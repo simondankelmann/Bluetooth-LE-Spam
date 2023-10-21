@@ -1,5 +1,6 @@
 package de.simonkelmann.bluetoothlespam.ui.home
 
+import android.bluetooth.BluetoothAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,10 +37,19 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        var btn: Button = binding.advertiseButton
-        btn.setOnClickListener{view ->
+        var startBtn: Button = binding.advertiseButton
+        startBtn.setOnClickListener{view ->
             Log.d(_logTag, "OnClick");
+            var macAddress = BluetoothAdapter.getDefaultAdapter().address
+            _viewModel!!.setText("Started Advertising on $macAddress")
             bleService.advertise()
+        }
+
+        var stopBtn: Button = binding.stopAdvertiseButton
+        stopBtn.setOnClickListener{view ->
+            Log.d(_logTag, "OnClick");
+            _viewModel!!.setText("Stopped Advertising")
+            bleService.stopAdvertising()
         }
 
         val textView: TextView = binding.textHome

@@ -24,57 +24,79 @@ class BleService {
     private var _currentAdvertisingSet:AdvertisingSet? = null
     private var _macAddress = ""
 
+    private val _advertiser: BluetoothLeAdvertiser = BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
+
+    private val _callback: AdvertisingSetCallback = @RequiresApi(Build.VERSION_CODES.O)
+    object : AdvertisingSetCallback() {
+        override fun onAdvertisingSetStarted(
+            advertisingSet: AdvertisingSet,
+            txPower: Int,
+            status: Int
+        ) {
+            Log.i(
+                _logTag, "onAdvertisingSetStarted(): txPower:" + txPower + " , status: " + status
+            )
+
+            _currentAdvertisingSet = advertisingSet
+        }
+
+        override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
+            Log.i(_logTag, "onAdvertisingDataSet() :status:$status")
+        }
+
+        override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
+            Log.i(_logTag, "onScanResponseDataSet(): status:$status")
+        }
+
+        override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
+            Log.i(_logTag, "onAdvertisingSetStopped():")
+        }
+    }
+
+
     // apple = 004C => 76
+    /*
     var manufacturerId = 76
     var manufacturerSpecificData:ByteArray = byteArrayOf(0x1e,
         0xff.toByte(), 0x4c, 0x00, 0x07, 0x19, 0x07, 0x02, 0x20, 0x75, 0xaa.toByte(), 0x30, 0x01, 0x00, 0x00, 0x45, 0x12, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
+    */
+
+    var manufacturerId = 0xFE21
+    var manufacturerSpecificData:ByteArray = byteArrayOf(0x1e, 0xff.toByte(), 0x4c, 0x00, 0x07, 0x19, 0x07, 0x02, 0x20, 0x75, 0xaa.toByte(), 0x30, 0x01, 0x00, 0x00, 0x45, 0x12, 0x12, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun stopAdvertising(){
+        // When done with the advertising:
+        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())) {
+            Log.d(_logTag, "Stopping Advertiser")
+            _advertiser.stopAdvertisingSet(_callback)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun advertise(){
         Log.d(_logTag, "Calling Function")
 
-        val advertiser: BluetoothLeAdvertiser = BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
+        //val advertiser: BluetoothLeAdvertiser = BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
 
         val parameters = AdvertisingSetParameters.Builder()
             .setLegacyMode(false) // True by default, but set here as a reminder.
             .setConnectable(true)
+            //.setScannable(true)
             .setInterval(AdvertisingSetParameters.INTERVAL_HIGH)
             .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_HIGH)
             .build()
 
         val data = AdvertiseData.Builder()
+            .addServiceUuid(ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb")))
+            .addServiceData(ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb")), byteArrayOf(0xDC.toByte(), 0xE9.toByte(), 0xEA.toByte()))
             .setIncludeDeviceName(true)
             .addManufacturerData(manufacturerId, manufacturerSpecificData)
             .build()
 
-        val callback: AdvertisingSetCallback = object : AdvertisingSetCallback() {
-            override fun onAdvertisingSetStarted(
-                advertisingSet: AdvertisingSet,
-                txPower: Int,
-                status: Int
-            ) {
-                Log.i(
-                    _logTag, "onAdvertisingSetStarted(): txPower:" + txPower + " , status: " + status
-                )
-
-                _currentAdvertisingSet = advertisingSet
-            }
-
-            override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
-                Log.i(_logTag, "onAdvertisingDataSet() :status:$status")
-            }
-
-            override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
-                Log.i(_logTag, "onScanResponseDataSet(): status:$status")
-            }
-
-            override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
-                Log.i(_logTag, "onAdvertisingSetStopped():")
-            }
-        }
-
         if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-            advertiser.startAdvertisingSet(parameters, data, null, null, null, callback);
+            _advertiser.startAdvertisingSet(parameters, data, null, null, null, _callback);
         }
 
         // After onAdvertisingSetStarted callback is called, you can modify the
@@ -105,9 +127,7 @@ class BleService {
         // When done with the advertising:
         // Wait for onScanResponseDataSet callback...
 
-        // When done with the advertising:
-        //Log.d(_logTag, "Stopping Advertiser");
-        //advertiser.stopAdvertisingSet(callback)
+
 
     }
 }
