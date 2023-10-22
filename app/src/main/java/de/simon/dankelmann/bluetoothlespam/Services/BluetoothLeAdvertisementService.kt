@@ -2,6 +2,7 @@ package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.AdvertisingSet
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext

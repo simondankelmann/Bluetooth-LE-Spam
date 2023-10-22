@@ -15,19 +15,17 @@ class AdvertismentLoopService {
     private var _currentIndex = 0
     private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-
-    val timer = object: CountDownTimer(10000, 1000) {
+    val timer = object: CountDownTimer(30000, 3000) {
         override fun onTick(millisUntilFinished: Long) {
             // do something
             advertiseNextPackage()
         }
         override fun onFinish() {
             // do something
-            Log.d(_logTag, "Timer finished")
+            Log.d(_logTag, "Timer finished, restarting")
             start()
         }
     }
-
 
     fun addAdvertisementSet(advertisementSet: AdvertisementSet){
         _advertisementSets.add(advertisementSet)
@@ -45,22 +43,24 @@ class AdvertismentLoopService {
     }
 
     fun advertiseNextPackage(){
-        Log.d(_logTag, "Advertising the next Package")
-
+        
         if(_advertising && _advertisementSets.count() > 0){
             // stop advertising the current package
+
             val currentAdvertisementSet = _advertisementSets.get(_currentIndex)
+            Log.d(_logTag, "Advertising the next Package, currentIndex is: " + _currentIndex + " - " + currentAdvertisementSet.deviceName)
+
             _bluetoothLeAdvertisementService.stopAdvertising(currentAdvertisementSet)
 
             val maxIndex = _advertisementSets.count() - 1
             if(_currentIndex < maxIndex){
                 _currentIndex++
-
             }
 
             //start the new one
             val newAdvertisementSet = _advertisementSets.get(_currentIndex)
-            _bluetoothLeAdvertisementService.startAdvertising(currentAdvertisementSet)
+            Log.d(_logTag, "Next index is: " + _currentIndex + " - " + newAdvertisementSet.deviceName)
+            _bluetoothLeAdvertisementService.startAdvertising(newAdvertisementSet)
 
             // exectute again with delay
             /*

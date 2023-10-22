@@ -7,8 +7,9 @@ import android.util.Log
 import android.widget.Toast
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
+import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 
-class GoogleFastPairAdvertisingSetCallback : AdvertisingSetCallback() {
+class GoogleFastPairAdvertisingSetCallback() : AdvertisingSetCallback() {
     private val _logTag = "GoogleFastPairAdvertisingSetCallback"
 
     override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet?, txPower: Int, status: Int) {
