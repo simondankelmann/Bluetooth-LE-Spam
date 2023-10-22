@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertismentLoopService
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentHomeBinding
@@ -51,7 +52,8 @@ class HomeFragment : Fragment() {
             }
             _advertismentLoopService.startAdvertising()
 
-            //_bluetoothLeAdvertisementService.startAdvertising(_advertisementSets.get(0))
+            //_advertisementSets[0].callback = GoogleFastPairAdvertisingSetCallback()
+            //_bluetoothLeAdvertisementService.startAdvertisingSet(_advertisementSets[0])
 
 
             _viewModel!!.setText("Started Advertising")

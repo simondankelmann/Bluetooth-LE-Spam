@@ -1,8 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
@@ -15,10 +13,13 @@ class AdvertismentLoopService {
     private var _currentIndex = 0
     private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-    val timer = object: CountDownTimer(30000, 3000) {
+    private val _maxAdvertisers = 1
+    private var _currentAdvertisers:MutableList<AdvertisementSet> = mutableListOf()
+
+    val timer = object: CountDownTimer(10000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            // do something
             advertiseNextPackage()
+            //batchIt()
         }
         override fun onFinish() {
             // do something
@@ -32,6 +33,8 @@ class AdvertismentLoopService {
     }
 
     fun startAdvertising(){
+        val hardwareCheck = _bluetoothLeAdvertisementService.checkHardware()
+        Log.d(_logTag, "Hardware Check returns: ${hardwareCheck}");
         _advertising = true
         _currentIndex = 0
         timer.start()
@@ -39,38 +42,61 @@ class AdvertismentLoopService {
 
     fun stopAdvertising(){
         _advertising = false
+        _currentIndex = 0
         timer.cancel()
+        stopAllAdvertisers()
     }
 
-    fun advertiseNextPackage(){
+    fun stopAllAdvertisers(){
+        _advertisementSets.map{
+            _bluetoothLeAdvertisementService.stopAdvertisingSet(it)
+        }
+    }
+
+    fun cleanupAdvertisers(){
+        if(_currentAdvertisers.count() > _maxAdvertisers){
+            // remove the first advertiser
+            var advertiserToRemove = _currentAdvertisers[0]
+            _bluetoothLeAdvertisementService.stopAdvertisingSet(advertiserToRemove)
+            _currentAdvertisers.removeAt(0)
+            Log.d(_logTag, "Removed advertiser for: " + advertiserToRemove.deviceName)
+        }
+    }
+
+    fun batchIt(){
+        stopAllAdvertisers()
+        for (i in 0.._maxAdvertisers){
+            advertiseNextPackage(false)
+        }
+    }
+
+
+    fun advertiseNextPackage(clean: Boolean = true){
         
         if(_advertising && _advertisementSets.count() > 0){
-            // stop advertising the current package
 
-            val currentAdvertisementSet = _advertisementSets.get(_currentIndex)
-            Log.d(_logTag, "Advertising the next Package, currentIndex is: " + _currentIndex + " - " + currentAdvertisementSet.deviceName)
-
-            _bluetoothLeAdvertisementService.stopAdvertising(currentAdvertisementSet)
-
-            val maxIndex = _advertisementSets.count() - 1
-            if(_currentIndex < maxIndex){
-                _currentIndex++
+            // clean if there are already too many advertisers
+            if(clean){
+                cleanupAdvertisers()
             }
 
-            //start the new one
-            val newAdvertisementSet = _advertisementSets.get(_currentIndex)
-            Log.d(_logTag, "Next index is: " + _currentIndex + " - " + newAdvertisementSet.deviceName)
-            _bluetoothLeAdvertisementService.startAdvertising(newAdvertisementSet)
+            val nextAdvertisementSet = _advertisementSets[_currentIndex]
 
-            // exectute again with delay
-            /*
-            val mainHandler = Handler(Looper.getMainLooper())
-            mainHandler.post(object : Runnable {
-                override fun run() {
-                    advertiseNextPackage()
-                    mainHandler.postDelayed(this, 1000)
-                }
-            })*/
+            _currentAdvertisers.add(nextAdvertisementSet)
+            _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
+
+            Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
+
+            val maxIndex = _advertisementSets.count() - 1
+
+            if(_currentIndex < maxIndex){
+                // go the next item
+                _currentIndex++
+            } else {
+                // go back to the start
+                _currentIndex = 0
+            }
+
         }
     }
 

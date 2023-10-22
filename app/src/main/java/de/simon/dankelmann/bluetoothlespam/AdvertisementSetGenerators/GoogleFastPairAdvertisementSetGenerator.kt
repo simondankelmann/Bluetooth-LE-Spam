@@ -32,8 +32,9 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
             val advertisingSetParameters = AdvertisingSetParameters.Builder()
                 .setLegacyMode(true)
-                .setInterval(AdvertisingSetParameters.INTERVAL_HIGH)
+                .setInterval(AdvertisingSetParameters.INTERVAL_MIN)
                 .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_HIGH)
+                //.setIncludeTxPower(true)
                 .build()
 
             val advertiseData: AdvertiseData = AdvertiseData.Builder()
