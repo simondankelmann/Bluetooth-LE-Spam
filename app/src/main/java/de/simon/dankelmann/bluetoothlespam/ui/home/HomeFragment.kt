@@ -13,6 +13,7 @@ import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertismentLoopService
+import de.simon.dankelmann.bluetoothlespam.Services.BleAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentHomeBinding
 
@@ -45,6 +46,11 @@ class HomeFragment : Fragment() {
         var startBtn: Button = binding.advertiseButton
         startBtn.setOnClickListener{view ->
 
+            //val svc = BleAdvertisementService()
+            //svc.startLeAdvertise(AppContext.getContext().bluetoothAdapter()!!)
+
+            //_bluetoothLeAdvertisementService.startAdvertising(_advertisementSets[0])
+            //_bluetoothLeAdvertisementService.startAdvertisingSet(_advertisementSets[0])
 
             _advertisementSets.map {
                 _advertismentLoopService.addAdvertisementSet(it)

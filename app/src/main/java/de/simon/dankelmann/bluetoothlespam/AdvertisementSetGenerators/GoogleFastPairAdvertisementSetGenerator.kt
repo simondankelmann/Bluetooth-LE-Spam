@@ -1,9 +1,13 @@
 package de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.AdvertiseData
+import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import android.os.ParcelUuid
+import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import java.util.UUID
@@ -30,11 +34,20 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
         _genuineDeviceIds.map {
 
+            val settings = AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+                .setConnectable(true)
+                .setTimeout(0)
+                .build()
+
             val advertisingSetParameters = AdvertisingSetParameters.Builder()
                 .setLegacyMode(true)
                 .setInterval(AdvertisingSetParameters.INTERVAL_MIN)
-                .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_HIGH)
+                .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_MEDIUM)
                 //.setIncludeTxPower(true)
+                .setPrimaryPhy(BluetoothDevice.PHY_LE_CODED)
+                .setSecondaryPhy(BluetoothDevice.PHY_LE_2M)
                 .build()
 
             val advertiseData: AdvertiseData = AdvertiseData.Builder()
@@ -46,11 +59,18 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
                 .setIncludeTxPowerLevel(true)
                 .build()
 
+            val scanResponse: AdvertiseData = AdvertiseData.Builder()
+                .setIncludeTxPowerLevel(true)
+                .build()
+
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.deviceName = it.value
             advertisementSet.advertiseData = advertiseData
             advertisementSet.advertisingSetParameters = advertisingSetParameters
-            advertisementSet.callback = GoogleFastPairAdvertisingSetCallback()
+            advertisementSet.advertisingSetCallback = GoogleFastPairAdvertisingSetCallback()
+            advertisementSet.advertisingCallback = GoogleFastPairAdvertisingCallback()
+            advertisementSet.advertiseSettings = settings
+            advertisementSet.scanResponse = scanResponse
 
             advertisementSets.add(advertisementSet)
         }

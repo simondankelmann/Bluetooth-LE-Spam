@@ -14,6 +14,9 @@ abstract class AppContext {
         fun Context.bluetoothAdapter(): BluetoothAdapter? =
             (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
 
+        fun Context.bluetoothManager(): BluetoothManager? =
+            (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+
 
         fun setContext(con: Context) {
             context=con

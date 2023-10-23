@@ -18,7 +18,7 @@ class AdvertismentLoopService {
 
     val timer = object: CountDownTimer(10000, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            advertiseNextPackage()
+            advertiseNextPackage(true)
             //batchIt()
         }
         override fun onFinish() {
@@ -83,7 +83,9 @@ class AdvertismentLoopService {
             val nextAdvertisementSet = _advertisementSets[_currentIndex]
 
             _currentAdvertisers.add(nextAdvertisementSet)
-            _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
+            _bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
+            // _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
+
 
             Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
 
