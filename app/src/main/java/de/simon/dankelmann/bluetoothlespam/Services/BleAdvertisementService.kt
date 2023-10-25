@@ -12,12 +12,14 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFast
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import java.util.UUID
 
 class BleAdvertisementService {
 
     private val _logTag = "BleAdvertisementService"
+    private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
      fun startLeAdvertise(bluetoothAdapter: BluetoothAdapter) {
 
@@ -79,6 +81,10 @@ class BleAdvertisementService {
             mBluetoothLeAdvertiser.startAdvertising(settings, advertiseData, mAdvertiseCallback)
             //mBluetoothLeAdvertiser.startAdvertisingSet(firstItem.advertisingSetParameters, advertiseData, null, null, null, firstItem.callback )
         }
+    }
+
+    fun addBleAdvertisementServiceCallback(callback: IBleAdvertisementServiceCallback){
+        _bleAdvertisementServiceCallback.add(callback)
     }
 
 }

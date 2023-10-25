@@ -16,7 +16,6 @@ class GoogleFastPairAdvertisingSetCallback() : AdvertisingSetCallback() {
 
         val context = AppContext.getActivity()
 
-
         if (status==AdvertisingSetCallback.ADVERTISE_FAILED_ALREADY_STARTED)
             //Toast.makeText(context, "ADVERTISE_FAILED_ALREADY_STARTED", Toast.LENGTH_SHORT).show();
             Log.d(_logTag, "ADVERTISE_FAILED_ALREADY_STARTED")

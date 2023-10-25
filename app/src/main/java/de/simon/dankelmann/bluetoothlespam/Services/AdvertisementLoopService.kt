@@ -2,16 +2,16 @@ package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.os.CountDownTimer
 import android.util.Log
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 
-class AdvertismentLoopService {
-    private var _logTag = "AdvertismentLoopService"
+class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdvertisementService){
+    private var _logTag = "AdvertisementLoopService"
     private var _advertising = false
-    private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = BluetoothLeAdvertisementService(AppContext.getContext().bluetoothAdapter()!!)
+    private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = bluetoothLeAdvertisementService
     private var _currentIndex = 0
     private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
+    private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
     private val _maxAdvertisers = 1
     private var _currentAdvertisers:MutableList<AdvertisementSet> = mutableListOf()
@@ -38,6 +38,9 @@ class AdvertismentLoopService {
         _advertising = true
         _currentIndex = 0
         timer.start()
+        _bleAdvertisementServiceCallback.map {
+            it.onAdvertisementStarted()
+        }
     }
 
     fun stopAdvertising(){
@@ -45,6 +48,9 @@ class AdvertismentLoopService {
         _currentIndex = 0
         timer.cancel()
         stopAllAdvertisers()
+        _bleAdvertisementServiceCallback.map {
+            it.onAdvertisementStopped()
+        }
     }
 
     fun stopAllAdvertisers(){
@@ -100,6 +106,10 @@ class AdvertismentLoopService {
             }
 
         }
+    }
+
+    fun addBleAdvertisementServiceCallback(callback: IBleAdvertisementServiceCallback){
+        _bleAdvertisementServiceCallback.add(callback)
     }
 
 }

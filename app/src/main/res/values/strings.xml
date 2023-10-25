@@ -10,4 +10,11 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">High</item>
+        <item name="tx_power_medium">Medium</item>
+        <item name="tx_power_low">Low</item>
+        <item name="tx_power_ultralow">Ultra Low</item>
+    </string-array>
 </resources>

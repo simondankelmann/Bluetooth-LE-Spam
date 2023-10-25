@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothManager
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import java.util.UUID
@@ -28,6 +29,8 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     private val _bluetoothAdapter = _bluetoothAdapter
     private val _logTag = "BluetoothLeAdvertisementService"
     private val _advertiser: BluetoothLeAdvertiser = _bluetoothAdapter.bluetoothLeAdvertiser
+    private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
+
 
     init {
         checkHardware()
@@ -67,6 +70,9 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         if(advertisementSet.validate()){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser.startAdvertising(advertisementSet.advertiseSettings, advertisementSet.advertiseData, advertisementSet.advertisingCallback)
+                _bleAdvertisementServiceCallback.map {
+                    it.onAdvertisementSetStarted(advertisementSet)
+                }
             } else {
                 Log.d(_logTag, "Missing permission to execute advertisement")
             }
@@ -79,6 +85,9 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         if(advertisementSet.validate()){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser.startAdvertisingSet(advertisementSet.advertisingSetParameters, advertisementSet.advertiseData, advertisementSet.scanResponse, advertisementSet.periodicParameters, advertisementSet.periodicData, advertisementSet.advertisingSetCallback)
+                _bleAdvertisementServiceCallback.map {
+                    it.onAdvertisementSetStarted(advertisementSet)
+                }
             } else {
                 Log.d(_logTag, "Missing permission to execute advertisement")
             }
@@ -90,6 +99,9 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     fun stopAdvertisingSet(advertisementSet: AdvertisementSet){
         if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
             _advertiser.stopAdvertisingSet(advertisementSet.advertisingSetCallback)
+            _bleAdvertisementServiceCallback.map {
+                it.onAdvertisementStopped()
+            }
         } else {
             Log.d(_logTag, "Missing permission to stop advertisement")
         }
@@ -103,4 +115,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         }
     }
 
+    fun addBleAdvertisementServiceCallback(callback: IBleAdvertisementServiceCallback){
+        _bleAdvertisementServiceCallback.add(callback)
+    }
 }

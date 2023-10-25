@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fastPairing.FastPairingFragment"
+    android:id="@+id/fastPairingLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/fastPairingTopLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/fastPairingAnimation"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:lottie_rawRes="@raw/bluetooth"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                />
+
+            <TextView
+                android:id="@+id/statusLabelFastPairing"
+                android:text="Status"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.10"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fastPairingSettingsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/fastPairingIncludeNameSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Include Device Name" />
+
+            <Spinner
+                android:id="@+id/fastPairingTxPowerSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/spinner_entries_tx_power"
+                />
+
+
+            <TextView
+                android:id="@+id/fastPairingRepeatitionSeekbarLabel"
+                android:text="Advertise every 2 Seconds"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="14sp"
+                />
+            <SeekBar
+                android:id="@+id/fastPairingRepeatitionSeekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="1"
+                android:progress="2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fastPairingFooterLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toBottomOf="@id/fastPairingLayout"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/stopAdvertiseButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Stop Advertising"
+                app:layout_constraintTop_toBottomOf="@id/advertiseButton"
+                android:layout_margin="5dp">
+            </Button>
+
+            <Button
+                android:id="@+id/advertiseButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Start Advertising"
+                app:layout_constraintStart_toStartOf="@id/fastPairingLayout"
+                app:layout_constraintTop_toTopOf="@id/fastPairingLayout"
+                android:layout_margin="5dp">
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
