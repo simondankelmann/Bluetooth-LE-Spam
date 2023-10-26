@@ -1,5 +1,10 @@
 package de.simon.dankelmann.bluetoothlespam.Constants
 
+
+enum class LogLevel{
+    Error, Warning, Info, Success
+}
+
 class Constants {
     companion object {
         const val ADVERTISE_TIMEOUT = 160

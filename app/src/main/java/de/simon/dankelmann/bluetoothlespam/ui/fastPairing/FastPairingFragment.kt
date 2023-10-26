@@ -1,13 +1,20 @@
 package de.simon.dankelmann.bluetoothlespam.ui.fastPairing
 
+import android.bluetooth.le.AdvertiseCallback
+import android.bluetooth.le.AdvertiseSettings
+import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
@@ -17,13 +24,16 @@ import com.airbnb.lottie.LottieDrawable.RepeatMode
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
+import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentFastpairingBinding
 
-class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
+class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
     private var _binding: FragmentFastpairingBinding? = null
 
@@ -59,11 +69,6 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
             _advertisementLoopService.addAdvertisementSet(it)
         }
 
-        val textView: TextView = binding.statusLabelFastPairing
-        viewModel.statusText.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-
         setupUi()
 
         return root
@@ -75,19 +80,28 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
             var startBtn: Button = binding.advertiseButton
             startBtn.setOnClickListener{view ->
                 _advertisementLoopService.startAdvertising()
+
+                val logEntry = LogEntryModel()
+                logEntry.level = LogLevel.Info
+                logEntry.message = "Started Advertising"
+                _viewModel!!.addLogEntry(logEntry)
             }
 
             // stop button
             var stopBtn: Button = binding.stopAdvertiseButton
             stopBtn.setOnClickListener{view ->
                 _advertisementLoopService.stopAdvertising()
+
+                val logEntry = LogEntryModel()
+                logEntry.level = LogLevel.Info
+                logEntry.message = "Stopped Advertising"
+                _viewModel!!.addLogEntry(logEntry)
             }
 
             //animation view
             val animationView: LottieAnimationView = binding.fastPairingAnimation
             _viewModel!!.isTransmitting.observe(viewLifecycleOwner) {
                 if(it == true){
-                    Log.d(_logTag, "Setting to true")
                     animationView.repeatCount = LottieDrawable.INFINITE
                     animationView.playAnimation()
                 } else {
@@ -101,6 +115,97 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
                _bluetoothLeAdvertisementService.includeDeviceName = includeDeviceNameSwitch.isChecked
             }
 
+            // txPower
+            val fastPairingTxPowerSeekbar = binding.fastPairingTxPowerSeekbar
+            val fastPairingTxPowerSeekbarLabel:TextView = binding.fastPairingTxPowerSeekbarLabel
+            fastPairingTxPowerSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+
+                    var newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+                    var newTxPowerLabel = "High"
+
+                    when (progress) {
+                        0 -> {
+                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW
+                            newTxPowerLabel = "Ultra Low"
+                        }
+                        1 -> {
+                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_LOW
+                            newTxPowerLabel = "Low"
+                        }
+                        2 -> {
+                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM
+                            newTxPowerLabel = "Medium"
+                        }
+                        3 -> {
+                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+                            newTxPowerLabel = "High"
+                        }
+                    }
+
+                    fastPairingTxPowerSeekbarLabel.text = "TX Power: ${newTxPowerLabel}"
+                    _bluetoothLeAdvertisementService.txPowerLevel = newTxPowerLevel
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    // you can probably leave this empty
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    // you can probably leave this empty
+                }
+            })
+
+            // seekbar
+            val fastPairingRepeatitionSeekbar:SeekBar = binding.fastPairingRepeatitionSeekbar
+            val fastPairingRepeatitionLabel:TextView = binding.fastPairingRepeatitionSeekbarLabel
+            fastPairingRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    fastPairingRepeatitionLabel.text = "Advertise every ${progress} Seconds"
+                    _advertisementLoopService.setIntervalSeconds(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    // you can probably leave this empty
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    // you can probably leave this empty
+                }
+            })
+
+            // status label
+            val statusLabelFastPairing: TextView = binding.statusLabelFastPairing
+            _viewModel!!.statusText.observe(viewLifecycleOwner) {
+                statusLabelFastPairing.text = it
+            }
+
+            // log scroll view
+            val logView: LinearLayout = binding.fastPairingLogLinearView
+            _viewModel!!.logEntries.observe(viewLifecycleOwner) {
+                logView.removeAllViews()
+                it.reversed().map { logEntryModel ->
+                    val logEntryTextView:TextView = TextView(logView.context)
+                    logEntryTextView.text = logEntryModel.message
+
+                    when (logEntryModel.level){
+                        LogLevel.Info -> {
+                            logEntryTextView.setTextColor(ContextCompat.getColor(logView.context, R.color.log_info))
+                        }
+                        LogLevel.Warning -> {
+                            logEntryTextView.setTextColor(ContextCompat.getColor(logView.context, R.color.log_warning))
+                        }
+                        LogLevel.Error -> {
+                            logEntryTextView.setTextColor(ContextCompat.getColor(logView.context, R.color.log_error))
+                        }
+                        LogLevel.Success -> {
+                            logEntryTextView.setTextColor(ContextCompat.getColor(logView.context, R.color.log_success))
+                        }
+                    }
+
+                    logView.addView(logEntryTextView)
+                }
+            }
 
         }
     }
@@ -120,7 +225,70 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
     }
 
     override fun onAdvertisementSetStarted(advertisementSet: AdvertisementSet) {
-        _viewModel!!.setStatusText("Advertising Set: " + advertisementSet.deviceName)
+        var message = "Advertising: ${advertisementSet.deviceName}"
+        _viewModel!!.setStatusText(message)
+
+        var logEntry = LogEntryModel()
+        logEntry.level = LogLevel.Info
+        logEntry.message = message
+        _viewModel!!.addLogEntry(logEntry)
     }
 
+    override fun onAdvertisementSetStopped(advertisementSet: AdvertisementSet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onStartFailure(errorCode: Int) {
+        var message = ""
+        message = if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_FEATURE_UNSUPPORTED) {
+            "ADVERTISE_FAILED_FEATURE_UNSUPPORTED"
+        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS) {
+            "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS"
+        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED) {
+            "ADVERTISE_FAILED_ALREADY_STARTED"
+        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE) {
+            "ADVERTISE_FAILED_DATA_TOO_LARGE"
+        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_INTERNAL_ERROR) {
+            "ADVERTISE_FAILED_INTERNAL_ERROR"
+        } else {
+            "unknown"
+        }
+
+        if (errorCode != AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED){
+            var logEntry = LogEntryModel()
+            logEntry.level = LogLevel.Error
+            logEntry.message = message
+            _viewModel!!.addLogEntry(logEntry)
+        }
+    }
+
+    override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
+        var logEntry = LogEntryModel()
+        logEntry.level = LogLevel.Success
+        logEntry.message = "Started advertising successfully"
+        _viewModel!!.addLogEntry(logEntry)
+    }
+
+    override fun onAdvertisingSetStarted(
+        advertisingSet: AdvertisingSet?,
+        txPower: Int,
+        status: Int
+    ) {
+        var logEntry = LogEntryModel()
+        logEntry.level = LogLevel.Success
+        logEntry.message = "Advertised successfully"
+        _viewModel!!.addLogEntry(logEntry)
+    }
+
+    override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
+        TODO("Not yet implemented")
+    }
 }

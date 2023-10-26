@@ -7,4 +7,17 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <color name="log_info">#000000</color>
+    <color name="log_warning">#c19c00</color>
+    <color name="log_error">#c50f1f</color>
+    <color name="log_success">#13a10e</color>
+
+
+
+    <color name="seek_bar_background">#ababab</color>
+    <color name="seek_bar_progress">#ffb600</color>
+    <color name="seek_bar_secondary_progress">#3399CC</color>
+
 </resources>

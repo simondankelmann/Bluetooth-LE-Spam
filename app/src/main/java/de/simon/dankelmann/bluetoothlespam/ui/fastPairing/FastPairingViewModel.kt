@@ -3,11 +3,12 @@ package de.simon.dankelmann.bluetoothlespam.ui.fastPairing
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 
 class FastPairingViewModel : ViewModel() {
 
     private val _statusText = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+        value = "Start Advertising"
     }
     public fun setStatusText(text:String){
         _statusText.postValue(text)
@@ -17,10 +18,13 @@ class FastPairingViewModel : ViewModel() {
         value = false
     }
 
-    val inludeDeviceName = MutableLiveData<Boolean?>().apply {
-        value = null
+    val logEntries = MutableLiveData<List<LogEntryModel>>().apply {
+        value = listOf()
     }
 
+    fun addLogEntry(logEntry: LogEntryModel){
+        logEntries.value = logEntries.value?.plus(logEntry) ?: listOf(logEntry)
+    }
 
     val statusText: LiveData<String> = _statusText
 }

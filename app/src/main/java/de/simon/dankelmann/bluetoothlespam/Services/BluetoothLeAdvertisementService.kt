@@ -73,7 +73,6 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     }
 
     private fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet{
-
         if(txPowerLevel != null){
             advertisementSet.advertiseSettings.txPowerLevel = txPowerLevel!!
             advertisementSet.advertisingSetParameters.txPowerLevel = txPowerLevel!!
