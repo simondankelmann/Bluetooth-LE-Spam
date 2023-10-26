@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="de.simon.dankelmann.bluetoothlespam.ui.fastPairing.FastPairingFragment"
-        android:label="@string/menu_home"
+        android:label="@string/menu_fastPairing"
         tools:layout="@layout/fragment_fastpairing" />
 
     <fragment

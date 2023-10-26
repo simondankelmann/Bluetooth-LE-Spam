@@ -25,7 +25,8 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 app:lottie_rawRes="@raw/bluetooth"
-                app:lottie_autoPlay="true"
+                app:lottie_autoPlay="false"
+                app:lottie_repeatMode="restart"
                 app:lottie_loop="true"
                 />
 
@@ -54,6 +55,7 @@
                 android:id="@+id/fastPairingIncludeNameSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="false"
                 android:text="Include Device Name" />
 
             <Spinner

@@ -26,10 +26,16 @@ import java.util.UUID
 
 
 class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
+
+    // private
     private val _bluetoothAdapter = _bluetoothAdapter
     private val _logTag = "BluetoothLeAdvertisementService"
     private val _advertiser: BluetoothLeAdvertiser = _bluetoothAdapter.bluetoothLeAdvertiser
     private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
+
+    // public
+    var includeDeviceName:Boolean? = null
+    var txPowerLevel:Int? = null
 
 
     init {
@@ -66,10 +72,26 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         return true
     }
 
+    private fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet{
+
+        if(txPowerLevel != null){
+            advertisementSet.advertiseSettings.txPowerLevel = txPowerLevel!!
+            advertisementSet.advertisingSetParameters.txPowerLevel = txPowerLevel!!
+        }
+
+        if(includeDeviceName != null){
+            Log.d(_logTag, "Setting include Devicename to: ${includeDeviceName}")
+            advertisementSet.advertiseData.includeDeviceName = includeDeviceName!!
+        }
+
+        return advertisementSet
+    }
+
     fun startAdvertising(advertisementSet: AdvertisementSet){
         if(advertisementSet.validate()){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-                _advertiser.startAdvertising(advertisementSet.advertiseSettings, advertisementSet.advertiseData, advertisementSet.advertisingCallback)
+                val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
+                _advertiser.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
                 _bleAdvertisementServiceCallback.map {
                     it.onAdvertisementSetStarted(advertisementSet)
                 }
@@ -84,7 +106,8 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     fun startAdvertisingSet(advertisementSet: AdvertisementSet){
         if(advertisementSet.validate()){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-                _advertiser.startAdvertisingSet(advertisementSet.advertisingSetParameters, advertisementSet.advertiseData, advertisementSet.scanResponse, advertisementSet.periodicParameters, advertisementSet.periodicData, advertisementSet.advertisingSetCallback)
+                val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
+                _advertiser.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
                 _bleAdvertisementServiceCallback.map {
                     it.onAdvertisementSetStarted(advertisementSet)
                 }

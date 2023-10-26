@@ -1,14 +1,19 @@
 package de.simon.dankelmann.bluetoothlespam.ui.fastPairing
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.LottieDrawable.INFINITE
+import com.airbnb.lottie.LottieDrawable.RepeatMode
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
@@ -80,14 +85,22 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback {
 
             //animation view
             val animationView: LottieAnimationView = binding.fastPairingAnimation
-            animationView.cancelAnimation()
             _viewModel!!.isTransmitting.observe(viewLifecycleOwner) {
                 if(it == true){
+                    Log.d(_logTag, "Setting to true")
+                    animationView.repeatCount = LottieDrawable.INFINITE
                     animationView.playAnimation()
                 } else {
                     animationView.cancelAnimation()
                 }
             }
+
+            // include device name switch
+            val includeDeviceNameSwitch: Switch = binding.fastPairingIncludeNameSwitch
+            includeDeviceNameSwitch.setOnClickListener { view ->
+               _bluetoothLeAdvertisementService.includeDeviceName = includeDeviceNameSwitch.isChecked
+            }
+
 
         }
     }

@@ -16,7 +16,10 @@ class FastPairingViewModel : ViewModel() {
     val isTransmitting = MutableLiveData<Boolean>().apply {
         value = false
     }
-    //val isTransmitting: LiveData<Boolean> = _isTransmitting
+
+    val inludeDeviceName = MutableLiveData<Boolean?>().apply {
+        value = null
+    }
 
 
     val statusText: LiveData<String> = _statusText

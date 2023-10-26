@@ -34,43 +34,36 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
         _genuineDeviceIds.map {
 
-            val settings = AdvertiseSettings.Builder()
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
-                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-                .setConnectable(true)
-                .setTimeout(0)
-                .build()
-
-            val advertisingSetParameters = AdvertisingSetParameters.Builder()
-                .setLegacyMode(true)
-                .setInterval(AdvertisingSetParameters.INTERVAL_MIN)
-                .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_MEDIUM)
-                //.setIncludeTxPower(true)
-                .setPrimaryPhy(BluetoothDevice.PHY_LE_CODED)
-                .setSecondaryPhy(BluetoothDevice.PHY_LE_2M)
-                .build()
-
-            val advertiseData: AdvertiseData = AdvertiseData.Builder()
-                .setIncludeDeviceName(false)
-                .addServiceUuid(serviceUuid)
-                .addServiceData(serviceUuid, StringHelpers.decodeHex(it.key))
-                //.addManufacturerData(manufacturerId, serviceData)
-                //.addManufacturerData(manufacturerId, manufacturerSpecificData)
-                .setIncludeTxPowerLevel(true)
-                .build()
-
-            val scanResponse: AdvertiseData = AdvertiseData.Builder()
-                .setIncludeTxPowerLevel(true)
-                .build()
-
             var advertisementSet:AdvertisementSet = AdvertisementSet()
+
+            // Advertise Settings
+            advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
+            advertisementSet.advertiseSettings.txPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+            advertisementSet.advertiseSettings.connectable = true
+            advertisementSet.advertiseSettings.timeout = 0
+
+            // Advertising Parameters
+            advertisementSet.advertisingSetParameters.legacyMode = true
+            advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
+            advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
+            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_CODED
+            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_2M
+
+            // AdvertiseData
+            advertisementSet.advertiseData.includeDeviceName = false
+            advertisementSet.advertiseData.serviceUuid = serviceUuid
+            advertisementSet.advertiseData.serviceData = StringHelpers.decodeHex(it.key)
+            advertisementSet.advertiseData.includeTxPower = true
+
+            // Scan Response
+            advertisementSet.scanResponse.includeTxPower = true
+
+            // General Data
             advertisementSet.deviceName = it.value
-            advertisementSet.advertiseData = advertiseData
-            advertisementSet.advertisingSetParameters = advertisingSetParameters
+
+            // Callbacks
             advertisementSet.advertisingSetCallback = GoogleFastPairAdvertisingSetCallback()
             advertisementSet.advertisingCallback = GoogleFastPairAdvertisingCallback()
-            advertisementSet.advertiseSettings = settings
-            advertisementSet.scanResponse = scanResponse
 
             advertisementSets.add(advertisementSet)
         }
