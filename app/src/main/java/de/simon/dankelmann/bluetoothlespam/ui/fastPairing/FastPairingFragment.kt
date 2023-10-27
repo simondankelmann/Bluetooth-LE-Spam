@@ -41,11 +41,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     // onDestroyView.
     private val binding get() = _binding!!
     private var _viewModel:FastPairingViewModel? = null
-
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = BluetoothLeAdvertisementService(AppContext.getContext().bluetoothAdapter()!!)
     private var _advertisementLoopService: AdvertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService)
-
-
     private val _logTag = "FastPairingFragment"
 
     override fun onCreateView(
@@ -76,6 +73,37 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
     fun setupUi(){
         if(_viewModel != null){
+
+            // toggle button
+            var toggleBtn: Button = binding.advertiseButton
+            toggleBtn.setOnClickListener{view ->
+                if(!_advertisementLoopService.advertising){
+                    _advertisementLoopService.startAdvertising()
+
+                    val logEntry = LogEntryModel()
+                    logEntry.level = LogLevel.Info
+                    logEntry.message = "Started Advertising"
+                    _viewModel!!.addLogEntry(logEntry)
+
+                    _viewModel!!.isTransmitting.postValue(true)
+
+                    toggleBtn.text = "Stop Advertising"
+                } else {
+                    _advertisementLoopService.stopAdvertising()
+
+                    val logEntry = LogEntryModel()
+                    logEntry.level = LogLevel.Info
+                    logEntry.message = "Stopped Advertising"
+                    _viewModel!!.addLogEntry(logEntry)
+
+                    _viewModel!!.isTransmitting.postValue(false)
+
+                    toggleBtn.text = "Start Advertising"
+                }
+
+            }
+
+            /*
             // start button
             var startBtn: Button = binding.advertiseButton
             startBtn.setOnClickListener{view ->
@@ -96,7 +124,7 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
                 logEntry.level = LogLevel.Info
                 logEntry.message = "Stopped Advertising"
                 _viewModel!!.addLogEntry(logEntry)
-            }
+            }*/
 
             //animation view
             val animationView: LottieAnimationView = binding.fastPairingAnimation
@@ -217,11 +245,9 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
     override fun onAdvertisementStarted() {
         _viewModel!!.setStatusText("Started Advertising")
-        _viewModel!!.isTransmitting.postValue(true)
     }
     override fun onAdvertisementStopped() {
         _viewModel!!.setStatusText("Stopped Advertising")
-        _viewModel!!.isTransmitting.postValue(false)
     }
 
     override fun onAdvertisementSetStarted(advertisementSet: AdvertisementSet) {
@@ -235,7 +261,7 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     override fun onAdvertisementSetStopped(advertisementSet: AdvertisementSet) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onStartFailure(errorCode: Int) {
@@ -281,14 +307,14 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
-        TODO("Not yet implemented")
+
     }
 }

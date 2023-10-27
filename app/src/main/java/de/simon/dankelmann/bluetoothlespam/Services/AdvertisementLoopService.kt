@@ -1,6 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.Services
 
-import android.Manifest
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSet
@@ -10,11 +9,12 @@ import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
-import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
+import java.util.Timer
+import java.util.TimerTask
 
 class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdvertisementService) {
     private var _logTag = "AdvertisementLoopService"
-    private var _advertising = false
+    var advertising = false
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = bluetoothLeAdvertisementService
     private var _currentIndex = 0
     private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
@@ -24,25 +24,25 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     private var _currentAdvertisers:MutableList<AdvertisementSet> = mutableListOf()
 
     private var countdownInterval = 1000
-    private var missisInFuture = 10000
+    private var millisInFuture = 10000
     private var timer:CountDownTimer = getTimer()
 
     fun setIntervalSeconds(interval:Int){
         timer.cancel()
 
         countdownInterval = interval * 1000
-        missisInFuture = countdownInterval * 10
+        millisInFuture = countdownInterval * 10
 
         timer = getTimer()
-        if(_advertising){
+        if(advertising){
             timer.start()
         }
     }
 
     private fun getTimer():CountDownTimer{
-        return object: CountDownTimer(missisInFuture.toLong(), countdownInterval.toLong()) {
+        return object: CountDownTimer(millisInFuture.toLong(), countdownInterval.toLong()) {
             override fun onTick(millisUntilFinished: Long) {
-                advertiseNextPackage(true)
+                //advertiseNextPackage(true)
                 //batchIt()
             }
             override fun onFinish() {
@@ -63,12 +63,15 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     fun startAdvertising(){
         val hardwareCheck = _bluetoothLeAdvertisementService.checkHardware()
         Log.d(_logTag, "Hardware Check returns: ${hardwareCheck}");
-        _advertising = true
+        advertising = true
         _currentIndex = 0
 
+        /*
         timer.cancel()
         timer = getTimer()
-        timer.start()
+        timer.start()*/
+
+        advertiseNextPackage()
 
         _bleAdvertisementServiceCallback.map {
             it.onAdvertisementStarted()
@@ -76,7 +79,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     }
 
     fun stopAdvertising(){
-        _advertising = false
+        advertising = false
         _currentIndex = 0
 
         timer.cancel()
@@ -94,7 +97,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     }
 
     fun cleanupAdvertisers(){
-        if(_currentAdvertisers.count() > _maxAdvertisers){
+        if(_currentAdvertisers.count() >= _maxAdvertisers){
             // remove the first advertiser
             var advertiserToRemove = _currentAdvertisers[0]
             _bluetoothLeAdvertisementService.stopAdvertisingSet(advertiserToRemove)
@@ -113,18 +116,21 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
 
     fun advertiseNextPackage(clean: Boolean = true){
         
-        if(_advertising && _advertisementSets.count() > 0){
+        if(advertising && _advertisementSets.count() > 0){
 
             // clean if there are already too many advertisers
             if(clean){
                 cleanupAdvertisers()
             }
 
-            val nextAdvertisementSet = _advertisementSets[_currentIndex]
+            //val nextAdvertisementSet = _advertisementSets[_currentIndex]
+
+            val nextAdvertisementSet = _advertisementSets.random()
+
 
             _currentAdvertisers.add(nextAdvertisementSet)
-            _bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
-            // _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
+            //_bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
+            _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
 
             Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
 
@@ -165,6 +171,17 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
         override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet?, txPower: Int, status: Int) {
             _bleAdvertisementServiceCallback.map{
                 it.onAdvertisingSetStarted(advertisingSet, txPower, status)
+                if(advertising){
+
+                    Timer().schedule(object : TimerTask() {
+                        override fun run() {
+                            AppContext.getActivity().runOnUiThread(){
+                                advertiseNextPackage()
+                            }
+
+                        }
+                    }, countdownInterval.toLong())
+                }
             }
         }
 

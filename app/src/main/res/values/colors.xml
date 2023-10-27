@@ -1,19 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
+
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="blue_normal">#2d5eed</color>
+    <color name="blue_dark">#164795</color>
+
+    <color name="green_normal">#a2c03c</color>
+    <color name="green_dark">#546320</color>
+
+    <color name="grey_normal">#ababab</color>
+
+
+
+
+
+    <!--
+        Primary brand color.
+    <item name="colorPrimary">@color/purple_500</item>
+    <item name="colorPrimaryVariant">@color/purple_700</item>
+    <item name="colorOnPrimary">@color/white</item>
+
+        Secondary brand color.
+    <item name="colorSecondary">@color/teal_200</item>
+    <item name="colorSecondaryVariant">@color/teal_700</item>
+    <item name="colorOnSecondary">@color/black</item>
+
+    -->
+
+
+    <color name="color_accent_text">#ffffff</color>
 
 
     <color name="log_info">#000000</color>
     <color name="log_warning">#c19c00</color>
     <color name="log_error">#c50f1f</color>
     <color name="log_success">#13a10e</color>
-
 
 
     <color name="seek_bar_background">#ababab</color>

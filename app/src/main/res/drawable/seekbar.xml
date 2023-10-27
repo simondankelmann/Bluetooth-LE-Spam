@@ -3,7 +3,7 @@
         <shape
             android:shape="line">
             <stroke
-                android:color="@color/seek_bar_background"
+                android:color="?attr/seekbarBackground"
                 android:width="@dimen/seek_bar_thickness"/>
         </shape>
     </item>
@@ -12,7 +12,7 @@
             <shape
                 android:shape="line">
                 <stroke
-                    android:color="@color/seek_bar_secondary_progress"
+                    android:color="?attr/seekbarSecondaryProgress"
                     android:width="@dimen/seek_bar_thickness"/>
             </shape>
         </clip>
@@ -23,7 +23,7 @@
             <shape
                 android:shape="line">
                 <stroke
-                    android:color="@color/seek_bar_progress"
+                    android:color="?attr/seekbarProgress"
                     android:width="@dimen/seek_bar_thickness"/>
             </shape>
         </clip>

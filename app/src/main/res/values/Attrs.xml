@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Theme">
+        <attr name="seekbarBackground" format="color" />
+        <attr name="seekbarProgress" format="color" />
+        <attr name="seekbarSecondaryProgress" format="color" />
+    </declare-styleable>
+</resources>
