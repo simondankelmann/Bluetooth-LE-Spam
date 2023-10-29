@@ -22,6 +22,8 @@ Since the official Bluetooth Low Energy API provided by Google's Android SDK all
 
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
+## Screenshots
+![](./Assets/Screenshots/Screenshot1.jpeg)
 
 ## Disclaimer
 Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
