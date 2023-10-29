@@ -1,17 +1,17 @@
 # Bluetooth LE Spam
 
-This Project is about using the built in Bluetooth Low Energy (BLE) functionality of Android phones to generate Phantom Bluetooth Device Advertisements like known for example from the Flipper Zero. There are other apps that offer similar functionality, the goal of this App is to make it more convenient and easy to use.
+This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-> **_NOTE:_**  This Project is in a very early State.  Contribution by anyone is Welcome.
+> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome.
 
 ## Functionality
 ### Google Fast Pair
-This App can spoof BLE Advertisers that pretend to make use of the Google Fast Pair Service resulting in a flood of unwanted popups on the receiving Device. 
+This app is capable of spoofing BLE advertisers that mimic the usage of the Google Fast Pair Service, leading to an influx of unwanted pop-up notifications on the receiving device.
 
-More about the Google Fast Pair Service can be found [here](https://developers.google.com/nearby/fast-pair/landing-page)
+For additional information about the Google Fast Pair Service, you can find it [here](https://developers.google.com/nearby/fast-pair/landing-page)
 
 ## Range
-Since the official Bluetooth Low Energy provided by Googles Android SDK lets you set the TX Powerlevel and also include it in the Advertisers Payload but not modify the actually transmitted Bytevalue in the Payload, the Range of the Fast Pair functionality is rather low. The receiving Devices calculates the Transmitters Proximity using the actual received Signal Strength and the transmitted Byte in the Payload which contains the Tx Powerlevel the Transmitter used. Since this can be modified by Devices like the Flipper Zero, their range is much higher.
+Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload, but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
 
 ## Credit
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
@@ -20,7 +20,7 @@ Since the official Bluetooth Low Energy provided by Googles Android SDK lets you
 
 - [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
 
-- And anyone else who was involved in prior researches and publications about this topic. 
+- And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 
 ## Disclaimer

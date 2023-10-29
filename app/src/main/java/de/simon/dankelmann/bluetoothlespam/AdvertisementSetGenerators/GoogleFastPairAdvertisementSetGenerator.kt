@@ -14,6 +14,9 @@ import java.util.UUID
 
 class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
+    // Genuine Device Ic's taken from here:
+    // https://github.com/Flipper-XFW/Xtreme-Firmware/commit/46fd5d2eae46cbbf511d8901b6bcfda094ec1573
+
     val _genuineDeviceIds = mapOf(
         "0001F0" to "Bisto CSR8670 Dev Board",
         "000047" to "Arduino 101",
