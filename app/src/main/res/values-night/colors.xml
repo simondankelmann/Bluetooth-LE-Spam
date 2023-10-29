@@ -22,7 +22,7 @@
 
     <color name="color_accent_text">#ffffff</color>
 
-    <color name="log_info">#000000</color>
+    <color name="log_info">@color/grey_normal</color>
     <color name="log_warning">#c19c00</color>
     <color name="log_error">#c50f1f</color>
     <color name="log_success">#13a10e</color>

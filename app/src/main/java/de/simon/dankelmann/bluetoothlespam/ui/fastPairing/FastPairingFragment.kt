@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
@@ -76,7 +77,10 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
             // toggle button
             var toggleBtn: Button = binding.advertiseButton
-            toggleBtn.setOnClickListener{view ->
+            //animation view
+            val animationView: LottieAnimationView = binding.fastPairingAnimation
+
+            val toggleOnClickListener = OnClickListener{ view ->
                 if(!_advertisementLoopService.advertising){
                     _advertisementLoopService.startAdvertising()
 
@@ -100,34 +104,11 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
                     toggleBtn.text = "Start Advertising"
                 }
-
             }
 
-            /*
-            // start button
-            var startBtn: Button = binding.advertiseButton
-            startBtn.setOnClickListener{view ->
-                _advertisementLoopService.startAdvertising()
+            toggleBtn.setOnClickListener(toggleOnClickListener)
+            animationView.setOnClickListener(toggleOnClickListener)
 
-                val logEntry = LogEntryModel()
-                logEntry.level = LogLevel.Info
-                logEntry.message = "Started Advertising"
-                _viewModel!!.addLogEntry(logEntry)
-            }
-
-            // stop button
-            var stopBtn: Button = binding.stopAdvertiseButton
-            stopBtn.setOnClickListener{view ->
-                _advertisementLoopService.stopAdvertising()
-
-                val logEntry = LogEntryModel()
-                logEntry.level = LogLevel.Info
-                logEntry.message = "Stopped Advertising"
-                _viewModel!!.addLogEntry(logEntry)
-            }*/
-
-            //animation view
-            val animationView: LottieAnimationView = binding.fastPairingAnimation
             _viewModel!!.isTransmitting.observe(viewLifecycleOwner) {
                 if(it == true){
                     animationView.repeatCount = LottieDrawable.INFINITE
@@ -236,6 +217,10 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             }
 
         }
+    }
+
+    fun toggleAdvertising(){
+
     }
 
     override fun onDestroyView() {

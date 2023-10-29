@@ -8,9 +8,5 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_android"
             android:title="@string/menu_fastPairing" />
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_info"
-            android:title="@string/menu_about" />
     </group>
 </menu>
