@@ -42,7 +42,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     private fun getTimer():CountDownTimer{
         return object: CountDownTimer(millisInFuture.toLong(), countdownInterval.toLong()) {
             override fun onTick(millisUntilFinished: Long) {
-                //advertiseNextPackage(true)
+                advertiseNextPackage(true)
                 //batchIt()
             }
             override fun onFinish() {
@@ -66,12 +66,12 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
         advertising = true
         _currentIndex = 0
 
-        /*
+
         timer.cancel()
         timer = getTimer()
-        timer.start()*/
+        timer.start()
 
-        advertiseNextPackage()
+        //advertiseNextPackage()
 
         _bleAdvertisementServiceCallback.map {
             it.onAdvertisementStarted()
@@ -172,7 +172,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
             _bleAdvertisementServiceCallback.map{
                 it.onAdvertisingSetStarted(advertisingSet, txPower, status)
                 if(advertising){
-
+                    /*
                     Timer().schedule(object : TimerTask() {
                         override fun run() {
                             AppContext.getActivity().runOnUiThread(){
@@ -180,7 +180,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
                             }
 
                         }
-                    }, countdownInterval.toLong())
+                    }, countdownInterval.toLong())*/
                 }
             }
         }
