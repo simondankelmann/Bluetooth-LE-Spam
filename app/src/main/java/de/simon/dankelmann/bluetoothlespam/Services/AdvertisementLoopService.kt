@@ -124,9 +124,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
             }
 
             //val nextAdvertisementSet = _advertisementSets[_currentIndex]
-
             val nextAdvertisementSet = _advertisementSets.random()
-
 
             _currentAdvertisers.add(nextAdvertisementSet)
             //_bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
@@ -171,17 +169,6 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
         override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet?, txPower: Int, status: Int) {
             _bleAdvertisementServiceCallback.map{
                 it.onAdvertisingSetStarted(advertisingSet, txPower, status)
-                if(advertising){
-                    /*
-                    Timer().schedule(object : TimerTask() {
-                        override fun run() {
-                            AppContext.getActivity().runOnUiThread(){
-                                advertiseNextPackage()
-                            }
-
-                        }
-                    }, countdownInterval.toLong())*/
-                }
             }
         }
 

@@ -130,24 +130,23 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             fastPairingTxPowerSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 
-                    var newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+                    var newTxPowerLevel = progress
                     var newTxPowerLabel = "High"
 
                     when (progress) {
                         0 -> {
-                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW
                             newTxPowerLabel = "Ultra Low"
                         }
                         1 -> {
-                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_LOW
                             newTxPowerLabel = "Low"
                         }
                         2 -> {
-                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM
                             newTxPowerLabel = "Medium"
                         }
                         3 -> {
-                            newTxPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+                            newTxPowerLabel = "High"
+                        } else -> {
+                            newTxPowerLevel = 3
                             newTxPowerLabel = "High"
                         }
                     }
@@ -175,11 +174,11 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
-                    // you can probably leave this empty
+                    // currently not in use
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    // you can probably leave this empty
+                    // currently not in use
                 }
             })
 
@@ -219,10 +218,6 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
         }
     }
 
-    fun toggleAdvertising(){
-
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -246,7 +241,7 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     override fun onAdvertisementSetStopped(advertisementSet: AdvertisementSet) {
-
+        // currently not in use
     }
 
     override fun onStartFailure(errorCode: Int) {
@@ -292,14 +287,14 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
-
+        // currently not in use
     }
 
     override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
-
+        // currently not in use
     }
 
     override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
-
+        // currently not in use
     }
 }

@@ -8,8 +8,7 @@ import android.util.Log
 
 class AdvertisingSetParametersModel {
     private var _logTag = "AdvertisingSetParametersModel"
-
-
+    
     var legacyMode = true
     var interval = AdvertisingSetParameters.INTERVAL_MIN
     var txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
@@ -22,13 +21,35 @@ class AdvertisingSetParametersModel {
     }
     fun build(): AdvertisingSetParameters? {
         if(validate()){
-            return AdvertisingSetParameters.Builder()
-                .setLegacyMode(legacyMode)
-                .setInterval(interval)
-                .setTxPowerLevel(txPowerLevel)
-                .setPrimaryPhy(primaryPhy)
-                .setSecondaryPhy(secondaryPhy)
-                .build()
+            var params = AdvertisingSetParameters.Builder()
+
+            params.setLegacyMode(legacyMode)
+            params.setInterval(interval)
+            params.setPrimaryPhy(primaryPhy)
+            params.setSecondaryPhy(secondaryPhy)
+
+            try{
+                when (txPowerLevel) {
+                    0 -> {
+                        params.setTxPowerLevel(AdvertisingSetParameters.TX_POWER_ULTRA_LOW)
+                    }
+                    1 -> {
+                        params.setTxPowerLevel(AdvertisingSetParameters.TX_POWER_LOW)
+                    }
+                    2 -> {
+                        params.setTxPowerLevel(AdvertisingSetParameters.TX_POWER_MEDIUM)
+                    }
+                    3 -> {
+                        params.setTxPowerLevel(AdvertisingSetParameters.TX_POWER_HIGH)
+                    } else -> {
+                        params.setTxPowerLevel(AdvertisingSetParameters.TX_POWER_HIGH)
+                    }
+                }
+            }catch (ex:IllegalArgumentException){
+                Log.e(_logTag, "Could not execute setTxPowerLevel: ${ex.message}")
+            }
+
+            return params.build()
         } else {
             Log.d(_logTag, "AdvertisingSetParametersModel could not be built because its invalid")
         }

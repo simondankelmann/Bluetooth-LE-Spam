@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -27,17 +26,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
     private val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // INITIALIZE THE APP CONTEXT
+        // Initialize AppContext and Activity
         AppContext.setContext(this)
         AppContext.setActivity(this)
 
-        // REQUIRE ALL PERMISSIONS
+        // Require all permissions at startup
         this.requestAllPermissions()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -52,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home
+                R.id.nav_fast_pairing
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -97,19 +95,13 @@ class MainActivity : AppCompatActivity() {
     fun requestAllPermissions(){
 
         val allPermissions = arrayOf(
-            android.Manifest.permission.BLUETOOTH,
-            android.Manifest.permission.BLUETOOTH_ADMIN,
-            android.Manifest.permission.BLUETOOTH_SCAN,
-            android.Manifest.permission.BLUETOOTH_ADVERTISE,
-            android.Manifest.permission.BLUETOOTH_CONNECT,
-
-            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-
-            android.Manifest.permission.INTERNET,
-            android.Manifest.permission.ACCESS_NETWORK_STATE,
-            android.Manifest.permission.FOREGROUND_SERVICE
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_ADVERTISE,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
         )
 
         PermissionCheck.requireAllPermissions(this, allPermissions)

@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_fast_pairing">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_fast_pairing"
         android:name="de.simon.dankelmann.bluetoothlespam.ui.fastPairing.FastPairingFragment"
         android:label="@string/menu_fastPairing"
         tools:layout="@layout/fragment_fastpairing" />
-
 </navigation>

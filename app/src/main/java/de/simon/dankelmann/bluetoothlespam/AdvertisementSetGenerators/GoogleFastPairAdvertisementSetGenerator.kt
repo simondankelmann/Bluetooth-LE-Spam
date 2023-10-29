@@ -1,20 +1,18 @@
 package de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators
 
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import android.os.ParcelUuid
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingSetCallback
-import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import java.util.UUID
 
 class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
-    // Genuine Device Ic's taken from here:
+    // Genuine Device Id's taken from here:
     // https://github.com/Flipper-XFW/Xtreme-Firmware/commit/46fd5d2eae46cbbf511d8901b6bcfda094ec1573
 
     val _genuineDeviceIds = mapOf(
@@ -243,6 +241,4 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
         return advertisementSets.toList()
     }
-
-
 }
