@@ -10,6 +10,11 @@ This app is capable of spoofing BLE advertisers that mimic the usage of the Goog
 
 For additional information about the Google Fast Pair Service, you can find it [here](https://developers.google.com/nearby/fast-pair/landing-page)
 
+### Microsoft Swift Pair
+This app can spoof BLE advertisers that mimic devices supporting the Microsoft Swift Pairing Service. If Swift Pair notifications are enabled on a nearby Windows 10 (or later) device, it will receive a flood of notifications regarding nearby devices.
+
+For additional information about the Microsoft Swift Pair Service, you can find it [here](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair)
+
 ## Range
 Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload, but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
 
@@ -26,7 +31,8 @@ You can clone the repository and open it in Android Studio to install the app, o
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 ## Screenshots
-![](./Assets/Screenshots/Screenshot1.jpeg)
+![](./Assets/Screenshots/ScreenshotFastPairing.jpeg)
+![](./Assets/Screenshots/ScreenshotSwiftPair.jpeg)
 
 ## Disclaimer
 Disclaimer for Bluetooth Low Energy Protocol Investigation Repository

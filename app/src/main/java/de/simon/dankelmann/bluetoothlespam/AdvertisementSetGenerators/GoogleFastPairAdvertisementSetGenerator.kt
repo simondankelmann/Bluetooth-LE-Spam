@@ -8,6 +8,7 @@ import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCa
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.ServiceDataModel
 import java.util.UUID
 
 class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
@@ -222,8 +223,11 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false
-            advertisementSet.advertiseData.serviceUuid = serviceUuid
-            advertisementSet.advertiseData.serviceData = StringHelpers.decodeHex(it.key)
+
+            val serviceDataModel = ServiceDataModel()
+            serviceDataModel.serviceUuid = serviceUuid
+            serviceDataModel.serviceData = StringHelpers.decodeHex(it.key)
+            advertisementSet.advertiseData.services.add(serviceDataModel)
             advertisementSet.advertiseData.includeTxPower = true
 
             // Scan Response

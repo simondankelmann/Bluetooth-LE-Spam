@@ -23,6 +23,7 @@ import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.LottieDrawable.INFINITE
 import com.airbnb.lottie.LottieDrawable.RepeatMode
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
@@ -45,6 +46,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = BluetoothLeAdvertisementService(AppContext.getContext().bluetoothAdapter()!!)
     private var _advertisementLoopService: AdvertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService)
     private val _logTag = "FastPairingFragment"
+    private lateinit var _toggleButton:Button
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,37 +75,57 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if(_advertisementLoopService.advertising){
+            stopAdvertising()
+        }
+    }
+
+    fun startAdvertising(){
+        _advertisementLoopService.startAdvertising()
+
+        val logEntry = LogEntryModel()
+        logEntry.level = LogLevel.Info
+        logEntry.message = "Started Advertising"
+        _viewModel!!.addLogEntry(logEntry)
+
+        _viewModel!!.isTransmitting.postValue(true)
+
+        _toggleButton.text = "Stop Advertising"
+    }
+
+    fun stopAdvertising(){
+        _advertisementLoopService.stopAdvertising()
+
+        val logEntry = LogEntryModel()
+        logEntry.level = LogLevel.Info
+        logEntry.message = "Stopped Advertising"
+        _viewModel!!.addLogEntry(logEntry)
+
+        _viewModel!!.isTransmitting.postValue(false)
+
+        _toggleButton.text = "Start Advertising"
+    }
+
     fun setupUi(){
         if(_viewModel != null){
 
             // toggle button
             var toggleBtn: Button = binding.advertiseButton
+            _toggleButton = toggleBtn
             //animation view
             val animationView: LottieAnimationView = binding.fastPairingAnimation
 
             val toggleOnClickListener = OnClickListener{ view ->
                 if(!_advertisementLoopService.advertising){
-                    _advertisementLoopService.startAdvertising()
-
-                    val logEntry = LogEntryModel()
-                    logEntry.level = LogLevel.Info
-                    logEntry.message = "Started Advertising"
-                    _viewModel!!.addLogEntry(logEntry)
-
-                    _viewModel!!.isTransmitting.postValue(true)
-
-                    toggleBtn.text = "Stop Advertising"
+                   startAdvertising()
                 } else {
-                    _advertisementLoopService.stopAdvertising()
-
-                    val logEntry = LogEntryModel()
-                    logEntry.level = LogLevel.Info
-                    logEntry.message = "Stopped Advertising"
-                    _viewModel!!.addLogEntry(logEntry)
-
-                    _viewModel!!.isTransmitting.postValue(false)
-
-                    toggleBtn.text = "Start Advertising"
+                   stopAdvertising()
                 }
             }
 

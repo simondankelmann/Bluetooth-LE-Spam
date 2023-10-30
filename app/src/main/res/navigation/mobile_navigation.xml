@@ -10,4 +10,10 @@
         android:name="de.simon.dankelmann.bluetoothlespam.ui.fastPairing.FastPairingFragment"
         android:label="@string/menu_fastPairing"
         tools:layout="@layout/fragment_fastpairing" />
+
+    <fragment
+        android:id="@+id/nav_swift_pair"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.swiftPair.SwiftPairFragment"
+        android:label="@string/menu_swiftPair"
+        tools:layout="@layout/fragment_swiftpair" />
 </navigation>

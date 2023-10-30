@@ -10,9 +10,14 @@ class AdvertiseDataModel {
     private var _logTag = "AdvertiseDataModel"
 
     var includeDeviceName = true
-    var serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))
-    var serviceData = StringHelpers.decodeHex("00")
+
+    /*
+    var serviceUuid: ParcelUuid? = null
+    var serviceData = StringHelpers.decodeHex("00")*/
+
+    var services = mutableListOf<ServiceDataModel>()
     var includeTxPower = true
+    var manufacturerData = mutableListOf<ManufacturerSpecificDataModel>()
 
     fun validate():Boolean{
         //@Todo: implement validation here
@@ -20,14 +25,26 @@ class AdvertiseDataModel {
     }
     fun build() : AdvertiseData?{
         if(validate()){
-            return AdvertiseData.Builder()
-                .setIncludeDeviceName(includeDeviceName)
-                .addServiceUuid(serviceUuid)
-                .addServiceData(serviceUuid, serviceData)
-                //.addManufacturerData(manufacturerId, serviceData)
-                //.addManufacturerData(manufacturerId, manufacturerSpecificData)
-                .setIncludeTxPowerLevel(includeTxPower)
-                .build()
+            var builder = AdvertiseData.Builder()
+
+            builder.setIncludeDeviceName(includeDeviceName)
+
+            services.forEach {
+                if(it.serviceUuid != null){
+                    builder.addServiceUuid(it.serviceUuid)
+                    if(it.serviceData != null){
+                        builder.addServiceData(it.serviceUuid, it.serviceData)
+                    }
+                }
+            }
+
+            builder.setIncludeTxPowerLevel(includeTxPower)
+
+            manufacturerData.forEach {
+                builder.addManufacturerData(it.manufacturerId, it.manufacturerSpecificData)
+            }
+
+            return builder.build()
         } else {
             Log.d(_logTag, "AdvertiseDataModel could not be built because its invalid")
         }

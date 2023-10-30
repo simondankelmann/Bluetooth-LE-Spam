@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.swiftPair.SwiftPairFragment"
+    android:id="@+id/swiftPairLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/swiftPairTopLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/swiftPairAnimation"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:lottie_rawRes="@raw/bluetooth"
+                app:lottie_autoPlay="false"
+                app:lottie_repeatMode="restart"
+                app:lottie_loop="true"
+                />
+
+            <TextView
+                android:id="@+id/statusLabelswiftPair"
+                android:text="Status"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.10"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/swiftPairSettingsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+
+            <TextView
+                android:id="@+id/swiftPairTxPowerSeekbarLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="TX Power High"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <SeekBar
+                android:id="@+id/swiftPairTxPowerSeekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="3"
+                android:min="0"
+                android:progress="3"
+                android:progressDrawable="@drawable/seekbar"
+                android:thumb="@drawable/seekbarthumb"
+                />
+
+            <TextView
+                android:id="@+id/swiftPairRepeatitionSeekbarLabel"
+                android:text="Advertise every 2 Seconds"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="14sp"
+                />
+            <SeekBar
+                android:id="@+id/swiftPairRepeatitionSeekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="10"
+                android:min="1"
+                android:progress="2"
+                android:progressDrawable="@drawable/seekbar"
+                android:thumb="@drawable/seekbarthumb"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/swiftPairLogLabel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Log"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="14sp"></TextView>
+
+                <Switch
+                    android:id="@+id/swiftPairIncludeNameSwitch"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="Include Device Name"
+                    android:textSize="14sp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    />
+                
+
+
+            </LinearLayout>
+
+
+            <ScrollView
+                android:id="@+id/swiftPairLogScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="8dp">
+                <LinearLayout
+                    android:id="@+id/swiftPairLogLinearView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+
+
+            </ScrollView>
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/swiftPairFooterLayout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toBottomOf="@id/swiftPairLayout"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/advertiseButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Start Advertising"
+                app:layout_constraintStart_toStartOf="@id/swiftPairLayout"
+                app:layout_constraintTop_toTopOf="@id/swiftPairLayout"
+                android:layout_margin="5dp">
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
