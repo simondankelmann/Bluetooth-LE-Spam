@@ -1,7 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.Callbacks
 
 import android.Manifest
-import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertisingSet
 import android.bluetooth.le.AdvertisingSetCallback
 import android.util.Log
@@ -9,9 +8,8 @@ import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
 
-class GoogleFastPairAdvertisingSetCallback() : AdvertisingSetCallback() {
-    private val _logTag = "GoogleFastPairAdvertisingSetCallback"
-
+class GenericAdvertisingSetCallback() : AdvertisingSetCallback() {
+    private val _logTag = "GenericAdvertisingSetCallback"
     override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet?, txPower: Int, status: Int) {
 
         val context = AppContext.getActivity()
