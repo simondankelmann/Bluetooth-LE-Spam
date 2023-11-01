@@ -40,9 +40,8 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
     // onDestroyView.
     private val binding get() = _binding!!
     private var _viewModel: SwiftPairViewModel? = null
-    private var _bluetoothLeAdvertisementService: BluetoothLeAdvertisementService = BluetoothLeAdvertisementService(
-        AppContext.getContext().bluetoothAdapter()!!)
-    private var _advertisementLoopService: AdvertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService)
+    private var _bluetoothLeAdvertisementService: BluetoothLeAdvertisementService? = null //BluetoothLeAdvertisementService(AppContext.getContext().bluetoothAdapter()!!)
+    private var _advertisementLoopService: AdvertisementLoopService? =  null //AdvertisementLoopService(_bluetoothLeAdvertisementService)
     private val _logTag = "SwiftPairFragment"
 
     private lateinit var _toggleButton:Button
@@ -57,15 +56,22 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
         _binding = FragmentSwiftpairBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // setup callbacks
-        _bluetoothLeAdvertisementService.addBleAdvertisementServiceCallback(this)
-        _advertisementLoopService.addBleAdvertisementServiceCallback(this)
+        // get bt adapter
+        val bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
+        if(bluetoothAdapter != null){
+            _bluetoothLeAdvertisementService = BluetoothLeAdvertisementService(bluetoothAdapter)
+            _advertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
 
-        // Add advertisement sets to the Loop Service:
-        val _advertisementSetGenerator = SwiftPairAdvertisementSetGenerator()
-        val _advertisementSets = _advertisementSetGenerator.getAdvertisementSets()
-        _advertisementSets.map {
-            _advertisementLoopService.addAdvertisementSet(it)
+            // setup callbacks
+            _bluetoothLeAdvertisementService!!.addBleAdvertisementServiceCallback(this)
+            _advertisementLoopService!!.addBleAdvertisementServiceCallback(this)
+
+            // Add advertisement sets to the Loop Service:
+            val _advertisementSetGenerator = SwiftPairAdvertisementSetGenerator()
+            val _advertisementSets = _advertisementSetGenerator.getAdvertisementSets()
+            _advertisementSets.map {
+                _advertisementLoopService!!.addAdvertisementSet(it)
+            }
         }
 
         setupUi()
@@ -79,35 +85,51 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
 
     override fun onPause() {
         super.onPause()
-        if(_advertisementLoopService.advertising){
-            stopAdvertising()
+        if(_advertisementLoopService != null){
+            if(_advertisementLoopService!!.advertising){
+                stopAdvertising()
+            }
         }
     }
 
     fun startAdvertising(){
-        _advertisementLoopService.startAdvertising()
+        if(_advertisementLoopService != null){
+            _advertisementLoopService!!.startAdvertising()
 
-        val logEntry = LogEntryModel()
-        logEntry.level = LogLevel.Info
-        logEntry.message = "Started Advertising"
-        _viewModel!!.addLogEntry(logEntry)
+            val logEntry = LogEntryModel()
+            logEntry.level = LogLevel.Info
+            logEntry.message = "Started Advertising"
+            _viewModel!!.addLogEntry(logEntry)
 
-        _viewModel!!.isTransmitting.postValue(true)
+            _viewModel!!.isTransmitting.postValue(true)
 
-        _toggleButton.text = "Stop Advertising"
+            _toggleButton.text = "Stop Advertising"
+        } else {
+            val logEntry = LogEntryModel()
+            logEntry.level = LogLevel.Info
+            logEntry.message = "Could not start Advertising"
+            _viewModel!!.addLogEntry(logEntry)
+        }
     }
 
     fun stopAdvertising(){
-        _advertisementLoopService.stopAdvertising()
+        if(_advertisementLoopService != null){
+            _advertisementLoopService!!.stopAdvertising()
 
-        val logEntry = LogEntryModel()
-        logEntry.level = LogLevel.Info
-        logEntry.message = "Stopped Advertising"
-        _viewModel!!.addLogEntry(logEntry)
+            val logEntry = LogEntryModel()
+            logEntry.level = LogLevel.Info
+            logEntry.message = "Stopped Advertising"
+            _viewModel!!.addLogEntry(logEntry)
 
-        _viewModel!!.isTransmitting.postValue(false)
+            _viewModel!!.isTransmitting.postValue(false)
 
-        _toggleButton.text = "Start Advertising"
+            _toggleButton.text = "Start Advertising"
+        } else {
+            val logEntry = LogEntryModel()
+            logEntry.level = LogLevel.Info
+            logEntry.message = "Could not stop Advertising"
+            _viewModel!!.addLogEntry(logEntry)
+        }
     }
 
     fun setupUi(){
@@ -120,10 +142,12 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
             val animationView: LottieAnimationView = binding.swiftPairAnimation
 
             val toggleOnClickListener = View.OnClickListener { view ->
-                if (!_advertisementLoopService.advertising) {
-                  startAdvertising()
-                } else {
-                    stopAdvertising()
+                if(_advertisementLoopService != null){
+                    if (!_advertisementLoopService!!.advertising) {
+                        startAdvertising()
+                    } else {
+                        stopAdvertising()
+                    }
                 }
             }
 
@@ -142,7 +166,9 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
             // include device name switch
             val includeDeviceNameSwitch: Switch = binding.swiftPairIncludeNameSwitch
             includeDeviceNameSwitch.setOnClickListener { view ->
-                _bluetoothLeAdvertisementService.includeDeviceName = includeDeviceNameSwitch.isChecked
+                if(_bluetoothLeAdvertisementService != null){
+                    _bluetoothLeAdvertisementService!!.includeDeviceName = includeDeviceNameSwitch.isChecked
+                }
             }
 
             // txPower
@@ -173,7 +199,9 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
                     }
 
                     fastPairingTxPowerSeekbarLabel.text = "TX Power: ${newTxPowerLabel}"
-                    _bluetoothLeAdvertisementService.txPowerLevel = newTxPowerLevel
+                    if(_bluetoothLeAdvertisementService != null){
+                        _bluetoothLeAdvertisementService!!.txPowerLevel = newTxPowerLevel
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -191,7 +219,9 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
             fastPairingRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     fastPairingRepeatitionLabel.text = "Advertise every ${progress} Seconds"
-                    _advertisementLoopService.setIntervalSeconds(progress)
+                    if(_advertisementLoopService != null){
+                        _advertisementLoopService!!.setIntervalSeconds(progress)
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
