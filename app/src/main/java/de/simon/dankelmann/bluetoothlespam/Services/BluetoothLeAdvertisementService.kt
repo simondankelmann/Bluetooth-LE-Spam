@@ -30,7 +30,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     // private
     private val _bluetoothAdapter = _bluetoothAdapter
     private val _logTag = "BluetoothLeAdvertisementService"
-    private val _advertiser: BluetoothLeAdvertiser = _bluetoothAdapter.bluetoothLeAdvertiser
+    private var _advertiser: BluetoothLeAdvertiser? = null
     private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
     // public
@@ -40,6 +40,13 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
 
     init {
         checkHardware()
+
+        val advertiser = _bluetoothAdapter.bluetoothLeAdvertiser
+        if(advertiser != null){
+            _advertiser = advertiser
+        } else {
+            Log.e(_logTag, "Bluetooth Low Energy Advertiser could not be accessed")
+        }
     }
 
     fun checkHardware():Boolean{
@@ -87,53 +94,70 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     }
 
     fun startAdvertising(advertisementSet: AdvertisementSet){
-        if(advertisementSet.validate()){
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-                val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
-                _advertiser.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
-                _bleAdvertisementServiceCallback.map {
-                    it.onAdvertisementSetStarted(advertisementSet)
+        if(_advertiser != null){
+            if(advertisementSet.validate()){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                    val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
+                    _advertiser!!.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
+                    _bleAdvertisementServiceCallback.map {
+                        it.onAdvertisementSetStarted(advertisementSet)
+                    }
+                } else {
+                    Log.d(_logTag, "Missing permission to execute advertisement")
                 }
             } else {
-                Log.d(_logTag, "Missing permission to execute advertisement")
+                Log.d(_logTag, "Advertisementset could not be validated")
             }
         } else {
-            Log.d(_logTag, "Advertisementset could not be validated")
+            Log.d(_logTag, "Advertiser is null")
         }
     }
 
     fun startAdvertisingSet(advertisementSet: AdvertisementSet){
-        if(advertisementSet.validate()){
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-                val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
-                _advertiser.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
-                _bleAdvertisementServiceCallback.map {
-                    it.onAdvertisementSetStarted(advertisementSet)
+        if(_advertiser != null){
+            if(advertisementSet.validate()){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                    val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
+                    _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
+                    _bleAdvertisementServiceCallback.map {
+                        it.onAdvertisementSetStarted(advertisementSet)
+                    }
+                } else {
+                    Log.d(_logTag, "Missing permission to execute advertisement")
                 }
             } else {
-                Log.d(_logTag, "Missing permission to execute advertisement")
+                Log.d(_logTag, "Advertisementset could not be validated")
             }
         } else {
-            Log.d(_logTag, "Advertisementset could not be validated")
+            Log.d(_logTag, "Advertiser is null")
         }
     }
 
     fun stopAdvertisingSet(advertisementSet: AdvertisementSet){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-            _advertiser.stopAdvertisingSet(advertisementSet.advertisingSetCallback)
-            _bleAdvertisementServiceCallback.map {
-                it.onAdvertisementStopped()
+        if(_advertiser != null){
+            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                _advertiser!!.stopAdvertisingSet(advertisementSet.advertisingSetCallback)
+                _bleAdvertisementServiceCallback.map {
+                    it.onAdvertisementStopped()
+                }
+            } else {
+                Log.d(_logTag, "Missing permission to stop advertisement")
             }
         } else {
-            Log.d(_logTag, "Missing permission to stop advertisement")
+            Log.d(_logTag, "Advertiser is null")
         }
+
     }
 
     fun stopAdvertising(advertisementSet: AdvertisementSet){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-            _advertiser.stopAdvertising(advertisementSet.advertisingCallback)
+        if(_advertiser != null){
+            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                _advertiser!!.stopAdvertising(advertisementSet.advertisingCallback)
+            } else {
+                Log.d(_logTag, "Missing permission to stop advertisement")
+            }
         } else {
-            Log.d(_logTag, "Missing permission to stop advertisement")
+            Log.d(_logTag, "Advertiser is null")
         }
     }
 
