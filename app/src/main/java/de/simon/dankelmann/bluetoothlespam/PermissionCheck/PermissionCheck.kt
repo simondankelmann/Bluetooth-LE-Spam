@@ -55,11 +55,13 @@ class PermissionCheck (){
             }
 
             if(dialogNeeded.size > 0){
+                showArrayAlert(activity, dialogNeeded)
+                /*
                 dialogNeeded.forEachIndexed { index, permission ->
                     run {
                         showAlert(activity, permission)
                     }
-                }
+                }*/
             }
         }
 
@@ -68,6 +70,21 @@ class PermissionCheck (){
             builder.setTitle("Requesting permission")
             builder.setMessage("App requires the following permission: $permission, please grant it in order to proceed")
             builder.setPositiveButton("OK", { dialog, which -> requestPermissions(activity, arrayOf(permission)) })
+            builder.setNeutralButton("Cancel", null)
+            val dialog = builder.create()
+            dialog.show()
+        }
+
+        private fun showArrayAlert(activity: Activity, permissions:MutableList<String>) {
+            val builder = AlertDialog.Builder(activity)
+            builder.setTitle("Requesting permission")
+            builder.setMessage("App requires the following permission: ${permissions.toString()}, please grant it in order to proceed")
+            builder.setPositiveButton("OK") { dialog, which ->
+                requestPermissions(
+                    activity,
+                    permissions.toTypedArray()
+                )
+            }
             builder.setNeutralButton("Cancel", null)
             val dialog = builder.create()
             dialog.show()
