@@ -8,25 +8,29 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
-import com.google.android.material.navigation.NavigationView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val ENABLE_BLUETOOTH_REQUEST_CODE = 1
+    private val _logTag = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         if (!bluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, this)){
-                startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST_CODE)
+                startActivityForResult(enableBtIntent, Constants.REQUEST_CODE_ENABLE_BLUETOOTH)
             }
         }
     }
@@ -105,6 +109,23 @@ class MainActivity : AppCompatActivity() {
         )
 
         PermissionCheck.requireAllPermissions(this, allPermissions)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        grantResults.forEachIndexed { index, element ->
+            var permission = ""
+            if(permissions.get(index) != null){
+                permission = permissions.get(index)!!
+            }
+
+            if (element == PackageManager.PERMISSION_GRANTED) {
+                Log.d(_logTag, "Permission granted for: ${permission}, Request Code: ${requestCode}")
+            } else {
+                Log.d(_logTag, "Permission denied for: ${permission}, Request Code: ${requestCode}")
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
