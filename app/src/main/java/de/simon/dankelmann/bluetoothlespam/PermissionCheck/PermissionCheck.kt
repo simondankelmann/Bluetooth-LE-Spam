@@ -3,24 +3,29 @@ package de.simon.dankelmann.bluetoothlespam.PermissionCheck
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 
 class PermissionCheck (){
     companion object {
         private val _logTag = "PermissionCheck"
         fun checkPermission(permission:String, activity: Activity):Boolean{
-            if(ContextCompat.checkSelfPermission(
-                    AppContext.getContext(),
-                    permission
-                ) == PackageManager.PERMISSION_GRANTED){
+            if (permission == "android.permission.BLUETOOTH_ADVERTISE" && Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+            {
+                // android.permission.BLUETOOTH_ADMIN was first introduced in api level 31
+                return true
+            }
+
+            if(ContextCompat.checkSelfPermission(AppContext.getContext(), permission) == PackageManager.PERMISSION_GRANTED){
                 //Log.d(_logTag, "Permission granted: $permission")
                 return true
             } else {
-                ActivityCompat.requestPermissions(activity, arrayOf(permission), 1000)
+                ActivityCompat.requestPermissions(activity, arrayOf(permission), Constants.REQUEST_CODE_SINGLE_PERMISSION)
             }
             Log.d(_logTag, "Permission not granted: $permission")
             return false
@@ -31,10 +36,7 @@ class PermissionCheck (){
             var dialogNeeded: MutableList<String> = mutableListOf()
 
             permissions.forEachIndexed { index, permission ->
-                if(ContextCompat.checkSelfPermission(
-                        AppContext.getContext(),
-                        permission
-                    ) == PackageManager.PERMISSION_GRANTED){
+                if(ContextCompat.checkSelfPermission(AppContext.getContext(), permission) == PackageManager.PERMISSION_GRANTED){
                     //Log.d(_logTag, "Permission granted: $permission")
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
@@ -46,7 +48,6 @@ class PermissionCheck (){
                     }
                 }
             }
-
 
             // SHOW DIALOG
             if(requestNeeded.size > 0){
@@ -91,7 +92,7 @@ class PermissionCheck (){
         }
 
         private fun requestPermissions(activity: Activity, permissions: Array<String>){
-            ActivityCompat.requestPermissions(activity, permissions, 1234)
+            ActivityCompat.requestPermissions(activity, permissions, Constants.REQUEST_CODE_MULTIPLE_PERMISSIONS)
         }
 
         fun processPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
