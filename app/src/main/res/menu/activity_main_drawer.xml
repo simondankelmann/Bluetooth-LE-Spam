@@ -11,7 +11,22 @@
 
         <item
             android:id="@+id/nav_swift_pair"
-            android:icon="@drawable/window"
+            android:icon="@drawable/microsoft"
             android:title="@string/menu_swiftPair" />
+
+        <item
+            android:id="@+id/nav_continuity_device_popups"
+            android:icon="@drawable/apple"
+            android:title="@string/menu_continuityDevicePopup" />
+
+        <item
+            android:id="@+id/nav_continuity_action_modals"
+            android:icon="@drawable/apple"
+            android:title="@string/menu_continuityActionModal" />
+
+        <item
+            android:id="@+id/nav_kitchen_sink"
+            android:icon="@drawable/shuffle"
+            android:title="@string/menu_kitchenSink" />
     </group>
 </menu>

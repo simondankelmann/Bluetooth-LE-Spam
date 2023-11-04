@@ -7,8 +7,11 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_fastPairing">Fast Pairing</string>
-    <string name="menu_swiftPair">Swift Pair</string>
+    <string name="menu_fastPairing">Google Fast Pairing</string>
+    <string name="menu_swiftPair">Microsoft Swift Pairing</string>
+    <string name="menu_continuityDevicePopup">Apple Device Popups</string>
+    <string name="menu_continuityActionModal">Apple Action Modals</string>
+    <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
 
     <string-array name="spinner_entries_tx_power">
         <item name="tx_power_high">High</item>

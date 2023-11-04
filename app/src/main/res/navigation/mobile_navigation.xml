@@ -16,4 +16,22 @@
         android:name="de.simon.dankelmann.bluetoothlespam.ui.swiftPair.SwiftPairFragment"
         android:label="@string/menu_swiftPair"
         tools:layout="@layout/fragment_swiftpair" />
+
+    <fragment
+        android:id="@+id/nav_continuity_device_popups"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.continuityDevicePopUps.ContinuityDevicePopUpsFragment"
+        android:label="@string/menu_continuityDevicePopup"
+        tools:layout="@layout/fragment_continuity_device_popups" />
+
+    <fragment
+        android:id="@+id/nav_continuity_action_modals"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.continuityActionModals.ContinuityActionModalsFragment"
+        android:label="@string/menu_continuityActionModal"
+        tools:layout="@layout/fragment_continuity_action_modals" />
+
+    <fragment
+        android:id="@+id/nav_kitchen_sink"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.kitchenSink.KitchenSinkFragment"
+        android:label="@string/menu_kitchenSink"
+        tools:layout="@layout/fragment_kitchen_sink" />
 </navigation>
