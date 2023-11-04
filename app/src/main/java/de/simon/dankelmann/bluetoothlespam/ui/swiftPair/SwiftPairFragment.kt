@@ -69,9 +69,7 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
             // Add advertisement sets to the Loop Service:
             val _advertisementSetGenerator = SwiftPairAdvertisementSetGenerator()
             val _advertisementSets = _advertisementSetGenerator.getAdvertisementSets()
-            _advertisementSets.map {
-                _advertisementLoopService!!.addAdvertisementSet(it)
-            }
+            _advertisementLoopService?.addAdvertisementSetCollection(_advertisementSets)
         }
 
         setupUi()
@@ -160,14 +158,6 @@ class SwiftPairFragment: Fragment(), IBleAdvertisementServiceCallback {
                     animationView.playAnimation()
                 } else {
                     animationView.cancelAnimation()
-                }
-            }
-
-            // include device name switch
-            val includeDeviceNameSwitch: Switch = binding.swiftPairIncludeNameSwitch
-            includeDeviceNameSwitch.setOnClickListener { view ->
-                if(_bluetoothLeAdvertisementService != null){
-                    _bluetoothLeAdvertisementService!!.includeDeviceName = includeDeviceNameSwitch.isChecked
                 }
             }
 

@@ -21,6 +21,15 @@ This app can spoof BLE advertisers that mimic devices supporting the Microsoft S
 
 For additional information about the Microsoft Swift Pair Service, you can find it [here](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair)
 
+### Apple Device Popups
+This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
+
+### Apple Action Modals
+By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions."
+
+### Kitchen Sink
+Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
+
 ## Range
 Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload, but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
 
@@ -39,6 +48,9 @@ You can clone the repository and open it in Android Studio to install the app, o
 ## Screenshots
 ![](./Assets/Screenshots/ScreenshotFastPairing.jpeg)
 ![](./Assets/Screenshots/ScreenshotSwiftPair.jpeg)
+![](./Assets/Screenshots/ScreenshotContinuityDevicePopUps.jpeg)
+![](./Assets/Screenshots/ScreenshotContinuityActionModals.jpeg)
+![](./Assets/Screenshots/ScreenshotKitchenSink.jpeg)
 
 ## Disclaimer
 Disclaimer for Bluetooth Low Energy Protocol Investigation Repository

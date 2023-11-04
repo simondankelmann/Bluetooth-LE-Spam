@@ -16,8 +16,10 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     private var _logTag = "AdvertisementLoopService"
     var advertising = false
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = bluetoothLeAdvertisementService
-    private var _currentIndex = 0
-    private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
+
+    //private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
+    private var _advertisementSetCollections:MutableList<MutableList<AdvertisementSet>> = mutableListOf()
+
     private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
     private val _maxAdvertisers = 1
@@ -52,20 +54,24 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
         }
     }
 
-    fun addAdvertisementSet(advertisementSet: AdvertisementSet){
-        // overwrite with own callbacks
-        var advertisementSetToAdd = advertisementSet
-        advertisementSetToAdd.advertisingCallback = advertiseCallback
-        advertisementSetToAdd.advertisingSetCallback = advertisingSetCallback
-        _advertisementSets.add(advertisementSetToAdd)
+    fun addAdvertisementSetCollection(advertisementSetCollection: List<AdvertisementSet>){
+        var newCollection:MutableList<AdvertisementSet> = mutableListOf()
+
+        advertisementSetCollection.map{
+            var advertisementSetToAdd = it
+            // overwrite with own callbacks
+            advertisementSetToAdd.advertisingCallback = advertiseCallback
+            advertisementSetToAdd.advertisingSetCallback = advertisingSetCallback
+            newCollection.add(advertisementSetToAdd)
+        }
+
+        _advertisementSetCollections.add(newCollection)
     }
 
     fun startAdvertising(){
         val hardwareCheck = _bluetoothLeAdvertisementService.checkHardware()
         Log.d(_logTag, "Hardware Check returns: ${hardwareCheck}");
         advertising = true
-        _currentIndex = 0
-
 
         timer.cancel()
         timer = getTimer()
@@ -80,7 +86,6 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
 
     fun stopAdvertising(){
         advertising = false
-        _currentIndex = 0
 
         timer.cancel()
 
@@ -91,8 +96,10 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     }
 
     fun stopAllAdvertisers(){
-        _advertisementSets.map{
-            _bluetoothLeAdvertisementService.stopAdvertisingSet(it)
+        _advertisementSetCollections.map { collection ->
+            collection.map {advertisementSet ->
+                _bluetoothLeAdvertisementService.stopAdvertisingSet(advertisementSet)
+            }
         }
     }
 
@@ -116,31 +123,21 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
 
     fun advertiseNextPackage(clean: Boolean = true){
         
-        if(advertising && _advertisementSets.count() > 0){
+        if(advertising && _advertisementSetCollections.count() > 0){
 
             // clean if there are already too many advertisers
             if(clean){
                 cleanupAdvertisers()
             }
 
-            //val nextAdvertisementSet = _advertisementSets[_currentIndex]
-            val nextAdvertisementSet = _advertisementSets.random()
+            val nextAdvertisementSetCollection = _advertisementSetCollections.random()
+            val nextAdvertisementSet = nextAdvertisementSetCollection.random()
 
             _currentAdvertisers.add(nextAdvertisementSet)
             //_bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
             _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
 
             Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
-
-            val maxIndex = _advertisementSets.count() - 1
-
-            if(_currentIndex < maxIndex){
-                // go the next item
-                _currentIndex++
-            } else {
-                // go back to the start
-                _currentIndex = 0
-            }
         }
     }
 

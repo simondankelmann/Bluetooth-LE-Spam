@@ -4,14 +4,12 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
@@ -20,10 +18,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import com.airbnb.lottie.LottieDrawable.INFINITE
-import com.airbnb.lottie.LottieDrawable.RepeatMode
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
@@ -71,9 +68,7 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             // Add advertisement sets to the Loop Service:
             val _googleFastPairAdvertisementSetGenerator = GoogleFastPairAdvertisementSetGenerator()
             val _advertisementSets = _googleFastPairAdvertisementSetGenerator.getAdvertisementSets()
-            _advertisementSets.map {
-                _advertisementLoopService?.addAdvertisementSet(it)
-            }
+            _advertisementLoopService?.addAdvertisementSetCollection(_advertisementSets)
         } else {
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -165,14 +160,6 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
                     animationView.playAnimation()
                 } else {
                     animationView.cancelAnimation()
-                }
-            }
-
-            // include device name switch
-            val includeDeviceNameSwitch: Switch = binding.fastPairingIncludeNameSwitch
-            includeDeviceNameSwitch.setOnClickListener { view ->
-                if(_bluetoothLeAdvertisementService != null){
-                    _bluetoothLeAdvertisementService!!.includeDeviceName = includeDeviceNameSwitch.isChecked
                 }
             }
 
