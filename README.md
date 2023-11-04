@@ -4,6 +4,10 @@ This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functi
 
 > **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome.
 
+## Requirements
+- Android 8.0 (API level 26) or later
+> If you don't know your API level vist [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the settings app.
+
 ## Functionality
 ### Google Fast Pair
 This app is capable of spoofing BLE advertisers that mimic the usage of the Google Fast Pair Service, leading to an influx of unwanted pop-up notifications on the receiving device.
