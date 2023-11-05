@@ -28,7 +28,7 @@ class AdvertiseDataModel {
             var builder = AdvertiseData.Builder()
 
             builder.setIncludeDeviceName(includeDeviceName)
-
+            
             services.forEach {
                 if(it.serviceUuid != null){
                     builder.addServiceUuid(it.serviceUuid)
