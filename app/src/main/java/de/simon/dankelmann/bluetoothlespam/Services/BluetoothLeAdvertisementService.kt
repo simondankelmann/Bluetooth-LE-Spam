@@ -16,12 +16,14 @@ import android.content.pm.PackageManager
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.preference.PreferenceManager
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothManager
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
+import de.simon.dankelmann.bluetoothlespam.R
 import java.util.UUID
 
 
@@ -37,9 +39,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     var includeDeviceName:Boolean? = null
     var txPowerLevel:Int? = null
 
-
     init {
-        checkHardware()
 
         val advertiser = _bluetoothAdapter.bluetoothLeAdvertiser
         if(advertiser != null){
@@ -47,6 +47,21 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         } else {
             Log.e(_logTag, "Bluetooth Low Energy Advertiser could not be accessed")
         }
+
+        checkHardware()
+    }
+
+    private fun useAdvertisingWithSettings():Boolean{
+        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
+
+        preferences.forEach {
+            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_advertise_with_settings)){
+                val useAdvertisingWithSettings = it.value as Boolean
+                return useAdvertisingWithSettings
+            }
+        }
+
+        return false
     }
 
     fun checkHardware():Boolean{
@@ -93,7 +108,22 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         return advertisementSet
     }
 
-    fun startAdvertising(advertisementSet: AdvertisementSet){
+    fun advertiseSet(advertisementSet: AdvertisementSet){
+        if(useAdvertisingWithSettings()){
+            startAdvertising(advertisementSet)
+        } else {
+            startAdvertisingSet(advertisementSet)
+        }
+    }
+    fun stopAdvertiseSet(advertisementSet: AdvertisementSet){
+        if(useAdvertisingWithSettings()){
+            stopAdvertising(advertisementSet)
+        } else {
+            stopAdvertisingSet(advertisementSet)
+        }
+    }
+
+    private fun startAdvertising(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
             if(advertisementSet.validate()){
                 if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
@@ -113,7 +143,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         }
     }
 
-    fun startAdvertisingSet(advertisementSet: AdvertisementSet){
+    private fun startAdvertisingSet(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
             if(advertisementSet.validate()){
                 if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
@@ -133,7 +163,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         }
     }
 
-    fun stopAdvertisingSet(advertisementSet: AdvertisementSet){
+    private fun stopAdvertisingSet(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser!!.stopAdvertisingSet(advertisementSet.advertisingSetCallback)
@@ -146,10 +176,9 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         } else {
             Log.d(_logTag, "Advertiser is null")
         }
-
     }
 
-    fun stopAdvertising(advertisementSet: AdvertisementSet){
+    private fun stopAdvertising(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
             if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser!!.stopAdvertising(advertisementSet.advertisingCallback)

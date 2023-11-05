@@ -7,11 +7,15 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="menu_settings">Settings</string>
     <string name="menu_fastPairing">Google Fast Pairing</string>
     <string name="menu_swiftPair">Microsoft Swift Pairing</string>
     <string name="menu_continuityDevicePopup">Apple Device Popups</string>
     <string name="menu_continuityActionModal">Apple Action Modals</string>
     <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
+
+    <string name="preference_key_advertise_with_settings">preferenceKeyadvertiseWithSettings</string>
+
 
     <string-array name="spinner_entries_tx_power">
         <item name="tx_power_high">High</item>
@@ -19,4 +23,20 @@
         <item name="tx_power_low">Low</item>
         <item name="tx_power_ultralow">Ultra Low</item>
     </string-array>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

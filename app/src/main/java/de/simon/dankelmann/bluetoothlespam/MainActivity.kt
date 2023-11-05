@@ -10,10 +10,12 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -24,6 +26,7 @@ import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
+import de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +57,11 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_fast_pairing
+                R.id.nav_fast_pairing,
+                R.id.nav_swift_pair,
+                R.id.nav_continuity_action_modals,
+                R.id.nav_continuity_device_popups,
+                R.id.nav_kitchen_sink
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -137,5 +144,16 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_settings -> {
+                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                navController.navigate(R.id.open_settings_fragment)
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

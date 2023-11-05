@@ -34,4 +34,15 @@
         android:name="de.simon.dankelmann.bluetoothlespam.ui.kitchenSink.KitchenSinkFragment"
         android:label="@string/menu_kitchenSink"
         tools:layout="@layout/fragment_kitchen_sink" />
+
+    <!--Settings fragment-->
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment"
+        android:label="@string/menu_settings"/>
+
+    <!--Global action-->
+    <action android:id="@+id/open_settings_fragment"
+        app:destination="@id/settingsFragment"/>
+
 </navigation>
