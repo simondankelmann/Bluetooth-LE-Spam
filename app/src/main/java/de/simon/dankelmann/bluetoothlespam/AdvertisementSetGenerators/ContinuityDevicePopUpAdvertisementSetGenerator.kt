@@ -48,7 +48,7 @@ class ContinuityDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenerator
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
             advertisementSet.advertiseSettings.txPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
-            advertisementSet.advertiseSettings.connectable = true
+            advertisementSet.advertiseSettings.connectable = false
             advertisementSet.advertiseSettings.timeout = 0
 
             // Advertising Parameters

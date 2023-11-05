@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="@string/preference_key_advertise_with_settings"
+        app:title="Use Advertising with Settings"/>
+
+</PreferenceScreen>

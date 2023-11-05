@@ -98,7 +98,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     fun stopAllAdvertisers(){
         _advertisementSetCollections.map { collection ->
             collection.map {advertisementSet ->
-                _bluetoothLeAdvertisementService.stopAdvertisingSet(advertisementSet)
+                _bluetoothLeAdvertisementService.stopAdvertiseSet(advertisementSet)
             }
         }
     }
@@ -107,7 +107,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
         if(_currentAdvertisers.count() >= _maxAdvertisers){
             // remove the first advertiser
             var advertiserToRemove = _currentAdvertisers[0]
-            _bluetoothLeAdvertisementService.stopAdvertisingSet(advertiserToRemove)
+            _bluetoothLeAdvertisementService.stopAdvertiseSet(advertiserToRemove)
             _currentAdvertisers.removeAt(0)
             Log.d(_logTag, "Removed advertiser for: " + advertiserToRemove.deviceName)
         }
@@ -134,8 +134,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
             val nextAdvertisementSet = nextAdvertisementSetCollection.random()
 
             _currentAdvertisers.add(nextAdvertisementSet)
-            //_bluetoothLeAdvertisementService.startAdvertising(nextAdvertisementSet)
-            _bluetoothLeAdvertisementService.startAdvertisingSet(nextAdvertisementSet)
+            _bluetoothLeAdvertisementService.advertiseSet(nextAdvertisementSet)
 
             Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
         }
