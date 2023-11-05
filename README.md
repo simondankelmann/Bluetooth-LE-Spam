@@ -8,7 +8,7 @@ This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functi
 
 ## Requirements
 - Android 8.0 (API level 26) or later
-> If you don't know your API level vist [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the settings app.
+> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the settings app.
 
 ## Functionality
 ### Google Fast Pair
