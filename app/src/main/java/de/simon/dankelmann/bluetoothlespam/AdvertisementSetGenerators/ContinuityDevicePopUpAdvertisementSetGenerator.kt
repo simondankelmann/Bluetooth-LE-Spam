@@ -55,8 +55,9 @@ class ContinuityDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenerator
             advertisementSet.advertisingSetParameters.legacyMode = true
             advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
             advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
-            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_CODED
-            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_2M
+            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.scannable = false
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false
@@ -64,8 +65,6 @@ class ContinuityDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenerator
             val manufacturerSpecificData = ManufacturerSpecificDataModel()
             manufacturerSpecificData.manufacturerId = _manufacturerId
             manufacturerSpecificData.manufacturerSpecificData = StringHelpers.decodeHex(deviceData.value)
-
-            Log.d(_logTag, "Created Bytearray with ${manufacturerSpecificData.manufacturerSpecificData.size} Bytes")
 
             advertisementSet.advertiseData.manufacturerData.add(manufacturerSpecificData)
             advertisementSet.advertiseData.includeTxPower = false

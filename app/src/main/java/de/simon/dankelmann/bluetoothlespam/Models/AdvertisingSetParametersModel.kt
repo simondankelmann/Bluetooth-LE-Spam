@@ -12,8 +12,9 @@ class AdvertisingSetParametersModel {
     var legacyMode = true
     var interval = AdvertisingSetParameters.INTERVAL_MIN
     var txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
-    var primaryPhy = BluetoothDevice.PHY_LE_CODED
-    var secondaryPhy = BluetoothDevice.PHY_LE_2M
+    var primaryPhy = BluetoothDevice.PHY_LE_1M
+    var secondaryPhy = BluetoothDevice.PHY_LE_1M
+    var scannable = false
 
     fun validate():Boolean{
         //@Todo: implement validation here
@@ -27,6 +28,7 @@ class AdvertisingSetParametersModel {
             params.setInterval(interval)
             params.setPrimaryPhy(primaryPhy)
             params.setSecondaryPhy(secondaryPhy)
+            params.setScannable(scannable)
 
             try{
                 when (txPowerLevel) {

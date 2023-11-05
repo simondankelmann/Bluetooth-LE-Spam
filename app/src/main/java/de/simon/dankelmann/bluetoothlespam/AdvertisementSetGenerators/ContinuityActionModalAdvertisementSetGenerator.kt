@@ -41,21 +41,17 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
             var advertisementSet: AdvertisementSet = AdvertisementSet()
 
             // Advertise Settings
-            advertisementSet.advertiseSettings.advertiseMode =
-                AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
-            advertisementSet.advertiseSettings.txPowerLevel =
-                AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
-            advertisementSet.advertiseSettings.connectable = true
+            advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
+            advertisementSet.advertiseSettings.txPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+            advertisementSet.advertiseSettings.connectable = false
             advertisementSet.advertiseSettings.timeout = 0
 
             // Advertising Parameters
             advertisementSet.advertisingSetParameters.legacyMode = true
-            advertisementSet.advertisingSetParameters.interval =
-                AdvertisingSetParameters.INTERVAL_MIN
-            advertisementSet.advertisingSetParameters.txPowerLevel =
-                AdvertisingSetParameters.TX_POWER_HIGH
-            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_CODED
-            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_2M
+            advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
+            advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
+            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_1M
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false
