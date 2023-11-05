@@ -66,8 +66,6 @@ class ContinuityDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenerator
             manufacturerSpecificData.manufacturerId = _manufacturerId
             manufacturerSpecificData.manufacturerSpecificData = StringHelpers.decodeHex(deviceData.value)
 
-            Log.d(_logTag, "Created Bytearray with ${manufacturerSpecificData.manufacturerSpecificData.size} Bytes")
-
             advertisementSet.advertiseData.manufacturerData.add(manufacturerSpecificData)
             advertisementSet.advertiseData.includeTxPower = false
 
