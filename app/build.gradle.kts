@@ -21,7 +21,7 @@ android {
 
     buildTypes {
         release {
-            resValue("string", "app_name", "${app_name}")>
+            resValue("string", "app_name", app_name)
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -29,7 +29,7 @@ android {
             )
         }
         debug {
-            resValue("string", "app_name", "${app_name} Debug")>
+            resValue("string", "app_name", "$app_name Debug")
             applicationIdSuffix = ".debug"
         }
     }
