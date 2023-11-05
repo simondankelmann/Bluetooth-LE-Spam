@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val app_name = "5.2.1"
+
 android {
     namespace = "de.simon.dankelmann.bluetoothlespam"
     compileSdk = 34
@@ -19,11 +21,16 @@ android {
 
     buildTypes {
         release {
+            resValue("string", "app_name", "${app_name}")>
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            resValue("string", "app_name", "${app_name} Debug")>
+            applicationIdSuffix = ".debug"
         }
     }
     compileOptions {
