@@ -27,6 +27,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
+import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentContinuityActionModalsBinding
 
@@ -39,7 +40,7 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
     private val binding get() = _binding!!
     private var _viewModel: ContinuityActionModalsViewModel? = null
     private var _bluetoothLeAdvertisementService: BluetoothLeAdvertisementService? = null
-    private var _advertisementLoopService: AdvertisementLoopService? = null
+    private var _advertisementSetQueHandler: AdvertisementSetQueHandler? = null
     private val _logTag = "continuityActionModalsFragment"
     private lateinit var _toggleButton: Button
 
@@ -57,16 +58,16 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
         val bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(bluetoothAdapter != null){
             _bluetoothLeAdvertisementService = BluetoothLeAdvertisementService(bluetoothAdapter)
-            _advertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
+            _advertisementSetQueHandler = AdvertisementSetQueHandler(_bluetoothLeAdvertisementService!!)//AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
 
             // setup callbacks
             _bluetoothLeAdvertisementService?.addBleAdvertisementServiceCallback(this)
-            _advertisementLoopService?.addBleAdvertisementServiceCallback(this)
+            _advertisementSetQueHandler?.addBleAdvertisementServiceCallback(this)
 
             // Add advertisement sets to the Loop Service:
             val _continuityActionModalsGenerator = ContinuityActionModalAdvertisementSetGenerator()
             val _advertisementSets = _continuityActionModalsGenerator.getAdvertisementSets()
-            _advertisementLoopService?.addAdvertisementSetCollection(_advertisementSets)
+            _advertisementSetQueHandler?.addAdvertisementSetCollection(_advertisementSets)
         } else {
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -85,14 +86,14 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
 
     override fun onPause() {
         super.onPause()
-        if(_advertisementLoopService != null && _advertisementLoopService!!.advertising){
+        if( _advertisementSetQueHandler != null &&  _advertisementSetQueHandler!!.advertising){
             stopAdvertising()
         }
     }
 
     fun startAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.startAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.startAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -111,8 +112,8 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
     }
 
     fun stopAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.stopAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.stopAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -140,8 +141,8 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
             val animationView: LottieAnimationView = binding.continuityActionModalsAnimation
 
             val toggleOnClickListener = View.OnClickListener { view ->
-                if (_advertisementLoopService != null) {
-                    if (!_advertisementLoopService!!.advertising) {
+                if ( _advertisementSetQueHandler != null) {
+                    if (! _advertisementSetQueHandler!!.advertising) {
                         startAdvertising()
                     } else {
                         stopAdvertising()
@@ -209,8 +210,8 @@ class ContinuityActionModalsFragment: Fragment(), IBleAdvertisementServiceCallba
             continuityActionModalsRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     continuityActionModalsRepeatitionLabel.text = "Advertise every ${progress} Seconds"
-                    if(_advertisementLoopService != null){
-                        _advertisementLoopService!!.setIntervalSeconds(progress)
+                    if( _advertisementSetQueHandler != null){
+                         _advertisementSetQueHandler!!.setIntervalSeconds(progress)
                     }
                 }
 

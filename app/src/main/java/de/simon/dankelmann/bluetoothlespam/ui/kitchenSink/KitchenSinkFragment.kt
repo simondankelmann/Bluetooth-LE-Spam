@@ -28,6 +28,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
+import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentKitchenSinkBinding
 
@@ -41,7 +42,7 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
     private val binding get() = _binding!!
     private var _viewModel: KitchenSinkViewModel? = null
     private var _bluetoothLeAdvertisementService: BluetoothLeAdvertisementService? = null
-    private var _advertisementLoopService: AdvertisementLoopService? = null
+    private var  _advertisementSetQueHandler: AdvertisementSetQueHandler? = null
     private val _logTag = "kitchenSinkFragment"
     private lateinit var _toggleButton: Button
 
@@ -59,11 +60,11 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
         val bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(bluetoothAdapter != null){
             _bluetoothLeAdvertisementService = BluetoothLeAdvertisementService(bluetoothAdapter)
-            _advertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
+             _advertisementSetQueHandler = AdvertisementSetQueHandler(_bluetoothLeAdvertisementService!!)
 
             // setup callbacks
             _bluetoothLeAdvertisementService?.addBleAdvertisementServiceCallback(this)
-            _advertisementLoopService?.addBleAdvertisementServiceCallback(this)
+             _advertisementSetQueHandler?.addBleAdvertisementServiceCallback(this)
 
             // Add advertisement sets to the Loop Service:
             val fastPairingGenerator = GoogleFastPairAdvertisementSetGenerator()
@@ -71,10 +72,10 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
             val continuityActionModalsGenerator = ContinuityActionModalAdvertisementSetGenerator()
             val swiftPairingGenerator = SwiftPairAdvertisementSetGenerator()
 
-            _advertisementLoopService?.addAdvertisementSetCollection(fastPairingGenerator.getAdvertisementSets())
-            _advertisementLoopService?.addAdvertisementSetCollection(continuityDevicePopUpsGenerator.getAdvertisementSets())
-            _advertisementLoopService?.addAdvertisementSetCollection(continuityActionModalsGenerator.getAdvertisementSets())
-            _advertisementLoopService?.addAdvertisementSetCollection(swiftPairingGenerator.getAdvertisementSets())
+             _advertisementSetQueHandler?.addAdvertisementSetCollection(fastPairingGenerator.getAdvertisementSets())
+             _advertisementSetQueHandler?.addAdvertisementSetCollection(continuityDevicePopUpsGenerator.getAdvertisementSets())
+             _advertisementSetQueHandler?.addAdvertisementSetCollection(continuityActionModalsGenerator.getAdvertisementSets())
+             _advertisementSetQueHandler?.addAdvertisementSetCollection(swiftPairingGenerator.getAdvertisementSets())
 
         } else {
             val logEntry = LogEntryModel()
@@ -94,14 +95,14 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
 
     override fun onPause() {
         super.onPause()
-        if(_advertisementLoopService != null && _advertisementLoopService!!.advertising){
+        if( _advertisementSetQueHandler != null &&  _advertisementSetQueHandler!!.advertising){
             stopAdvertising()
         }
     }
 
     fun startAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.startAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.startAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -120,8 +121,8 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
     }
 
     fun stopAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.stopAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.stopAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -149,8 +150,8 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
             val animationView: LottieAnimationView = binding.kitchenSinkAnimation
 
             val toggleOnClickListener = View.OnClickListener { view ->
-                if (_advertisementLoopService != null) {
-                    if (!_advertisementLoopService!!.advertising) {
+                if ( _advertisementSetQueHandler != null) {
+                    if (! _advertisementSetQueHandler!!.advertising) {
                         startAdvertising()
                     } else {
                         stopAdvertising()
@@ -218,8 +219,8 @@ class KitchenSinkFragment: Fragment(), IBleAdvertisementServiceCallback {
             kitchenSinkRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     kitchenSinkRepeatitionLabel.text = "Advertise every ${progress} Seconds"
-                    if(_advertisementLoopService != null){
-                        _advertisementLoopService!!.setIntervalSeconds(progress)
+                    if( _advertisementSetQueHandler != null){
+                         _advertisementSetQueHandler!!.setIntervalSeconds(progress)
                     }
                 }
 

@@ -25,9 +25,9 @@ class AdvertisingSetParametersModel {
             var params = AdvertisingSetParameters.Builder()
 
             params.setLegacyMode(legacyMode)
-            params.setInterval(interval)
-            params.setPrimaryPhy(primaryPhy)
-            params.setSecondaryPhy(secondaryPhy)
+            //params.setInterval(interval)
+            //params.setPrimaryPhy(primaryPhy)
+           // params.setSecondaryPhy(secondaryPhy)
             params.setScannable(scannable)
 
             try{

@@ -21,6 +21,7 @@ import com.airbnb.lottie.LottieDrawable
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
@@ -29,6 +30,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
+import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentFastpairingBinding
 
@@ -41,7 +43,7 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     private val binding get() = _binding!!
     private var _viewModel:FastPairingViewModel? = null
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService? = null
-    private var _advertisementLoopService: AdvertisementLoopService? = null
+    private var  _advertisementSetQueHandler: AdvertisementSetQueHandler? = null
     private val _logTag = "FastPairingFragment"
     private lateinit var _toggleButton:Button
 
@@ -59,16 +61,16 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
         val bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(bluetoothAdapter != null){
             _bluetoothLeAdvertisementService = BluetoothLeAdvertisementService(bluetoothAdapter)
-            _advertisementLoopService = AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
+             _advertisementSetQueHandler = AdvertisementSetQueHandler(_bluetoothLeAdvertisementService!!)//AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
 
             // setup callbacks
             _bluetoothLeAdvertisementService?.addBleAdvertisementServiceCallback(this)
-            _advertisementLoopService?.addBleAdvertisementServiceCallback(this)
+             _advertisementSetQueHandler?.addBleAdvertisementServiceCallback(this)
 
             // Add advertisement sets to the Loop Service:
             val _googleFastPairAdvertisementSetGenerator = GoogleFastPairAdvertisementSetGenerator()
             val _advertisementSets = _googleFastPairAdvertisementSetGenerator.getAdvertisementSets()
-            _advertisementLoopService?.addAdvertisementSetCollection(_advertisementSets)
+             _advertisementSetQueHandler?.addAdvertisementSetCollection(_advertisementSets)
         } else {
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -87,14 +89,14 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
     override fun onPause() {
         super.onPause()
-        if(_advertisementLoopService != null && _advertisementLoopService!!.advertising){
+        if( _advertisementSetQueHandler != null &&  _advertisementSetQueHandler!!.advertising){
             stopAdvertising()
         }
     }
 
     fun startAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.startAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.startAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -113,8 +115,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     fun stopAdvertising(){
-        if(_advertisementLoopService != null){
-            _advertisementLoopService!!.stopAdvertising()
+        if( _advertisementSetQueHandler != null){
+             _advertisementSetQueHandler!!.stopAdvertising()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -142,8 +144,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             val animationView: LottieAnimationView = binding.fastPairingAnimation
 
             val toggleOnClickListener = OnClickListener{ view ->
-                if(_advertisementLoopService != null){
-                    if(!_advertisementLoopService!!.advertising){
+                if( _advertisementSetQueHandler != null){
+                    if(! _advertisementSetQueHandler!!.advertising){
                         startAdvertising()
                     } else {
                         stopAdvertising()
@@ -211,8 +213,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             fastPairingRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     fastPairingRepeatitionLabel.text = "Advertise every ${progress} Seconds"
-                    if(_advertisementLoopService != null){
-                        _advertisementLoopService!!.setIntervalSeconds(progress)
+                    if( _advertisementSetQueHandler != null){
+                         _advertisementSetQueHandler!!.setIntervalSeconds(progress)
                     }
                 }
 
