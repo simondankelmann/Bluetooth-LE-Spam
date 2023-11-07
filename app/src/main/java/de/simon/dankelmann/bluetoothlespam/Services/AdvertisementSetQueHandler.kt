@@ -101,7 +101,7 @@ class AdvertisementSetQueHandler(bluetoothLeAdvertisementService:BluetoothLeAdve
         }, _interval)
     }
 
-    // Callback implementation
+    // Callback implementation  <--- MOVE TO BLE ADVERTISE SERVICE
     // - -- --- ADVERTISECALLBACK --- -- - //
     val advertiseCallback: AdvertiseCallback = object : AdvertiseCallback() {
         override fun onStartFailure(errorCode: Int) {
@@ -121,7 +121,7 @@ class AdvertisementSetQueHandler(bluetoothLeAdvertisementService:BluetoothLeAdve
         }
     }
 
-    // - -- --- ADVERTISINGSETCALLBACK --- -- - //
+    // - -- --- ADVERTISINGSETCALLBACK BLUETOOTH 5 --- -- - //
     val advertisingSetCallback: AdvertisingSetCallback = object : AdvertisingSetCallback() {
         override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet?, txPower: Int, status: Int) {
             if(status == AdvertisingSetCallback.ADVERTISE_SUCCESS){

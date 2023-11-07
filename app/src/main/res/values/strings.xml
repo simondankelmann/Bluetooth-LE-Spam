@@ -15,8 +15,9 @@
     <string name="menu_continuityActionModal">Apple Action Modals</string>
     <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
 
-    <string name="preference_key_advertise_with_settings">preferenceKeyadvertiseWithSettings</string>
-
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_title_use_legacy_advertising">Legacy Advertising</string>
+    <string name="preference_summary_use_legacy_advertising">Use Bluetooth 4 Compatible BLE Advertising</string>
 
     <string-array name="spinner_entries_tx_power">
         <item name="tx_power_high">High</item>

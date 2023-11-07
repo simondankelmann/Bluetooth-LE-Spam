@@ -4,6 +4,7 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -25,6 +26,9 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairA
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
@@ -34,7 +38,7 @@ import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentFastpairingBinding
 
-class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
+class FastPairingFragment : Fragment(), IAdvertisementServiceCallback{
 
     private var _binding: FragmentFastpairingBinding? = null
 
@@ -42,8 +46,9 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     // onDestroyView.
     private val binding get() = _binding!!
     private var _viewModel:FastPairingViewModel? = null
-    private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService? = null
-    private var  _advertisementSetQueHandler: AdvertisementSetQueHandler? = null
+    private var _advertisementSetQueueHandler: AdvertisementSetQueueHandler = AppContext.getAdvertisementSetQueueHandler()
+    private val _advertisementSets = GoogleFastPairAdvertisementSetGenerator().getAdvertisementSets()
+
     private val _logTag = "FastPairingFragment"
     private lateinit var _toggleButton:Button
 
@@ -57,26 +62,9 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
         _binding = FragmentFastpairingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // get bt adapter
-        val bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
-        if(bluetoothAdapter != null){
-            _bluetoothLeAdvertisementService = BluetoothLeAdvertisementService(bluetoothAdapter)
-             _advertisementSetQueHandler = AdvertisementSetQueHandler(_bluetoothLeAdvertisementService!!)//AdvertisementLoopService(_bluetoothLeAdvertisementService!!)
-
-            // setup callbacks
-            _bluetoothLeAdvertisementService?.addBleAdvertisementServiceCallback(this)
-             _advertisementSetQueHandler?.addBleAdvertisementServiceCallback(this)
-
-            // Add advertisement sets to the Loop Service:
-            val _googleFastPairAdvertisementSetGenerator = GoogleFastPairAdvertisementSetGenerator()
-            val _advertisementSets = _googleFastPairAdvertisementSetGenerator.getAdvertisementSets()
-             _advertisementSetQueHandler?.addAdvertisementSetCollection(_advertisementSets)
-        } else {
-            val logEntry = LogEntryModel()
-            logEntry.level = LogLevel.Info
-            logEntry.message = "Bluetooth could not be initialized"
-            _viewModel!!.addLogEntry(logEntry)
-        }
+        _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
+        _advertisementSetQueueHandler.clearAdvertisementSetCollection()
+        _advertisementSetQueueHandler.addAdvertisementSetCollection(_advertisementSets)
 
         setupUi()
 
@@ -85,18 +73,23 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
 
     override fun onResume() {
         super.onResume()
+        _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
+        _advertisementSetQueueHandler.clearAdvertisementSetCollection()
+        _advertisementSetQueueHandler.addAdvertisementSetCollection(_advertisementSets)
     }
 
     override fun onPause() {
         super.onPause()
-        if( _advertisementSetQueHandler != null &&  _advertisementSetQueHandler!!.advertising){
+        _advertisementSetQueueHandler.removeAdvertisementServiceCallback(this)
+        if( _advertisementSetQueueHandler != null && _advertisementSetQueueHandler!!.isActive()){
             stopAdvertising()
+            _advertisementSetQueueHandler.clearAdvertisementSetCollection()
         }
     }
 
     fun startAdvertising(){
-        if( _advertisementSetQueHandler != null){
-             _advertisementSetQueHandler!!.startAdvertising()
+        if( _advertisementSetQueueHandler != null){
+            _advertisementSetQueueHandler!!.activate()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -115,8 +108,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
     }
 
     fun stopAdvertising(){
-        if( _advertisementSetQueHandler != null){
-             _advertisementSetQueHandler!!.stopAdvertising()
+        if( _advertisementSetQueueHandler != null){
+            _advertisementSetQueueHandler!!.deactivate()
 
             val logEntry = LogEntryModel()
             logEntry.level = LogLevel.Info
@@ -144,8 +137,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             val animationView: LottieAnimationView = binding.fastPairingAnimation
 
             val toggleOnClickListener = OnClickListener{ view ->
-                if( _advertisementSetQueHandler != null){
-                    if(! _advertisementSetQueHandler!!.advertising){
+                if( _advertisementSetQueueHandler != null){
+                    if(! _advertisementSetQueueHandler!!.isActive()){
                         startAdvertising()
                     } else {
                         stopAdvertising()
@@ -193,8 +186,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
                     }
 
                     fastPairingTxPowerSeekbarLabel.text = "TX Power: ${newTxPowerLabel}"
-                    if(_bluetoothLeAdvertisementService != null){
-                        _bluetoothLeAdvertisementService!!.txPowerLevel = newTxPowerLevel
+                    if(_advertisementSetQueueHandler != null){
+                        _advertisementSetQueueHandler!!.setTxPowerLevel(newTxPowerLevel)
                     }
                 }
 
@@ -213,8 +206,8 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
             fastPairingRepeatitionSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                     fastPairingRepeatitionLabel.text = "Advertise every ${progress} Seconds"
-                    if( _advertisementSetQueHandler != null){
-                         _advertisementSetQueHandler!!.setIntervalSeconds(progress)
+                    if( _advertisementSetQueueHandler != null){
+                        _advertisementSetQueueHandler!!.setIntervalSeconds(progress)
                     }
                 }
 
@@ -268,78 +261,47 @@ class FastPairingFragment : Fragment(), IBleAdvertisementServiceCallback{
         _binding = null
     }
 
-    override fun onAdvertisementStarted() {
-        _viewModel!!.setStatusText("Started Advertising")
-    }
-    override fun onAdvertisementStopped() {
-        _viewModel!!.setStatusText("Stopped Advertising")
-    }
+    override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
+        if(advertisementSet != null){
+            var message = "Advertising: ${advertisementSet.deviceName}"
+            _viewModel!!.setStatusText(message)
 
-    override fun onAdvertisementSetStarted(advertisementSet: AdvertisementSet) {
-        var message = "Advertising: ${advertisementSet.deviceName}"
-        _viewModel!!.setStatusText(message)
-
-        var logEntry = LogEntryModel()
-        logEntry.level = LogLevel.Info
-        logEntry.message = message
-        _viewModel!!.addLogEntry(logEntry)
-    }
-
-    override fun onAdvertisementSetStopped(advertisementSet: AdvertisementSet) {
-        // currently not in use
-    }
-
-    override fun onStartFailure(errorCode: Int) {
-        var message = ""
-        message = if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_FEATURE_UNSUPPORTED) {
-            "ADVERTISE_FAILED_FEATURE_UNSUPPORTED"
-        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS) {
-            "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS"
-        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED) {
-            "ADVERTISE_FAILED_ALREADY_STARTED"
-        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE) {
-            "ADVERTISE_FAILED_DATA_TOO_LARGE"
-        } else if (errorCode == AdvertiseCallback.ADVERTISE_FAILED_INTERNAL_ERROR) {
-            "ADVERTISE_FAILED_INTERNAL_ERROR"
-        } else {
-            "unknown"
-        }
-
-        if (errorCode != AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED){
             var logEntry = LogEntryModel()
-            logEntry.level = LogLevel.Error
+            logEntry.level = LogLevel.Info
             logEntry.message = message
             _viewModel!!.addLogEntry(logEntry)
         }
     }
 
-    override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
+    override fun onAdvertisementSetStop(advertisementSet: AdvertisementSet?) {
+        Log.i(_logTag, "onAdvertisementSetStop called")
+    }
+
+    override fun onAdvertisementSetSucceeded(advertisementSet: AdvertisementSet?) {
         var logEntry = LogEntryModel()
         logEntry.level = LogLevel.Success
         logEntry.message = "Started advertising successfully"
         _viewModel!!.addLogEntry(logEntry)
     }
 
-    override fun onAdvertisingSetStarted(
-        advertisingSet: AdvertisingSet?,
-        txPower: Int,
-        status: Int
-    ) {
+    override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
+        var message = if (advertisementError == AdvertisementError.ADVERTISE_FAILED_FEATURE_UNSUPPORTED) {
+            "ADVERTISE_FAILED_FEATURE_UNSUPPORTED"
+        } else if (advertisementError == AdvertisementError.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS) {
+            "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS"
+        } else if (advertisementError == AdvertisementError.ADVERTISE_FAILED_ALREADY_STARTED) {
+            "ADVERTISE_FAILED_ALREADY_STARTED"
+        } else if (advertisementError == AdvertisementError.ADVERTISE_FAILED_DATA_TOO_LARGE) {
+            "ADVERTISE_FAILED_DATA_TOO_LARGE"
+        } else if (advertisementError == AdvertisementError.ADVERTISE_FAILED_INTERNAL_ERROR) {
+            "ADVERTISE_FAILED_INTERNAL_ERROR"
+        } else {
+            "Unknown Error"
+        }
+
         var logEntry = LogEntryModel()
-        logEntry.level = LogLevel.Success
-        logEntry.message = "Advertised successfully"
+        logEntry.level = LogLevel.Error
+        logEntry.message = message
         _viewModel!!.addLogEntry(logEntry)
-    }
-
-    override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
-        // currently not in use
-    }
-
-    override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
-        // currently not in use
-    }
-
-    override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
-        // currently not in use
     }
 }
