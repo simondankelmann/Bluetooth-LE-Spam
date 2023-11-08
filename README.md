@@ -1,10 +1,10 @@
-# Bluetooth LE Spam <a href="https://discord.gg/JHyKE8mZkE">![Discord](https://img.shields.io/discord/1170266776731406386?label=Discord&link=https%3A%2F%2Fdiscord.gg%2FJHyKE8mZkE)</a>
+# Bluetooth LE Spam <a href="https://discord.gg/x4e4Gma585">![Discord](https://img.shields.io/discord/1170266776731406386?label=Discord&link=https://discord.gg/x4e4Gma585)</a>
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
 > **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome.
 
-<h4><a href="https://discord.gg/JHyKE8mZkE">Join the Discord Server</a></h4>
+<h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
 
 ## Requirements
 - Android 8.0 (API level 26) or later
