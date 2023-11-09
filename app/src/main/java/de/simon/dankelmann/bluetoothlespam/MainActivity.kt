@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
+import android.bluetooth.le.AdvertisingSetCallback
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,22 +12,25 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
+import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
+import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
-import de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,9 +42,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize AppContext and Activity
+        // Initialize AppContext, Activity, Advertisement Service and QueHandler
         AppContext.setContext(this)
         AppContext.setActivity(this)
+
+        initializeBluetooth()
 
         // Require all permissions at startup
         this.requestAllPermissions()
@@ -66,6 +72,39 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    fun initializeBluetooth():Boolean{
+        var bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
+        if(bluetoothAdapter != null){
+            val useLegacyAdvertisement = getUseLegacyAdvertisingPreference()
+
+            val advertisementService = when (useLegacyAdvertisement) {
+                true -> LegacyAdvertisementService()
+                else -> {ModernAdvertisementService()}
+            }
+
+            AppContext.setAdvertisementService(advertisementService)
+
+            var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
+            AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
+            return true
+        }
+        Log.d(_logTag, "Bluetooth Adapter is null")
+        return false
+    }
+
+    private fun getUseLegacyAdvertisingPreference():Boolean{
+        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
+
+        preferences.forEach {
+            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
+                val legacyAdvertising = it.value as Boolean
+                return legacyAdvertising
+            }
+        }
+
+        return false
     }
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {

@@ -32,6 +32,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     // private
     private val _bluetoothAdapter = _bluetoothAdapter
     private val _logTag = "BluetoothLeAdvertisementService"
+    private var _currentAdvertisementSet:AdvertisementSet? = null
     private var _advertiser: BluetoothLeAdvertiser? = null
     private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
@@ -55,9 +56,9 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
 
         preferences.forEach {
-            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_advertise_with_settings)){
+            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
                 val useAdvertisingWithSettings = it.value as Boolean
-                return useAdvertisingWithSettings
+                return !useAdvertisingWithSettings
             }
         }
 
@@ -91,6 +92,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
             return false
         }
 
+        // BLUETOOTH 5 COMPATIBLE
         return true
     }
 
@@ -109,9 +111,12 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     }
 
     fun advertiseSet(advertisementSet: AdvertisementSet){
+        _currentAdvertisementSet = advertisementSet
         if(useAdvertisingWithSettings()){
+            // BLUETOOTH 4 AND 5
             startAdvertising(advertisementSet)
         } else {
+            // BLUETOOTH 5 ONLY
             startAdvertisingSet(advertisementSet)
         }
     }
@@ -121,6 +126,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
         } else {
             stopAdvertisingSet(advertisementSet)
         }
+        _currentAdvertisementSet = null
     }
 
     private fun startAdvertising(advertisementSet: AdvertisementSet){
@@ -137,6 +143,18 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
                 }
             } else {
                 Log.d(_logTag, "Advertisementset could not be validated")
+            }
+        } else {
+            Log.d(_logTag, "Advertiser is null")
+        }
+    }
+
+    private fun stopAdvertising(advertisementSet: AdvertisementSet){
+        if(_advertiser != null){
+            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                _advertiser!!.stopAdvertising(advertisementSet.advertisingCallback)
+            } else {
+                Log.d(_logTag, "Missing permission to stop advertisement")
             }
         } else {
             Log.d(_logTag, "Advertiser is null")
@@ -170,18 +188,6 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
                 _bleAdvertisementServiceCallback.map {
                     it.onAdvertisementStopped()
                 }
-            } else {
-                Log.d(_logTag, "Missing permission to stop advertisement")
-            }
-        } else {
-            Log.d(_logTag, "Advertiser is null")
-        }
-    }
-
-    private fun stopAdvertising(advertisementSet: AdvertisementSet){
-        if(_advertiser != null){
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
-                _advertiser!!.stopAdvertising(advertisementSet.advertisingCallback)
             } else {
                 Log.d(_logTag, "Missing permission to stop advertisement")
             }

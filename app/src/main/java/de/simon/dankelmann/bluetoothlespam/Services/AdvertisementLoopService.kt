@@ -17,9 +17,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
     var advertising = false
     private var _bluetoothLeAdvertisementService:BluetoothLeAdvertisementService = bluetoothLeAdvertisementService
 
-    //private var _advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
     private var _advertisementSetCollections:MutableList<MutableList<AdvertisementSet>> = mutableListOf()
-
     private var _bleAdvertisementServiceCallback:MutableList<IBleAdvertisementServiceCallback> = mutableListOf()
 
     private val _maxAdvertisers = 1
