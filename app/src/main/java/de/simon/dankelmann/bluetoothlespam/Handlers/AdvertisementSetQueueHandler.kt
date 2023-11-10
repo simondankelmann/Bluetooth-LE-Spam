@@ -26,6 +26,11 @@ class AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
         }
     }
 
+    fun setAdvertisementService(advertisementService: IAdvertisementService){
+        _advertisementService = advertisementService
+        _advertisementService!!.addAdvertisementServiceCallback(this)
+    }
+
     fun setTxPowerLevel(txPowerLevel:Int){
         if(_advertisementService != null){
             _advertisementService!!.setTxPowerLevel(txPowerLevel)

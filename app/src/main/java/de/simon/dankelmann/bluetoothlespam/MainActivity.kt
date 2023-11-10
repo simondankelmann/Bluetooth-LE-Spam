@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.le.AdvertisingSetCallback
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +29,7 @@ import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluet
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val _logTag = "MainActivity"
+    private lateinit var sharedPreferenceChangedListener:OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,22 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
+        // Listen to Preference changes
+        var prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        sharedPreferenceChangedListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            run {
+                var legacyAdvertisingKey = AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)
+                if (key == legacyAdvertisingKey) {
+                    val advertisementService = getAdvertisementService()
+                    AppContext.setAdvertisementService(advertisementService)
+                    AppContext.getAdvertisementSetQueueHandler().setAdvertisementService(advertisementService)
+                }
+            }
+        }
+
+        prefs.registerOnSharedPreferenceChangeListener(sharedPreferenceChangedListener);
+
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -72,39 +92,53 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        logHardwareDetails()
     }
 
     fun initializeBluetooth():Boolean{
         var bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(bluetoothAdapter != null){
-            val useLegacyAdvertisement = getUseLegacyAdvertisingPreference()
-
-            val advertisementService = when (useLegacyAdvertisement) {
-                true -> LegacyAdvertisementService()
-                else -> {ModernAdvertisementService()}
-            }
-
+            val advertisementService = getAdvertisementService()
             AppContext.setAdvertisementService(advertisementService)
 
             var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
             AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
             return true
         }
-        Log.d(_logTag, "Bluetooth Adapter is null")
         return false
     }
 
-    private fun getUseLegacyAdvertisingPreference():Boolean{
-        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
+    private fun getAdvertisementService() : IAdvertisementService{
 
+        var useLegacyAdvertisementService = true // <-- DEFAULT
+
+        // Get from Settings, if present
+        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
         preferences.forEach {
             if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
-                val legacyAdvertising = it.value as Boolean
-                return legacyAdvertising
+                useLegacyAdvertisementService = it.value as Boolean
             }
         }
 
-        return false
+        val advertisementService = when (useLegacyAdvertisementService) {
+            true -> LegacyAdvertisementService()
+            else -> {ModernAdvertisementService()}
+        }
+
+        Log.d(_logTag, "Setting up Advertisement Service. Legacy = $useLegacyAdvertisementService")
+
+        return advertisementService
+    }
+
+    private fun logHardwareDetails(){
+        var bluetoothAdapter:BluetoothAdapter = bluetoothAdapter
+        if(bluetoothAdapter != null){
+            Log.d(_logTag, "---------------Bluetooth Adapter Info: -----------")
+
+            Log.d(_logTag, "isLeCodedPhySupported : " + bluetoothAdapter.isLeCodedPhySupported)
+
+        }
     }
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {

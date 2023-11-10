@@ -15,6 +15,7 @@ class AdvertisingSetParametersModel {
     var primaryPhy = BluetoothDevice.PHY_LE_1M
     var secondaryPhy = BluetoothDevice.PHY_LE_1M
     var scannable = false
+    var connectable = false
 
     fun validate():Boolean{
         //@Todo: implement validation here
@@ -29,6 +30,7 @@ class AdvertisingSetParametersModel {
             params.setPrimaryPhy(primaryPhy)
             params.setSecondaryPhy(secondaryPhy)
             params.setScannable(scannable)
+            params.setConnectable(connectable)
 
             try{
                 when (txPowerLevel) {
