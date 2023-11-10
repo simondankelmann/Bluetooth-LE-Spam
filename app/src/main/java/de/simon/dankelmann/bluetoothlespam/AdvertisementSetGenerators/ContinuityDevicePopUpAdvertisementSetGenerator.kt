@@ -55,9 +55,11 @@ class ContinuityDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenerator
             advertisementSet.advertisingSetParameters.legacyMode = true
             advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
             advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
-            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_1M
-            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_1M
-            advertisementSet.advertisingSetParameters.scannable = false
+            // Phy is only used in non Legacy Mode
+            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_CODED
+            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_CODED
+            advertisementSet.advertisingSetParameters.scannable = true
+            advertisementSet.advertisingSetParameters.connectable = false
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false

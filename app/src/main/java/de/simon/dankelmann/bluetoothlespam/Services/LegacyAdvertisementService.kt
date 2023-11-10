@@ -38,6 +38,7 @@ class LegacyAdvertisementService: IAdvertisementService {
                 if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
                     _advertiser!!.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
+                    Log.d(_logTag, "Started Legacy Advertisement")
                     _currentAdvertisementSet = preparedAdvertisementSet
                     _advertisementServiceCallbacks.map {
                         it.onAdvertisementSetStart(advertisementSet)
