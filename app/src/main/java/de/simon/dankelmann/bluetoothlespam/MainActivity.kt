@@ -14,7 +14,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -58,7 +61,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
+        // Custom toolbar
+        val toolbar = findViewById<Toolbar>(R.id.customToolbar)
+        setSupportActionBar(toolbar)
+
+        /*
+        supportActionBar!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        supportActionBar!!.setDisplayShowCustomEnabled(true)
+        supportActionBar!!.setCustomView(R.layout.custom_actionbar)
+*/
+        //setSupportActionBar(binding.appBarMain.toolbar)
 
         // Listen to Preference changes
         var prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -83,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
+                R.id.nav_start,
                 R.id.nav_fast_pairing,
                 R.id.nav_swift_pair,
                 R.id.nav_continuity_action_modals,
@@ -90,10 +103,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_kitchen_sink
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         logHardwareDetails()
+
     }
 
     fun initializeBluetooth():Boolean{
@@ -135,9 +150,7 @@ class MainActivity : AppCompatActivity() {
         var bluetoothAdapter:BluetoothAdapter = bluetoothAdapter
         if(bluetoothAdapter != null){
             Log.d(_logTag, "---------------Bluetooth Adapter Info: -----------")
-
             Log.d(_logTag, "isLeCodedPhySupported : " + bluetoothAdapter.isLeCodedPhySupported)
-
         }
     }
 

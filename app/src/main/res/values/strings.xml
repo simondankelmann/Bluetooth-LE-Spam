@@ -9,6 +9,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_settings">Settings</string>
+    <string name="menu_start">Start</string>
     <string name="menu_fastPairing">Google Fast Pairing</string>
     <string name="menu_swiftPair">Microsoft Swift Pairing</string>
     <string name="menu_continuityDevicePopup">Apple Device Popups</string>

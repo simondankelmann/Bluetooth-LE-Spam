@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_fast_pairing">
+    app:startDestination="@+id/nav_start">
+
+    <fragment
+        android:id="@+id/nav_start"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.start.StartFragment"
+        android:label="@string/menu_start"
+        tools:layout="@layout/fragment_start" />
 
     <fragment
         android:id="@+id/nav_fast_pairing"
