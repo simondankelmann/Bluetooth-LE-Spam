@@ -1,13 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.start.StartFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.start.StartFragment"
+    android:id="@+id/startFragmentLayout"
+    android:padding="20dp">
 
-    <TextView
+    <androidx.cardview.widget.CardView
+        app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="wrap_content"
+        app:cardElevation="0dp"
+        android:backgroundTint="@color/blue_normal"
+        app:contentPadding="10dp"
+        >
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <!-- System Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/startFragmentHeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Bluetooth LE Spam"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/textSizeHeadline"/>
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewAppVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="App Version:"
+                    />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewAndroidVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android Version:"
+                    />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewSdkVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sdk Version:"
+                    />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewBluetooth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bluetooth Support:"
+                    />
+            </LinearLayout>
+
+            <!-- Image Column -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/logobrightnocircle"></ImageView>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,4 +8,6 @@
 
     <dimen name="seek_bar_thickness">4dp</dimen>
     <dimen name="seek_bar_thumb_size">20dp</dimen>
+
+    <dimen name="textSizeHeadline">24dp</dimen>
 </resources>
