@@ -15,6 +15,9 @@
         <item name="seekbarBackground">@color/grey_normal</item>
         <item name="seekbarProgress">?attr/colorPrimary</item>
         <item name="seekbarSecondaryProgress">?attr/colorPrimaryVariant</item>
+
+        <item name="actionBarBackgroundColor">@color/white</item>
+        <item name="actionBarForegroundColor">@color/blue_normal</item>
     </style>
 
     <style name="Theme.BluetoothLESpam.NoActionBar">
@@ -24,11 +27,11 @@
 
     <!-- ACTION BAR -->
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/blue_normal</item>
+        <item name="color">?attr/actionBarForegroundColor</item>
     </style>
     <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
         <item name="android:src">@drawable/settings</item>
-        <item name="tint">@color/blue_normal</item>
+        <item name="tint">?attr/actionBarForegroundColor</item>
     </style>
     <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>

@@ -5,11 +5,7 @@
         <attr name="seekbarProgress" format="color" />
         <attr name="seekbarSecondaryProgress" format="color" />
 
-<!--
-        <attr name="textColorLogInfo" format="color" />
-        <attr name="textColorLogWarning" format="color" />
-        <attr name="textColorLogError" format="color" />
-        <attr name="textColorLogSuccess" format="color" />
--->
+        <attr name="actionBarBackgroundColor" format="color" />
+        <attr name="actionBarForegroundColor" format="color" />
     </declare-styleable>
 </resources>
