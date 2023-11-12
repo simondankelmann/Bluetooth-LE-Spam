@@ -16,8 +16,22 @@
         <item name="seekbarProgress">?attr/colorPrimary</item>
         <item name="seekbarSecondaryProgress">?attr/colorPrimaryVariant</item>
 
+        <!-- ACTIONBAR -->
         <item name="actionBarBackgroundColor">@color/white</item>
         <item name="actionBarForegroundColor">@color/blue_normal</item>
+
+        <!-- HEADLINE -->
+        <item name="textColorHeadline">@color/black</item>
+
+        <!-- CARDVIEW -->
+        <item name="backgroundCardview">@drawable/gradient_cardview</item>
+        <item name="textColorCardHeadline">@color/white</item>
+        <item name="textColorCard">@color/grey_normal</item>
+
+        <item name="backgroundCardviewAlternative">@drawable/gradient_cardview_alternative</item>
+        <item name="textColorCardHeadlineAlternative">@color/black</item>
+        <item name="textColorCardAlternative">@color/black</item>
+
     </style>
 
     <style name="Theme.BluetoothLESpam.NoActionBar">

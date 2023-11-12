@@ -84,7 +84,7 @@ class StartFragment : Fragment() {
         // Bluetooth Support
         val textViewBluetoothSupport: TextView = binding.startFragmentTextViewBluetooth
         _viewModel!!.bluetoothSupport.observe(viewLifecycleOwner) {
-            textViewBluetoothSupport.text = "Bluetooth Support: $it"
+            textViewBluetoothSupport.text = "Bluetooth Version: $it"
         }
 
     }

@@ -9,5 +9,10 @@
     <dimen name="seek_bar_thickness">4dp</dimen>
     <dimen name="seek_bar_thumb_size">20dp</dimen>
 
+    <!-- CARDVIEW -->
+    <dimen name="cornerRadiusCardview">15dp</dimen>
+
+    <!-- Headline -->
     <dimen name="textSizeHeadline">24dp</dimen>
+    <dimen name="textSizeHeadline2">20dp</dimen>
 </resources>

@@ -27,4 +27,9 @@
     <color name="log_error">#c50f1f</color>
     <color name="log_success">#13a10e</color>
 
+    <color name="permission_denied">#c50f1f</color>
+    <color name="permission_granted">#13a10e</color>
+
+
+
 </resources>

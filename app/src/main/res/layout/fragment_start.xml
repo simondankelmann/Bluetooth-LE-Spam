@@ -6,84 +6,304 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.start.StartFragment"
     android:id="@+id/startFragmentLayout"
-    android:padding="20dp">
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
 
+    <!-- SYSTEM INFO CARD -->
     <androidx.cardview.widget.CardView
         app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
-        android:backgroundTint="@color/blue_normal"
-        app:contentPadding="10dp"
+        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+        android:id="@+id/startFragmentSystemInfoCard"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="?attr/backgroundCardview"
+            android:padding="@dimen/cornerRadiusCardview">
 
-            <!-- System Info -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                android:id="@+id/startFragmentSystemInfoHeadline"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:orientation="vertical"
-                >
-                <TextView
-                    android:id="@+id/startFragmentHeadline"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="Bluetooth LE Spam"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/textSizeHeadline"/>
+                android:text="Bluetooth LE Spam"
+                android:textStyle="bold"
+                android:textSize="@dimen/textSizeHeadline"
+                android:textColor="?attr/textColorCardHeadline"
+                android:paddingBottom="5dp"/>
 
-                <TextView
-                    android:id="@+id/startFragmentTextViewAppVersion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="App Version:"
-                    />
-
-                <TextView
-                    android:id="@+id/startFragmentTextViewAndroidVersion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Android Version:"
-                    />
-
-                <TextView
-                    android:id="@+id/startFragmentTextViewSdkVersion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sdk Version:"
-                    />
-
-                <TextView
-                    android:id="@+id/startFragmentTextViewBluetooth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bluetooth Support:"
-                    />
-            </LinearLayout>
-
-            <!-- Image Column -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- System Info -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/startFragmentTextViewAppVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="App Version:"
+                        android:textColor="?attr/textColorCard"
+                        />
+
+                    <TextView
+                        android:id="@+id/startFragmentTextViewAndroidVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Android Version:"
+                        android:textColor="?attr/textColorCard"
+                        />
+
+                    <TextView
+                        android:id="@+id/startFragmentTextViewSdkVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sdk Version:"
+                        android:textColor="?attr/textColorCard"
+                        />
+
+                    <TextView
+                        android:id="@+id/startFragmentTextViewBluetooth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bluetooth Version:"
+                        android:textColor="?attr/textColorCard"
+                        />
+                </LinearLayout>
+
+                <!-- Image Column -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    >
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/logobrightnocircle"
+                        app:tint="@color/white"
+                        ></ImageView>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <!-- END: SYSTEM INFO CARD -->
+
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard"
+        android:layout_marginTop="@dimen/cornerRadiusCardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- LEFT -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- PERMISSIONS CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                android:id="@+id/startFragmentPermissionCard"
                 >
-                <ImageView
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/logobrightnocircle"></ImageView>
-            </LinearLayout>
+                    android:orientation="vertical"
+                    android:background="?attr/backgroundCardviewAlternative"
+                    android:padding="@dimen/cornerRadiusCardview">
+
+                    <TextView
+                        android:id="@+id/startFragmentPermissionHeadline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Permissions"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/textSizeHeadline"
+                        android:textColor="?attr/textColorCardHeadlineAlternative"
+                        android:paddingBottom="5dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <!-- System Info -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:orientation="vertical"
+                            >
+
+                          <LinearLayout
+                              android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal">
+                              <TextView
+                                  android:id="@+id/permissionCardTextviewPermissionBluetooth"
+                                  android:layout_width="0dp"
+                                  android:layout_weight="3"
+                                  android:layout_height="wrap_content"
+                                  android:text="Bluetooth:"
+                                  android:textColor="?attr/textColorCardAlternative"
+                                  />
+
+                              <ImageView
+                                  android:id="@+id/permissionCardImageViewPermissionBluetooth"
+                                  android:layout_width="0dp"
+                                  android:layout_weight="1"
+                                  android:layout_height="wrap_content"
+                                  android:src="@drawable/remove_circle_outline_24"
+                                  app:tint="@color/permission_denied"></ImageView>
+                          </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/permissionCardTextviewPermissionBluetoothAdmin"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="3"
+                                    android:layout_height="wrap_content"
+                                    android:text="Bluetooth Admin:"
+                                    android:textColor="?attr/textColorCardAlternative"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/permissionCardImageViewPermissionBluetoothAdmin"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/remove_circle_outline_24"
+                                    app:tint="@color/permission_denied"></ImageView>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/permissionCardTextviewPermissionBluetoothAdvertise"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="3"
+                                    android:layout_height="wrap_content"
+                                    android:text="Bluetooth Advertise:"
+                                    android:textColor="?attr/textColorCardAlternative"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/permissionCardImageViewPermissionBluetoothAdvertise"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/remove_circle_outline_24"
+                                    app:tint="@color/permission_denied"></ImageView>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/permissionCardTextviewPermissionBluetoothScan"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="3"
+                                    android:layout_height="wrap_content"
+                                    android:text="Bluetooth Scan:"
+                                    android:textColor="?attr/textColorCardAlternative"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/permissionCardImageViewPermissionBluetoothScan"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/remove_circle_outline_24"
+                                    app:tint="@color/permission_denied"></ImageView>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/permissionCardTextviewPermissionBluetoothConnect"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="3"
+                                    android:layout_height="wrap_content"
+                                    android:text="Bluetooth Connect:"
+                                    android:textColor="?attr/textColorCardAlternative"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/permissionCardImageViewPermissionBluetoothConnect"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/remove_circle_outline_24"
+                                    app:tint="@color/permission_denied"></ImageView>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <!-- Image Column -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            >
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="75dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/key_24"
+                                app:tint="?attr/textColorCardAlternative"
+                                android:maxHeight="50dp"
+                                ></ImageView>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <!-- END: PERMISSIONS CARD -->
 
 
 
         </LinearLayout>
 
+    </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,8 +26,10 @@
          devices.
     -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- Needed only if your app uses Bluetooth scan results to derive physical location. -->
+    <!--
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    -->
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
