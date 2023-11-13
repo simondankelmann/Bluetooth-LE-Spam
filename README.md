@@ -25,24 +25,24 @@ For additional information about the Microsoft Swift Pair Service, you can find 
 This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
 
 ### Apple Action Modals
-By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions."
+By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions.
 
 ### Kitchen Sink
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
 ## Range
-Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload, but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
+Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
 
 ## Installation
 You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
 
 If you are a developer or tester, choose the Debug APK for testing and debugging purposes.
-If you are an end user seeking the fully functional app, download the Release APK for the best performance.
+If you are an end-user seeking a fully functional app, download the Release APK for the best performance.
 
 ## Credit
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
 
-- [Willy-JL](https://github.com/Willy-JL) , [ECTO-1A](https://github.com/ECTO-1A) , [Spooks4567](https://github.com/Spooks4576) for their contribution in the BLE Spam App on the Flipper Zero
+- [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576) for their contribution in the BLE Spam App on the Flipper Zero
 
 - [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
 
@@ -68,7 +68,7 @@ This repository contains code for the investigation and experimentation of the B
 
 4. Risks: Experimenting with BLE protocols can have potential security and privacy implications. Users should exercise caution and use this code responsibly, respecting the privacy and security of devices and systems.
 
-5. Contribution Guidelines: If you contribute to this repository, ensure that your contributions are in compliance with the project's goals and the repository's license. By contributing, you agree to license your contributions under the same license as this repository.
+5. Contribution Guidelines: If you contribute to this repository, ensure that your contributions comply with the project's goals and the repository's license. By contributing, you agree to license your contributions under the same license as this repository.
 
 6. Support: This repository is not maintained for production use. The authors and contributors may not provide support or updates regularly.
 
