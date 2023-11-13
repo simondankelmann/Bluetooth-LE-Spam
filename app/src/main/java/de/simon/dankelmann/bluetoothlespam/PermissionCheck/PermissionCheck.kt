@@ -14,10 +14,16 @@ import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 class PermissionCheck (){
     companion object {
         private val _logTag = "PermissionCheck"
-        fun checkPermission(permission:String, activity: Activity):Boolean{
+        fun checkPermission(permission:String, activity: Activity, requestIfNotGranted:Boolean = true):Boolean{
             if (permission == "android.permission.BLUETOOTH_ADVERTISE" && Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
             {
-                // android.permission.BLUETOOTH_ADMIN was first introduced in api level 31
+                // android.permission.BLUETOOTH_ADVERTISE was first introduced in api level 31
+                return true
+            }
+
+            if ((permission == "android.permission.BLUETOOTH" || permission == "android.permission.BLUETOOTH_ADMIN") && Build.VERSION.SDK_INT > Build.VERSION_CODES.R)
+            {
+                // android.permission.BLUETOOTH and android.permission.BLUETOOTH_ADMIN have a max sdk version of 30
                 return true
             }
 
@@ -25,7 +31,9 @@ class PermissionCheck (){
                 //Log.d(_logTag, "Permission granted: $permission")
                 return true
             } else {
-                ActivityCompat.requestPermissions(activity, arrayOf(permission), Constants.REQUEST_CODE_SINGLE_PERMISSION)
+                if(requestIfNotGranted){
+                    ActivityCompat.requestPermissions(activity, arrayOf(permission), Constants.REQUEST_CODE_SINGLE_PERMISSION)
+                }
             }
             Log.d(_logTag, "Permission not granted: $permission")
             return false

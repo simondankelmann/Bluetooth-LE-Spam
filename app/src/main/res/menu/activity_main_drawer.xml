@@ -13,7 +13,8 @@
         <item
             android:id="@+id/nav_fast_pairing"
             android:icon="@drawable/ic_android"
-            android:title="@string/menu_fastPairing" />
+            android:title="@string/menu_fastPairing"
+            />
 
         <item
             android:id="@+id/nav_swift_pair"

@@ -4,24 +4,5 @@
         <attr name="seekbarBackground" format="color" />
         <attr name="seekbarProgress" format="color" />
         <attr name="seekbarSecondaryProgress" format="color" />
-
-        <!-- ACTIONBAR -->
-        <attr name="actionBarBackgroundColor" format="color" />
-        <attr name="actionBarForegroundColor" format="color" />
-
-        <!-- HEADLINE -->
-        <attr name="textColorHeadline" format="color" />
-
-        <!-- CARDVIEW -->
-        <attr name="backgroundCardview" format="reference" />
-        <attr name="textColorCardHeadline" format="color" />
-        <attr name="textColorCard" format="color" />
-
-        <attr name="backgroundCardviewAlternative" format="reference" />
-        <attr name="textColorCardHeadlineAlternative" format="color" />
-        <attr name="textColorCardAlternative" format="color" />
-
-
-
     </declare-styleable>
 </resources>

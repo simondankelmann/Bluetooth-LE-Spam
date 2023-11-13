@@ -9,270 +9,92 @@
     android:paddingLeft="20dp"
     android:paddingRight="20dp">
 
-    <!-- SYSTEM INFO CARD -->
-    <androidx.cardview.widget.CardView
-        app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="@dimen/cornerRadiusCardview"
-        android:id="@+id/startFragmentSystemInfoCard"
-        >
+        app:layout_constraintTop_toTopOf="@id/startFragmentLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="?attr/backgroundCardview"
-            android:padding="@dimen/cornerRadiusCardview">
-
-            <TextView
-                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
-                android:id="@+id/startFragmentSystemInfoHeadline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bluetooth LE Spam"
-                android:textStyle="bold"
-                android:textSize="@dimen/textSizeHeadline"
-                android:textColor="?attr/textColorCardHeadline"
-                android:paddingBottom="5dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!-- System Info -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:orientation="vertical"
-                    >
-
-                    <TextView
-                        android:id="@+id/startFragmentTextViewAppVersion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="App Version:"
-                        android:textColor="?attr/textColorCard"
-                        />
-
-                    <TextView
-                        android:id="@+id/startFragmentTextViewAndroidVersion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Android Version:"
-                        android:textColor="?attr/textColorCard"
-                        />
-
-                    <TextView
-                        android:id="@+id/startFragmentTextViewSdkVersion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sdk Version:"
-                        android:textColor="?attr/textColorCard"
-                        />
-
-                    <TextView
-                        android:id="@+id/startFragmentTextViewBluetooth"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Bluetooth Version:"
-                        android:textColor="?attr/textColorCard"
-                        />
-                </LinearLayout>
-
-                <!-- Image Column -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="75dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/logobrightnocircle"
-                        app:tint="@color/white"
-                        ></ImageView>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-    <!-- END: SYSTEM INFO CARD -->
-
-    <LinearLayout
-        app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard"
-        android:layout_marginTop="@dimen/cornerRadiusCardview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <!-- LEFT -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- PERMISSIONS CARD -->
+            <!-- SYSTEM INFO CARD -->
             <androidx.cardview.widget.CardView
+                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="180dp"
                 app:cardElevation="0dp"
                 app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                android:id="@+id/startFragmentPermissionCard"
+                android:id="@+id/startFragmentSystemInfoCard"
                 >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:background="?attr/backgroundCardviewAlternative"
+                    android:background="@drawable/gradient_cardview_accent"
                     android:padding="@dimen/cornerRadiusCardview">
 
                     <TextView
-                        android:id="@+id/startFragmentPermissionHeadline"
+                        app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                        android:id="@+id/startFragmentSystemInfoHeadline"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Permissions"
+                        android:text="Bluetooth LE Spam"
                         android:textStyle="bold"
                         android:textSize="@dimen/textSizeHeadline"
-                        android:textColor="?attr/textColorCardHeadlineAlternative"
+                        android:textColor="@color/text_color_card_view_accent"
                         android:paddingBottom="5dp"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <!-- System Info -->
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
                             android:orientation="vertical"
                             >
 
-                          <LinearLayout
-                              android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="horizontal">
-                              <TextView
-                                  android:id="@+id/permissionCardTextviewPermissionBluetooth"
-                                  android:layout_width="0dp"
-                                  android:layout_weight="3"
-                                  android:layout_height="wrap_content"
-                                  android:text="Bluetooth:"
-                                  android:textColor="?attr/textColorCardAlternative"
-                                  />
-
-                              <ImageView
-                                  android:id="@+id/permissionCardImageViewPermissionBluetooth"
-                                  android:layout_width="0dp"
-                                  android:layout_weight="1"
-                                  android:layout_height="wrap_content"
-                                  android:src="@drawable/remove_circle_outline_24"
-                                  app:tint="@color/permission_denied"></ImageView>
-                          </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/startFragmentTextViewAppVersion"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:text="App Version:"
+                                android:textColor="@color/text_color_card_view_accent_light"
+                                />
 
-                                <TextView
-                                    android:id="@+id/permissionCardTextviewPermissionBluetoothAdmin"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="3"
-                                    android:layout_height="wrap_content"
-                                    android:text="Bluetooth Admin:"
-                                    android:textColor="?attr/textColorCardAlternative"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/permissionCardImageViewPermissionBluetoothAdmin"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/remove_circle_outline_24"
-                                    app:tint="@color/permission_denied"></ImageView>
-
-                            </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/startFragmentTextViewAndroidVersion"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:text="Android Version:"
+                                android:textColor="@color/text_color_card_view_accent_light"
+                                />
 
-                                <TextView
-                                    android:id="@+id/permissionCardTextviewPermissionBluetoothAdvertise"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="3"
-                                    android:layout_height="wrap_content"
-                                    android:text="Bluetooth Advertise:"
-                                    android:textColor="?attr/textColorCardAlternative"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/permissionCardImageViewPermissionBluetoothAdvertise"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/remove_circle_outline_24"
-                                    app:tint="@color/permission_denied"></ImageView>
-
-                            </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/startFragmentTextViewSdkVersion"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:text="Sdk Version:"
+                                android:textColor="@color/text_color_card_view_accent_light"
+                                />
 
-                                <TextView
-                                    android:id="@+id/permissionCardTextviewPermissionBluetoothScan"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="3"
-                                    android:layout_height="wrap_content"
-                                    android:text="Bluetooth Scan:"
-                                    android:textColor="?attr/textColorCardAlternative"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/permissionCardImageViewPermissionBluetoothScan"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/remove_circle_outline_24"
-                                    app:tint="@color/permission_denied"></ImageView>
-
-                            </LinearLayout>
-
-                            <LinearLayout
+                            <TextView
+                                android:id="@+id/startFragmentTextViewBluetooth"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/permissionCardTextviewPermissionBluetoothConnect"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="3"
-                                    android:layout_height="wrap_content"
-                                    android:text="Bluetooth Connect:"
-                                    android:textColor="?attr/textColorCardAlternative"
-                                    />
-
-                                <ImageView
-                                    android:id="@+id/permissionCardImageViewPermissionBluetoothConnect"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="wrap_content"
-                                    android:src="@drawable/remove_circle_outline_24"
-                                    app:tint="@color/permission_denied"></ImageView>
-
-                            </LinearLayout>
-
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:text="Bluetooth Version:"
+                                android:textColor="@color/text_color_card_view_accent_light"
+                                />
                         </LinearLayout>
-
 
                         <!-- Image Column -->
                         <LinearLayout
@@ -282,24 +104,606 @@
                             >
                             <ImageView
                                 android:layout_width="match_parent"
-                                android:layout_height="75dp"
+                                android:layout_height="match_parent"
                                 android:layout_gravity="center"
-                                android:src="@drawable/key_24"
-                                app:tint="?attr/textColorCardAlternative"
-                                android:maxHeight="50dp"
+                                android:src="@drawable/logobrightnocircle"
+                                app:tint="@color/white"
                                 ></ImageView>
                         </LinearLayout>
-
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+            <!-- END: SYSTEM INFO CARD -->
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard"
+                android:id="@+id/startFragmentRequirementsHeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Requirements"
+                android:textStyle="bold"
+                android:textSize="@dimen/textSizeHeadline"
+                android:textColor="@color/text_color"
+                android:paddingBottom="5dp"
+                android:paddingTop="15dp"/>
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsHeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/startFragmentRequirementsTextView"
+                android:text="@string/startfragment_requirements_checking"
+                android:paddingBottom="5dp">
+            </TextView>
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/startFragmentMissingRequirementsTextView"
+                android:text="---"
+                android:textStyle="italic"
+                android:textColor="@color/grey_normal"
+                android:paddingBottom="@dimen/cornerRadiusCardview">
+            </TextView>
+
+            <!-- PERMISSIONS CARD -->
+            <androidx.cardview.widget.CardView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentMissingRequirementsTextView"
+                android:id="@+id/startFragmentPermissionsCardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                android:layout_marginTop="5dp"
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                >
+
+                <LinearLayout
+                    android:id="@+id/startFragmentPermissionCardViewContentWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/gradient_cardview_alternative">
+
+                    <LinearLayout
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/key_24"
+                            app:tint="@color/tint_icon_card_view_alternative"
+                            >
+                        </ImageView>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Permissions"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/textSizeHeadline2"
+                        android:textColor="@color/text_color_card_view_alternative"
+                        ></TextView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
             <!-- END: PERMISSIONS CARD -->
 
+            <!-- BLUETOOTH CARD -->
+            <androidx.cardview.widget.CardView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentPermissionsCardview"
+                android:id="@+id/start_fragment_bluetooth_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                android:layout_marginTop="@dimen/cornerRadiusCardview"
+                >
+
+                <LinearLayout
+                    android:id="@+id/startFragmentBluetoothCardViewContentWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/gradient_cardview_alternative">
+
+                    <LinearLayout
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/bluetooth"
+                            app:tint="@color/tint_icon_card_view_alternative"
+                            >
+                        </ImageView>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Bluetooth Adapter"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/textSizeHeadline2"
+                        android:textColor="@color/text_color_card_view_alternative"
+                        ></TextView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- END: BLUETOOTH CARD -->
+
+            <!-- SERVICE CARD -->
+            <androidx.cardview.widget.CardView
+                app:layout_constraintTop_toBottomOf="@id/start_fragment_bluetooth_cardview"
+                android:id="@+id/start_fragment_service_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                android:layout_marginTop="@dimen/cornerRadiusCardview"
+                >
+
+                <LinearLayout
+                    android:id="@+id/startFragmentServiceCardViewContentWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/gradient_cardview_alternative">
+
+                    <LinearLayout
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/bluetooth_audio_24"
+                            app:tint="@color/tint_icon_card_view_alternative"
+                            >
+                        </ImageView>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Advertisement Service"
+                        android:layout_gravity="center"
+                        android:textSize="@dimen/textSizeHeadline2"
+                        android:textColor="@color/text_color_card_view_alternative"
+                        ></TextView>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- END: SERVICE CARD -->
+
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@id/start_fragment_service_cardview"
+                android:id="@+id/startFragmentAdvertisementHeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Advertise"
+                android:textStyle="bold"
+                android:textSize="@dimen/textSizeHeadline"
+                android:textColor="@color/text_color"
+                android:paddingBottom="5dp"
+                android:paddingTop="15dp"/>
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisementHeadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/startFragmentAdvertisingDescription"
+                android:text="Select a Set and Start BLE Advertising"
+                android:paddingBottom="5dp">
+            </TextView>
+
+            <HorizontalScrollView
+                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisingDescription"
+                android:id="@+id/startFragmentAdvertisementSetsScrollView"
+                android:layout_width="wrap_content"
+                android:layout_height="120dp"
+                android:layout_marginTop="@dimen/cornerRadiusCardview"
+                >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <!-- FASTPAIRING CARD -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="250dp"
+                        android:layout_height="120dp"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                        android:id="@+id/startFragmentFastPairingCard"
+                        android:layout_marginRight="@dimen/cornerRadiusCardview"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/gradient_cardview_alternative"
+                            android:padding="@dimen/cornerRadiusCardview">
+
+                            <TextView
+                                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                                android:id="@+id/startFragmentFastPairingHeadline"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Fast Pairing"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/textSizeHeadline"
+                                android:textColor="@color/text_color_card_view_alternative"
+                                android:paddingBottom="5dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <!-- System Info -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:orientation="vertical"
+                                    >
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Target: Android"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Distance: Close"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+                                </LinearLayout>
+
+                                <!-- Image Column -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    >
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/ic_android"
+                                        app:tint="@color/text_color_card_view_alternative_light"
+                                        ></ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- END: FAST PAIRING CARD -->
+
+                    <!-- DEVICE POPUPS CARD -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="250dp"
+                        android:layout_height="120dp"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                        android:id="@+id/startFragmentDevicePopUpsCard"
+                        android:layout_marginRight="@dimen/cornerRadiusCardview"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/gradient_cardview_alternative"
+                            android:padding="@dimen/cornerRadiusCardview">
+
+                            <TextView
+                                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="iOs Devices"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/textSizeHeadline"
+                                android:textColor="@color/text_color_card_view_alternative"
+                                android:paddingBottom="5dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <!-- System Info -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:orientation="vertical"
+                                    >
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Target: iOs"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Distance: Close"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+                                </LinearLayout>
+
+                                <!-- Image Column -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    >
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/apple"
+                                        app:tint="@color/text_color_card_view_alternative_light"
+                                        ></ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- END: DEVICE POPUPS CARD -->
+
+                    <!-- ACTION MODALS CARD -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="250dp"
+                        android:layout_height="120dp"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                        android:id="@+id/startFragmentActionModalsCard"
+                        android:layout_marginRight="@dimen/cornerRadiusCardview"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/gradient_cardview_alternative"
+                            android:padding="@dimen/cornerRadiusCardview">
+
+                            <TextView
+                                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="iOs Actions"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/textSizeHeadline"
+                                android:textColor="@color/text_color_card_view_alternative"
+                                android:paddingBottom="5dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <!-- System Info -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:orientation="vertical"
+                                    >
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Target: iOs"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Distance: Up to 10 Meter"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+                                </LinearLayout>
+
+                                <!-- Image Column -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    >
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/apple"
+                                        app:tint="@color/text_color_card_view_alternative_light"
+                                        ></ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- END: ACTION MODALS CARD -->
+
+                    <!-- SWIFT PAIRING CARD -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="250dp"
+                        android:layout_height="120dp"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                        android:id="@+id/startFragmentSwiftPairingCard"
+                        android:layout_marginRight="@dimen/cornerRadiusCardview"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/gradient_cardview_alternative"
+                            android:padding="@dimen/cornerRadiusCardview">
+
+                            <TextView
+                                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Swift Pairing"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/textSizeHeadline"
+                                android:textColor="@color/text_color_card_view_alternative"
+                                android:paddingBottom="5dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <!-- System Info -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:orientation="vertical"
+                                    >
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Target: Windows"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Distance: Close"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+                                </LinearLayout>
+
+                                <!-- Image Column -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    >
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/microsoft"
+                                        app:tint="@color/text_color_card_view_alternative_light"
+                                        ></ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- END: SWIFT PAIRING CARD -->
+
+                    <!-- KITCHEN SINK CARD -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="250dp"
+                        android:layout_height="120dp"
+                        app:cardElevation="0dp"
+                        app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                        android:id="@+id/startFragmentKitchenSinkCard"
+                        android:layout_marginRight="@dimen/cornerRadiusCardview"
+                        >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:background="@drawable/gradient_cardview_alternative"
+                            android:padding="@dimen/cornerRadiusCardview">
+
+                            <TextView
+                                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Kitchen Sink"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/textSizeHeadline"
+                                android:textColor="@color/text_color_card_view_alternative"
+                                android:paddingBottom="5dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal">
+                                <!-- System Info -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3"
+                                    android:orientation="vertical"
+                                    >
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Target: All"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        android:text="Distance: Mixed"
+                                        android:textColor="@color/text_color_card_view_alternative_light"
+                                        />
+                                </LinearLayout>
+
+                                <!-- Image Column -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    >
+                                    <ImageView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:src="@drawable/shuffle"
+                                        app:tint="@color/text_color_card_view_alternative_light"
+                                        ></ImageView>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- END: KITCHEN SINK CARD -->
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
 
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
+
+
+
 
 
 

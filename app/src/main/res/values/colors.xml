@@ -14,6 +14,9 @@
 
     <color name="blue_normal">#2d5eed</color>
     <color name="blue_dark">#164795</color>
+    <color name="blue_light">#577ce6</color>
+    <color name="blue_lighter">#7894e3</color>
+
 
     <color name="green_normal">#a2c03c</color>
     <color name="green_dark">#546320</color>
@@ -31,5 +34,21 @@
     <color name="permission_granted">#13a10e</color>
 
 
+    <!-- Text Colors -->
+    <color name="text_color">#000000</color>
+    <color name="text_color_light">#ababab</color>
+
+    <!-- ACTIONBAR -->
+    <color name="background_color_action_bar">#FFFFFF</color>
+    <color name="foreground_color_action_bar">#2d5eed</color>
+
+    <!-- CARDVIEW -->
+    <color name="text_color_card_view_accent">#FFFFFF</color>
+    <color name="text_color_card_view_accent_light">#ababab</color>
+
+    <!-- CARDVIEW ALTERNATIVE -->
+    <color name="text_color_card_view_alternative">#000000</color>
+    <color name="text_color_card_view_alternative_light">#373737</color>
+    <color name="tint_icon_card_view_alternative">#373737</color>
 
 </resources>
