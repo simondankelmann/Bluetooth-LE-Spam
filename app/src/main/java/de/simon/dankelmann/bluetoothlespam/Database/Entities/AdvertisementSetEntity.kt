@@ -10,17 +10,18 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 data class AdvertisementSetEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
 
+    // Data
     @ColumnInfo(name = "title") var title: String,
-    @ColumnInfo(name = "target") var target: AdvertisementTarget?,
-    @ColumnInfo(name = "type") var type: AdvertisementSetType?,
+    @ColumnInfo(name = "target") var target: AdvertisementTarget,
+    @ColumnInfo(name = "type") var type: AdvertisementSetType,
+    @ColumnInfo(name = "duration") var duration: Int,
+    @ColumnInfo(name = "maxExtendedAdvertisingEvents") var maxExtendedAdvertisingEvents: Int,
 
-    @ColumnInfo(name = "advertiseSettingsId") var advertiseSettingsId: Int?,
-    @ColumnInfo(name = "advertisingSetParametersId") var advertisingSetParametersId: Int?,
+    // Related Data
+    @ColumnInfo(name = "advertiseSettingsId") var advertiseSettingsId: Int,
+    @ColumnInfo(name = "advertisingSetParametersId") var advertisingSetParametersId: Int,
     @ColumnInfo(name = "advertiseDataId") var advertiseDataId: Int?,
     @ColumnInfo(name = "scanResponseId") var scanResponseId: Int?,
     @ColumnInfo(name = "periodicAdvertisingParametersId") var periodicAdvertisingParametersId: Int?,
     @ColumnInfo(name = "periodicAdvertiseDataId") var periodicAdvertiseDataId: Int?,
-
-    @ColumnInfo(name = "duration") var duration: Int?,
-    @ColumnInfo(name = "maxExtendedAdvertisingEvents") var maxExtendedAdvertisingEvents: Int?,
 )

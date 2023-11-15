@@ -8,8 +8,10 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 @Entity
 data class AdvertiseDataEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) var id: Int,
 
-    @ColumnInfo(name = "includeDeviceName") var boolean: Boolean,
+    @ColumnInfo(name = "includeDeviceName") var includeDeviceName: Boolean,
     @ColumnInfo(name = "includeTxPower") var includeTxPower: Boolean
-)
+){
+    constructor():this(0,false,false)
+}

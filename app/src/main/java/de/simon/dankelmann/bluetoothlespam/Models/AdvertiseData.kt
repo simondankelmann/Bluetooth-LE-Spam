@@ -1,23 +1,18 @@
 package de.simon.dankelmann.bluetoothlespam.Models
 
 import android.bluetooth.le.AdvertiseData
-import android.os.ParcelUuid
 import android.util.Log
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import java.util.UUID
 
-class AdvertiseDataModel {
-    private var _logTag = "AdvertiseDataModel"
+class AdvertiseData {
+    private var _logTag = "AdvertiseData"
 
+    var id = 0
     var includeDeviceName = true
-
-    /*
-    var serviceUuid: ParcelUuid? = null
-    var serviceData = StringHelpers.decodeHex("00")*/
-
-    var services = mutableListOf<ServiceDataModel>()
     var includeTxPower = true
-    var manufacturerData = mutableListOf<ManufacturerSpecificDataModel>()
+
+    var manufacturerData = mutableListOf<ManufacturerSpecificData>()
+    var services = mutableListOf<ServiceData>()
+
 
     fun validate():Boolean{
         //@Todo: implement validation here

@@ -5,11 +5,15 @@ import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
-import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCallback
+import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.PrimaryPhy
+import de.simon.dankelmann.bluetoothlespam.Enums.SecondaryPhy
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
-import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificDataModel
+import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificData
 
 class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator {
 
@@ -40,25 +44,25 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
         _deviceData.map { deviceData ->
 
             var advertisementSet: AdvertisementSet = AdvertisementSet()
-            advertisementSet.advertisementTarget = AdvertisementTarget.iOs
+            advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_IOS
 
             // Advertise Settings
-            advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
-            advertisementSet.advertiseSettings.txPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+            advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY
+            advertisementSet.advertiseSettings.txPowerLevel = TxPowerLevel.TX_POWER_HIGH
             advertisementSet.advertiseSettings.connectable = false
             advertisementSet.advertiseSettings.timeout = 0
 
             // Advertising Parameters
             advertisementSet.advertisingSetParameters.legacyMode = true
             advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
-            advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
-            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_1M
-            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.txPowerLevel = TxPowerLevel.TX_POWER_HIGH
+            advertisementSet.advertisingSetParameters.primaryPhy = PrimaryPhy.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.secondaryPhy = SecondaryPhy.PHY_LE_1M
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false
 
-            val manufacturerSpecificData = ManufacturerSpecificDataModel()
+            val manufacturerSpecificData = ManufacturerSpecificData()
             manufacturerSpecificData.manufacturerId = _manufacturerId
             manufacturerSpecificData.manufacturerSpecificData =
                 StringHelpers.decodeHex(deviceData.value)
@@ -72,14 +76,14 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
             advertisementSet.advertiseData.includeTxPower = false
 
             // Scan Response
-            advertisementSet.scanResponse.includeTxPower = false
+            //advertisementSet.scanResponse.includeTxPower = false
 
             // General Data
-            advertisementSet.deviceName = deviceData.key
+            advertisementSet.title = deviceData.key
 
             // Callbacks
             advertisementSet.advertisingSetCallback = GenericAdvertisingSetCallback()
-            advertisementSet.advertisingCallback = GoogleFastPairAdvertisingCallback()
+            advertisementSet.advertisingCallback = GenericAdvertisingCallback()
 
             advertisementSets.add(advertisementSet)
         }

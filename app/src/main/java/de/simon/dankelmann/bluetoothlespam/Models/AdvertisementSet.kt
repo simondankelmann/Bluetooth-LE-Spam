@@ -1,32 +1,33 @@
 package de.simon.dankelmann.bluetoothlespam.Models
 
 import android.bluetooth.le.AdvertiseCallback
-import android.bluetooth.le.AdvertiseData
-import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetCallback
-import android.bluetooth.le.AdvertisingSetParameters
-import android.bluetooth.le.PeriodicAdvertisingParameters
 import android.util.Log
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 class AdvertisementSet {
     private val _logTag = "AdvertisementSet"
 
-    // BLE Data Models
-    var advertiseSettings: AdvertiseSettingsModel = AdvertiseSettingsModel()
-    var advertisingSetParameters:AdvertisingSetParametersModel = AdvertisingSetParametersModel()
-    var advertiseData:AdvertiseDataModel = AdvertiseDataModel()
-    var scanResponse:AdvertiseDataModel = AdvertiseDataModel()
-    var periodicParameters:PeriodicAdvertisingParameters? = null
-    var periodicData:AdvertiseDataModel = AdvertiseDataModel()
+    // Data
+    var id = 0
+    var title = ""
+    var target:AdvertisementTarget = AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED
+    var type:AdvertisementSetType = AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED
+    var duration:Int = 0
+    var maxExtendedAdvertisingEvents:Int = 0
+
+    // Related Data
+    var advertiseSettings: AdvertiseSettings = AdvertiseSettings()
+    var advertisingSetParameters:AdvertisingSetParameters = AdvertisingSetParameters()
+    var advertiseData:AdvertiseData = AdvertiseData()
+    var scanResponse:AdvertiseData? = AdvertiseData()
+    var periodicAdvertisingParameters:PeriodicAdvertisingParameters? = null
+    var periodicAdvertiseData:AdvertiseData? = null
 
     // Callbacks
     lateinit var advertisingSetCallback:AdvertisingSetCallback
     lateinit var advertisingCallback: AdvertiseCallback
-
-    // Custom Data
-    var deviceName = ""
-    var advertisementTarget:AdvertisementTarget = AdvertisementTarget.Undefined
 
     fun validate():Boolean{
         //@todo: implement checks here

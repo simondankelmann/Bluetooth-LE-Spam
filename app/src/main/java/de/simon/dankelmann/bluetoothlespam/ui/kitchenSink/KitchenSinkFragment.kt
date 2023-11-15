@@ -1,8 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.ui.kitchenSink
 
-import android.bluetooth.le.AdvertiseCallback
-import android.bluetooth.le.AdvertiseSettings
-import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,20 +20,16 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFast
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentKitchenSinkBinding
 
 
@@ -235,7 +228,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
                     kitchenSinkTxPowerSeekbarLabel.text = "TX Power: ${newTxPowerLabel}"
                     if(_advertisementSetQueueHandler != null){
-                        _advertisementSetQueueHandler!!.setTxPowerLevel(newTxPowerLevel)
+                        _advertisementSetQueueHandler!!.setTxPowerLevel(TxPowerLevel.TX_POWER_HIGH)
                     }
                 }
 
@@ -309,7 +302,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
     override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
         if(advertisementSet != null){
-            var message = "Advertising: ${advertisementSet.deviceName}"
+            var message = "Advertising: ${advertisementSet.title}"
             _viewModel!!.setStatusText(message)
 
             var logEntry = LogEntryModel()

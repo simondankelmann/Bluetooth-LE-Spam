@@ -30,6 +30,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
+import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
@@ -48,6 +49,12 @@ class MainActivity : AppCompatActivity() {
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
         AppContext.setContext(this)
         AppContext.setActivity(this)
+
+        var db = AppDatabase.getInstance()
+        /*
+        Thread {
+            AppDatabase.seedingThread.run()
+        }.start()*/
 
 
         binding = ActivityMainBinding.inflate(layoutInflater)

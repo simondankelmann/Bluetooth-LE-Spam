@@ -4,12 +4,16 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import android.os.ParcelUuid
-import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCallback
+import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.PrimaryPhy
+import de.simon.dankelmann.bluetoothlespam.Enums.SecondaryPhy
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
-import de.simon.dankelmann.bluetoothlespam.Models.ServiceDataModel
+import de.simon.dankelmann.bluetoothlespam.Models.ServiceData
 import java.util.UUID
 
 class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
@@ -517,39 +521,39 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
         _genuineDeviceIds.map {
 
             var advertisementSet:AdvertisementSet = AdvertisementSet()
-            advertisementSet.advertisementTarget = AdvertisementTarget.Android
+            advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID
 
             // Advertise Settings
-            advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY
-            advertisementSet.advertiseSettings.txPowerLevel = AdvertiseSettings.ADVERTISE_TX_POWER_HIGH
+            advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY
+            advertisementSet.advertiseSettings.txPowerLevel = TxPowerLevel.TX_POWER_HIGH
             advertisementSet.advertiseSettings.connectable = false
             advertisementSet.advertiseSettings.timeout = 0
 
             // Advertising Parameters
             advertisementSet.advertisingSetParameters.legacyMode = true
             advertisementSet.advertisingSetParameters.interval = AdvertisingSetParameters.INTERVAL_MIN
-            advertisementSet.advertisingSetParameters.txPowerLevel = AdvertisingSetParameters.TX_POWER_HIGH
-            advertisementSet.advertisingSetParameters.primaryPhy = BluetoothDevice.PHY_LE_1M
-            advertisementSet.advertisingSetParameters.secondaryPhy = BluetoothDevice.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.txPowerLevel = TxPowerLevel.TX_POWER_HIGH
+            advertisementSet.advertisingSetParameters.primaryPhy = PrimaryPhy.PHY_LE_1M
+            advertisementSet.advertisingSetParameters.secondaryPhy = SecondaryPhy.PHY_LE_1M
 
             // AdvertiseData
             advertisementSet.advertiseData.includeDeviceName = false
 
-            val serviceDataModel = ServiceDataModel()
-            serviceDataModel.serviceUuid = serviceUuid
-            serviceDataModel.serviceData = StringHelpers.decodeHex(it.key)
-            advertisementSet.advertiseData.services.add(serviceDataModel)
+            val serviceData = ServiceData()
+            serviceData.serviceUuid = serviceUuid
+            serviceData.serviceData = StringHelpers.decodeHex(it.key)
+            advertisementSet.advertiseData.services.add(serviceData)
             advertisementSet.advertiseData.includeTxPower = true
 
             // Scan Response
-            advertisementSet.scanResponse.includeTxPower = true
+            //advertisementSet.scanResponse.includeTxPower = true
 
             // General Data
-            advertisementSet.deviceName = it.value
+            advertisementSet.title = it.value
 
             // Callbacks
             advertisementSet.advertisingSetCallback = GenericAdvertisingSetCallback()
-            advertisementSet.advertisingCallback = GoogleFastPairAdvertisingCallback()
+            advertisementSet.advertisingCallback = GenericAdvertisingCallback()
 
             advertisementSets.add(advertisementSet)
         }

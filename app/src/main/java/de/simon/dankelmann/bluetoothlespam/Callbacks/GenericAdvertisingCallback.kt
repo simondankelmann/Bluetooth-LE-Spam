@@ -4,7 +4,7 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseSettings
 import android.util.Log
 
-class GoogleFastPairAdvertisingCallback : AdvertiseCallback() {
+class GenericAdvertisingCallback : AdvertiseCallback() {
     
     private val _logTag = "GoogleFastPairAdvertisingCallback"
     override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {

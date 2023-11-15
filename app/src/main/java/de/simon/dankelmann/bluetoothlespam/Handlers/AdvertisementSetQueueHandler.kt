@@ -5,6 +5,7 @@ import android.os.Looper
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -33,7 +34,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
         _advertisementService!!.addAdvertisementServiceCallback(this)
     }
 
-    fun setTxPowerLevel(txPowerLevel:Int){
+    fun setTxPowerLevel(txPowerLevel: TxPowerLevel){
         if(_advertisementService != null){
             _advertisementService!!.setTxPowerLevel(txPowerLevel)
         }

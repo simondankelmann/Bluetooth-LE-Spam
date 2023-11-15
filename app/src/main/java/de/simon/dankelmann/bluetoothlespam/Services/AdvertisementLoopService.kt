@@ -6,11 +6,8 @@ import android.bluetooth.le.AdvertisingSet
 import android.bluetooth.le.AdvertisingSetCallback
 import android.os.CountDownTimer
 import android.util.Log
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
-import java.util.Timer
-import java.util.TimerTask
 
 class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdvertisementService) {
     private var _logTag = "AdvertisementLoopService"
@@ -107,7 +104,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
             var advertiserToRemove = _currentAdvertisers[0]
             _bluetoothLeAdvertisementService.stopAdvertiseSet(advertiserToRemove)
             _currentAdvertisers.removeAt(0)
-            Log.d(_logTag, "Removed advertiser for: " + advertiserToRemove.deviceName)
+            Log.d(_logTag, "Removed advertiser for: " + advertiserToRemove.title)
         }
     }
 
@@ -134,7 +131,7 @@ class AdvertisementLoopService (bluetoothLeAdvertisementService:BluetoothLeAdver
             _currentAdvertisers.add(nextAdvertisementSet)
             _bluetoothLeAdvertisementService.advertiseSet(nextAdvertisementSet)
 
-            Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.deviceName);
+            Log.d(_logTag, "Added advertiser for: " + nextAdvertisementSet.title);
         }
     }
 

@@ -1,8 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.ui.continuityActionModals
 
-import android.bluetooth.le.AdvertiseCallback
-import android.bluetooth.le.AdvertiseSettings
-import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.SeekBar
-import android.widget.Switch
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,22 +15,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentContinuityActionModalsBinding
 
 class ContinuityActionModalsFragment: Fragment(), IAdvertisementServiceCallback {
@@ -170,12 +160,12 @@ class ContinuityActionModalsFragment: Fragment(), IAdvertisementServiceCallback 
             continuityActionModalsTxPowerSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 
-                    var newTxPowerLevel = progress
+                    var newTxPowerLevel = TxPowerLevel.TX_POWER_HIGH
                     var newTxPowerLabel = "High"
 
                     when (progress) {
                         0 -> {
-                            newTxPowerLabel = "Ultra Low"
+                            newTxPowerLabel = "HIGH"
                         }
                         1 -> {
                             newTxPowerLabel = "Low"
@@ -186,7 +176,7 @@ class ContinuityActionModalsFragment: Fragment(), IAdvertisementServiceCallback 
                         3 -> {
                             newTxPowerLabel = "High"
                         } else -> {
-                        newTxPowerLevel = 3
+                        newTxPowerLevel = TxPowerLevel.TX_POWER_HIGH
                         newTxPowerLabel = "High"
                     }
                     }
@@ -269,7 +259,7 @@ class ContinuityActionModalsFragment: Fragment(), IAdvertisementServiceCallback 
 
     override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
         if(advertisementSet != null){
-            var message = "Advertising: ${advertisementSet.deviceName}"
+            var message = "Advertising: ${advertisementSet.title}"
             _viewModel!!.setStatusText(message)
 
             var logEntry = LogEntryModel()
