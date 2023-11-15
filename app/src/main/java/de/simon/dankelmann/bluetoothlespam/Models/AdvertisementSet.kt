@@ -17,8 +17,8 @@ class AdvertisementSet {
     var advertisingSetParameters:AdvertisingSetParametersModel = AdvertisingSetParametersModel()
     var advertiseData:AdvertiseDataModel = AdvertiseDataModel()
     var scanResponse:AdvertiseDataModel = AdvertiseDataModel()
-    //var periodicParameters:PeriodicAdvertisingParameters? = null
-    //var periodicData:AdvertiseDataModel = AdvertiseDataModel()
+    var periodicParameters:PeriodicAdvertisingParameters? = null
+    var periodicData:AdvertiseDataModel = AdvertiseDataModel()
 
     // Callbacks
     lateinit var advertisingSetCallback:AdvertisingSetCallback

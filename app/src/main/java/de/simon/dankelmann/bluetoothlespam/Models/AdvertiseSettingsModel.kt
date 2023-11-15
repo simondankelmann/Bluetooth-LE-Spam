@@ -44,7 +44,6 @@ class AdvertiseSettingsModel {
                 Log.e(_logTag, "Could not execute setTxPowerLevel: ${ex.message}")
             }
 
-
             return settings.build()
         } else {
             Log.d(_logTag, "AdvertiseSettingsModel could not be built because its invalid")
