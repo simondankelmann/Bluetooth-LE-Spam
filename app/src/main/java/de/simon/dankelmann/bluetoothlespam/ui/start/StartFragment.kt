@@ -15,20 +15,30 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
 import java.lang.Exception
+import kotlin.reflect.typeOf
 
 
 class StartFragment : Fragment() {
@@ -192,6 +202,151 @@ class StartFragment : Fragment() {
                 startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
+
+        // Fast Pairing Cardview
+        val startFragmentFastPairingCard: CardView = binding.startFragmentFastPairingCard
+        startFragmentFastPairingCard.setOnClickListener {
+            onFastPairingCardViewClicked()
+        }
+
+        // Continuity Device PopUps Cardview
+        val startFragmentDevicePopUpsCard: CardView = binding.startFragmentDevicePopUpsCard
+        startFragmentDevicePopUpsCard.setOnClickListener {
+            onDevicePopUpsCardViewClicked()
+        }
+
+        // Continuity ActionModals Cardview
+        val startFragmentActionModalsCard: CardView = binding.startFragmentActionModalsCard
+        startFragmentActionModalsCard.setOnClickListener {
+            onActionModalsCardViewClicked()
+        }
+
+        // Swift Pairing Cardview
+        val startFragmentSwiftPairingCard: CardView = binding.startFragmentSwiftPairingCard
+        startFragmentSwiftPairingCard.setOnClickListener {
+            onSwiftPairingCardViewClicked()
+        }
+
+        // Kitchen Sink Cardview
+        val startFragmentKitchenSinkCard: CardView = binding.startFragmentKitchenSinkCard
+        startFragmentKitchenSinkCard.setOnClickListener {
+            onKitchenSinkCardViewClicked()
+        }
+    }
+
+    fun onFastPairingCardViewClicked(){
+        var titlePrefix = "Fast Pairing"
+        var advertisementSetGenerator:IAdvertisementSetGenerator = GoogleFastPairAdvertisementSetGenerator()
+
+        // Initialize the Collection
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "$titlePrefix Collection"
+
+        // Initialize the List
+        var advertisementSetList = AdvertisementSetList()
+        advertisementSetList.title = "$titlePrefix List"
+        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+        // Add List to the Collection
+        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+        // Pass Collection to Advertisement Fragment
+        navigateToAdvertisementFragment(advertisementSetCollection)
+    }
+    fun onDevicePopUpsCardViewClicked(){
+        var titlePrefix = "iOs Device Popups"
+        var advertisementSetGenerator:IAdvertisementSetGenerator = ContinuityDevicePopUpAdvertisementSetGenerator()
+
+        // Initialize the Collection
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "$titlePrefix Collection"
+
+        // Initialize the List
+        var advertisementSetList = AdvertisementSetList()
+        advertisementSetList.title = "$titlePrefix List"
+        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+        // Add List to the Collection
+        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+        // Pass Collection to Advertisement Fragment
+        navigateToAdvertisementFragment(advertisementSetCollection)
+    }
+    fun onActionModalsCardViewClicked(){
+        var titlePrefix = "iOs Action Modals"
+        var advertisementSetGenerator:IAdvertisementSetGenerator = ContinuityActionModalAdvertisementSetGenerator()
+
+        // Initialize the Collection
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "$titlePrefix Collection"
+
+        // Initialize the List
+        var advertisementSetList = AdvertisementSetList()
+        advertisementSetList.title = "$titlePrefix List"
+        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+        // Add List to the Collection
+        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+        // Pass Collection to Advertisement Fragment
+        navigateToAdvertisementFragment(advertisementSetCollection)
+    }
+
+    fun onSwiftPairingCardViewClicked(){
+        var titlePrefix = "Swift Pairing"
+        var advertisementSetGenerator:IAdvertisementSetGenerator = SwiftPairAdvertisementSetGenerator()
+
+        // Initialize the Collection
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "$titlePrefix Collection"
+
+        // Initialize the List
+        var advertisementSetList = AdvertisementSetList()
+        advertisementSetList.title = "$titlePrefix List"
+        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+        // Add List to the Collection
+        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+        // Pass Collection to Advertisement Fragment
+        navigateToAdvertisementFragment(advertisementSetCollection)
+    }
+
+    fun onKitchenSinkCardViewClicked(){
+        var titlePrefix = "Kitchen Sink"
+        // Initialize the Collection
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "$titlePrefix Collection"
+
+        val generators:List<IAdvertisementSetGenerator> = listOf(GoogleFastPairAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
+        generators.forEach{ advertisementSetGenerator ->
+            // Initialize the List
+
+            val listName = when (advertisementSetGenerator::class) {
+                GoogleFastPairAdvertisementSetGenerator::class -> "Fast Pairing"
+                ContinuityDevicePopUpAdvertisementSetGenerator::class -> "iOs Device Popups"
+                ContinuityActionModalAdvertisementSetGenerator::class -> "iOs Action Modals"
+                SwiftPairAdvertisementSetGenerator::class -> "Swift Pairing"
+                else -> {"Unknown"}
+            }
+            
+            var advertisementSetList = AdvertisementSetList()
+            advertisementSetList.title = "$listName List"
+            advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+            // Add List to the Collection
+            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+        }
+        
+        // Pass Collection to Advertisement Fragment
+        navigateToAdvertisementFragment(advertisementSetCollection)
+    }
+
+
+    fun navigateToAdvertisementFragment(advertisementSetCollection: AdvertisementSetCollection){
+        val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
+        val navController = AppContext.getActivity().findNavController(R.id.nav_host_fragment_content_main)
+        navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
     }
 
     fun addMissingRequirement(missingRequirement:String){

@@ -7,6 +7,7 @@ import android.bluetooth.le.AdvertisingSetCallback
 import android.bluetooth.le.AdvertisingSetParameters
 import android.bluetooth.le.PeriodicAdvertisingParameters
 import android.util.Log
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 class AdvertisementSet {
     private val _logTag = "AdvertisementSet"
@@ -25,6 +26,7 @@ class AdvertisementSet {
 
     // Custom Data
     var deviceName = ""
+    var advertisementTarget:AdvertisementTarget = AdvertisementTarget.Undefined
 
     fun validate():Boolean{
         //@todo: implement checks here

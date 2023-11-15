@@ -4,7 +4,7 @@
     >
     <item
         android:visible="true"
-        android:id="@+id/action_settings"
+        android:id="@+id/nav_preferences"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"

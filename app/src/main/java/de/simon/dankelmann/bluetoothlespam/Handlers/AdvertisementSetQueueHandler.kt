@@ -8,13 +8,15 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 
-class AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
+class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
 
     // private
     private var _logTag = "AdvertisementSetQueuHandler"
     private var _advertisementService:IAdvertisementService? = null
-    private var _advertisementSetCollections:MutableList<MutableList<AdvertisementSet>> = mutableListOf()
+    private var _advertisementSetCollection:AdvertisementSetCollection = AdvertisementSetCollection()
     private var _interval:Long = 1000
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
     private var _active = false
@@ -37,21 +39,23 @@ class AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
         }
     }
 
+    fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection){
+        _advertisementSetCollection = advertisementSetCollection
+    }
+
     // Add / Remove AdvertisementSetCollections
     fun clearAdvertisementSetCollection(){
-        _advertisementSetCollections.clear()
+        _advertisementSetCollection.advertisementSetLists.clear()
     }
-    fun addAdvertisementSetCollection(advertisementSetCollection: List<AdvertisementSet>){
-        var mutableAdvertisementSetCollection:MutableList<AdvertisementSet> = advertisementSetCollection.toMutableList()
-        if(!_advertisementSetCollections.contains(mutableAdvertisementSetCollection)){
-            _advertisementSetCollections.add(mutableAdvertisementSetCollection)
+    fun addAdvertisementSetList(advertisementSetList: AdvertisementSetList){
+        if(!_advertisementSetCollection.advertisementSetLists.contains(advertisementSetList)){
+            _advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
         }
     }
 
-    fun removeAdvertisementSetCollection(advertisementSetCollection: List<AdvertisementSet>){
-        var mutableAdvertisementSetCollection:MutableList<AdvertisementSet> = advertisementSetCollection.toMutableList()
-        if(_advertisementSetCollections.contains(mutableAdvertisementSetCollection)){
-            _advertisementSetCollections.remove(mutableAdvertisementSetCollection)
+    fun removeAdvertisementSetList(advertisementSetList: AdvertisementSetList){
+        if(_advertisementSetCollection.advertisementSetLists.contains(advertisementSetList)){
+            _advertisementSetCollection.advertisementSetLists.remove(advertisementSetList)
         }
     }
 
@@ -84,9 +88,9 @@ class AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     }
 
     private fun handleNextAdvertisementSet(){
-        if(_active && _advertisementSetCollections.isNotEmpty()){
-            val nextAdvertisementSetCollection = _advertisementSetCollections.random()
-            val nextAdvertisementSet = nextAdvertisementSetCollection.random()
+        if(_active && _advertisementSetCollection.advertisementSetLists.isNotEmpty()){
+            val nextAdvertisementSetList = _advertisementSetCollection.advertisementSetLists.random()
+            val nextAdvertisementSet = nextAdvertisementSetList.advertisementSets.random()
 
             if(_advertisementService != null){
                 _advertisementService!!.startAdvertisement(nextAdvertisementSet)

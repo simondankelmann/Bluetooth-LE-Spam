@@ -29,6 +29,7 @@ import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
@@ -61,18 +62,26 @@ class ContinuityActionModalsFragment: Fragment(), IAdvertisementServiceCallback 
 
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        _advertisementSetQueueHandler.addAdvertisementSetCollection(_advertisementSets)
+        _advertisementSetQueueHandler.addAdvertisementSetList(getAdvertisementSetList())
+
 
         setupUi()
 
         return root
     }
 
+    fun getAdvertisementSetList():AdvertisementSetList{
+        var advertisementSetList = AdvertisementSetList()
+        advertisementSetList.title = "iOs Action Modals"
+        advertisementSetList.advertisementSets = _advertisementSets.toMutableList()
+        return advertisementSetList
+    }
+
     override fun onResume() {
         super.onResume()
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        _advertisementSetQueueHandler.addAdvertisementSetCollection(_advertisementSets)
+        _advertisementSetQueueHandler.addAdvertisementSetList(getAdvertisementSetList())
     }
 
     override fun onPause() {

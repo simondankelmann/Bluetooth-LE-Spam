@@ -20,6 +20,7 @@ import com.airbnb.lottie.LottieDrawable
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
@@ -29,6 +30,8 @@ import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
@@ -68,6 +71,35 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         return returnList.toList()
     }
 
+    fun getAdvertisementSetCollection(): AdvertisementSetCollection {
+
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "Kitchen Sink"
+
+        val generators:List<IAdvertisementSetGenerator> = listOf(GoogleFastPairAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
+        generators.forEach{ advertisementSetGenerator ->
+            // Initialize the List
+
+            val listName = when (advertisementSetGenerator::class) {
+                GoogleFastPairAdvertisementSetGenerator::class -> "Fast Pairing"
+                ContinuityDevicePopUpAdvertisementSetGenerator::class -> "iOs Device Popups"
+                ContinuityActionModalAdvertisementSetGenerator::class -> "iOs Action Modals"
+                SwiftPairAdvertisementSetGenerator::class -> "Swift Pairing"
+                else -> {"Unknown"}
+            }
+
+            var advertisementSetList = AdvertisementSetList()
+            advertisementSetList.title = "$listName List"
+            advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+            // Add List to the Collection
+            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+        }
+
+        return advertisementSetCollection
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,9 +112,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        getAllAdvertisementSetCollections().map {
-            _advertisementSetQueueHandler.addAdvertisementSetCollection(it)
-        }
+       _advertisementSetQueueHandler.setAdvertisementSetCollection(getAdvertisementSetCollection())
 
         setupUi()
 
@@ -93,9 +123,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         super.onResume()
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        getAllAdvertisementSetCollections().map {
-            _advertisementSetQueueHandler.addAdvertisementSetCollection(it)
-        }
+        _advertisementSetQueueHandler.setAdvertisementSetCollection(getAdvertisementSetCollection())
     }
 
     override fun onPause() {

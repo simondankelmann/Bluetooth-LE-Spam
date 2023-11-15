@@ -6,6 +6,7 @@ import android.bluetooth.le.AdvertisingSetParameters
 import android.os.ParcelUuid
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GoogleFastPairAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.ServiceDataModel
@@ -516,6 +517,7 @@ class GoogleFastPairAdvertisementSetGenerator:IAdvertisementSetGenerator{
         _genuineDeviceIds.map {
 
             var advertisementSet:AdvertisementSet = AdvertisementSet()
+            advertisementSet.advertisementTarget = AdvertisementTarget.Android
 
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY

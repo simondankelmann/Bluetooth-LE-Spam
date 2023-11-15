@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs")
 }
 
 val app_name = "Bluetooth LE Spam"
@@ -46,7 +47,6 @@ android {
 }
 
 dependencies {
-
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
