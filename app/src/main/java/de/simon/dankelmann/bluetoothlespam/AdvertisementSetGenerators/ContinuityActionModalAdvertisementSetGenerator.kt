@@ -7,6 +7,7 @@ import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Enums.PrimaryPhy
 import de.simon.dankelmann.bluetoothlespam.Enums.SecondaryPhy
@@ -45,6 +46,7 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
 
             var advertisementSet: AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_IOS
+            advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS
 
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY

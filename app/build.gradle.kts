@@ -65,6 +65,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+
     val room_version = "2.6.0"
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")

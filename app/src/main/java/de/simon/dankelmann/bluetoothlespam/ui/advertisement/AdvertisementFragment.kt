@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +36,7 @@ class AdvertisementFragment : Fragment() {
         val root: View = _binding!!.root
 
         if(arguments != null){
+
             var advertisementSetCollectionArgumentKey = "advertisementSetCollection"
 
             var advertismentSetCollection = AdvertisementSetCollection()
@@ -50,6 +52,19 @@ class AdvertisementFragment : Fragment() {
                     advertismentSetCollection = collectionFromBundle as AdvertisementSetCollection
                 }
             }
+
+            var statusText = "Advertisement Set Collection: ${advertismentSetCollection.title}\n"
+            statusText += "Lists: ${advertismentSetCollection.advertisementSetLists.count()}\n"
+            advertismentSetCollection.advertisementSetLists.forEach{ advertisementSetList ->
+                statusText += "- List: ${advertisementSetList.title}\n"
+                statusText += "- Sets: ${advertisementSetList.advertisementSets.count()}\n"
+
+                advertisementSetList.advertisementSets.forEach{ advertisementSet ->
+                    statusText += "- Set: ${advertisementSet.title}\n"
+                }
+            }
+
+            viewModel._statusText.postValue(statusText)
 
             Log.d(_logTag," ${advertismentSetCollection.advertisementSetLists.count()}")
             advertismentSetCollection.advertisementSetLists.forEach {
@@ -69,6 +84,12 @@ class AdvertisementFragment : Fragment() {
     }
 
     fun setupUi(){
+
+        // Status
+        val textViewStatus: TextView = _binding!!.advertisementFragmentTextViewStatus
+        _viewModel!!._statusText.observe(viewLifecycleOwner) {
+            textViewStatus.text = "$it"
+        }
 
     }
 }

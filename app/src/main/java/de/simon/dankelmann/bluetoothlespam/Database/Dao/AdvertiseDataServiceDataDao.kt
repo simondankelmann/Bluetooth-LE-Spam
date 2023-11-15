@@ -12,6 +12,9 @@ interface AdvertiseDataServiceDataDao {
     @Query("SELECT * FROM advertisedataservicedataentity WHERE id = :id")
     fun findById(id: Int): AdvertiseDataServiceDataEntity
 
+    @Query("SELECT * FROM advertisedataservicedataentity WHERE advertiseDataId = :id")
+    fun findByAdvertiseDataId(id: Int): List<AdvertiseDataServiceDataEntity>
+
     @Query("SELECT * FROM advertisedataservicedataentity")
     fun getAll(): List<AdvertiseDataServiceDataEntity>
 

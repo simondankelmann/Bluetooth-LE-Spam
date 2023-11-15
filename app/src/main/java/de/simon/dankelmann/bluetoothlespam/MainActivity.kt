@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -32,8 +33,14 @@ import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,12 +57,68 @@ class MainActivity : AppCompatActivity() {
         AppContext.setContext(this)
         AppContext.setActivity(this)
 
-        var db = AppDatabase.getInstance()
-        /*
-        Thread {
-            AppDatabase.seedingThread.run()
-        }.start()*/
 
+        /* DATABASE DEBUGGING *
+        var db = AppDatabase.getInstance()
+        var seedingThread = Thread {
+            AppDatabase.seedingThread.run()
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            //seedingThread.start()
+            var _logTagDb = "DbDebug"
+
+            var advertisementSetDao = AppDatabase.getInstance().advertisementSetDao()
+            var allSets = advertisementSetDao.getAll()
+            // Debug Output
+            Log.d(_logTagDb, "Number of Advertisement Sets: ${allSets.count()}")
+
+            if(allSets.count() > 0){
+                var firstSet = allSets.first()
+
+                var convertedFromEntity = DatabaseHelpers.getAdvertisementSetFromEntity(firstSet)
+
+
+                Log.d(_logTagDb, "-------------- ADVERTISEMENT SET --------------")
+                Log.d(_logTagDb, "Device Name: ${convertedFromEntity.title} - ${convertedFromEntity.target} - ${convertedFromEntity.type}")
+                Log.d(_logTagDb, "Id: ${convertedFromEntity.id}")
+                Log.d(_logTagDb, "Duration: ${convertedFromEntity.duration}")
+                Log.d(_logTagDb, "Max Extended Advertising Events: ${convertedFromEntity.maxExtendedAdvertisingEvents}")
+                Log.d(_logTagDb, "-------------- ADVERTISE SETTINGS --------------")
+                Log.d(_logTagDb, "Id: ${convertedFromEntity.advertiseSettings.id}")
+                Log.d(_logTagDb, "TxPower: ${convertedFromEntity.advertiseSettings.txPowerLevel}")
+                Log.d(_logTagDb, "Mode: ${convertedFromEntity.advertiseSettings.advertiseMode}")
+                Log.d(_logTagDb, "Timeout: ${convertedFromEntity.advertiseSettings.timeout}")
+                Log.d(_logTagDb, "Connectable: ${convertedFromEntity.advertiseSettings.connectable}")
+                Log.d(_logTagDb, "-------------- ADVERTISINGSET PARAMETERS --------------")
+                Log.d(_logTagDb, "Id: ${convertedFromEntity.advertisingSetParameters.id}")
+                Log.d(_logTagDb, "Legacy: ${convertedFromEntity.advertisingSetParameters.legacyMode}")
+                Log.d(_logTagDb, "Interval: ${convertedFromEntity.advertisingSetParameters.interval}")
+                Log.d(_logTagDb, "TxPower: ${convertedFromEntity.advertisingSetParameters.txPowerLevel}")
+                Log.d(_logTagDb, "Include TX: ${convertedFromEntity.advertisingSetParameters.includeTxPowerLevel}")
+                Log.d(_logTagDb, "Primary Phy: ${convertedFromEntity.advertisingSetParameters.primaryPhy}")
+                Log.d(_logTagDb, "Secondary Phy: ${convertedFromEntity.advertisingSetParameters.secondaryPhy}")
+                Log.d(_logTagDb, "Scanable: ${convertedFromEntity.advertisingSetParameters.scanable}")
+                Log.d(_logTagDb, "Connectable: ${convertedFromEntity.advertisingSetParameters.connectable}")
+                Log.d(_logTagDb, "Anonymous: ${convertedFromEntity.advertisingSetParameters.anonymous}")
+                Log.d(_logTagDb, "-------------- ADVERTISINGDATA --------------")
+                Log.d(_logTagDb, "Id: ${convertedFromEntity.advertiseData.id}")
+                Log.d(_logTagDb, "Include DeviceName: ${convertedFromEntity.advertiseData.includeDeviceName}")
+                Log.d(_logTagDb, "Include TxPower: ${convertedFromEntity.advertiseData.includeTxPower}")
+
+                convertedFromEntity.advertiseData.services.forEach{service ->
+                    Log.d(_logTagDb, "Service: ${service.id} - ${service.serviceUuid}")
+                    if(service.serviceData != null){
+                        Log.d(_logTagDb, "ServiceData: ${service.serviceData?.toHexString()}")
+                    }
+                }
+
+                convertedFromEntity.advertiseData.manufacturerData.forEach{ manufacturerSpecificData ->
+                    Log.d(_logTagDb, "Manufacturer Specific Data: ${manufacturerSpecificData.id} - ${manufacturerSpecificData.manufacturerSpecificData.toHexString()}")
+                }
+            }
+        }
+        * END DATABASE DEBUGGING */
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

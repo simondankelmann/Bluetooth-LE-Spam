@@ -11,8 +11,12 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisingSetParam
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseData
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseSettings
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisingSetParameters
 import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificData
+import de.simon.dankelmann.bluetoothlespam.Models.PeriodicAdvertisingParameters
+import de.simon.dankelmann.bluetoothlespam.Models.ServiceData
 import java.util.UUID
 
 class DatabaseHelpers {
@@ -20,6 +24,7 @@ class DatabaseHelpers {
         private const val _logTag = "DatabaseHelpers"
 
         fun saveAdvertisementSet(advertisementSet: AdvertisementSet):Int{
+
             var database = AppDatabase.getInstance()
 
             var advertisementSetEntity:AdvertisementSetEntity = AdvertisementSetEntity(
@@ -90,9 +95,9 @@ class DatabaseHelpers {
             }
 
             var advertisementSetId = database.advertisementSetDao().insertItem(advertisementSetEntity).toInt()
+
             return advertisementSetId
         }
-
         fun saveAdvertiseData(advertiseData: AdvertiseData, database: AppDatabase): Int{
             var advertiseDataEntity = AdvertiseDataEntity(
                 advertiseData.id,
@@ -127,6 +132,122 @@ class DatabaseHelpers {
 
             // RETURN ID
             return advertiseDataId
+        }
+
+        fun getAdvertisementSetFromEntity(advertisementSetEntity: AdvertisementSetEntity):AdvertisementSet{
+            var advertisementSet = AdvertisementSet()
+
+            // Data
+            advertisementSet.id = advertisementSetEntity.id
+            advertisementSet.title = advertisementSetEntity.title
+            advertisementSet.target = advertisementSetEntity.target
+            advertisementSet.type = advertisementSetEntity.type
+            advertisementSet.duration = advertisementSetEntity.duration
+            advertisementSet.maxExtendedAdvertisingEvents = advertisementSetEntity.maxExtendedAdvertisingEvents
+
+            var database = AppDatabase.getInstance()
+
+            // Advertise Settings
+            var advertiseSettingsEntity = database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId)
+            if(advertiseSettingsEntity != null){
+                var advertiseSettings = AdvertiseSettings()
+                advertiseSettings.id = advertisementSetEntity.id
+
+                advertiseSettings.advertiseMode = advertiseSettingsEntity.advertiseMode
+                advertiseSettings.txPowerLevel = advertiseSettingsEntity.txPowerLevel
+                advertiseSettings.connectable = advertiseSettingsEntity.connectable
+                advertiseSettings.timeout = advertiseSettingsEntity.timeout
+
+                advertisementSet.advertiseSettings = advertiseSettings
+            }
+
+            // AdvertisingSetParameters
+            var advertisingSetParametersEntity = database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)
+            if(advertisingSetParametersEntity != null){
+                var advertisingSetParameters = AdvertisingSetParameters()
+                advertisingSetParameters.id = advertisingSetParametersEntity.id
+
+                advertisingSetParameters.legacyMode = advertisingSetParametersEntity.legacyMode
+                advertisingSetParameters.interval = advertisingSetParametersEntity.interval
+                advertisingSetParameters.txPowerLevel = advertisingSetParametersEntity.txPowerLevel
+                advertisingSetParameters.includeTxPowerLevel = advertisingSetParametersEntity.includeTxPowerLevel
+                advertisingSetParameters.primaryPhy = advertisingSetParametersEntity.primaryPhy
+                advertisingSetParameters.secondaryPhy = advertisingSetParametersEntity.secondaryPhy
+                advertisingSetParameters.scanable = advertisingSetParametersEntity.scanable
+                advertisingSetParameters.connectable = advertisingSetParametersEntity.connectable
+                advertisingSetParameters.anonymous = advertisingSetParametersEntity.anonymous
+
+                advertisementSet.advertisingSetParameters = advertisingSetParameters
+            }
+
+            if(advertisementSetEntity.advertiseDataId != null){
+                var advertiseDataEntity = database.advertiseDataDao().findById(advertisementSetEntity.advertiseDataId)
+                if(advertiseDataEntity != null){
+                    advertisementSet.advertiseData = getAdvertiseDataFromEntity(advertiseDataEntity, database)
+                }
+            }
+
+            if(advertisementSetEntity.scanResponseId != null){
+                var scanResponseEntity = database.advertiseDataDao().findById(advertisementSetEntity.scanResponseId!!)
+                if(scanResponseEntity != null){
+                    advertisementSet.scanResponse = getAdvertiseDataFromEntity(scanResponseEntity, database)
+                }
+            }
+
+            if(advertisementSetEntity.periodicAdvertiseDataId != null){
+                var periodicAdvertiseDataEntity = database.advertiseDataDao().findById(advertisementSetEntity.periodicAdvertiseDataId!!)
+                if(periodicAdvertiseDataEntity != null){
+                    advertisementSet.periodicAdvertiseData = getAdvertiseDataFromEntity(periodicAdvertiseDataEntity, database)
+                }
+            }
+
+            if(advertisementSetEntity.periodicAdvertisingParametersId != null){
+                var periodicAdvertisingParametersEntity = database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)
+                if(periodicAdvertisingParametersEntity != null){
+                    var periodicAdvertisingParameters = PeriodicAdvertisingParameters()
+
+                    periodicAdvertisingParameters.id = periodicAdvertisingParametersEntity.id
+                    periodicAdvertisingParameters.includeTxPowerLevel = periodicAdvertisingParametersEntity.includeTxPowerLevel
+                    periodicAdvertisingParameters.interval = periodicAdvertisingParametersEntity.interval
+
+                    advertisementSet.periodicAdvertisingParameters = periodicAdvertisingParameters
+                }
+            }
+
+            return advertisementSet
+        }
+
+        fun getAdvertiseDataFromEntity(advertiseDataEntity: AdvertiseDataEntity, database: AppDatabase):AdvertiseData{
+            var advertiseData = AdvertiseData()
+
+            advertiseData.id = advertiseDataEntity.id
+            advertiseData.includeDeviceName = advertiseDataEntity.includeDeviceName
+            advertiseData.includeTxPower = advertiseDataEntity.includeTxPower
+
+            var manufacturerSpecificDataEntities = database.advertiseDataManufacturerSpecificDataDao().findByAdvertiseDataId(advertiseDataEntity.id)
+            manufacturerSpecificDataEntities.forEach{ manufacturerSpecificDataEntity ->
+                var manufacturerSpecificData = ManufacturerSpecificData()
+                manufacturerSpecificData.id = manufacturerSpecificDataEntity.id
+                manufacturerSpecificData.manufacturerId = manufacturerSpecificDataEntity.manufacturerId
+                manufacturerSpecificData.manufacturerSpecificData = StringHelpers.decodeHex(manufacturerSpecificDataEntity.manufacturerSpecificData)
+
+                advertiseData.manufacturerData.add(manufacturerSpecificData)
+            }
+
+            var advertiseDataServiceDataEntities = database.advertiseDataServiceDataDao().findByAdvertiseDataId(advertiseDataEntity.id)
+            advertiseDataServiceDataEntities.forEach{ advertiseDataServiceDataEntity ->
+                var serviceData = ServiceData()
+
+                serviceData.id = advertiseDataServiceDataEntity.id
+                serviceData.serviceUuid = ParcelUuid.fromString(advertiseDataServiceDataEntity.serviceUuid.toString())
+                if(advertiseDataServiceDataEntity.serviceData != null){
+                    serviceData.serviceData = StringHelpers.decodeHex(advertiseDataServiceDataEntity.serviceData!!)
+                }
+
+                advertiseData.services.add(serviceData)
+            }
+
+            return advertiseData
         }
     }
 }

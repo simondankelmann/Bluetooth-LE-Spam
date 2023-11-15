@@ -20,7 +20,7 @@ data class AdvertisementSetEntity(
     // Related Data
     @ColumnInfo(name = "advertiseSettingsId") var advertiseSettingsId: Int,
     @ColumnInfo(name = "advertisingSetParametersId") var advertisingSetParametersId: Int,
-    @ColumnInfo(name = "advertiseDataId") var advertiseDataId: Int?,
+    @ColumnInfo(name = "advertiseDataId") var advertiseDataId: Int,
     @ColumnInfo(name = "scanResponseId") var scanResponseId: Int?,
     @ColumnInfo(name = "periodicAdvertisingParametersId") var periodicAdvertisingParametersId: Int?,
     @ColumnInfo(name = "periodicAdvertiseDataId") var periodicAdvertiseDataId: Int?,

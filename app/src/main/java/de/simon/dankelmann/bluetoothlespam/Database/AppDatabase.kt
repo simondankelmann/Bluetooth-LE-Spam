@@ -5,6 +5,10 @@ import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.AdvertiseDataDao
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.AdvertiseDataManufacturerSpecificDataDao
@@ -28,6 +32,7 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisingSetParam
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociatonCollectionListEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociationListSetEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 
 @androidx.room.Database(
     entities = [AdvertiseDataEntity::class,
@@ -84,7 +89,9 @@ abstract class AppDatabase : RoomDatabase() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
                     Thread {
-                        seedingThread.run()
+                        synchronized(this) {
+                            seedingThread.run()
+                        }
                     }.start()
                 }
             }
@@ -93,7 +100,21 @@ abstract class AppDatabase : RoomDatabase() {
         val seedingThread = Runnable {
             Log.d(_logTag, "Starting Database Seeding")
 
-           // var yourDao = getInstance()!!.yourDao()
+            val advertisementSetGenerators = listOf(
+                GoogleFastPairAdvertisementSetGenerator(),
+                ContinuityDevicePopUpAdvertisementSetGenerator(),
+                ContinuityActionModalAdvertisementSetGenerator(),
+                SwiftPairAdvertisementSetGenerator()
+            )
+
+            advertisementSetGenerators.forEach{ generator ->
+                val advertisementSets = generator.getAdvertisementSets()
+                advertisementSets.forEach{ advertisementSet ->
+                    DatabaseHelpers.saveAdvertisementSet(advertisementSet)
+                }
+            }
+
+           Log.d(_logTag, "Database Seeding finished")
         }
     }
 }

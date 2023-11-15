@@ -27,9 +27,13 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertise
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
@@ -37,6 +41,9 @@ import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import kotlin.reflect.typeOf
 
@@ -235,23 +242,34 @@ class StartFragment : Fragment() {
     }
 
     fun onFastPairingCardViewClicked(){
-        var titlePrefix = "Fast Pairing"
-        var advertisementSetGenerator:IAdvertisementSetGenerator = GoogleFastPairAdvertisementSetGenerator()
+        CoroutineScope(Dispatchers.IO).launch {
+            var titlePrefix = "Fast Pairing"
 
-        // Initialize the Collection
-        var advertisementSetCollection = AdvertisementSetCollection()
-        advertisementSetCollection.title = "$titlePrefix Collection"
+            // Initialize the Collection
+            var advertisementSetCollection = AdvertisementSetCollection()
 
-        // Initialize the List
-        var advertisementSetList = AdvertisementSetList()
-        advertisementSetList.title = "$titlePrefix List"
-        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+            advertisementSetCollection.title = "$titlePrefix Collection"
 
-        // Add List to the Collection
-        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+            // Initialize the List
+            var advertisementSetList = AdvertisementSetList()
+            advertisementSetList.title = "$titlePrefix List"
 
-        // Pass Collection to Advertisement Fragment
-        navigateToAdvertisementFragment(advertisementSetCollection)
+            var advertisementSets = mutableListOf<AdvertisementSet>()
+            var entities = AppDatabase.getInstance().advertisementSetDao().findByTarget(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID)
+            entities.forEach { entity ->
+                advertisementSets.add(DatabaseHelpers.getAdvertisementSetFromEntity(entity))
+            }
+
+            advertisementSetList.advertisementSets = advertisementSets
+
+            // Add List to the Collection
+            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+            AppContext.getActivity().runOnUiThread {
+                // Pass Collection to Advertisement Fragment
+                navigateToAdvertisementFragment(advertisementSetCollection)
+            }
+        }
     }
     fun onDevicePopUpsCardViewClicked(){
         var titlePrefix = "iOs Device Popups"

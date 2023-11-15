@@ -18,8 +18,8 @@ class AdvertisingSetParameters {
     var interval = AdvertisingSetParameters.INTERVAL_MIN
     var txPowerLevel = TxPowerLevel.TX_POWER_HIGH
     var includeTxPowerLevel = false
-    var primaryPhy = PrimaryPhy.PHY_LE_1M
-    var secondaryPhy = SecondaryPhy.PHY_LE_1M
+    var primaryPhy: PrimaryPhy? = null
+    var secondaryPhy: SecondaryPhy? = null
     var scanable = false
     var connectable = false
     var anonymous = false
@@ -54,6 +54,7 @@ class AdvertisingSetParameters {
 
             params.setIncludeTxPower(includeTxPowerLevel)
 
+
             when(primaryPhy){
                 PrimaryPhy.PHY_LE_1M -> {
                     params.setPrimaryPhy(BluetoothDevice.PHY_LE_1M)
@@ -61,7 +62,12 @@ class AdvertisingSetParameters {
                 PrimaryPhy.PHY_LE_CODED -> {
                     params.setPrimaryPhy(BluetoothDevice.PHY_LE_CODED)
                 }
+                else -> {
+                    // Use System Default
+                }
             }
+
+
 
             when(secondaryPhy){
                 SecondaryPhy.PHY_LE_1M -> {
@@ -72,6 +78,9 @@ class AdvertisingSetParameters {
                 }
                 SecondaryPhy.PHY_LE_2M -> {
                     params.setSecondaryPhy(BluetoothDevice.PHY_LE_2M)
+                }
+                else -> {
+                    // Use System Default
                 }
             }
 
