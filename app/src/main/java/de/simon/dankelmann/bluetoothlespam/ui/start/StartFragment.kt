@@ -2,10 +2,13 @@ package de.simon.dankelmann.bluetoothlespam.ui.start
 
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.opengl.Visibility
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +31,7 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairA
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
@@ -45,6 +49,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.typeOf
 
 
@@ -93,6 +99,7 @@ class StartFragment : Fragment() {
         checkRequiredPermissions(true)
         checkBluetoothAdapter(true)
         checkAdvertisementService()
+        checkDatabase()
 
 
         return root
@@ -114,6 +121,21 @@ class StartFragment : Fragment() {
     }
 
     fun setupUi(){
+
+        // Loading Animation
+        val loadingSpinnerLayout: View = binding.startFragmentLoadingSpinnerLayout
+        _viewModel!!.isLoading.observe(viewLifecycleOwner) {
+            loadingSpinnerLayout.visibility = when(it){
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
+        }
+
+        // Loading Message
+        val textViewLoadingMessage: TextView = binding.startFragmentLoadingSpinnerMessage
+        _viewModel!!.loadingMessage.observe(viewLifecycleOwner) {
+            textViewLoadingMessage.text = it
+        }
 
         // App Version
         val textViewAppVersion: TextView = binding.startFragmentTextViewAppVersion
@@ -210,6 +232,22 @@ class StartFragment : Fragment() {
             }
         }
 
+        // Database CardView
+        val startFragmentDatabaseCardview: CardView = binding.startFragmentDatabaseCardview
+        startFragmentDatabaseCardview.setOnClickListener {
+            checkDatabase()
+        }
+
+        // Service CardView Content
+        val startFragmentDatabaseCardViewContentWrapper: LinearLayout = binding.startFragmentDatabaseCardViewContentWrapper
+        _viewModel!!.databaseIsReady.observe(viewLifecycleOwner) {
+            if(it == true){
+                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+            } else {
+                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+            }
+        }
+
         // Fast Pairing Cardview
         val startFragmentFastPairingCard: CardView = binding.startFragmentFastPairingCard
         startFragmentFastPairingCard.setOnClickListener {
@@ -241,130 +279,78 @@ class StartFragment : Fragment() {
         }
     }
 
-    fun onFastPairingCardViewClicked(){
+    fun navigateToAdvertisementFragmentWithType(advertisementSetTypes: List<AdvertisementSetType>, advertisementSetCollectionTitle:String){
         CoroutineScope(Dispatchers.IO).launch {
-            var titlePrefix = "Fast Pairing"
-
+            showLoadingSpinner("Loading Advertisement Sets from Database")
             // Initialize the Collection
             var advertisementSetCollection = AdvertisementSetCollection()
+            advertisementSetCollection.title = advertisementSetCollectionTitle
 
-            advertisementSetCollection.title = "$titlePrefix Collection"
+            advertisementSetTypes.forEach { advertisementSetType ->
+                var titlePrefix = when(advertisementSetType){
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOS Device PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOS Action Modals"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
+                }
 
-            // Initialize the List
-            var advertisementSetList = AdvertisementSetList()
-            advertisementSetList.title = "$titlePrefix List"
+                // Initialize the List
+                var advertisementSetList = AdvertisementSetList()
+                advertisementSetList.title = "$titlePrefix List"
 
-            var advertisementSets = mutableListOf<AdvertisementSet>()
-            var entities = AppDatabase.getInstance().advertisementSetDao().findByTarget(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID)
-            entities.forEach { entity ->
-                advertisementSets.add(DatabaseHelpers.getAdvertisementSetFromEntity(entity))
+                var advertisementSets = DatabaseHelpers.getAllAdvertisementSetsForType(advertisementSetType)
+                advertisementSetList.advertisementSets = advertisementSets.toMutableList()
+
+                // Add List to the Collection
+                advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
+                hideLoadingSpinner()
             }
 
-            advertisementSetList.advertisementSets = advertisementSets
-
-            // Add List to the Collection
-            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
-
-            AppContext.getActivity().runOnUiThread {
-                // Pass Collection to Advertisement Fragment
-                navigateToAdvertisementFragment(advertisementSetCollection)
-            }
+            // Pass Collection to Advertisement Fragment
+            navigateToAdvertisementFragment(advertisementSetCollection)
         }
     }
+
+    fun showLoadingSpinner(message:String){
+        _viewModel!!.loadingMessage.postValue(message)
+        _viewModel!!.isLoading.postValue(true)
+    }
+
+    fun hideLoadingSpinner(){
+        _viewModel!!.isLoading.postValue(false)
+    }
+
+    fun onFastPairingCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING), "Fast Pairing")
+    }
     fun onDevicePopUpsCardViewClicked(){
-        var titlePrefix = "iOs Device Popups"
-        var advertisementSetGenerator:IAdvertisementSetGenerator = ContinuityDevicePopUpAdvertisementSetGenerator()
-
-        // Initialize the Collection
-        var advertisementSetCollection = AdvertisementSetCollection()
-        advertisementSetCollection.title = "$titlePrefix Collection"
-
-        // Initialize the List
-        var advertisementSetList = AdvertisementSetList()
-        advertisementSetList.title = "$titlePrefix List"
-        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
-
-        // Add List to the Collection
-        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
-
-        // Pass Collection to Advertisement Fragment
-        navigateToAdvertisementFragment(advertisementSetCollection)
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS), "iOs Device PopUps")
     }
     fun onActionModalsCardViewClicked(){
-        var titlePrefix = "iOs Action Modals"
-        var advertisementSetGenerator:IAdvertisementSetGenerator = ContinuityActionModalAdvertisementSetGenerator()
-
-        // Initialize the Collection
-        var advertisementSetCollection = AdvertisementSetCollection()
-        advertisementSetCollection.title = "$titlePrefix Collection"
-
-        // Initialize the List
-        var advertisementSetList = AdvertisementSetList()
-        advertisementSetList.title = "$titlePrefix List"
-        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
-
-        // Add List to the Collection
-        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
-
-        // Pass Collection to Advertisement Fragment
-        navigateToAdvertisementFragment(advertisementSetCollection)
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS), "iOs Action Modals")
     }
 
     fun onSwiftPairingCardViewClicked(){
-        var titlePrefix = "Swift Pairing"
-        var advertisementSetGenerator:IAdvertisementSetGenerator = SwiftPairAdvertisementSetGenerator()
-
-        // Initialize the Collection
-        var advertisementSetCollection = AdvertisementSetCollection()
-        advertisementSetCollection.title = "$titlePrefix Collection"
-
-        // Initialize the List
-        var advertisementSetList = AdvertisementSetList()
-        advertisementSetList.title = "$titlePrefix List"
-        advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
-
-        // Add List to the Collection
-        advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
-
-        // Pass Collection to Advertisement Fragment
-        navigateToAdvertisementFragment(advertisementSetCollection)
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING), "Swift Pairing")
     }
 
     fun onKitchenSinkCardViewClicked(){
-        var titlePrefix = "Kitchen Sink"
-        // Initialize the Collection
-        var advertisementSetCollection = AdvertisementSetCollection()
-        advertisementSetCollection.title = "$titlePrefix Collection"
-
-        val generators:List<IAdvertisementSetGenerator> = listOf(GoogleFastPairAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
-        generators.forEach{ advertisementSetGenerator ->
-            // Initialize the List
-
-            val listName = when (advertisementSetGenerator::class) {
-                GoogleFastPairAdvertisementSetGenerator::class -> "Fast Pairing"
-                ContinuityDevicePopUpAdvertisementSetGenerator::class -> "iOs Device Popups"
-                ContinuityActionModalAdvertisementSetGenerator::class -> "iOs Action Modals"
-                SwiftPairAdvertisementSetGenerator::class -> "Swift Pairing"
-                else -> {"Unknown"}
-            }
-            
-            var advertisementSetList = AdvertisementSetList()
-            advertisementSetList.title = "$listName List"
-            advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
-
-            // Add List to the Collection
-            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
-        }
-        
-        // Pass Collection to Advertisement Fragment
-        navigateToAdvertisementFragment(advertisementSetCollection)
+        navigateToAdvertisementFragmentWithType(listOf(
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
+            ), "Kitchen Sink")
     }
 
-
     fun navigateToAdvertisementFragment(advertisementSetCollection: AdvertisementSetCollection){
-        val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
-        val navController = AppContext.getActivity().findNavController(R.id.nav_host_fragment_content_main)
-        navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+        AppContext.getActivity().runOnUiThread {
+            val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
+            val navController = AppContext.getActivity().findNavController(R.id.nav_host_fragment_content_main)
+            navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+        }
     }
 
     fun addMissingRequirement(missingRequirement:String){
@@ -379,6 +365,40 @@ class StartFragment : Fragment() {
         var newList = _viewModel!!.missingRequirements.value!!
         newList.remove(missingRequirement)
         _viewModel!!.missingRequirements.postValue(newList)
+    }
+
+    fun checkDatabase(){
+        CoroutineScope(Dispatchers.IO).launch {
+            var result = false
+            var database = AppDatabase.getInstance()
+            if(database != null){
+                removeMissingRequirement("Database is not initialized")
+
+                if(!database.isSeeding){
+                    removeMissingRequirement("Database is Seeding")
+                    var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
+                    if(numberOfAdvertisementSetEntities > 0){
+                        removeMissingRequirement("Database is empty")
+                        result = true
+                    } else {
+                        addMissingRequirement("Database is empty")
+                    }
+                } else {
+                    addMissingRequirement("Database is Seeding")
+                }
+
+            } else {
+                addMissingRequirement("Database is not initialized")
+            }
+            _viewModel!!.databaseIsReady.postValue(result)
+
+            if(result == false){
+                // Check again in a few seconds
+                Executors.newSingleThreadScheduledExecutor().schedule({
+                    checkDatabase()
+                }, 2, TimeUnit.SECONDS)
+            }
+        }
     }
 
     fun checkBluetoothAdapter(promptIfAdapterIsDisabled:Boolean = false){

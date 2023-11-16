@@ -1,14 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.advertisement.AdvertisementFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.advertisement.AdvertisementFragment"
+    android:id="@+id/advertisementFragmentLayout">
 
-    <TextView
-        android:id="@+id/advertisementFragmentTextViewStatus"
+    <!-- Advertisement Top Container -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayout"
+        android:id="@+id/advertisementFragmentLayoutTop"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.35"
+        android:orientation="vertical"
+        android:padding="10dp"
+        >
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/advertisementFragmentAdvertisingAnimation"
+            app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayoutTop"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:lottie_rawRes="@raw/advertisingdevices"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="true"
+            />
+        <TextView
+            android:id="@+id/advertisementFragmentCollectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
+            android:text="Collection Title"
+            android:textStyle="bold"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/textSizeHeadline"
+            >
+        </TextView>
+        <TextView
+            android:id="@+id/advertisementFragmentCollectionSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayoutTop"
+            android:text="test"
+            android:textStyle="italic"
+            android:textColor="@color/text_color"
+            >
+        </TextView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- End: Advertisement Top Container -->
 
-</FrameLayout>
+    <!-- Advertisement Lower Top Container -->
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutTop"
+        android:id="@+id/advertisementFragmentLayoutLowerTop"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:background="@color/grey_normal"
+        >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+            <ImageButton
+                android:id="@+id/advertisementFragmentPlayButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/play_arrow"
+                app:tint="@color/foreground_color_rounded_button"
+                android:background="@drawable/roundedbutton"
+                android:scaleType="center"></ImageButton>
+        </LinearLayout>
+
+    </LinearLayout>
+    <!-- END: Advertisement Lower Top Container -->
+
+    <!-- Advertisement Center Container -->
+    <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutLowerTop"
+        app:layout_constraintBottom_toTopOf="@id/advertisementFragmentLayoutFooter"
+        android:id="@+id/advertisementFragmentLayoutCenter"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:background="@color/blue_light"
+        >
+    </LinearLayout>
+    <!-- END: Advertisement Center Container -->
+
+
+    <!-- Advertisement Footer Container -->
+    <LinearLayout
+        app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayout"
+        android:id="@+id/advertisementFragmentLayoutFooter"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+            <ImageView
+                android:id="@+id/advertisementFragmentTargetImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bluetooth"
+                app:tint="@color/tint_icon_light">
+            </ImageView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="match_parent"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp">
+                <TextView
+                    android:id="@+id/advertisementFragmentCurrentSetTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Current Advertising Set"
+                    android:textStyle="bold">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/advertisementFragmentCurrentSetSubTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Current Advertising SubTitle"
+                    android:textColor="@color/blue_normal"
+                    android:textStyle="italic">
+                </TextView>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <!-- END: Advertisement Footer Container -->
+</androidx.constraintlayout.widget.ConstraintLayout>

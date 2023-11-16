@@ -6,6 +6,7 @@ import android.bluetooth.le.AdvertisingSetParameters
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Enums.PrimaryPhy
@@ -42,6 +43,7 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING
+            advertisementSet.range = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_CLOSE
 
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY

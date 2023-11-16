@@ -51,4 +51,18 @@
     <color name="text_color_card_view_alternative_light">#373737</color>
     <color name="tint_icon_card_view_alternative">#373737</color>
 
+    <!-- LOADING SPINNER -->
+    <color name="background_color_loading_spinner">#ccffffff</color>
+    <color name="color_filter_loading_spinner">@color/blue_normal</color>
+    <color name="color_loading_spinner_message">@color/black</color>
+
+    <!-- ROUNDED BUTTON -->
+    <color name="background_color_rounded_button">@color/blue_normal</color>
+    <color name="foreground_color_rounded_button">@color/white</color>
+
+    <!-- ICON TINT -->
+    <color name="tint_icon">@color/black</color>
+    <color name="tint_icon_light">@color/grey_normal</color>
+    <color name="tint_icon_accent">@color/blue_normal</color>
+
 </resources>

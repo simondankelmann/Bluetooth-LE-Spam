@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam.Models
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertisingSetCallback
 import android.util.Log
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
@@ -16,6 +17,7 @@ class AdvertisementSet {
     var type:AdvertisementSetType = AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED
     var duration:Int = 0
     var maxExtendedAdvertisingEvents:Int = 0
+    var range:AdvertisementSetRange = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_UNKNOWN
 
     // Related Data
     var advertiseSettings: AdvertiseSettings = AdvertiseSettings()

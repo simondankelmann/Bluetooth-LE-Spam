@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetEntity
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 @Dao
@@ -22,6 +23,9 @@ interface AdvertisementSetDao {
 
     @Query("SELECT * FROM advertisementsetentity WHERE target = :target")
     fun findByTarget(target:AdvertisementTarget): List<AdvertisementSetEntity>
+
+    @Query("SELECT * FROM advertisementsetentity WHERE type = :type")
+    fun findByType(type:AdvertisementSetType): List<AdvertisementSetEntity>
 
     @Insert
     fun insertAll(vararg advertisementSetEntity: AdvertisementSetEntity)

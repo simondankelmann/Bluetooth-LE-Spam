@@ -49,6 +49,8 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
     version = 1,
     exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
+
+    var isSeeding = false
     abstract fun advertiseDataDao(): AdvertiseDataDao
     abstract fun advertiseDataManufacturerSpecificDataDao(): AdvertiseDataManufacturerSpecificDataDao
     abstract fun advertiseDataServiceDataDao(): AdvertiseDataServiceDataDao
@@ -99,6 +101,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         val seedingThread = Runnable {
             Log.d(_logTag, "Starting Database Seeding")
+            getInstance().isSeeding = true
 
             val advertisementSetGenerators = listOf(
                 GoogleFastPairAdvertisementSetGenerator(),
@@ -114,7 +117,8 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
 
-           Log.d(_logTag, "Database Seeding finished")
+            getInstance().isSeeding = false
+            Log.d(_logTag, "Database Seeding finished")
         }
     }
 }

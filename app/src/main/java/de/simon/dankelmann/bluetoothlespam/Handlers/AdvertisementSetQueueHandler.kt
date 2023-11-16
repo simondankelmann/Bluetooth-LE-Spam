@@ -44,6 +44,10 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
         _advertisementSetCollection = advertisementSetCollection
     }
 
+    fun getAdvertisementSetCollection(): AdvertisementSetCollection{
+        return _advertisementSetCollection
+    }
+
     // Add / Remove AdvertisementSetCollections
     fun clearAdvertisementSetCollection(){
         _advertisementSetCollection.advertisementSetLists.clear()

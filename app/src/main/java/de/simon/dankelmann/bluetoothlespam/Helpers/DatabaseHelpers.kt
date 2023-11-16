@@ -9,6 +9,9 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseSettingsEn
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisingSetParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseData
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseSettings
@@ -34,9 +37,10 @@ class DatabaseHelpers {
                 advertisementSet.type,
                 advertisementSet.duration,
                 advertisementSet.maxExtendedAdvertisingEvents,
+                advertisementSet.range,
                 0 ,
                 0 ,
-                0 ,
+                0,
                 0,
                 0,
                 0
@@ -144,6 +148,7 @@ class DatabaseHelpers {
             advertisementSet.type = advertisementSetEntity.type
             advertisementSet.duration = advertisementSetEntity.duration
             advertisementSet.maxExtendedAdvertisingEvents = advertisementSetEntity.maxExtendedAdvertisingEvents
+            advertisementSet.range = advertisementSetEntity.range
 
             var database = AppDatabase.getInstance()
 
@@ -248,6 +253,29 @@ class DatabaseHelpers {
             }
 
             return advertiseData
+        }
+
+        fun getAllAdvertisementSetsForTarget(advertisementTarget: AdvertisementTarget):List<AdvertisementSet>{
+            var database = AppDatabase.getInstance()
+            var advertisementSetEntities = database.advertisementSetDao().findByTarget(advertisementTarget)
+            return getAdvertisementSetListFromEntities(advertisementSetEntities)
+        }
+
+        fun getAllAdvertisementSetsForType(advertisementSetType: AdvertisementSetType):List<AdvertisementSet>{
+            var database = AppDatabase.getInstance()
+            var advertisementSetEntities = database.advertisementSetDao().findByType(advertisementSetType)
+            return getAdvertisementSetListFromEntities(advertisementSetEntities)
+        }
+
+        fun getAdvertisementSetListFromEntities(entities: List<AdvertisementSetEntity>):List<AdvertisementSet>{
+            var advertisementSets = mutableListOf<AdvertisementSet>()
+
+            entities.forEach { entitiy ->
+                var advertisementSet = getAdvertisementSetFromEntity(entitiy)
+                advertisementSets.add(advertisementSet)
+            }
+
+            return advertisementSets.toList()
         }
     }
 }

@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam.Database.Entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
@@ -16,6 +17,7 @@ data class AdvertisementSetEntity(
     @ColumnInfo(name = "type") var type: AdvertisementSetType,
     @ColumnInfo(name = "duration") var duration: Int,
     @ColumnInfo(name = "maxExtendedAdvertisingEvents") var maxExtendedAdvertisingEvents: Int,
+    @ColumnInfo(name = "range") var range: AdvertisementSetRange,
 
     // Related Data
     @ColumnInfo(name = "advertiseSettingsId") var advertiseSettingsId: Int,

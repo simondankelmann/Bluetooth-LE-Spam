@@ -5,6 +5,14 @@ import androidx.lifecycle.ViewModel
 
 class StartViewModel : ViewModel() {
 
+    var isLoading = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+
+    var loadingMessage = MutableLiveData<String>().apply {
+        value = "Loading..."
+    }
+
     var appVersion = MutableLiveData<String>().apply {
         value = "0.0.0"
     }
@@ -30,6 +38,10 @@ class StartViewModel : ViewModel() {
     }
 
     var advertisementServiceIsReady = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+
+    var databaseIsReady = MutableLiveData<Boolean>().apply {
         value = false
     }
 
