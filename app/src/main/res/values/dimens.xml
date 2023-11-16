@@ -15,4 +15,6 @@
     <!-- Headline -->
     <dimen name="textSizeHeadline">24dp</dimen>
     <dimen name="textSizeHeadline2">20dp</dimen>
+    <dimen name="textSizeHeadline3">18dp</dimen>
+    <dimen name="textSizeHeadline4">16dp</dimen>
 </resources>

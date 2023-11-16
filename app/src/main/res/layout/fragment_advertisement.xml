@@ -20,34 +20,12 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/advertisementFragmentAdvertisingAnimation"
             app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayoutTop"
-            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionTitle"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:lottie_rawRes="@raw/advertisingdevices"
             app:lottie_autoPlay="false"
             app:lottie_loop="true"
             />
-        <TextView
-            android:id="@+id/advertisementFragmentCollectionTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
-            android:text="Collection Title"
-            android:textStyle="bold"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/textSizeHeadline"
-            >
-        </TextView>
-        <TextView
-            android:id="@+id/advertisementFragmentCollectionSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayoutTop"
-            android:text="test"
-            android:textStyle="italic"
-            android:textColor="@color/text_color"
-            >
-        </TextView>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- End: Advertisement Top Container -->
 
@@ -58,12 +36,39 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:orientation="horizontal"
-        android:background="@color/grey_normal"
         >
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="5"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
+
+            <TextView
+                android:id="@+id/advertisementFragmentCollectionTitle"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
+                android:text="Collection Title"
+                android:textStyle="bold"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/textSizeHeadline"
+                >
+            </TextView>
+            <TextView
+                android:id="@+id/advertisementFragmentCollectionSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayoutTop"
+                android:text="test"
+                android:textStyle="italic"
+                android:textColor="@color/text_color"
+                >
+            </TextView>
 
         </LinearLayout>
 
@@ -92,8 +97,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="@color/blue_light"
         >
+
+        <ExpandableListView
+            android:id="@+id/advertisementFragmentCollectionExpandableListview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="0.5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
     </LinearLayout>
     <!-- END: Advertisement Center Container -->
 

@@ -31,6 +31,9 @@ class AdvertisementSet {
     lateinit var advertisingSetCallback:AdvertisingSetCallback
     lateinit var advertisingCallback: AdvertiseCallback
 
+    // Ui Data
+    var currentlyAdvertising = false
+
     fun validate():Boolean{
         //@todo: implement checks here
         return true

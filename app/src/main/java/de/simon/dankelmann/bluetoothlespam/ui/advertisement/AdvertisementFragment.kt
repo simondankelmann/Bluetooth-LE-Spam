@@ -7,13 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.annotation.RequiresApi
+import android.widget.ExpandableListView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.LottieDrawable.INFINITE
-import com.airbnb.lottie.LottieDrawable.RepeatMode
+import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
@@ -22,9 +19,9 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementBinding
-import kotlin.reflect.typeOf
 
 
 class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
@@ -33,6 +30,9 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
     private var _viewModel: AdvertisementViewModel? = null
     private var _binding: FragmentAdvertisementBinding? = null
     private var _advertisementSetCollection: AdvertisementSetCollection? = null
+
+    private lateinit var _expandableListView:ExpandableListView
+    private lateinit var _adapter: AdvertisementSetCollectionExpandableListViewAdapter
 
     companion object {
         fun newInstance() = AdvertisementFragment()
@@ -45,6 +45,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _viewModel = viewModel
         _binding = FragmentAdvertisementBinding.inflate(inflater, container, false)
         val root: View = _binding!!.root
+
+        _expandableListView = _binding!!.advertisementFragmentCollectionExpandableListview
 
         // Get AdvertisementSetCollection from Bundle
         if(arguments != null){
@@ -80,6 +82,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
     override fun onPause() {
         super.onPause()
         AppContext.getAdvertisementSetQueueHandler().removeAdvertisementServiceCallback(this)
+        AppContext.getAdvertisementSetQueueHandler().deactivate()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -104,8 +107,46 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _viewModel!!.advertisementSetCollectionTitle.postValue(advertisementSetCollection.title)
         _viewModel!!.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(advertisementSetCollection))
 
+        // Update UI
+        setupExpandableListView(advertisementSetCollection)
+
         // Pass the Collection to the Queue Handler
         AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+    }
+
+    private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
+
+        // Setup grouped Data
+        var titleList = advertisementSetCollection.advertisementSetLists.toList()
+        var dataList = HashMap<AdvertisementSetList, List<AdvertisementSet>>()
+        advertisementSetCollection.advertisementSetLists.forEach{ advertisementSetList ->
+            dataList[advertisementSetList] = advertisementSetList.advertisementSets
+        }
+
+        _adapter = AdvertisementSetCollectionExpandableListViewAdapter(AppContext.getContext(),titleList,dataList)
+        _expandableListView.setAdapter(_adapter)
+
+
+        if(_adapter.advertisementSetLists.isNotEmpty()){
+            _expandableListView.expandGroup(0)
+        }
+
+        _expandableListView.setOnGroupExpandListener { groupPosition ->
+            var advertisementSetList = titleList[groupPosition]
+            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Expanded.", Toast.LENGTH_SHORT).show()
+        }
+
+        _expandableListView.setOnGroupCollapseListener { groupPosition ->
+            var advertisementSetList = titleList[groupPosition]
+            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Collapsed.", Toast.LENGTH_SHORT).show()
+        }
+
+        _expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+            var advertisementSetList = titleList[groupPosition]
+            var advertisementSet = dataList[titleList[groupPosition]]!![childPosition]
+            //Toast.makeText(AppContext.getContext(), "Clicked: " + advertisementSetList.title + " -> " + advertisementSet.title, Toast.LENGTH_SHORT).show()
+            false
+        }
     }
 
     fun getAdvertisementSetCollectionSubTitle(advertisementSetCollection: AdvertisementSetCollection):String{
@@ -143,6 +184,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         var advertisementSetCollectionSubTitle = _binding!!.advertisementFragmentCollectionSubtitle
         var advertisementSetTitle = _binding!!.advertisementFragmentCurrentSetTitle
         var advertisementSetSubTitle = _binding!!.advertisementFragmentCurrentSetSubTitle
+        var advertisementSetCollectionExpandableList = _binding!!.advertisementFragmentCollectionExpandableListview
 
         // Listeners
         playButton.setOnClickListener{
@@ -186,7 +228,23 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _viewModel!!.advertisementSetSubTitle.observe(viewLifecycleOwner) { value ->
             advertisementSetSubTitle.text = value
         }
+    }
 
+    fun highlightCurrentAdverstisementSet(currentAdvertisementSet: AdvertisementSet){
+        if(_adapter != null){
+            _adapter.advertisementSetLists.forEachIndexed{ listIndex, advertisementList ->
+                advertisementList.currentlyAdvertising = false
+                advertisementList.advertisementSets.forEachIndexed{ setIndex, advertisementSet ->
+                    if(advertisementSet == currentAdvertisementSet){
+                        advertisementSet.currentlyAdvertising = true
+                        advertisementList.currentlyAdvertising = true
+                    } else {
+                        advertisementSet.currentlyAdvertising = false
+                    }
+                }
+            }
+            _adapter.notifyDataSetChanged()
+        }
     }
 
     // AdvertismentServiceCallback
@@ -203,6 +261,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
             _viewModel!!.target.postValue(advertisementSet.target)
             _viewModel!!.advertisementSetTitle.postValue(advertisementSet.title)
             _viewModel!!.advertisementSetSubTitle.postValue(getAdvertisementSetSubtitle(advertisementSet))
+
+            highlightCurrentAdverstisementSet(advertisementSet)
         }
     }
 
