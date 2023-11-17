@@ -132,6 +132,8 @@ class DatabaseHelpers {
                     manufacturerSpecificData.manufacturerId,
                     manufacturerSpecificData.manufacturerSpecificData.toHexString()
                 )
+
+                var manufacturerDataId = database.advertiseDataManufacturerSpecificDataDao().insertItem(manufacturerSpecificDataEntity)
             }
 
             // RETURN ID

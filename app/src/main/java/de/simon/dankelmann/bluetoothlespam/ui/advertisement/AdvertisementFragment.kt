@@ -168,6 +168,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOs Device Popup"
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOs Action Modal"
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP -> "Easy Setup"
         }
 
         var range = when(advertisementSet.range){
@@ -235,6 +236,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> resources.getDrawable(R.drawable.apple, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> resources.getDrawable(R.drawable.ic_android, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> resources.getDrawable(R.drawable.microsoft, AppContext.getContext().theme)
+                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> resources.getDrawable(R.drawable.samsung, AppContext.getContext().theme)
             }
             advertisingTargetImage.setImageDrawable(targetImageDrawable)
         }

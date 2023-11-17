@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairDebugAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
@@ -109,7 +110,8 @@ abstract class AppDatabase : RoomDatabase() {
                 ContinuityDevicePopUpAdvertisementSetGenerator(),
                 ContinuityActionModalAdvertisementSetGenerator(),
                 SwiftPairAdvertisementSetGenerator(),
-                GoogleFastPairDebugAdvertisementSetGenerator()
+                GoogleFastPairDebugAdvertisementSetGenerator(),
+                EasySetupAdvertisementSetGenerator()
             )
 
             advertisementSetGenerators.forEach{ generator ->

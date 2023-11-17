@@ -254,6 +254,12 @@ class StartFragment : Fragment() {
             onFastPairingCardViewClicked()
         }
 
+        // Easy Setup Cardview
+        val startFragmentEasySetupCard: CardView = binding.startFragmentEasySetupCard
+        startFragmentEasySetupCard.setOnClickListener {
+            onEasySetupCardViewClicked()
+        }
+
         // Continuity Device PopUps Cardview
         val startFragmentDevicePopUpsCard: CardView = binding.startFragmentDevicePopUpsCard
         startFragmentDevicePopUpsCard.setOnClickListener {
@@ -300,6 +306,7 @@ class StartFragment : Fragment() {
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP -> "Easy Setup"
                 }
 
                 // Initialize the List
@@ -332,6 +339,11 @@ class StartFragment : Fragment() {
     fun onFastPairingCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING), "Fast Pairing")
     }
+
+    fun onEasySetupCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP), "Easy Setup")
+    }
+
     fun onDevicePopUpsCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS), "iOs Device PopUps")
     }
