@@ -272,6 +272,12 @@ class StartFragment : Fragment() {
             onSwiftPairingCardViewClicked()
         }
 
+        // Fast Pairing Cardview
+        val startFragmentFastPairingDebugCard: CardView = binding.startFragmentFastPairingDebugCard
+        startFragmentFastPairingDebugCard.setOnClickListener {
+            onFastPairingDebugCardViewClicked()
+        }
+
         // Kitchen Sink Cardview
         val startFragmentKitchenSinkCard: CardView = binding.startFragmentKitchenSinkCard
         startFragmentKitchenSinkCard.setOnClickListener {
@@ -293,6 +299,7 @@ class StartFragment : Fragment() {
                     AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOS Action Modals"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
                 }
 
                 // Initialize the List
@@ -336,12 +343,17 @@ class StartFragment : Fragment() {
         navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING), "Swift Pairing")
     }
 
+    fun onFastPairingDebugCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG), "Fast Pairing Debug")
+    }
+
     fun onKitchenSinkCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG
             ), "Kitchen Sink")
     }
 

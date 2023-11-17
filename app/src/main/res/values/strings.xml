@@ -19,6 +19,7 @@
     <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
 
     <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
     <string name="preference_title_use_legacy_advertising">Legacy Advertising</string>
     <string name="preference_summary_use_legacy_advertising">Use Bluetooth 4 Compatible BLE Advertising</string>
 

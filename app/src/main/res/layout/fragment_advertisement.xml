@@ -20,12 +20,36 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/advertisementFragmentAdvertisingAnimation"
             app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayoutTop"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:lottie_rawRes="@raw/advertisingdevices"
             app:lottie_autoPlay="false"
             app:lottie_loop="true"
             />
+
+        <TextView
+            android:id="@+id/advertisementFragmentCollectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
+            android:text="Collection Title"
+            android:textStyle="bold"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/textSizeHeadline"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/advertisementFragmentCollectionSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="test"
+            android:textStyle="italic"
+            android:textColor="@color/text_color"
+            >
+        </TextView>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- End: Advertisement Top Container -->
 
@@ -41,34 +65,41 @@
             android:layout_width="0dp"
             android:layout_weight="5"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingLeft="10dp">
+            android:orientation="horizontal"
+            android:layout_gravity="start">
 
-            <TextView
-                android:id="@+id/advertisementFragmentCollectionTitle"
-                android:layout_width="wrap_content"
-                android:gravity="center"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
-                android:text="Collection Title"
-                android:textStyle="bold"
-                android:textColor="@color/text_color"
-                android:textSize="@dimen/textSizeHeadline"
-                >
-            </TextView>
-            <TextView
-                android:id="@+id/advertisementFragmentCollectionSubtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayoutTop"
-                android:text="test"
-                android:textStyle="italic"
-                android:textColor="@color/text_color"
-                >
-            </TextView>
+            <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeSingleButton"
+                android:layout_width="50dp"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/repeat_one"
+                app:tint="@color/text_color_light"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                ></ImageButton>
+
+            <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeLinearButton"
+                android:layout_width="50dp"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/repeat"
+                app:tint="@color/text_color_light"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                ></ImageButton>
+
+            <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeRandomButton"
+                android:layout_width="50dp"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/shuffle"
+                app:tint="@color/text_color_light"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                ></ImageButton>
 
         </LinearLayout>
 

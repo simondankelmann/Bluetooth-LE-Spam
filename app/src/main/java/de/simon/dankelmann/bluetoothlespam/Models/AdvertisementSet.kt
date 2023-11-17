@@ -5,6 +5,7 @@ import android.bluetooth.le.AdvertisingSetCallback
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 class AdvertisementSet {
@@ -33,6 +34,7 @@ class AdvertisementSet {
 
     // Ui Data
     var currentlyAdvertising = false
+    var advertisementState = AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED
 
     fun validate():Boolean{
         //@todo: implement checks here

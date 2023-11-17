@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
@@ -56,6 +57,16 @@ class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
         var textColor = when(advertisementSet.currentlyAdvertising){
             true -> AppContext.getActivity().resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
             false -> AppContext.getActivity().resources.getColor(R.color.text_color, AppContext.getContext().theme)
+        }
+
+        if(advertisementSet.currentlyAdvertising){
+            if(advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED){
+                textColor = AppContext.getActivity().resources.getColor(R.color.log_success, AppContext.getContext().theme)
+            } else if(advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_FAILED){
+                textColor = AppContext.getActivity().resources.getColor(R.color.log_error, AppContext.getContext().theme)
+            }
+        } else {
+            textColor = AppContext.getActivity().resources.getColor(R.color.text_color, AppContext.getContext().theme)
         }
 
         holder.label!!.text = advertisementSet.title

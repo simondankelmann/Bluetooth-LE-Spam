@@ -2,6 +2,7 @@ package de.simon.dankelmann.bluetoothlespam.ui.advertisement
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 
 class AdvertisementViewModel : ViewModel() {
@@ -29,5 +30,8 @@ class AdvertisementViewModel : ViewModel() {
         value = "-"
     }
 
+    var advertisementQueueMode = MutableLiveData<AdvertisementQueueMode>().apply {
+        value = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM
+    }
 
 }

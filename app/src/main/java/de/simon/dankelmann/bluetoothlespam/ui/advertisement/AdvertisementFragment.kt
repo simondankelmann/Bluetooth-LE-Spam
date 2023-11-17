@@ -8,13 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -67,11 +70,12 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
             }
 
            setAdvertisementSetCollection(advertismentSetCollection)
+            _viewModel!!.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
         }
 
         setupUi()
 
-        return root//inflater.inflate(R.layout.fragment_advertisement, container, false)
+        return root
     }
 
     override fun onResume() {
@@ -144,7 +148,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
             var advertisementSetList = titleList[groupPosition]
             var advertisementSet = dataList[titleList[groupPosition]]!![childPosition]
-            //Toast.makeText(AppContext.getContext(), "Clicked: " + advertisementSetList.title + " -> " + advertisementSet.title, Toast.LENGTH_SHORT).show()
+            AppContext.getAdvertisementSetQueueHandler().setSelectedAdvertisementSet(groupPosition, childPosition)
+            highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED)
             false
         }
     }
@@ -162,6 +167,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOs Device Popup"
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOs Action Modal"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
         }
 
         var range = when(advertisementSet.range){
@@ -174,6 +180,11 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         return "Type: $type, Range: $range"
     }
 
+    fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
+        AppContext.getAdvertisementSetQueueHandler().setAdvertisementQueueMode(advertisementQueueMode)
+        _viewModel!!.advertisementQueueMode.postValue(advertisementQueueMode)
+    }
+
     fun setupUi(){
 
         // Views
@@ -184,11 +195,26 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         var advertisementSetCollectionSubTitle = _binding!!.advertisementFragmentCollectionSubtitle
         var advertisementSetTitle = _binding!!.advertisementFragmentCurrentSetTitle
         var advertisementSetSubTitle = _binding!!.advertisementFragmentCurrentSetSubTitle
-        var advertisementSetCollectionExpandableList = _binding!!.advertisementFragmentCollectionExpandableListview
+        var queueModeButtonSingle = _binding!!.advertisementFragmentQueueModeSingleButton
+        var queueModeButtonLinear = _binding!!.advertisementFragmentQueueModeLinearButton
+        var queueModeButtonRandom = _binding!!.advertisementFragmentQueueModeRandomButton
+
 
         // Listeners
         playButton.setOnClickListener{
             onPlayButtonClicked()
+        }
+
+        queueModeButtonSingle.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE)
+        }
+
+        queueModeButtonLinear.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR)
+        }
+
+        queueModeButtonRandom.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
         }
 
         // Observers
@@ -228,14 +254,30 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _viewModel!!.advertisementSetSubTitle.observe(viewLifecycleOwner) { value ->
             advertisementSetSubTitle.text = value
         }
+
+        _viewModel!!.advertisementQueueMode.observe(viewLifecycleOwner) { mode ->
+            val colorInactive = resources.getColor(R.color.text_color_light, AppContext.getContext().theme)
+            val colorActive = resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
+
+            queueModeButtonSingle.setColorFilter(colorInactive)
+            queueModeButtonLinear.setColorFilter(colorInactive)
+            queueModeButtonRandom.setColorFilter(colorInactive)
+
+            when(mode){
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> queueModeButtonSingle.setColorFilter(colorActive)
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> queueModeButtonLinear.setColorFilter(colorActive)
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> queueModeButtonRandom.setColorFilter(colorActive)
+            }
+        }
     }
 
-    fun highlightCurrentAdverstisementSet(currentAdvertisementSet: AdvertisementSet){
+    fun highlightCurrentAdverstisementSet(currentAdvertisementSet: AdvertisementSet, advertisementState: AdvertisementState){
         if(_adapter != null){
             _adapter.advertisementSetLists.forEachIndexed{ listIndex, advertisementList ->
                 advertisementList.currentlyAdvertising = false
                 advertisementList.advertisementSets.forEachIndexed{ setIndex, advertisementSet ->
                     if(advertisementSet == currentAdvertisementSet){
+                        advertisementSet.advertisementState = advertisementState
                         advertisementSet.currentlyAdvertising = true
                         advertisementList.currentlyAdvertising = true
                     } else {
@@ -249,7 +291,13 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
 
     // AdvertismentServiceCallback
     override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
-        Log.d(_logTag, "onAdvertisementSetStart")
+        Log.d(_logTag, "onAdvertisementSetStart ${advertisementSet?.title}")
+        if(advertisementSet != null){
+            _viewModel!!.target.postValue(advertisementSet.target)
+            _viewModel!!.advertisementSetTitle.postValue(advertisementSet.title)
+            _viewModel!!.advertisementSetSubTitle.postValue(getAdvertisementSetSubtitle(advertisementSet))
+            highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_STARTED)
+        }
     }
 
     override fun onAdvertisementSetStop(advertisementSet: AdvertisementSet?) {
@@ -258,16 +306,15 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
 
     override fun onAdvertisementSetSucceeded(advertisementSet: AdvertisementSet?) {
         if(advertisementSet != null){
-            _viewModel!!.target.postValue(advertisementSet.target)
-            _viewModel!!.advertisementSetTitle.postValue(advertisementSet.title)
-            _viewModel!!.advertisementSetSubTitle.postValue(getAdvertisementSetSubtitle(advertisementSet))
-
-            highlightCurrentAdverstisementSet(advertisementSet)
+            highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED)
         }
     }
 
     override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
-        Log.d(_logTag, "onAdvertisementSetFailed")
+        if(advertisementSet != null){
+            highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_FAILED)
+            Toast.makeText(AppContext.getContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
+        }
     }
     // END: AdvertismentServiceCallback
 }
