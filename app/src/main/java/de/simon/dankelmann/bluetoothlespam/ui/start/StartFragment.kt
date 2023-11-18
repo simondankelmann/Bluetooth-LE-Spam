@@ -444,7 +444,7 @@ class StartFragment : Fragment() {
     }
 
     fun onEasySetupCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH, AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS), "Easy Setup Collection")
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH), "Easy Setup Collection")
     }
 
     fun onContinuityCardViewClicked(){
