@@ -1,7 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators
 
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import android.os.ParcelUuid
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
@@ -18,7 +16,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.ServiceData
 import java.util.UUID
 
-class GoogleFastPairDebugAdvertisementSetGenerator:IAdvertisementSetGenerator{
+class FastPairDebugAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
     // Device Id's taken from here:
     // https://github.com/Flipper-XFW/Xtreme-Firmware/blob/dev/applications/external/ble_spam/protocols/fastpair.c

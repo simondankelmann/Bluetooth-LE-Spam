@@ -16,7 +16,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
@@ -51,7 +51,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         var returnList = mutableListOf<List<AdvertisementSet>>()
 
         // Add advertisement sets to the Loop Service:
-        val fastPairingGenerator = GoogleFastPairAdvertisementSetGenerator()
+        val fastPairingGenerator = FastPairDevicesAdvertisementSetGenerator()
         val continuityDevicePopUpsGenerator = ContinuityDevicePopUpAdvertisementSetGenerator()
         val continuityActionModalsGenerator = ContinuityActionModalAdvertisementSetGenerator()
         val swiftPairingGenerator = SwiftPairAdvertisementSetGenerator()
@@ -69,12 +69,12 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         var advertisementSetCollection = AdvertisementSetCollection()
         advertisementSetCollection.title = "Kitchen Sink"
 
-        val generators:List<IAdvertisementSetGenerator> = listOf(GoogleFastPairAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
+        val generators:List<IAdvertisementSetGenerator> = listOf(FastPairDevicesAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
         generators.forEach{ advertisementSetGenerator ->
             // Initialize the List
 
             val listName = when (advertisementSetGenerator::class) {
-                GoogleFastPairAdvertisementSetGenerator::class -> "Fast Pairing"
+                FastPairDevicesAdvertisementSetGenerator::class -> "Fast Pairing"
                 ContinuityDevicePopUpAdvertisementSetGenerator::class -> "iOs Device Popups"
                 ContinuityActionModalAdvertisementSetGenerator::class -> "iOs Action Modals"
                 SwiftPairAdvertisementSetGenerator::class -> "Swift Pairing"

@@ -2,17 +2,13 @@ package de.simon.dankelmann.bluetoothlespam.ui.start
 
 import android.Manifest
 import android.app.Activity
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.opengl.Visibility
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
@@ -22,12 +18,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
@@ -36,22 +26,19 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
-import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 import java.lang.Exception
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.typeOf
 
 
 class StartFragment : Fragment() {
@@ -120,6 +107,111 @@ class StartFragment : Fragment() {
         }
     }
 
+    fun setupAdvertisementSetCollectionListView(linearLayout: LinearLayout, advertisementTargets: List<AdvertisementTarget>){
+        advertisementTargets.forEach { advertisementTarget ->
+            // Get Layout View
+            val advertisementSetCollectionView: View = layoutInflater.inflate(R.layout.listitem_advertisement_collection_start, null)
+
+            // Insert Data
+            var titleTextView:TextView = advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartTitle)
+            var targetTextView:TextView = advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartTarget)
+            var distanceTextView:TextView = advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartDistance)
+            var iconImageView:ImageView = advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartImage)
+
+            when(advertisementTarget){
+                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> {
+                    titleTextView.text = "Fast Pair"
+                    targetTextView.text = "Target: Android"
+                    distanceTextView.text = "Distance: Close"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_android, AppContext.getContext().theme))
+                }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> {
+                    titleTextView.text = "Continuity"
+                    targetTextView.text = "Target: iOS"
+                    distanceTextView.text = "Distance: Mixed"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.apple, AppContext.getContext().theme))
+                }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> {
+                    titleTextView.text = "Easy Setup"
+                    targetTextView.text = "Target: Samsung"
+                    distanceTextView.text = "Distance: Close"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.samsung, AppContext.getContext().theme))
+                }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> {
+                    titleTextView.text = "Swift Pair"
+                    targetTextView.text = "Target: Windows"
+                    distanceTextView.text = "Distance: Close"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.microsoft, AppContext.getContext().theme))
+                }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> {
+                    titleTextView.text = "Kitchen Sink"
+                    targetTextView.text = "Target: All"
+                    distanceTextView.text = "Distance: Mixed"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.shuffle, AppContext.getContext().theme))
+                }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> {
+                    titleTextView.text = "Undefined"
+                    targetTextView.text = "Target: undefined"
+                    distanceTextView.text = "Distance: Undefined"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_info, AppContext.getContext().theme))
+                }
+            }
+
+            // Hookup Events
+            var cardView:CardView = advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartCardview)
+            cardView.setOnClickListener {
+                when(advertisementTarget){
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> {
+                        onFastPairCardViewClicked()
+                    }
+
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> {
+                        onContinuityCardViewClicked()
+                    }
+
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> {
+                        onEasySetupCardViewClicked()
+                    }
+
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> {
+                        onSwiftPairingCardViewClicked()
+                    }
+
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> {
+                        onKitchenSinkCardViewClicked()
+                    }
+
+                    else -> {
+                        // Ignore
+                    }
+                }
+            }
+
+            // Add to Parent View
+            linearLayout.addView(advertisementSetCollectionView)
+        }
+    }
+
+    fun getDisplayableAdvertisementSetCollections():List<AdvertisementSetCollection>{
+        var advertisementSetCollectionList:MutableList<AdvertisementSetCollection> = mutableListOf()
+
+
+        return advertisementSetCollectionList.toList()
+    }
+
+    fun getAdvertisementSetCollectionForType(advertisementSetType: AdvertisementSetType):AdvertisementSetCollection{
+        var advertisementSetCollection = AdvertisementSetCollection()
+
+
+
+        return AdvertisementSetCollection()
+    }
+
     fun setupUi(){
 
         // Loading Animation
@@ -130,6 +222,9 @@ class StartFragment : Fragment() {
                 false -> View.GONE
             }
         }
+
+        var linearLayout:LinearLayout = binding.listView
+        setupAdvertisementSetCollectionListView(linearLayout, listOf(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID, AdvertisementTarget.ADVERTISEMENT_TARGET_IOS, AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG, AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS, AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK))
 
         // Loading Message
         val textViewLoadingMessage: TextView = binding.startFragmentLoadingSpinnerMessage
@@ -249,6 +344,7 @@ class StartFragment : Fragment() {
         }
 
         // Fast Pairing Cardview
+        /*
         val startFragmentFastPairingCard: CardView = binding.startFragmentFastPairingCard
         startFragmentFastPairingCard.setOnClickListener {
             onFastPairingCardViewClicked()
@@ -288,7 +384,7 @@ class StartFragment : Fragment() {
         val startFragmentKitchenSinkCard: CardView = binding.startFragmentKitchenSinkCard
         startFragmentKitchenSinkCard.setOnClickListener {
             onKitchenSinkCardViewClicked()
-        }
+        }*/
     }
 
     fun navigateToAdvertisementFragmentWithType(advertisementSetTypes: List<AdvertisementSetType>, advertisementSetCollectionTitle:String){
@@ -300,13 +396,20 @@ class StartFragment : Fragment() {
 
             advertisementSetTypes.forEach { advertisementSetType ->
                 var titlePrefix = when(advertisementSetType){
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOS Device PopUps"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined"
+
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOS Device PopUps"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOS Action Modals"
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
+
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE -> "Fast Pairing Device"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP -> "Fast Pairing Phone Setup"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION -> "Fast Pairing Non Production"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP -> "Easy Setup"
+
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
+
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
                 }
 
                 // Initialize the List
@@ -336,37 +439,38 @@ class StartFragment : Fragment() {
         _viewModel!!.isLoading.postValue(false)
     }
 
-    fun onFastPairingCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING), "Fast Pairing")
+    fun onFastPairCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE, AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP, AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION, AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG), "Fast Pair Collection")
     }
 
     fun onEasySetupCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP), "Easy Setup")
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH, AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS), "Easy Setup Collection")
     }
 
-    fun onDevicePopUpsCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS), "iOs Device PopUps")
-    }
-    fun onActionModalsCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS), "iOs Action Modals")
+    fun onContinuityCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS), "Continuity Collection")
     }
 
     fun onSwiftPairingCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING), "Swift Pairing")
-    }
-
-    fun onFastPairingDebugCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG), "Fast Pairing Debug")
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING), "Swift Pair Collection")
     }
 
     fun onKitchenSinkCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(
-            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG,
+
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
+            //AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
+
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
-            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG
-            ), "Kitchen Sink")
+
+            ), "Kitchen Sink Collection")
     }
 
     fun navigateToAdvertisementFragment(advertisementSetCollection: AdvertisementSetCollection){

@@ -98,11 +98,12 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_start,
+                /*
                 R.id.nav_fast_pairing,
                 R.id.nav_swift_pair,
                 R.id.nav_continuity_action_modals,
                 R.id.nav_continuity_device_popups,
-                R.id.nav_kitchen_sink
+                R.id.nav_kitchen_sink*/
             ), drawerLayout
         )
 

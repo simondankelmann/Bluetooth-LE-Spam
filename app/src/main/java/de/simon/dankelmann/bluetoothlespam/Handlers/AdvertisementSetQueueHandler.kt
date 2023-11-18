@@ -24,7 +24,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     private var _interval:Long = 1000
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
     private var _active = false
-    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM
+    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
 
     private var _currentAdvertisementSet: AdvertisementSet? = null
     private var _currentAdvertisementSetListIndex = 0
@@ -176,7 +176,6 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
                         }
                     }
                 } else {
-                    Log.d(_logTag, "Else Branch")
                     var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
                     Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
                     if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
@@ -193,6 +192,37 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
                         selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
 
                         // SET THE ITEM
+                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
+                    } else {
+                        nextAdvertisementSetIndex++
+                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
+                    }
+
+                }
+            }
+
+            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> {
+                // If no AdvertisementSet is selected, select the first set in the first list
+                if(_currentAdvertisementSet == null){
+                    if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
+                        val firstList = _advertisementSetCollection.advertisementSetLists.first()
+                        if(firstList.advertisementSets.isNotEmpty()){
+                            nextAdvertisementSetListIndex = 0
+                            nextAdvertisementSetIndex = 0
+                            nextAdvertisementSet = firstList.advertisementSets.first()
+                        }
+                    }
+                } else {
+                    var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
+                    Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
+                    if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
+                        // SET ADVERTISEMENT SET INDEX TO 0
+                        nextAdvertisementSetIndex = 0
+
+                        selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
+
+                        // SET THE ITEM
+                        nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
                         nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
                     } else {
                         nextAdvertisementSetIndex++

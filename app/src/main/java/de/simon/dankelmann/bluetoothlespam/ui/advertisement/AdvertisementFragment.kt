@@ -131,7 +131,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _expandableListView.setAdapter(_adapter)
 
 
-        if(_adapter.advertisementSetLists.isNotEmpty()){
+        if(_adapter.advertisementSetLists.isNotEmpty() && advertisementSetCollection.advertisementSetLists.size == 1){
             _expandableListView.expandGroup(0)
         }
 
@@ -164,11 +164,17 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         var type = when(advertisementSet.type){
             AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined"
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
-            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING -> "Fast Pairing"
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE -> "Fast Pairing Device"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP -> "Fast Pairing Phone Setup"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION -> "Fast Pairing Non Production"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
+
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOs Device Popup"
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOs Action Modal"
-            AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
-            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP -> "Easy Setup"
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
         }
 
         var range = when(advertisementSet.range){
@@ -199,7 +205,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         var queueModeButtonSingle = _binding!!.advertisementFragmentQueueModeSingleButton
         var queueModeButtonLinear = _binding!!.advertisementFragmentQueueModeLinearButton
         var queueModeButtonRandom = _binding!!.advertisementFragmentQueueModeRandomButton
-
+        var queueModeButtonList = _binding!!.advertisementFragmentQueueModeListButton
 
         // Listeners
         playButton.setOnClickListener{
@@ -216,6 +222,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
 
         queueModeButtonRandom.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
+        }
+
+        queueModeButtonList.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST)
         }
 
         // Observers
@@ -237,6 +247,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> resources.getDrawable(R.drawable.ic_android, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> resources.getDrawable(R.drawable.microsoft, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> resources.getDrawable(R.drawable.samsung, AppContext.getContext().theme)
+                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> resources.getDrawable(R.drawable.shuffle, AppContext.getContext().theme)
             }
             advertisingTargetImage.setImageDrawable(targetImageDrawable)
         }
@@ -264,11 +275,13 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
             queueModeButtonSingle.setColorFilter(colorInactive)
             queueModeButtonLinear.setColorFilter(colorInactive)
             queueModeButtonRandom.setColorFilter(colorInactive)
+            queueModeButtonList.setColorFilter(colorInactive)
 
             when(mode){
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> queueModeButtonSingle.setColorFilter(colorActive)
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> queueModeButtonLinear.setColorFilter(colorActive)
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> queueModeButtonRandom.setColorFilter(colorActive)
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> queueModeButtonList.setColorFilter(colorActive)
             }
         }
     }

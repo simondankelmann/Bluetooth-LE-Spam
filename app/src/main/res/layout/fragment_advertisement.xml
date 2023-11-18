@@ -91,6 +91,17 @@
                 ></ImageButton>
 
             <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeListButton"
+                android:layout_width="50dp"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/list"
+                app:tint="@color/text_color_light"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                ></ImageButton>
+
+            <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeRandomButton"
                 android:layout_width="50dp"
                 android:padding="5dp"

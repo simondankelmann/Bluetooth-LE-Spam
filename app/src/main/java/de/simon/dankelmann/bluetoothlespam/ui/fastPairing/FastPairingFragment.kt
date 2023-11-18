@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
@@ -37,7 +37,7 @@ class FastPairingFragment : Fragment(), IAdvertisementServiceCallback{
     private val binding get() = _binding!!
     private var _viewModel:FastPairingViewModel? = null
     private var _advertisementSetQueueHandler: AdvertisementSetQueueHandler = AppContext.getAdvertisementSetQueueHandler()
-    private val _advertisementSets = GoogleFastPairAdvertisementSetGenerator().getAdvertisementSets()
+    private val _advertisementSets = FastPairDevicesAdvertisementSetGenerator().getAdvertisementSets()
 
     private val _logTag = "FastPairingFragment"
     private lateinit var _toggleButton:Button
