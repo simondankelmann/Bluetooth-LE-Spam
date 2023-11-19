@@ -21,6 +21,12 @@ class PermissionCheck (){
                 return true
             }
 
+            if (permission == "android.permission.BLUETOOTH_CONNECT" && Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
+            {
+                // android.permission.BLUETOOTH_CONNECT was first introduced in api level 31
+                return true
+            }
+
             if ((permission == "android.permission.BLUETOOTH" || permission == "android.permission.BLUETOOTH_ADMIN") && Build.VERSION.SDK_INT > Build.VERSION_CODES.R)
             {
                 // android.permission.BLUETOOTH and android.permission.BLUETOOTH_ADMIN have a max sdk version of 30
