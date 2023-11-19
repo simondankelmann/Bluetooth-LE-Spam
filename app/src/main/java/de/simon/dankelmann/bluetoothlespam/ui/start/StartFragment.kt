@@ -560,15 +560,15 @@ class StartFragment : Fragment() {
         if(bluetoothAdapter != null){
             removeMissingRequirement("Bluetooth Adapter not found")
             // Check if Bluetooth Adapter is enabled
-            if(bluetoothAdapter.isEnabled){
-                removeMissingRequirement("Bluetooth is disabled")
-                bluetoothIsReady = true
-            } else {
-                addMissingRequirement("Bluetooth is disabled")
-                if(promptIfAdapterIsDisabled){
-                    promptEnableBluetooth(bluetoothAdapter)
+                if(bluetoothAdapter.isEnabled){
+                    removeMissingRequirement("Bluetooth is disabled")
+                    bluetoothIsReady = true
+                } else {
+                    addMissingRequirement("Bluetooth is disabled")
+                    if(promptIfAdapterIsDisabled){
+                        promptEnableBluetooth(bluetoothAdapter)
+                    }
                 }
-            }
         } else {
             addMissingRequirement("Bluetooth Adapter not found")
         }
@@ -587,7 +587,7 @@ class StartFragment : Fragment() {
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_ADVERTISE,
             //Manifest.permission.BLUETOOTH_SCAN,
-            //Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_CONNECT,
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()
