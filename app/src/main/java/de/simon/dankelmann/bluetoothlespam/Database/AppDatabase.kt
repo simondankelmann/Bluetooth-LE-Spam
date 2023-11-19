@@ -120,7 +120,7 @@ abstract class AppDatabase : RoomDatabase() {
                 SwiftPairAdvertisementSetGenerator(),
 
                 EasySetupWatchAdvertisementSetGenerator(),
-                //EasySetupBudsAdvertisementSetGenerator()
+                EasySetupBudsAdvertisementSetGenerator()
             )
 
             advertisementSetGenerators.forEach{ generator ->

@@ -155,7 +155,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
     }
 
     fun getAdvertisementSetCollectionSubTitle(advertisementSetCollection: AdvertisementSetCollection):String{
-        var subtitle = "${advertisementSetCollection.getTotalNumberOfAdvertisementSets()} Sets in ${advertisementSetCollection.getNumberOfLists()} Lists"
+        var subtitle = "${advertisementSetCollection.getTotalNumberOfAdvertisementSets()} Devices in ${advertisementSetCollection.getNumberOfLists()} Lists"
         return subtitle
     }
 

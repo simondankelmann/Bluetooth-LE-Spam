@@ -47,7 +47,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:paddingRight="20dp"
+        android:paddingBottom="@dimen/cornerRadiusCardview">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -338,13 +339,32 @@
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:gravity="center">
+
+
                         <ImageView
+                            android:id="@+id/startFragmentDatabaseCardIcon"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/data_array"
                             app:tint="@color/tint_icon_card_view_alternative"
                             >
                         </ImageView>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/startFragmentDatabaseCardSeedingAnimation"
+                            android:visibility="gone"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            app:lottie_rawRes="@raw/sandglass"
+                            app:lottie_autoPlay="true"
+                            app:lottie_repeatMode="restart"
+                            app:lottie_loop="true"
+                            app:lottie_colorFilter="@color/tint_icon_card_view_alternative"
+                            android:scaleType="fitXY"
+                            />
+
+
+
                     </LinearLayout>
 
                     <TextView
@@ -379,7 +399,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/startFragmentAdvertisingDescription"
-                android:text="Select a Set and Start BLE Advertising"
+                android:text="Select a Collection and start BLE Advertising"
                 android:paddingBottom="5dp">
             </TextView>
 

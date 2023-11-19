@@ -21,6 +21,7 @@ import androidx.navigation.findNavController
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
@@ -223,6 +224,21 @@ class StartFragment : Fragment() {
             }
         }
 
+        // Seeding Animation
+        val seedingAnimationView: View = binding.startFragmentDatabaseCardSeedingAnimation
+        val databaseImageView: View = binding.startFragmentDatabaseCardIcon
+        _viewModel!!.isSeeding.observe(viewLifecycleOwner) {
+            seedingAnimationView.visibility = when(it){
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
+
+            databaseImageView.visibility = when(it){
+                true -> View.GONE
+                false -> View.VISIBLE
+            }
+        }
+
         var linearLayout:LinearLayout = binding.listView
         setupAdvertisementSetCollectionListView(linearLayout, listOf(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID, AdvertisementTarget.ADVERTISEMENT_TARGET_IOS, AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG, AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS, AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK))
 
@@ -389,7 +405,7 @@ class StartFragment : Fragment() {
 
     fun navigateToAdvertisementFragmentWithType(advertisementSetTypes: List<AdvertisementSetType>, advertisementSetCollectionTitle:String){
         CoroutineScope(Dispatchers.IO).launch {
-            showLoadingSpinner("Loading Advertisement Sets from Database")
+            showLoadingSpinner("Loading Devices from Database")
             // Initialize the Collection
             var advertisementSetCollection = AdvertisementSetCollection()
             advertisementSetCollection.title = advertisementSetCollectionTitle
@@ -444,7 +460,10 @@ class StartFragment : Fragment() {
     }
 
     fun onEasySetupCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH), "Easy Setup Collection")
+        navigateToAdvertisementFragmentWithType(listOf(
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
+            //AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS
+        ), "Easy Setup Collection")
     }
 
     fun onContinuityCardViewClicked(){
@@ -456,6 +475,9 @@ class StartFragment : Fragment() {
     }
 
     fun onKitchenSinkCardViewClicked(){
+        // Set Random Mode for Kitchen Sink
+        AppContext.getAdvertisementSetQueueHandler().setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
+
         navigateToAdvertisementFragmentWithType(listOf(
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE,
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP,
@@ -504,6 +526,7 @@ class StartFragment : Fragment() {
 
                 if(!database.isSeeding){
                     removeMissingRequirement("Database is Seeding")
+                    _viewModel!!.isSeeding.postValue(false)
                     var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
                     if(numberOfAdvertisementSetEntities > 0){
                         removeMissingRequirement("Database is empty")
@@ -513,6 +536,7 @@ class StartFragment : Fragment() {
                     }
                 } else {
                     addMissingRequirement("Database is Seeding")
+                    _viewModel!!.isSeeding.postValue(true)
                 }
 
             } else {
@@ -562,8 +586,8 @@ class StartFragment : Fragment() {
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_ADVERTISE,
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
+            //Manifest.permission.BLUETOOTH_SCAN,
+            //Manifest.permission.BLUETOOTH_CONNECT,
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()

@@ -24,7 +24,7 @@ class EasySetupBudsAdvertisementSetGenerator:IAdvertisementSetGenerator{
     private val _manufacturerId = 117 // 0x75 == 117 = Samsung
 
     private val prependedBudsBytes = StringHelpers.decodeHex("42098102141503210109")
-    private val appendedBudsBytes = StringHelpers.decodeHex("063C948E00000000C700") // +16FF75
+    private val appendedBudsBytes = StringHelpers.decodeHex("063C948E00000000C70016FF75") // +16FF75
 
     //42098102941503210188 5317012A 063CE7EB000000001D00
     //private val prependedBudsBytes = StringHelpers.decodeHex("42098102941503210188")

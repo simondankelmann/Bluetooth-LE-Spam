@@ -9,6 +9,10 @@ class StartViewModel : ViewModel() {
         value = false
     }
 
+    var isSeeding = MutableLiveData<Boolean>().apply {
+        value = false
+    }
+
     var loadingMessage = MutableLiveData<String>().apply {
         value = "Loading..."
     }
