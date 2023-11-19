@@ -10,6 +10,9 @@ class StringHelpers {
                 .map { it.toInt(16).toByte() }
                 .toByteArray()
         }
+        fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
+
+
     }
 
 }

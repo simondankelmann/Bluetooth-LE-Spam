@@ -4,10 +4,18 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_start"
+            android:icon="@drawable/bluetooth"
+            android:title="@string/menu_start" />
+
+        <!--
         <item
             android:id="@+id/nav_fast_pairing"
             android:icon="@drawable/ic_android"
-            android:title="@string/menu_fastPairing" />
+            android:title="@string/menu_fastPairing"
+            />
 
         <item
             android:id="@+id/nav_swift_pair"
@@ -28,5 +36,6 @@
             android:id="@+id/nav_kitchen_sink"
             android:icon="@drawable/shuffle"
             android:title="@string/menu_kitchenSink" />
+            -->
     </group>
 </menu>

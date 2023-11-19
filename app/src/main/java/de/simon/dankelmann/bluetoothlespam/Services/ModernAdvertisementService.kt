@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -28,7 +29,7 @@ class ModernAdvertisementService: IAdvertisementService{
     private var _advertiser: BluetoothLeAdvertiser? = null
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
     private var _currentAdvertisementSet: AdvertisementSet? = null
-    private var _txPowerLevel:Int? = null
+    private var _txPowerLevel:TxPowerLevel? = null
 
     init {
         _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
@@ -88,12 +89,8 @@ class ModernAdvertisementService: IAdvertisementService{
         }
     }
 
-    override fun setTxPowerLevel(txPowerLevel: Int) {
-        if(txPowerLevel >= AdvertiseSettings.ADVERTISE_TX_POWER_ULTRA_LOW && txPowerLevel <= AdvertiseSettings.ADVERTISE_TX_POWER_HIGH){
-            _txPowerLevel = txPowerLevel
-        } else {
-            Log.d(_logTag, "Invalid txPowerLevel specified: $txPowerLevel")
-        }
+    override fun setTxPowerLevel(txPowerLevel: TxPowerLevel) {
+        _txPowerLevel = txPowerLevel
     }
 
     override fun addAdvertisementServiceCallback(callback: IAdvertisementServiceCallback){

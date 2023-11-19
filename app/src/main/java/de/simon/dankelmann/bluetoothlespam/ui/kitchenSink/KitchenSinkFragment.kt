@@ -1,8 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.ui.kitchenSink
 
-import android.bluetooth.le.AdvertiseCallback
-import android.bluetooth.le.AdvertiseSettings
-import android.bluetooth.le.AdvertisingSet
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,21 +16,20 @@ import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.GoogleFastPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.LogLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementLoopService
-import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementSetQueHandler
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentKitchenSinkBinding
 
 
@@ -55,7 +51,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         var returnList = mutableListOf<List<AdvertisementSet>>()
 
         // Add advertisement sets to the Loop Service:
-        val fastPairingGenerator = GoogleFastPairAdvertisementSetGenerator()
+        val fastPairingGenerator = FastPairDevicesAdvertisementSetGenerator()
         val continuityDevicePopUpsGenerator = ContinuityDevicePopUpAdvertisementSetGenerator()
         val continuityActionModalsGenerator = ContinuityActionModalAdvertisementSetGenerator()
         val swiftPairingGenerator = SwiftPairAdvertisementSetGenerator()
@@ -66,6 +62,35 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         returnList.add(swiftPairingGenerator.getAdvertisementSets())
 
         return returnList.toList()
+    }
+
+    fun getAdvertisementSetCollection(): AdvertisementSetCollection {
+
+        var advertisementSetCollection = AdvertisementSetCollection()
+        advertisementSetCollection.title = "Kitchen Sink"
+
+        val generators:List<IAdvertisementSetGenerator> = listOf(FastPairDevicesAdvertisementSetGenerator(), ContinuityDevicePopUpAdvertisementSetGenerator(), ContinuityActionModalAdvertisementSetGenerator(), SwiftPairAdvertisementSetGenerator())
+        generators.forEach{ advertisementSetGenerator ->
+            // Initialize the List
+
+            val listName = when (advertisementSetGenerator::class) {
+                FastPairDevicesAdvertisementSetGenerator::class -> "Fast Pairing"
+                ContinuityDevicePopUpAdvertisementSetGenerator::class -> "iOs Device Popups"
+                ContinuityActionModalAdvertisementSetGenerator::class -> "iOs Action Modals"
+                SwiftPairAdvertisementSetGenerator::class -> "Swift Pairing"
+                else -> {"Unknown"}
+            }
+
+            var advertisementSetList = AdvertisementSetList()
+            advertisementSetList.title = "$listName List"
+            advertisementSetList.advertisementSets = advertisementSetGenerator.getAdvertisementSets().toMutableList()
+
+            // Add List to the Collection
+            advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+        }
+
+        return advertisementSetCollection
+
     }
 
     override fun onCreateView(
@@ -80,9 +105,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        getAllAdvertisementSetCollections().map {
-            _advertisementSetQueueHandler.addAdvertisementSetCollection(it)
-        }
+       _advertisementSetQueueHandler.setAdvertisementSetCollection(getAdvertisementSetCollection())
 
         setupUi()
 
@@ -93,9 +116,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
         super.onResume()
         _advertisementSetQueueHandler.addAdvertisementServiceCallback(this)
         _advertisementSetQueueHandler.clearAdvertisementSetCollection()
-        getAllAdvertisementSetCollections().map {
-            _advertisementSetQueueHandler.addAdvertisementSetCollection(it)
-        }
+        _advertisementSetQueueHandler.setAdvertisementSetCollection(getAdvertisementSetCollection())
     }
 
     override fun onPause() {
@@ -207,7 +228,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
                     kitchenSinkTxPowerSeekbarLabel.text = "TX Power: ${newTxPowerLabel}"
                     if(_advertisementSetQueueHandler != null){
-                        _advertisementSetQueueHandler!!.setTxPowerLevel(newTxPowerLevel)
+                        _advertisementSetQueueHandler!!.setTxPowerLevel(TxPowerLevel.TX_POWER_HIGH)
                     }
                 }
 
@@ -281,7 +302,7 @@ class KitchenSinkFragment: Fragment(), IAdvertisementServiceCallback {
 
     override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
         if(advertisementSet != null){
-            var message = "Advertising: ${advertisementSet.deviceName}"
+            var message = "Advertising: ${advertisementSet.title}"
             _viewModel!!.setStatusText(message)
 
             var logEntry = LogEntryModel()

@@ -3,8 +3,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_fast_pairing">
+    app:startDestination="@+id/nav_start">
 
+    <fragment
+        android:id="@+id/nav_start"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.start.StartFragment"
+        android:label="@string/menu_start"
+        tools:layout="@layout/fragment_start" >
+        <action
+            android:id="@+id/action_nav_start_to_nav_advertisement"
+            app:destination="@id/nav_advertisement" >
+            <argument
+                android:name="advertisementSetCollection"
+                app:argType="de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection"
+                app:nullable="true"
+                android:defaultValue="@null" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_advertisement"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.advertisement.AdvertisementFragment"
+        android:label="@string/menu_advertisement"
+        tools:layout="@layout/fragment_advertisement" >
+        <argument
+            android:name="advertisementSetCollection"
+            app:argType="de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <!--Settings fragment-->
+    <fragment
+        android:id="@+id/nav_preferences"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment"
+        android:label="@string/menu_preferences" />
+
+
+
+
+
+
+
+<!--
     <fragment
         android:id="@+id/nav_fast_pairing"
         android:name="de.simon.dankelmann.bluetoothlespam.ui.fastPairing.FastPairingFragment"
@@ -34,15 +75,5 @@
         android:name="de.simon.dankelmann.bluetoothlespam.ui.kitchenSink.KitchenSinkFragment"
         android:label="@string/menu_kitchenSink"
         tools:layout="@layout/fragment_kitchen_sink" />
-
-    <!--Settings fragment-->
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment"
-        android:label="@string/menu_settings"/>
-
-    <!--Global action-->
-    <action android:id="@+id/open_settings_fragment"
-        app:destination="@id/settingsFragment"/>
-
+-->
 </navigation>

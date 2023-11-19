@@ -3,37 +3,47 @@ package de.simon.dankelmann.bluetoothlespam
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
-import android.bluetooth.le.AdvertisingSetCallback
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
-import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
+import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
-import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
-import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,15 +60,12 @@ class MainActivity : AppCompatActivity() {
         AppContext.setContext(this)
         AppContext.setActivity(this)
 
-        initializeBluetooth()
-
-        // Require all permissions at startup
-        this.requestAllPermissions()
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.appBarMain.toolbar)
+        // Custom toolbar
+        val toolbar = findViewById<Toolbar>(R.id.customToolbar)
+        setSupportActionBar(toolbar)
 
         // Listen to Preference changes
         var prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,9 +74,16 @@ class MainActivity : AppCompatActivity() {
             run {
                 var legacyAdvertisingKey = AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)
                 if (key == legacyAdvertisingKey) {
-                    val advertisementService = getAdvertisementService()
+                    val advertisementService = BluetoothHelpers.getAdvertisementService()
                     AppContext.setAdvertisementService(advertisementService)
                     AppContext.getAdvertisementSetQueueHandler().setAdvertisementService(advertisementService)
+                }
+
+                var intervalKey = AppContext.getActivity().resources.getString(R.string.preference_key_interval_advertising_queue_handler)
+                if (key == intervalKey) {
+                    var newInterval = QueueHandlerHelpers.getInterval()
+                    Log.d(_logTag, "Setting new Interval: $newInterval")
+                    AppContext.getAdvertisementSetQueueHandler().setInterval(newInterval)
                 }
             }
         }
@@ -83,62 +97,19 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
+                R.id.nav_start,
+                /*
                 R.id.nav_fast_pairing,
                 R.id.nav_swift_pair,
                 R.id.nav_continuity_action_modals,
                 R.id.nav_continuity_device_popups,
-                R.id.nav_kitchen_sink
+                R.id.nav_kitchen_sink*/
             ), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        logHardwareDetails()
-    }
-
-    fun initializeBluetooth():Boolean{
-        var bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
-        if(bluetoothAdapter != null){
-            val advertisementService = getAdvertisementService()
-            AppContext.setAdvertisementService(advertisementService)
-
-            var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
-            AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
-            return true
-        }
-        return false
-    }
-
-    private fun getAdvertisementService() : IAdvertisementService{
-
-        var useLegacyAdvertisementService = true // <-- DEFAULT
-
-        // Get from Settings, if present
-        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
-        preferences.forEach {
-            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
-                useLegacyAdvertisementService = it.value as Boolean
-            }
-        }
-
-        val advertisementService = when (useLegacyAdvertisementService) {
-            true -> LegacyAdvertisementService()
-            else -> {ModernAdvertisementService()}
-        }
-
-        Log.d(_logTag, "Setting up Advertisement Service. Legacy = $useLegacyAdvertisementService")
-
-        return advertisementService
-    }
-
-    private fun logHardwareDetails(){
-        var bluetoothAdapter:BluetoothAdapter = bluetoothAdapter
-        if(bluetoothAdapter != null){
-            Log.d(_logTag, "---------------Bluetooth Adapter Info: -----------")
-
-            Log.d(_logTag, "isLeCodedPhySupported : " + bluetoothAdapter.isLeCodedPhySupported)
-
-        }
     }
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
@@ -162,9 +133,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (!bluetoothAdapter.isEnabled) {
-            promptEnableBluetooth()
-        }
     }
 
     private fun promptEnableBluetooth() {
@@ -176,36 +144,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun requestAllPermissions(){
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean
+    {
+        val actionSettingsMenuItem = menu?.findItem(R.id.nav_preferences)
+        val title = actionSettingsMenuItem?.title.toString()
+        val spannable = SpannableString(title)
 
-        val allPermissions = arrayOf(
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_ADVERTISE,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-        )
+        val textColor = resources.getColor(R.color.text_color, AppContext.getContext().theme)
+        spannable.setSpan(ForegroundColorSpan(textColor), 0, spannable.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        actionSettingsMenuItem?.title = spannable
 
-        PermissionCheck.requireAllPermissions(this, allPermissions)
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        grantResults.forEachIndexed { index, element ->
-            var permission = ""
-            if(permissions.get(index) != null){
-                permission = permissions.get(index)!!
-            }
-
-            if (element == PackageManager.PERMISSION_GRANTED) {
-                Log.d(_logTag, "Permission granted for: ${permission}, Request Code: ${requestCode}")
-            } else {
-                Log.d(_logTag, "Permission denied for: ${permission}, Request Code: ${requestCode}")
-            }
-        }
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -221,9 +170,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_settings -> {
+            R.id.nav_preferences -> {
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
-                navController.navigate(R.id.open_settings_fragment)
+                onNavDestinationSelected(item, navController)
             }
         }
 

@@ -8,7 +8,10 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_settings">Settings</string>
+    <string name="menu_preferences">Settings</string>
+    <string name="menu_start">Start</string>
+    <string name="menu_advertisement">Advertisement</string>
+
     <string name="menu_fastPairing">Google Fast Pairing</string>
     <string name="menu_swiftPair">Microsoft Swift Pairing</string>
     <string name="menu_continuityDevicePopup">Apple Device Popups</string>
@@ -16,6 +19,7 @@
     <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
 
     <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
     <string name="preference_title_use_legacy_advertising">Legacy Advertising</string>
     <string name="preference_summary_use_legacy_advertising">Use Bluetooth 4 Compatible BLE Advertising</string>
 
@@ -30,6 +34,9 @@
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
+
+    <string name="startfragment_requirements_checking">Checking Requirements...</string>
+
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>

@@ -1,6 +1,7 @@
 package de.simon.dankelmann.bluetoothlespam.Models
 
-class ManufacturerSpecificDataModel {
+class ManufacturerSpecificData {
+    var id = 0
     var manufacturerId = 0
     var manufacturerSpecificData = byteArrayOf()
 }

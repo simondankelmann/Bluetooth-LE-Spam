@@ -13,9 +13,10 @@
         <item name="seekbarBackground">@color/grey_normal</item>
         <item name="seekbarProgress">?attr/colorPrimary</item>
         <item name="seekbarSecondaryProgress">?attr/colorPrimaryVariant</item>
-
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
     </style>
+
 </resources>

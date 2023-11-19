@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothManager
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
+import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
@@ -38,7 +39,7 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
 
     // public
     var includeDeviceName:Boolean? = null
-    var txPowerLevel:Int? = null
+    var txPowerLevel:TxPowerLevel? = null
 
     init {
 

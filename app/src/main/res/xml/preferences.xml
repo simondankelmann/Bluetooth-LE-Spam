@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        app:key="@string/preference_key_use_legacy_advertising"
-        app:title="@string/preference_title_use_legacy_advertising"
-        app:summary="@string/preference_summary_use_legacy_advertising"
-        app:defaultValue="true"
-        />
+
+    <PreferenceCategory android:title="Advertising Settings">
+        <SwitchPreferenceCompat
+            app:key="@string/preference_key_use_legacy_advertising"
+            app:title="@string/preference_title_use_legacy_advertising"
+            app:summary="@string/preference_summary_use_legacy_advertising"
+            app:defaultValue="true"
+            />
+
+        <EditTextPreference
+            android:defaultValue="1000"
+            android:digits="0123456789"
+            android:inputType="number|numberDecimal"
+            android:key="@string/preference_key_interval_advertising_queue_handler"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="Duration of an Advertisement in Milliseconds. Recommended: 1000 - 10000"
+            android:title="Advertisement Duration (ms)" />
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

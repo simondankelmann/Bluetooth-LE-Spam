@@ -27,4 +27,38 @@
     <color name="log_error">#c50f1f</color>
     <color name="log_success">#13a10e</color>
 
+
+
+
+    <!-- Text Colors -->
+    <color name="text_color">#ffffff</color>
+    <color name="text_color_light">#ababab</color>
+
+    <!-- ACTIONBAR -->
+    <color name="background_color_action_bar">#000000</color>
+    <color name="foreground_color_action_bar">#FFFFFF</color>
+
+    <!-- CARDVIEW -->
+    <color name="text_color_card_view_accent">#FFFFFF</color>
+    <color name="text_color_card_view_accent_light">#ababab</color>
+
+    <!-- CARDVIEW ALTERNATIVE -->
+    <color name="text_color_card_view_alternative">#000000</color>
+    <color name="text_color_card_view_alternative_light">#ababab</color>
+    <color name="tint_icon_card_view_alternative">#373737</color>
+
+    <!-- LOADING SPINNER -->
+    <color name="background_color_loading_spinner">#cc000000</color>
+    <color name="color_filter_loading_spinner">@color/blue_normal</color>
+    <color name="color_loading_spinner_message">#ababab</color>
+
+    <!-- ROUNDED BUTTON -->
+    <color name="background_color_rounded_button">@color/blue_normal</color>
+    <color name="foreground_color_rounded_button">@color/white</color>
+
+    <!-- ICON TINT -->
+    <color name="tint_icon">@color/grey_normal</color>
+    <color name="tint_icon_light">@color/grey_normal</color>
+    <color name="tint_icon_accent">@color/blue_normal</color>
+
 </resources>

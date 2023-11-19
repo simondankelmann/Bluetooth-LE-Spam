@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+<!--
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,6 +20,20 @@
             app:popupTheme="@style/Theme.BluetoothLESpam.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
+    -->
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.BluetoothLESpam.AppBarOverlay"
+        app:elevation="0dp"
+        >
+
+        <include layout="@layout/custom_toolbar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
 
     <include layout="@layout/content_main" />
 

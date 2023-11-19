@@ -18,6 +18,17 @@ abstract class AppContext {
         fun Context.bluetoothAdapter(): BluetoothAdapter? = (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
         fun Context.bluetoothManager(): BluetoothManager? = (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
 
+        fun isBluetooth5Supported():Boolean{
+            val bluetoothAdapter:BluetoothAdapter? = this.getContext().bluetoothAdapter()
+            if(bluetoothAdapter != null) {
+                return (bluetoothAdapter.isLe2MPhySupported
+                        && bluetoothAdapter.isLeCodedPhySupported
+                        && bluetoothAdapter.isLeExtendedAdvertisingSupported
+                        && bluetoothAdapter.isLePeriodicAdvertisingSupported)
+            }
+            return false
+        }
+
 
         fun setContext(context: Context) {
             _context = context
