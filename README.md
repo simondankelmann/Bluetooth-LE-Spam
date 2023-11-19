@@ -24,6 +24,9 @@ For additional information about the Microsoft Swift Pair Service, you can find 
 ### Apple Device Popups
 This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
 
+### Easy Setup
+With the Easy Setup functionality, the app is capable of generating Bluetooth Low Energy Advertisement Sets that will trigger popups on Samsung devices specifically.
+
 ### Apple Action Modals
 By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions."
 
@@ -49,11 +52,9 @@ If you are an end user seeking the fully functional app, download the Release AP
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 ## Screenshots
-![](./Assets/Screenshots/ScreenshotFastPairing.jpeg)
-![](./Assets/Screenshots/ScreenshotSwiftPair.jpeg)
-![](./Assets/Screenshots/ScreenshotContinuityDevicePopUps.jpeg)
-![](./Assets/Screenshots/ScreenshotContinuityActionModals.jpeg)
-![](./Assets/Screenshots/ScreenshotKitchenSink.jpeg)
+![](./Assets/Screenshots/1.0.5/start.jpeg)
+![](./Assets/Screenshots/1.0.5/advertise.jpeg)
+![](./Assets/Screenshots/1.0.5/settings.jpeg)
 
 ## Disclaimer
 Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
