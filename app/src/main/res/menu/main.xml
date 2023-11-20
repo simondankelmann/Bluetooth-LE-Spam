@@ -9,4 +9,12 @@
         android:title="@string/action_settings"
         app:showAsAction="never"
         />
+
+    <item
+        android:visible="true"
+        android:id="@+id/nav_set_tx_power"
+        android:orderInCategory="200"
+        android:title="@string/action_set_tx_power"
+        app:showAsAction="never"
+        />
 </menu>

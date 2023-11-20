@@ -127,7 +127,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
-                                android:text="Bluetooth Version:"
+                                android:text="Bluetooth:"
                                 android:textColor="@color/text_color_card_view_accent_light"
                                 />
                         </LinearLayout>

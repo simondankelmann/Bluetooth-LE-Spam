@@ -6,7 +6,9 @@
     <string name="nav_header_title">Bluetooth LE Spam</string>
     <string name="nav_header_subtitle">github.com/simondankelmann</string>
     <string name="nav_header_desc">Navigation header</string>
+
     <string name="action_settings">Settings</string>
+    <string name="action_set_tx_power">TX Power</string>
 
     <string name="menu_preferences">Settings</string>
     <string name="menu_start">Start</string>
