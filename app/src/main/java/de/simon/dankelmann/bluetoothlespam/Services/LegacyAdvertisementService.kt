@@ -78,6 +78,14 @@ class LegacyAdvertisementService: IAdvertisementService {
 
     override fun setTxPowerLevel(txPowerLevel:TxPowerLevel){
         _txPowerLevel = txPowerLevel
+        Log.d(_logTag, "Setting TX POWER")
+    }
+
+    override fun getTxPowerLevel(): TxPowerLevel{
+        if(_txPowerLevel != null){
+            return _txPowerLevel!!
+        }
+        return TxPowerLevel.TX_POWER_HIGH
     }
 
     fun prepareAdvertisementSet(advertisementSet: AdvertisementSet):AdvertisementSet{

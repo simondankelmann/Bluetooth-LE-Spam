@@ -93,6 +93,13 @@ class ModernAdvertisementService: IAdvertisementService{
         _txPowerLevel = txPowerLevel
     }
 
+    override fun getTxPowerLevel(): TxPowerLevel{
+        if(_txPowerLevel != null){
+            return _txPowerLevel!!
+        }
+        return TxPowerLevel.TX_POWER_HIGH
+    }
+
     override fun addAdvertisementServiceCallback(callback: IAdvertisementServiceCallback){
         if(!_advertisementServiceCallbacks.contains(callback)){
             _advertisementServiceCallbacks.add(callback)
