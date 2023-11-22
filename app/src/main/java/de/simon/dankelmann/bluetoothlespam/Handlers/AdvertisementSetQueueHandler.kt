@@ -13,6 +13,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementSer
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
+import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementForegroundService
 import kotlin.random.Random
 
 class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
@@ -120,16 +121,20 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     }
 
     fun activate(){
-        _active = true
-        if(_currentAdvertisementSet != null){
-            handleAdvertisementSet(_currentAdvertisementSet!!)
-        } else {
-            advertiseNextAdvertisementSet()
+        if(_active == false){
+            _active = true
+            AdvertisementForegroundService.startService(AppContext.getContext(), "Foreground Service is running...")
+            if(_currentAdvertisementSet != null){
+                handleAdvertisementSet(_currentAdvertisementSet!!)
+            } else {
+                advertiseNextAdvertisementSet()
+            }
         }
     }
 
     fun deactivate(){
         _active = false
+        AdvertisementForegroundService.stopService(AppContext.getActivity())
         if(_advertisementService != null){
             _advertisementService!!.stopAdvertisement()
         }

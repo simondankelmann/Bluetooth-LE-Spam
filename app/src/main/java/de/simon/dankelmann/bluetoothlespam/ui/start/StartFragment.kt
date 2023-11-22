@@ -588,6 +588,7 @@ class StartFragment : Fragment() {
             Manifest.permission.BLUETOOTH_ADVERTISE,
             //Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.POST_NOTIFICATIONS
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()
