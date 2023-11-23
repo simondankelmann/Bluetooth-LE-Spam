@@ -16,7 +16,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementForegroundService
 import kotlin.random.Random
 
-class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
+class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
 
     // private
     private var _logTag = "AdvertisementSetQueuHandler"
@@ -30,6 +30,8 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     private var _currentAdvertisementSet: AdvertisementSet? = null
     private var _currentAdvertisementSetListIndex = 0
     private var _currentAdvertisementSetIndex = 0
+
+    private var _advertisementForegroundService: AdvertisementForegroundService = AdvertisementForegroundService()
 
     init{
         _advertisementService = AppContext.getAdvertisementService()
@@ -135,8 +137,8 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     fun deactivate(){
         _active = false
         AdvertisementForegroundService.stopService(AppContext.getActivity())
-        if(_advertisementService != null){
-            _advertisementService!!.stopAdvertisement()
+        if(AppContext.getAdvertisementService() != null){
+            AppContext.getAdvertisementService().stopAdvertisement()
         }
     }
 
@@ -292,13 +294,21 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     // Callback Implementation, just pass to own Listeners
     override fun onAdvertisementSetStart(advertisementSet: AdvertisementSet?) {
         _advertisementServiceCallbacks.map {
-            it.onAdvertisementSetStart(advertisementSet)
+            try {
+                it.onAdvertisementSetStart(advertisementSet)
+            } catch (e:Exception){
+                Log.e(_logTag, "Error in: onAdvertisementSetStart ${e.message}")
+            }
         }
     }
 
     override fun onAdvertisementSetStop(advertisementSet: AdvertisementSet?) {
         _advertisementServiceCallbacks.map {
-            it.onAdvertisementSetStop(advertisementSet)
+            try {
+                it.onAdvertisementSetStop(advertisementSet)
+            } catch (e:Exception){
+                Log.e(_logTag, "Error in: onAdvertisementSetStop ${e.message}")
+            }
         }
 
         if(_advertisementService != null && !_advertisementService!!.isLegacyService()){
@@ -309,14 +319,22 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback {
     override fun onAdvertisementSetSucceeded(advertisementSet: AdvertisementSet?) {
         runLocalCallback(true)
         _advertisementServiceCallbacks.map {
-            it.onAdvertisementSetSucceeded(advertisementSet)
+            try {
+                it.onAdvertisementSetSucceeded(advertisementSet)
+            } catch (e:Exception){
+                Log.e(_logTag, "Error in: onAdvertisementSetSucceeded ${e.message}")
+            }
         }
     }
 
     override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
         runLocalCallback(false)
         _advertisementServiceCallbacks.map {
-            it.onAdvertisementSetFailed(advertisementSet, advertisementError)
+            try {
+                it.onAdvertisementSetFailed(advertisementSet, advertisementError)
+            } catch (e:Exception){
+                Log.e(_logTag, "Error in: onAdvertisementSetFailed ${e.message}")
+            }
         }
     }
 }

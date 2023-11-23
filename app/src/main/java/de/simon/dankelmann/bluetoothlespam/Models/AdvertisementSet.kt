@@ -7,8 +7,9 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import java.io.Serializable
 
-class AdvertisementSet {
+class AdvertisementSet : Serializable {
     private val _logTag = "AdvertisementSet"
 
     // Data

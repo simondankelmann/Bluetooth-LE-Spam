@@ -8,8 +8,9 @@ import androidx.room.ColumnInfo
 import de.simon.dankelmann.bluetoothlespam.Enums.PrimaryPhy
 import de.simon.dankelmann.bluetoothlespam.Enums.SecondaryPhy
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
+import java.io.Serializable
 
-class AdvertisingSetParameters {
+class AdvertisingSetParameters : Serializable {
     private var _logTag = "AdvertisingSetParametersModel"
 
     var id:Int = 0
@@ -23,8 +24,6 @@ class AdvertisingSetParameters {
     var scanable = false
     var connectable = false
     var anonymous = false
-
-
 
     fun validate():Boolean{
         //@Todo: implement validation here

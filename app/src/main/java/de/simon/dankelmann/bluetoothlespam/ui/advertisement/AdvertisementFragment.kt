@@ -52,26 +52,33 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         _expandableListView = _binding!!.advertisementFragmentCollectionExpandableListview
 
         // Get AdvertisementSetCollection from Bundle
+        /*
         if(arguments != null){
-            var advertisementSetCollectionArgumentKey = "advertisementSetCollection"
+            try{
+                var advertisementSetCollectionArgumentKey = "advertisementSetCollection"
 
-            var advertismentSetCollection = AdvertisementSetCollection()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val type: Class<AdvertisementSetCollection> = AdvertisementSetCollection::class.java
-                var collectionFromBundle = requireArguments().getSerializable(advertisementSetCollectionArgumentKey, type)
-                if(collectionFromBundle != null){
-                    advertismentSetCollection = collectionFromBundle
+                var advertismentSetCollection = AdvertisementSetCollection()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val type: Class<AdvertisementSetCollection> = AdvertisementSetCollection::class.java
+                    var collectionFromBundle = requireArguments().getSerializable(advertisementSetCollectionArgumentKey, type)
+                    if(collectionFromBundle != null){
+                        advertismentSetCollection = collectionFromBundle
+                    }
+                } else {
+                    var collectionFromBundle = requireArguments().getSerializable(advertisementSetCollectionArgumentKey)
+                    if(collectionFromBundle != null){
+                        advertismentSetCollection = collectionFromBundle as AdvertisementSetCollection
+                    }
                 }
-            } else {
-                var collectionFromBundle = requireArguments().getSerializable(advertisementSetCollectionArgumentKey)
-                if(collectionFromBundle != null){
-                    advertismentSetCollection = collectionFromBundle as AdvertisementSetCollection
-                }
+
+                setAdvertisementSetCollection(advertismentSetCollection)
+            } catch(e:Exception){
+                Log.d(_logTag, "Could not parse AdvertisementSetCollection")
             }
+        } */
 
-           setAdvertisementSetCollection(advertismentSetCollection)
-            _viewModel!!.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
-        }
+        setAdvertisementSetCollection(AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection())
+        _viewModel!!.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
 
         setupUi()
 
@@ -86,7 +93,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
     override fun onPause() {
         super.onPause()
         AppContext.getAdvertisementSetQueueHandler().removeAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().deactivate()
+        //AppContext.getAdvertisementSetQueueHandler().deactivate()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

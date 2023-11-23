@@ -497,9 +497,11 @@ class StartFragment : Fragment() {
 
     fun navigateToAdvertisementFragment(advertisementSetCollection: AdvertisementSetCollection){
         AppContext.getActivity().runOnUiThread {
-            val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
+            //val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
             val navController = AppContext.getActivity().findNavController(R.id.nav_host_fragment_content_main)
-            navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+            AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+            //navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+            navController.navigate(R.id.action_nav_start_to_nav_advertisement)
         }
     }
 

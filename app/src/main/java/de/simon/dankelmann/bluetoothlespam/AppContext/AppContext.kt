@@ -29,7 +29,6 @@ abstract class AppContext {
             return false
         }
 
-
         fun setContext(context: Context) {
             _context = context
         }
