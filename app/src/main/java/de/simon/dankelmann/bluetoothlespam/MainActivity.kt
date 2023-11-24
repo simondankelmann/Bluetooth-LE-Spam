@@ -94,6 +94,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_start,
+                R.id.nav_advertisement,
                 /*
                 R.id.nav_fast_pairing,
                 R.id.nav_swift_pair,

@@ -61,4 +61,11 @@
     <color name="tint_icon_light">@color/grey_normal</color>
     <color name="tint_icon_accent">@color/blue_normal</color>
 
+    <!-- NOTIFICATION -->
+    <color name="tint_target_icon">@color/text_color_light</color>
+    <color name="color_title">@color/text_color</color>
+    <color name="color_subtitle">@color/text_color_light</color>
+    <color name="tint_button_active">@color/text_color</color>
+    <color name="tint_button_inactive">@color/text_color_light</color>
+
 </resources>

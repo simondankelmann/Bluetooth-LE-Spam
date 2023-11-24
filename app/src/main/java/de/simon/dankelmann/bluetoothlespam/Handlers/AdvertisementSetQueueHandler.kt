@@ -136,7 +136,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
 
     fun deactivate(){
         _active = false
-        AdvertisementForegroundService.stopService(AppContext.getActivity())
+        //AdvertisementForegroundService.stopService(AppContext.getActivity())
         if(AppContext.getAdvertisementService() != null){
             AppContext.getAdvertisementService().stopAdvertisement()
         }

@@ -50,6 +50,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         val root: View = _binding!!.root
 
         _expandableListView = _binding!!.advertisementFragmentCollectionExpandableListview
+        syncViewModelToAdvertisementQueueHandler()
 
         // Get AdvertisementSetCollection from Bundle
         /*
@@ -85,9 +86,14 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback {
         return root
     }
 
+    fun syncViewModelToAdvertisementQueueHandler(){
+        _viewModel!!.isAdvertising.postValue(AppContext.getAdvertisementSetQueueHandler().isActive())
+    }
+
     override fun onResume() {
         super.onResume()
         AppContext.getAdvertisementSetQueueHandler().addAdvertisementServiceCallback(this)
+        syncViewModelToAdvertisementQueueHandler()
     }
 
     override fun onPause() {

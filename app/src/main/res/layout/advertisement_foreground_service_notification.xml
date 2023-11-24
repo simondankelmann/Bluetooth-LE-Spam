@@ -1,40 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:weightSum="100" >
+ >
 
     <ImageView
-        android:id="@+id/notifiation_image"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="30"
-        android:src="@drawable/bluetooth" />
+        android:id="@+id/advertisementForegroundServiceNotificationTargetImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_android"
+        app:tint="@color/tint_target_icon"
 
-    <TextView
-        android:id="@+id/appName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="50"
-        android:gravity="center"
-        android:text="TEXT IN LAYOUT"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        />
 
-    <Button
-        android:id="@+id/pauseButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:layout_weight="20"
-        android:text="PAUSE"
-        android:layout_marginRight="15dp"/>
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/advertisementForegroundServiceNotificationTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:gravity="center"
+            android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod"
+            android:textSize="18dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/color_title"/>
 
-    <Button
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="20"
-        android:text="PLAY" />
+        <TextView
+            android:id="@+id/advertisementForegroundServiceNotificationSubTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:gravity="center"
+            android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod"
+            android:textSize="15dp"
+            android:ellipsize="marquee"
+            android:textStyle="italic"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/color_subtitle"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        >
+
+        <ImageView
+            android:padding="10dp"
+            android:id="@+id/advertisementForegroundServiceNotificationPauseImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/pause"
+            app:tint="@color/tint_button_active"
+            >
+        </ImageView>
+
+        <ImageView
+            android:padding="10dp"
+            android:id="@+id/advertisementForegroundServiceNotificationPlayImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/play_arrow"
+            app:tint="@color/tint_button_active">
+        </ImageView>
+    </LinearLayout>
 
 </LinearLayout>

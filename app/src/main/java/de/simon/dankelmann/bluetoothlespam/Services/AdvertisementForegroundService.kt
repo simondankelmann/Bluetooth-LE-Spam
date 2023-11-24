@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -85,6 +87,44 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, Service() {
         // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
+
+        var title = ""
+        var subtitle = ""
+        var targetImageId = R.drawable.bluetooth
+
+        if(advertisementSet != null){
+            title = advertisementSet.title
+            subtitle = when(advertisementSet.type){
+                AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined Type"
+
+                AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
+                AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
+
+                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE -> "Fast Pairing"
+                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION -> "Fast Pairing"
+                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP -> "Fast Pairing"
+                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing"
+
+                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "Apple Device"
+                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "Apple Action"
+
+                AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
+            }
+
+            targetImageId = when(advertisementSet.target){
+                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> R.drawable.samsung
+                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> R.drawable.ic_android
+                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> R.drawable.apple
+                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> R.drawable.bluetooth
+                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> R.drawable.microsoft
+                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> R.drawable.shuffle
+            }
+        }
+        // Views for Custom Layout
+        notificationView.setTextViewText(R.id.advertisementForegroundServiceNotificationTitleTextView, title)
+        notificationView.setTextViewText(R.id.advertisementForegroundServiceNotificationSubTitleTextView, subtitle)
+        notificationView.setImageViewResource(R.id.advertisementForegroundServiceNotificationTargetImageView, targetImageId)
+
         // Listeners for Custom Layout
         val pauseSwitchIntent = Intent(AppContext.getActivity(), pauseButtonListener::class.java)
         val pendingPauseSwitchIntent = PendingIntent.getBroadcast(AppContext.getActivity(), 0, pauseSwitchIntent, PendingIntent.FLAG_MUTABLE)
@@ -92,8 +132,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, Service() {
         val playSwitchIntent = Intent(AppContext.getActivity(), playButtonListener::class.java)
         val pendingPlaySwitchIntent = PendingIntent.getBroadcast(AppContext.getActivity(), 0, playSwitchIntent, PendingIntent.FLAG_MUTABLE)
 
-        notificationView.setOnClickPendingIntent(R.id.pauseButton, pendingPauseSwitchIntent)
-        notificationView.setOnClickPendingIntent(R.id.playButton, pendingPlaySwitchIntent)
+        notificationView.setOnClickPendingIntent(R.id.advertisementForegroundServiceNotificationPauseImageView, pendingPauseSwitchIntent)
+        notificationView.setOnClickPendingIntent(R.id.advertisementForegroundServiceNotificationPlayImageView, pendingPlaySwitchIntent)
+
 
         var contentText = "Bluetooth LE Spam"
         if(advertisementSet != null){
@@ -109,7 +150,8 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, Service() {
             .setChannelId(_channelId)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .setCustomContentView(notificationView)
+            //.setCustomContentView(notificationView)
+            .setCustomBigContentView(notificationView)
             .build()
 
         return notification
