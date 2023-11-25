@@ -13,8 +13,8 @@
         android:padding="10dp"
         android:src="@drawable/ic_android"
         app:tint="@color/tint_target_icon"
-
         />
+
 
     <LinearLayout
         android:layout_width="fill_parent"

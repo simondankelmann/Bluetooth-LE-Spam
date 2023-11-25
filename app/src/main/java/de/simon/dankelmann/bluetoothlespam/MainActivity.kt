@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
-        AppContext.setContext(this)
+        AppContext.setContext(applicationContext)
         AppContext.setActivity(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_start,
-                R.id.nav_advertisement,
                 /*
                 R.id.nav_fast_pairing,
                 R.id.nav_swift_pair,
