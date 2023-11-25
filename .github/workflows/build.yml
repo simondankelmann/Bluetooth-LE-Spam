@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build.yml'
+      - 'app/**'
+      - 'gradle/**'
+      - '*.gradle.*'
+      - '*.properties'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/
+          key: ${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew assemble --no-daemon
+          {
+            echo "version=v$(grep versionName app/build.gradle.kts | awk '{print $3}' | tr -d \")"
+            echo "commit=$(echo ${{ github.sha }} | cut -c-7)"
+          } >> "$GITHUB_ENV"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: Bluetooth-LE-Spam(${{ env.version }}@${{ env.commit }})
+          path: app/build/outputs/apk/**/app-*.apk
