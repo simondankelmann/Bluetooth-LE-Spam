@@ -1,6 +1,7 @@
 package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.app.Notification
+import android.app.Notification.FOREGROUND_SERVICE_IMMEDIATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -116,15 +117,16 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         */
 
         // Custom Layout
-        val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
+        val notificationView =
+            RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
         var title = ""
         var subtitle = ""
         var targetImageId = R.drawable.bluetooth
 
-        if(advertisementSet != null){
+        if (advertisementSet != null) {
             title = advertisementSet.title
-            subtitle = when(advertisementSet.type){
+            subtitle = when (advertisementSet.type) {
                 AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined Type"
 
                 AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
@@ -141,7 +143,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
                 AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
             }
 
-            targetImageId = when(advertisementSet.target){
+            targetImageId = when (advertisementSet.target) {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> R.drawable.samsung
                 AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> R.drawable.ic_android
                 AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> R.drawable.apple
@@ -152,69 +154,146 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         }
 
         // Views for Custom Layout
-        notificationView.setTextViewText(R.id.advertisementForegroundServiceNotificationTitleTextView, title)
-        notificationView.setTextViewText(R.id.advertisementForegroundServiceNotificationSubTitleTextView, subtitle)
-        notificationView.setImageViewResource(R.id.advertisementForegroundServiceNotificationTargetImageView, targetImageId)
+        notificationView.setTextViewText(
+            R.id.advertisementForegroundServiceNotificationTitleTextView,
+            title
+        )
+        notificationView.setTextViewText(
+            R.id.advertisementForegroundServiceNotificationSubTitleTextView,
+            subtitle
+        )
+        notificationView.setImageViewResource(
+            R.id.advertisementForegroundServiceNotificationTargetImageView,
+            targetImageId
+        )
 
-        val targetIconColor = resources.getColor(R.color.tint_target_icon, AppContext.getContext().theme)
-        val buttonActiveColor = resources.getColor(R.color.tint_button_active, AppContext.getContext().theme)
-        val buttonInActiveColor = resources.getColor(R.color.tint_button_inactive, AppContext.getContext().theme)
+        val targetIconColor =
+            resources.getColor(R.color.tint_target_icon, AppContext.getContext().theme)
+        val buttonActiveColor =
+            resources.getColor(R.color.tint_button_active, AppContext.getContext().theme)
+        val buttonInActiveColor =
+            resources.getColor(R.color.tint_button_inactive, AppContext.getContext().theme)
 
-        val playImageViewTint = when(AppContext.getAdvertisementSetQueueHandler().isActive()){
+        val playImageViewTint = when (AppContext.getAdvertisementSetQueueHandler().isActive()) {
             true -> buttonInActiveColor
             false -> buttonActiveColor
         }
 
-        val pauseImageViewTint = when(AppContext.getAdvertisementSetQueueHandler().isActive()){
+        val pauseImageViewTint = when (AppContext.getAdvertisementSetQueueHandler().isActive()) {
             true -> buttonActiveColor
             false -> buttonInActiveColor
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            notificationView.setColorInt(R.id.advertisementForegroundServiceNotificationTargetImageView, "setColorFilter", targetIconColor, targetIconColor)
-            notificationView.setColorInt(R.id.advertisementForegroundServiceNotificationPlayImageView, "setColorFilter", playImageViewTint, playImageViewTint)
-            notificationView.setColorInt(R.id.advertisementForegroundServiceNotificationPauseImageView, "setColorFilter", pauseImageViewTint, pauseImageViewTint)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            notificationView.setColorInt(
+                R.id.advertisementForegroundServiceNotificationTargetImageView,
+                "setColorFilter",
+                targetIconColor,
+                targetIconColor
+            )
+            notificationView.setColorInt(
+                R.id.advertisementForegroundServiceNotificationPlayImageView,
+                "setColorFilter",
+                playImageViewTint,
+                playImageViewTint
+            )
+            notificationView.setColorInt(
+                R.id.advertisementForegroundServiceNotificationPauseImageView,
+                "setColorFilter",
+                pauseImageViewTint,
+                pauseImageViewTint
+            )
+        } else {
+            notificationView.setInt(
+                R.id.advertisementForegroundServiceNotificationTargetImageView,
+                "setColorFilter",
+                targetIconColor
+            )
+            notificationView.setInt(
+                R.id.advertisementForegroundServiceNotificationPlayImageView,
+                "setColorFilter",
+                playImageViewTint
+            )
+            notificationView.setInt(
+                R.id.advertisementForegroundServiceNotificationPauseImageView,
+                "setColorFilter",
+                pauseImageViewTint
+            )
         }
 
-        if(advertisementSet != null){
-            var titleColor = when(advertisementSet.advertisementState){
-                AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED -> resources.getColor(R.color.color_title, AppContext.getContext().theme)
-                AdvertisementState.ADVERTISEMENT_STATE_STARTED -> resources.getColor(R.color.color_title, AppContext.getContext().theme)
-                AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED -> resources.getColor(R.color.color_title, AppContext.getContext().theme)
-                AdvertisementState.ADVERTISEMENT_STATE_FAILED -> resources.getColor(R.color.log_error, AppContext.getContext().theme)
+        if (advertisementSet != null) {
+            var titleColor = when (advertisementSet.advertisementState) {
+                AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED -> resources.getColor(
+                    R.color.color_title,
+                    AppContext.getContext().theme
+                )
+
+                AdvertisementState.ADVERTISEMENT_STATE_STARTED -> resources.getColor(
+                    R.color.color_title,
+                    AppContext.getContext().theme
+                )
+
+                AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED -> resources.getColor(
+                    R.color.color_title,
+                    AppContext.getContext().theme
+                )
+
+                AdvertisementState.ADVERTISEMENT_STATE_FAILED -> resources.getColor(
+                    R.color.log_error,
+                    AppContext.getContext().theme
+                )
             }
 
-            notificationView.setTextColor(R.id.advertisementForegroundServiceNotificationTitleTextView, titleColor)
+            notificationView.setTextColor(
+                R.id.advertisementForegroundServiceNotificationTitleTextView,
+                titleColor
+            )
         }
 
         // Listeners for Custom Layout
         val pauseSwitchIntent = Intent(AppContext.getActivity(), pauseButtonListener::class.java)
-        val pendingPauseSwitchIntent = PendingIntent.getBroadcast(AppContext.getActivity(), 0, pauseSwitchIntent, PendingIntent.FLAG_MUTABLE)
+        val pendingPauseSwitchIntent = PendingIntent.getBroadcast(
+            AppContext.getActivity(),
+            0,
+            pauseSwitchIntent,
+            PendingIntent.FLAG_MUTABLE
+        )
 
         val playSwitchIntent = Intent(AppContext.getActivity(), playButtonListener::class.java)
-        val pendingPlaySwitchIntent = PendingIntent.getBroadcast(AppContext.getActivity(), 0, playSwitchIntent, PendingIntent.FLAG_MUTABLE)
+        val pendingPlaySwitchIntent = PendingIntent.getBroadcast(
+            AppContext.getActivity(),
+            0,
+            playSwitchIntent,
+            PendingIntent.FLAG_MUTABLE
+        )
 
-        notificationView.setOnClickPendingIntent(R.id.advertisementForegroundServiceNotificationPauseImageView, pendingPauseSwitchIntent)
-        notificationView.setOnClickPendingIntent(R.id.advertisementForegroundServiceNotificationPlayImageView, pendingPlaySwitchIntent)
+        notificationView.setOnClickPendingIntent(
+            R.id.advertisementForegroundServiceNotificationPauseImageView,
+            pendingPauseSwitchIntent
+        )
+        notificationView.setOnClickPendingIntent(
+            R.id.advertisementForegroundServiceNotificationPlayImageView,
+            pendingPlaySwitchIntent
+        )
 
         var contentText = "Bluetooth LE Spam"
-        if(advertisementSet != null){
+        if (advertisementSet != null) {
             contentText = advertisementSet.title
         }
 
-        val notification = NotificationCompat.Builder(AppContext.getActivity(), _channelId)
+        return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
             .setContentTitle("Bluetooth LE Spam")
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
             .setContentIntent(pendingIntentTargeted)
-            .setColor(Color.BLUE)
+            .setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
             .setChannelId(_channelId)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCustomBigContentView(notificationView)
+            .setContent(notificationView)
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .build()
-
-        return notification
     }
 
     private fun updateNotification(advertisementSet: AdvertisementSet?){
