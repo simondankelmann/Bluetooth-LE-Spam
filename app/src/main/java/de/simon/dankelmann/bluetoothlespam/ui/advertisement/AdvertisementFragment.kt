@@ -75,7 +75,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
     override fun onDestroy() {
         super.onDestroy()
-        AppContext.getAdvertisementSetQueueHandler().deactivate(true)
+        //AppContext.getAdvertisementSetQueueHandler().deactivate(true)
     }
 
     private fun syncWithQueueHandler(){

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 
@@ -53,12 +54,20 @@ abstract class AppContext {
             return _advertisementService
         }
 
+        fun advertisementServiceIsInitialized(): Boolean {
+            return this::_advertisementService.isInitialized
+        }
+
         fun setAdvertisementSetQueueHandler(advertisementSetQueueHandler: AdvertisementSetQueueHandler) {
             _advertisementSetQueueHandler = advertisementSetQueueHandler
         }
 
         fun getAdvertisementSetQueueHandler(): AdvertisementSetQueueHandler {
             return _advertisementSetQueueHandler
+        }
+
+        fun advertisementSetQueueHandlerIsInitialized(): Boolean {
+            return this::_advertisementSetQueueHandler.isInitialized
         }
 
         fun registerPermissionCallback(requestCode: Int, callback:Runnable){

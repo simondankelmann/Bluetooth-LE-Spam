@@ -15,6 +15,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -96,9 +97,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     }
 
     private fun createNotification(advertisementSet: AdvertisementSet?): Notification {
-/*
-        val notificationIntent = Intent(AppContext.getActivity(), MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(AppContext.getActivity(), 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
+
+        // val notificationIntent = Intent(AppContext.getActivity(), MainActivity::class.java)
+        // val pendingIntent = PendingIntent.getActivity(AppContext.getActivity(), 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
 
         val pendingIntentTargeted = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
@@ -106,12 +107,13 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .setDestination(R.id.nav_advertisement)
             //.setArguments(bundle)
             .createPendingIntent()
-*/
+
+        /*
         val notificationIntent = Intent(AppContext.getContext(), MainActivity::class.java)
         notificationIntent.action = Intent.ACTION_MAIN
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER)
         val contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE)
-
+        */
 
         // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
@@ -204,7 +206,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .setContentTitle("Bluetooth LE Spam")
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
-            .setContentIntent(contentIntent)
+            .setContentIntent(pendingIntentTargeted)
             .setColor(Color.BLUE)
             .setChannelId(_channelId)
             .setOngoing(true)
