@@ -204,6 +204,12 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
                 "setColorFilter",
                 buttonActiveColor
             )
+
+            notificationView.setInt(
+                R.id.advertisementForegroundServiceNotificationToggleImageView,
+                "setColorFilter",
+                buttonActiveColor
+            )
         }
 
         if (advertisementSet != null) {
