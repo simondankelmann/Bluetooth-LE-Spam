@@ -50,9 +50,8 @@
         android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
         tools:targetApi="31">
         <service android:name=".Services.AdvertisementForegroundService"></service>
-        <receiver android:name=".Services.AdvertisementForegroundService$playButtonListener" />
-        <receiver android:name=".Services.AdvertisementForegroundService$pauseButtonListener" />
-
+        <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
+        <receiver android:name=".Services.AdvertisementForegroundService$StopButtonListener" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

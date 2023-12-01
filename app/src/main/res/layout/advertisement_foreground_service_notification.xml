@@ -58,6 +58,29 @@
 
         <ImageView
             android:padding="10dp"
+            android:id="@+id/advertisementForegroundServiceNotificationStopImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/stop"
+            app:tint="@color/tint_button_active"
+            >
+        </ImageView>
+
+        <ImageView
+            android:padding="10dp"
+            android:id="@+id/advertisementForegroundServiceNotificationToggleImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/pause"
+            app:tint="@color/tint_button_active"
+            >
+        </ImageView>
+
+
+
+        <!--
+        <ImageView
+            android:padding="10dp"
             android:id="@+id/advertisementForegroundServiceNotificationPauseImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
@@ -73,7 +96,8 @@
             android:layout_height="50dp"
             android:src="@drawable/play_arrow"
             app:tint="@color/tint_button_active">
-        </ImageView>
+        </ImageView>-->
+
     </LinearLayout>
 
 </LinearLayout>

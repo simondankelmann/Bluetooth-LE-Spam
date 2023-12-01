@@ -169,6 +169,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         }
 
         if(stopService){
+            Log.d(_logTag, "Stopping Foreground Service")
             AdvertisementForegroundService.stopService(AppContext.getActivity())
         }
 
