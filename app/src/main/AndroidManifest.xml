@@ -38,6 +38,8 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
 
     <application
         android:allowBackup="true"
@@ -49,7 +51,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
         tools:targetApi="31">
-        <service android:name=".Services.AdvertisementForegroundService"></service>
+        <service android:foregroundServiceType="specialUse" android:name=".Services.AdvertisementForegroundService"></service>
         <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
         <receiver android:name=".Services.AdvertisementForegroundService$StopButtonListener" />
         <activity
