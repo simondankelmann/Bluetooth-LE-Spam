@@ -11,17 +11,17 @@ This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functi
 > If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the in the Info tab in settings.
 
 ## Functionality
-### Google Fast Pair
+### Google Fast Pair (Android Devices)
 This app is capable of spoofing BLE advertisers that mimic the usage of the Google Fast Pair Service, leading to an influx of unwanted pop-up notifications on the receiving device.
 
 For additional information about the Google Fast Pair Service, you can find it [here](https://developers.google.com/nearby/fast-pair/landing-page)
 
-### Microsoft Swift Pair
+### Microsoft Swift Pair (Windows Devices)
 This app can spoof BLE advertisers that mimic devices supporting the Microsoft Swift Pairing Service. If Swift Pair notifications are enabled on a nearby Windows 10 (or later) device, it will receive a flood of notifications regarding nearby devices.
 
 For additional information about the Microsoft Swift Pair Service, you can find it [here](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair)
 
-### Apple Device Popups
+### Apple Device Popups (Apple devices)
 This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
 
 ### Easy Setup (Samsung)
