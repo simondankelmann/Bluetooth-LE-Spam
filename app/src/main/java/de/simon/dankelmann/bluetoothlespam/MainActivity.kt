@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -17,18 +18,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
-import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -37,19 +37,12 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
-import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
+import org.w3c.dom.Text
 
 
 class MainActivity : AppCompatActivity() {
@@ -63,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
-        AppContext.setContext(this)
+        AppContext.setContext(applicationContext)
         AppContext.setActivity(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -76,46 +69,51 @@ class MainActivity : AppCompatActivity() {
         // Listen to Preference changes
         var prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        sharedPreferenceChangedListener = OnSharedPreferenceChangeListener { sharedPreferences, key ->
-            run {
-                var legacyAdvertisingKey = AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)
-                if (key == legacyAdvertisingKey) {
-                    val advertisementService = BluetoothHelpers.getAdvertisementService()
-                    AppContext.setAdvertisementService(advertisementService)
-                    AppContext.getAdvertisementSetQueueHandler().setAdvertisementService(advertisementService)
-                }
+        sharedPreferenceChangedListener =
+            OnSharedPreferenceChangeListener { sharedPreferences, key ->
+                run {
+                    var legacyAdvertisingKey =
+                        AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)
+                    if (key == legacyAdvertisingKey) {
+                        val advertisementService = BluetoothHelpers.getAdvertisementService()
+                        AppContext.setAdvertisementService(advertisementService)
+                        AppContext.getAdvertisementSetQueueHandler()
+                            .setAdvertisementService(advertisementService)
+                    }
 
-                var intervalKey = AppContext.getActivity().resources.getString(R.string.preference_key_interval_advertising_queue_handler)
-                if (key == intervalKey) {
-                    var newInterval = QueueHandlerHelpers.getInterval()
-                    Log.d(_logTag, "Setting new Interval: $newInterval")
-                    AppContext.getAdvertisementSetQueueHandler().setInterval(newInterval)
+                    var intervalKey =
+                        AppContext.getActivity().resources.getString(R.string.preference_key_interval_advertising_queue_handler)
+                    if (key == intervalKey) {
+                        var newInterval = QueueHandlerHelpers.getInterval()
+                        Log.d(_logTag, "Setting new Interval: $newInterval")
+                        AppContext.getAdvertisementSetQueueHandler().setInterval(newInterval)
+                    }
                 }
             }
-        }
 
         prefs.registerOnSharedPreferenceChangeListener(sharedPreferenceChangedListener);
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        navView.getHeaderView(0).findViewById<TextView>(R.id.textViewGithubLink)
+            ?.setOnClickListener {
+                val uri = Uri.parse("https://github.com/simondankelmann/Bluetooth-LE-Spam")
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
+            }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_start,
-                /*
-                R.id.nav_fast_pairing,
-                R.id.nav_swift_pair,
-                R.id.nav_continuity_action_modals,
-                R.id.nav_continuity_device_popups,
-                R.id.nav_kitchen_sink*/
             ), drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
     }
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {

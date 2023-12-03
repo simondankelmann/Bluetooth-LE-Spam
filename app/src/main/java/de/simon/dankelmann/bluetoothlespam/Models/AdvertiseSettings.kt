@@ -5,8 +5,9 @@ import android.util.Log
 import androidx.room.ColumnInfo
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
+import java.io.Serializable
 
-class AdvertiseSettings {
+class AdvertiseSettings : Serializable {
     private var _logTag = "AdvertiseSettingsModel"
     var id:Int = 0
     var advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY

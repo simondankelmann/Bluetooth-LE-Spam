@@ -36,16 +36,22 @@
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
         tools:targetApi="31">
+        <service android:name=".Services.AdvertisementForegroundService"></service>
+        <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
+        <receiver android:name=".Services.AdvertisementForegroundService$StopButtonListener" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

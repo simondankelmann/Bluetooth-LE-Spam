@@ -89,7 +89,6 @@ class StartFragment : Fragment() {
         checkAdvertisementService()
         checkDatabase()
 
-
         return root
     }
 
@@ -269,7 +268,7 @@ class StartFragment : Fragment() {
         // Bluetooth Support
         val textViewBluetoothSupport: TextView = binding.startFragmentTextViewBluetooth
         _viewModel!!.bluetoothSupport.observe(viewLifecycleOwner) {
-            textViewBluetoothSupport.text = "Bluetooth Version: $it"
+            textViewBluetoothSupport.text = "Bluetooth: $it"
         }
 
         // Missing Requirements Text
@@ -497,9 +496,12 @@ class StartFragment : Fragment() {
 
     fun navigateToAdvertisementFragment(advertisementSetCollection: AdvertisementSetCollection){
         AppContext.getActivity().runOnUiThread {
-            val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
+            //val bundle = bundleOf("advertisementSetCollection" to advertisementSetCollection)
             val navController = AppContext.getActivity().findNavController(R.id.nav_host_fragment_content_main)
-            navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+            AppContext.getAdvertisementSetQueueHandler().deactivate()
+            AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+            //navController.navigate(R.id.action_nav_start_to_nav_advertisement, bundle)
+            navController.navigate(R.id.action_nav_start_to_nav_advertisement)
         }
     }
 
@@ -588,6 +590,7 @@ class StartFragment : Fragment() {
             Manifest.permission.BLUETOOTH_ADVERTISE,
             //Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.POST_NOTIFICATIONS
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()
@@ -627,20 +630,24 @@ class StartFragment : Fragment() {
     fun checkAdvertisementService(){
         var advertisementServiceIsReady = true
 
-        try {
-            val advertisementService = BluetoothHelpers.getAdvertisementService()
-            AppContext.setAdvertisementService(advertisementService)
-        } catch (e:Exception){
-            addMissingRequirement("Advertisement Service not initialized")
-            advertisementServiceIsReady = false
+        if(!AppContext.advertisementServiceIsInitialized()){
+            try {
+                val advertisementService = BluetoothHelpers.getAdvertisementService()
+                AppContext.setAdvertisementService(advertisementService)
+            } catch (e:Exception){
+                addMissingRequirement("Advertisement Service not initialized")
+                advertisementServiceIsReady = false
+            }
         }
 
-        try {
-            var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
-            AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
-        } catch (e:Exception){
-            addMissingRequirement("Queue Handler not initialized")
-            advertisementServiceIsReady = false
+        if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
+            try {
+                var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
+                AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
+            } catch (e:Exception){
+                addMissingRequirement("Queue Handler not initialized")
+                advertisementServiceIsReady = false
+            }
         }
 
         _viewModel!!.advertisementServiceIsReady.postValue(advertisementServiceIsReady)

@@ -2,8 +2,9 @@ package de.simon.dankelmann.bluetoothlespam.Models
 
 import android.bluetooth.le.AdvertiseData
 import android.util.Log
+import java.io.Serializable
 
-class AdvertiseData {
+class AdvertiseData : Serializable {
     private var _logTag = "AdvertiseData"
 
     var id = 0
