@@ -103,8 +103,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
 
         // Custom Layout
-        val notificationView =
-            RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
+        val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
         var title = ""
         var subtitle = ""
@@ -278,14 +277,15 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
             .setContentIntent(pendingIntentTargeted)
-            .setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
+            //.setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
+            //.setColorized(true)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setChannelId(_channelId)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setCustomBigContentView(notificationView)
-            .setContent(notificationView)
-            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
-            .build()
+            .setCustomContentView(notificationView)
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE).build()
     }
 
     private fun updateNotification(advertisementSet: AdvertisementSet?){
