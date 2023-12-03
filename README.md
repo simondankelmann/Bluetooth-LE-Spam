@@ -2,13 +2,13 @@
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome.
+> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. So it really hit or miss there is not much we can do 
 
 <h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
 
 ## Requirements
 - Android 8.0 (API level 26) or later
-> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the settings app.
+> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the in the Info tab in settings.
 
 ## Functionality
 ### Google Fast Pair
@@ -24,13 +24,13 @@ For additional information about the Microsoft Swift Pair Service, you can find 
 ### Apple Device Popups
 This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
 
-### Easy Setup
+### Easy Setup (Samsung)
 With the Easy Setup functionality, the app is capable of generating Bluetooth Low Energy Advertisement Sets that will trigger popups on Samsung devices specifically.
 
-### Apple Action Modals
+### Apple Action Modals (Apple)
 By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions.
 
-### Kitchen Sink
+### Kitchen Sink (Everything at once)
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
 ## Range
