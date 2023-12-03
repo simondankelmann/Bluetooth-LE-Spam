@@ -8,7 +8,7 @@ This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functi
 
 ## Requirements
 - Android 8.0 (API level 26) or later
-> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the in the Info tab in settings.
+> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the Info tab in settings.
 
 ## Functionality
 ### Google Fast Pair (Android Devices)
@@ -34,7 +34,7 @@ By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
 ## Range
-Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range.
+Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range. But still very hit or miss on some devices it may have long rang but on others it may have short range 
 
 ## Installation
 You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
@@ -61,7 +61,7 @@ Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
 
 This repository contains code for the investigation and experimentation of the Bluetooth Low Energy (BLE) protocol. Please be aware of the following disclaimers before using or contributing to this repository:
 
-1. Purpose: The code and information provided in this repository are intended for educational and research purposes. It is not intended for any malicious or harmful activities.
+1. Purpose: The code and information provided in this repository are intended for educational and research purposes and is just a proof of concept. It is not intended for any malicious or harmful activities.
 
 2. Legal Compliance: Users are responsible for ensuring that their use of the code and information in this repository complies with all applicable laws and regulations, including those governing wireless communication and intellectual property rights.
 
@@ -75,6 +75,6 @@ This repository contains code for the investigation and experimentation of the B
 
 By using and contributing to this repository, you agree to these disclaimers and guidelines. If you do not agree, please refrain from using or contributing to this repository.
 
-For any questions or concerns, please contact the repository maintainers.
+For any questions or concerns, please contact the repository maintainers on Discord or Github.
 
 
