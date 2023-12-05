@@ -21,11 +21,11 @@ This app can spoof BLE advertisers that mimic devices supporting the Microsoft S
 
 For additional information about the Microsoft Swift Pair Service, you can find it [here](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair)
 
-### Apple Device Popups (Apple devices)
-This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
-
 ### Easy Setup (Samsung)
 With the Easy Setup functionality, the app is capable of generating Bluetooth Low Energy Advertisement Sets that will trigger popups on Samsung devices specifically.
+
+### Apple Device Popups (Apple devices)
+This app can spoof various Apple devices via Bluetooth Low Energy, which can be detected by iOS devices, resulting in a flood of unwanted popups on the receiving iOS device.
 
 ### Apple Action Modals (Apple)
 By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions.
