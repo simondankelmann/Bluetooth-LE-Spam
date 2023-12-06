@@ -2,7 +2,7 @@
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. So it really hit or miss there is not much we can do 
+> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. So the app is really hit or miss there is not much we can do.
 
 <h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
 
@@ -34,7 +34,8 @@ By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
 ## Range
-Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range. But still very hit or miss on some devices it may have long rang but on others it may have short range 
+To put it simply it can differ on some devices it may have long rang but on others it may have short range.
+Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range. 
 
 ## Installation
 You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
