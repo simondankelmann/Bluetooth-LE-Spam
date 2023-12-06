@@ -39,8 +39,8 @@ Since the official Bluetooth Low Energy API provided by Google's Android SDK all
 ## Installation
 You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
 
-If you are a developer or tester, choose the Debug APK for testing and debugging purposes.
 If you are an end-user seeking a fully functional app, download the Release APK for the best performance (just get this one).
+If you are a developer or tester, choose the Debug APK for testing and debugging purposes.
 
 ## Credit
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
