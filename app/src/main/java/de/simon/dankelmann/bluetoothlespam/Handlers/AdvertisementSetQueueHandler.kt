@@ -3,9 +3,11 @@ package de.simon.dankelmann.bluetoothlespam.Handlers
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
@@ -185,9 +187,17 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
     fun advertiseNextAdvertisementSet(){
         selectNextAdvertisementSet()
         if(_currentAdvertisementSet != null){
-            handleAdvertisementSet(_currentAdvertisementSet!!)
+            handleAdvertisementSet(prepareAdvertisementSet(_currentAdvertisementSet!!))
         } else {
             Log.e(_logTag, "Current Advertisement Set is null.")
+        }
+    }
+
+    fun prepareAdvertisementSet(advertisementSet: AdvertisementSet):AdvertisementSet{
+        when(advertisementSet.type){
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> return ContinuityDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+
+            else -> return advertisementSet
         }
     }
 

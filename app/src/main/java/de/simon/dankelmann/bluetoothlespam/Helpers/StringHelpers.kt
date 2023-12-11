@@ -12,6 +12,10 @@ class StringHelpers {
         }
         fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
+        fun intToHexString(input:Int):String{
+            return String.format("%02x", input)
+        }
+
 
     }
 
