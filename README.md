@@ -2,7 +2,7 @@
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. So the app is really hit or miss there is not much we can do.
+> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. Therefore, the app is currently quite unreliable, and there isn't much we can do about it.
 
 <h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
 
@@ -34,19 +34,21 @@ By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
 ## Range
-To put it simply it can differ on some devices it may have long rang but on others it may have short range.
-Since the official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload but doesn't permit direct modification of the byte values actually transmitted in the payload, the range of the Fast Pair functionality is somewhat limited. The receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used. However, devices like the Flipper Zero have the capability to modify this byte, significantly extending their range. 
+Simply put, the range of Bluetooth Low Energy (BLE) can vary between devices; some may have a long range, while others may have a short range.
+
+The official Bluetooth Low Energy API provided by Google's Android SDK allows you to set the TX Power level and include it in the advertiser's payload. However, it doesn't permit direct modification of the byte values actually transmitted in the payload. This limitation affects the range of the Fast Pair functionality. Receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used.
+
+Devices like the Flipper Zero, however, have the capability to modify this byte, significantly extending their range.
 
 ## Installation
 You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
 
-If you are an end-user seeking a fully functional app, download the Release APK for the best performance (just get this one).
-If you are a developer or tester, choose the Debug APK for testing and debugging purposes.
+If you're an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one). If you're a developer or tester, opt for the Debug APK for testing and debugging purposes.
 
 ## Credit
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
 
-- [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576),[Mrproxy](HTTPS://GitHub.com/Mrproxy) for their contribution in the BLE Spam App on the Flipper Zero
+- [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576),[Mrproxy](https://github.com/Mr-Proxy-source) for their contribution in the BLE Spam App on the Flipper Zero
 
 - [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
 
