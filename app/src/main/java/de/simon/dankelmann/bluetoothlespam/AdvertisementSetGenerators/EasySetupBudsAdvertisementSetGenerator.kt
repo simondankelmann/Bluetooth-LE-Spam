@@ -88,7 +88,7 @@ class EasySetupBudsAdvertisementSetGenerator:IAdvertisementSetGenerator{
             var fullPayload = prependedBudsBytes.plus(payload).plus(appendedBudsBytes)
 
             manufacturerSpecificData.manufacturerSpecificData = fullPayload
-            Log.d("EASY SETUP", "Full Payload(${fullPayload.size}): " + fullPayload.toHexString())
+            //Log.d("EASY SETUP", "Full Payload(${fullPayload.size}): " + fullPayload.toHexString())
 
             advertisementSet.advertiseData.manufacturerData.add(manufacturerSpecificData)
             advertisementSet.advertiseData.includeTxPower = false

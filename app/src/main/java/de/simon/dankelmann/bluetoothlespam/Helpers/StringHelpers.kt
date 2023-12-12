@@ -16,6 +16,12 @@ class StringHelpers {
             return String.format("%02x", input)
         }
 
+        fun byteToHexString(input:Byte):String{
+            return String.format("%02x", input)
+        }
+
+
+
 
     }
 
