@@ -25,7 +25,7 @@ class AdvertisementSet : Serializable {
     var advertiseSettings: AdvertiseSettings = AdvertiseSettings()
     var advertisingSetParameters:AdvertisingSetParameters = AdvertisingSetParameters()
     var advertiseData:AdvertiseData = AdvertiseData()
-    var scanResponse:AdvertiseData? = AdvertiseData()
+    var scanResponse:AdvertiseData? = null
     var periodicAdvertisingParameters:PeriodicAdvertisingParameters? = null
     var periodicAdvertiseData:AdvertiseData? = null
 

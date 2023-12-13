@@ -55,7 +55,12 @@ class ModernAdvertisementService: IAdvertisementService{
             if(advertisementSet.validate()){
                 if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
-                    _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), null, null, null, preparedAdvertisementSet.advertisingSetCallback)
+                    if(preparedAdvertisementSet.scanResponse != null){
+                        _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse!!.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
+
+                    } else {
+                        _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), null, null, null, preparedAdvertisementSet.advertisingSetCallback)
+                    }
                     Log.d(_logTag, "Started Modern Advertisement")
                     _currentAdvertisementSet = preparedAdvertisementSet
                     _advertisementServiceCallbacks.map {

@@ -382,7 +382,10 @@ class StartFragment : Fragment() {
                 var titlePrefix = when(advertisementSetType){
                     AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined"
 
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOS Device PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> "New Device PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> "New Airtag PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> "Not your Device PopUps"
+
                     AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOS Action Modals"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> "iOs 17 Crash"
 
@@ -439,7 +442,7 @@ class StartFragment : Fragment() {
     }
 
     fun onContinuityCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH), "Continuity Collection")
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH), "Continuity Collection")
     }
 
     fun onSwiftPairingCardViewClicked(){
@@ -460,11 +463,13 @@ class StartFragment : Fragment() {
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION,
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG,
 
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
-            //AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
 

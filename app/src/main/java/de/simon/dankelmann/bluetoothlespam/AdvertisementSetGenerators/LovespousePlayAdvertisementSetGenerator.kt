@@ -64,7 +64,7 @@ class LovespousePlayAdvertisementSetGenerator:IAdvertisementSetGenerator {
             var advertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY
-            advertisementSet.range = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_UNKNOWN
+            advertisementSet.range = AdvertisementSetRange.ADVERTISEMENTSET_RANGE_FAR
 
             // Advertise Settings
             advertisementSet.advertiseSettings.advertiseMode = AdvertiseMode.ADVERTISEMODE_LOW_LATENCY
