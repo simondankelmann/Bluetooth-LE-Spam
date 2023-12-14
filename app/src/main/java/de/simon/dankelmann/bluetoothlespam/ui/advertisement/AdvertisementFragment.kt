@@ -108,7 +108,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         setupExpandableListView(advertisementSetCollection)
 
         // Pass the Collection to the Queue Handler
-        AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+        //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
     }
 
     private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
