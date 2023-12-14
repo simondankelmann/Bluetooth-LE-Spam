@@ -30,6 +30,14 @@ This app can spoof various Apple devices via Bluetooth Low Energy, which can be 
 ### Apple Action Modals (Apple)
 By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions.
 
+### Apple iOS 17 Crash (Apple)
+With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices. This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
+
+> **_NOTE:_** To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
+
+### Lovespouse (Adult Toys)
+With this functionality, it is possible to enable or disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
+
 ### Kitchen Sink (Everything at once)
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
 
@@ -49,6 +57,10 @@ If you are a developer or tester, choose the Debug APK for testing and debugging
 - [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576),[Mrproxy](HTTPS://GitHub.com/Mrproxy) for their contribution in the BLE Spam App on the Flipper Zero
 
 - [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
+
+- [mandomat](https://mandomat.github.io/aboutme/) for the research of [Denial of Pleasure](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
+
+- [tutozz](https://github.com/tutozz) for the research of Easy Setup Buds in Android
 
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
