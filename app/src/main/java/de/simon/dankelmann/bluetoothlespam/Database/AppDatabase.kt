@@ -6,13 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityDevicePopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityIos17CrashAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewAirtagPopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewDevicePopUpAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNotYourDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupBudsAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupWatchAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDebugAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairNonProductionAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairPhoneSetupAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.LovespousePlayAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.LovespouseStopAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.AdvertiseDataDao
@@ -114,13 +119,20 @@ abstract class AppDatabase : RoomDatabase() {
                 FastPairNonProductionAdvertisementSetGenerator(),
                 FastPairDebugAdvertisementSetGenerator(),
 
-                ContinuityDevicePopUpAdvertisementSetGenerator(),
+                //ContinuityDevicePopUpAdvertisementSetGenerator(),
+                ContinuityNotYourDevicePopUpAdvertisementSetGenerator(),
+                ContinuityNewDevicePopUpAdvertisementSetGenerator(),
+                ContinuityNewAirtagPopUpAdvertisementSetGenerator(),
                 ContinuityActionModalAdvertisementSetGenerator(),
+                ContinuityIos17CrashAdvertisementSetGenerator(),
 
                 SwiftPairAdvertisementSetGenerator(),
 
                 EasySetupWatchAdvertisementSetGenerator(),
-                EasySetupBudsAdvertisementSetGenerator()
+                EasySetupBudsAdvertisementSetGenerator(),
+
+                LovespousePlayAdvertisementSetGenerator(),
+                LovespouseStopAdvertisementSetGenerator()
             )
 
             advertisementSetGenerators.forEach{ generator ->

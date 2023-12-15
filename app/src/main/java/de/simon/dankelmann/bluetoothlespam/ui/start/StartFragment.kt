@@ -160,6 +160,13 @@ class StartFragment : Fragment() {
                     distanceTextView.text = "Distance: Undefined"
                     iconImageView.setImageDrawable(resources.getDrawable(R.drawable.ic_info, AppContext.getContext().theme))
                 }
+
+                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> {
+                    titleTextView.text = "Lovespouse"
+                    targetTextView.text = "Target: Lovespouse"
+                    distanceTextView.text = "Distance: Far"
+                    iconImageView.setImageDrawable(resources.getDrawable(R.drawable.heart, AppContext.getContext().theme))
+                }
             }
 
             // Hookup Events
@@ -184,6 +191,10 @@ class StartFragment : Fragment() {
 
                     AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> {
                         onKitchenSinkCardViewClicked()
+                    }
+
+                    AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> {
+                        onLovespouseCardViewClicked()
                     }
 
                     else -> {
@@ -239,7 +250,7 @@ class StartFragment : Fragment() {
         }
 
         var linearLayout:LinearLayout = binding.listView
-        setupAdvertisementSetCollectionListView(linearLayout, listOf(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID, AdvertisementTarget.ADVERTISEMENT_TARGET_IOS, AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG, AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS, AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK))
+        setupAdvertisementSetCollectionListView(linearLayout, listOf(AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID, AdvertisementTarget.ADVERTISEMENT_TARGET_IOS, AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG, AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS,AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE, AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK))
 
         // Loading Message
         val textViewLoadingMessage: TextView = binding.startFragmentLoadingSpinnerMessage
@@ -358,48 +369,6 @@ class StartFragment : Fragment() {
             }
         }
 
-        // Fast Pairing Cardview
-        /*
-        val startFragmentFastPairingCard: CardView = binding.startFragmentFastPairingCard
-        startFragmentFastPairingCard.setOnClickListener {
-            onFastPairingCardViewClicked()
-        }
-
-        // Easy Setup Cardview
-        val startFragmentEasySetupCard: CardView = binding.startFragmentEasySetupCard
-        startFragmentEasySetupCard.setOnClickListener {
-            onEasySetupCardViewClicked()
-        }
-
-        // Continuity Device PopUps Cardview
-        val startFragmentDevicePopUpsCard: CardView = binding.startFragmentDevicePopUpsCard
-        startFragmentDevicePopUpsCard.setOnClickListener {
-            onDevicePopUpsCardViewClicked()
-        }
-
-        // Continuity ActionModals Cardview
-        val startFragmentActionModalsCard: CardView = binding.startFragmentActionModalsCard
-        startFragmentActionModalsCard.setOnClickListener {
-            onActionModalsCardViewClicked()
-        }
-
-        // Swift Pairing Cardview
-        val startFragmentSwiftPairingCard: CardView = binding.startFragmentSwiftPairingCard
-        startFragmentSwiftPairingCard.setOnClickListener {
-            onSwiftPairingCardViewClicked()
-        }
-
-        // Fast Pairing Cardview
-        val startFragmentFastPairingDebugCard: CardView = binding.startFragmentFastPairingDebugCard
-        startFragmentFastPairingDebugCard.setOnClickListener {
-            onFastPairingDebugCardViewClicked()
-        }
-
-        // Kitchen Sink Cardview
-        val startFragmentKitchenSinkCard: CardView = binding.startFragmentKitchenSinkCard
-        startFragmentKitchenSinkCard.setOnClickListener {
-            onKitchenSinkCardViewClicked()
-        }*/
     }
 
     fun navigateToAdvertisementFragmentWithType(advertisementSetTypes: List<AdvertisementSetType>, advertisementSetCollectionTitle:String){
@@ -413,8 +382,12 @@ class StartFragment : Fragment() {
                 var titlePrefix = when(advertisementSetType){
                     AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined"
 
-                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOS Device PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> "New Device PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> "New Airtag PopUps"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> "Not your Device PopUps"
+
                     AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOS Action Modals"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> "iOs 17 Crash"
 
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE -> "Fast Pairing Device"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP -> "Fast Pairing Phone Setup"
@@ -425,6 +398,9 @@ class StartFragment : Fragment() {
 
                     AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
                     AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
+
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY -> "Lovespouse Play"
+                    AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP -> "Lovespouse Stop"
                 }
 
                 // Initialize the List
@@ -461,16 +437,20 @@ class StartFragment : Fragment() {
     fun onEasySetupCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
-            //AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS
         ), "Easy Setup Collection")
     }
 
     fun onContinuityCardViewClicked(){
-        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS), "Continuity Collection")
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS, AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH), "Continuity Collection")
     }
 
     fun onSwiftPairingCardViewClicked(){
         navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING), "Swift Pair Collection")
+    }
+
+    fun onLovespouseCardViewClicked(){
+        navigateToAdvertisementFragmentWithType(listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY, AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP), "Lovespouse Collection")
     }
 
     fun onKitchenSinkCardViewClicked(){
@@ -483,13 +463,18 @@ class StartFragment : Fragment() {
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION,
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG,
 
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
-            //AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP,
 
             ), "Kitchen Sink Collection")
     }

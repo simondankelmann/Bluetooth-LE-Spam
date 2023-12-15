@@ -108,7 +108,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         setupExpandableListView(advertisementSetCollection)
 
         // Pass the Collection to the Queue Handler
-        AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+        //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
     }
 
     private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
@@ -164,11 +164,19 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION -> "Fast Pairing Non Production"
             AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing Debug"
 
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_DEVICE_POPUPS -> "iOs Device Popup"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> "New Device Popup"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> "Not your Device Popup"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> "New Airtag Popup"
+
+
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "iOs Action Modal"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> "iOs 17 Crash"
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY -> "Lovespouse Play"
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP -> "Lovespouse Stop"
         }
 
         var range = when(advertisementSet.range){
@@ -242,6 +250,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
                 AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> resources.getDrawable(R.drawable.microsoft, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> resources.getDrawable(R.drawable.samsung, AppContext.getContext().theme)
                 AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> resources.getDrawable(R.drawable.shuffle, AppContext.getContext().theme)
+                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> resources.getDrawable(R.drawable.heart, AppContext.getContext().theme)
             }
             advertisingTargetImage.setImageDrawable(targetImageDrawable)
         }

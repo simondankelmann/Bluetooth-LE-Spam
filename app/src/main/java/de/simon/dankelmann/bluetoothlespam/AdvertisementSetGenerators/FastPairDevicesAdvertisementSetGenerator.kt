@@ -508,6 +508,7 @@ class FastPairDevicesAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "E5E2E9" to "Zone Wireless 2"
         )
 
+
     val serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))
 
     override fun getAdvertisementSets():List<AdvertisementSet> {
