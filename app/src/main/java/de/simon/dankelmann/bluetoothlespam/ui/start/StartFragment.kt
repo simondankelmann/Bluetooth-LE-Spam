@@ -164,7 +164,7 @@ class StartFragment : Fragment() {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> {
                     titleTextView.text = "Lovespouse"
                     targetTextView.text = "Target: Lovespouse"
-                    distanceTextView.text = "Distance: Unknown"
+                    distanceTextView.text = "Distance: Far"
                     iconImageView.setImageDrawable(resources.getDrawable(R.drawable.heart, AppContext.getContext().theme))
                 }
             }
@@ -472,6 +472,9 @@ class StartFragment : Fragment() {
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
 
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
+
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP,
 
             ), "Kitchen Sink Collection")
     }
