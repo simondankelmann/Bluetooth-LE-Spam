@@ -51,7 +51,7 @@ class FastPairNonProductionAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "350000" to "Test 000035 2",
         "000009" to "Test Android TV",
         "090000" to "Test Android TV 2"
-    )
+        )
 
     val serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))
 

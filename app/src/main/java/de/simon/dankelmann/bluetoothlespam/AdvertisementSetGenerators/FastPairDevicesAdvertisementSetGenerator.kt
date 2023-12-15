@@ -58,7 +58,7 @@ class FastPairDevicesAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "0052DA" to "blackbox TRIP II",
         "124366" to "BLE-Phone",
         "8D13B9" to "BLE-TWS",
-        "00A168" to "boAt  Airdopes 621",
+        "00A168" to "boAt  Airdopes 621",
         "1F5865" to "boAt Airdopes 441",
         "641630" to "boAt Airdopes 452",
         "8E5550" to "boAt Airdopes 511v2",
@@ -315,7 +315,7 @@ class FastPairDevicesAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "E6E8B8" to "POCO Pods",
         "0E30C3" to "Razer Hammerhead TWS",
         "72EF8D" to "Razer Hammerhead TWS X",
-        "E6E37E" to "realme Buds  Air 5 Pro",
+        "E6E37E" to "realme Buds  Air 5 Pro",
         "8C6B6A" to "realme Buds Air 3S",
         "8CD10F" to "realme Buds Air Pro",
         "D8F4E8" to "realme Buds T100",
@@ -506,7 +506,8 @@ class FastPairDevicesAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "CC754F" to "YY2963",
         "8C1706" to "YY7861E",
         "E5E2E9" to "Zone Wireless 2"
-    )
+        )
+
 
     val serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))
 
