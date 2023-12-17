@@ -37,6 +37,10 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
         "06" to "Pair AppleTV",
         "0D" to "HomeKit AppleTV Setup",
         "2B" to "AppleID for AppleTV?",
+        "05" to "Apple Watch",
+        "24" to "Apple Vision Pro",
+        "2F" to "Connect to other Device",
+        "21" to "Software Update",
     )
 
     companion object {
@@ -49,13 +53,21 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
                     val action = payload[3]
                     var flag = payload[2]
 
+                    // Change flag from time to time
                     if ((StringHelpers.byteToHexString(action) == "20") && Random.nextBoolean()) {
                         flag = StringHelpers.decodeHex("BF")[0]
                     }
 
+                    // Change flag from time to time
                     if ((StringHelpers.byteToHexString(action) == "09") && Random.nextBoolean()) {
                         flag = StringHelpers.decodeHex("40")[0]
                     }
+
+                    // Change flag each time
+                    if ((StringHelpers.byteToHexString(action) == "21")) {
+                        flag = StringHelpers.decodeHex("40")[0]
+                    }
+
                     payload[2] = flag
 
                     // randomize auth tag
@@ -63,6 +75,7 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
                     payload[5] = Random.nextBytes(1)[0]
                     payload[6] = Random.nextBytes(1)[0]
 
+                    advertisementSet.advertiseData.manufacturerData[0].manufacturerSpecificData = payload
                 }
             }
 
