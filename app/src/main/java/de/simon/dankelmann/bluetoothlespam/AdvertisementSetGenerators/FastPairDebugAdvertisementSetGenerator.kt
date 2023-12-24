@@ -41,10 +41,12 @@ class FastPairDebugAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
     val serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))
 
-    override fun getAdvertisementSets():List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-        _genuineDeviceIds.map {
+        val data = inputData ?: _genuineDeviceIds
+
+        data.map {
 
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID

@@ -22,23 +22,27 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
     // https://github.com/Flipper-XFW/Xtreme-Firmware/blob/dev/applications/external/ble_spam/protocols/swiftpair.c
 
     private val _prependedBytes = StringHelpers.decodeHex("030080")
-    private var _deviceNames = mutableListOf(
-        "Device 1",
-        "Device 2",
-        "Device 3",
-        "Device 4",
-        "Device 5",
-        "Device 6",
-        "Device 7",
-        "Device 8",
-        "Device 9",
-        "Device 10")
+
+    private val _deviceNames = mapOf(
+        "Device 1" to "Not used...",
+        "Device 2" to "Not used...",
+        "Device 3" to "Not used...",
+        "Device 4" to "Not used...",
+        "Device 5" to "Not used...",
+        "Device 6" to "Not used...",
+        "Device 7" to "Not used...",
+        "Device 8" to "Not used...",
+        "Device 9" to "Not used...",
+        "Device 10" to "Not used...",
+    )
 
     private val _manufacturerId = 6 // 0x0006 == 6 = Microsoft
-    override fun getAdvertisementSets(): List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-        _deviceNames.map {deviceName ->
+        val data = inputData ?: _deviceNames
+
+        data.map {deviceName ->
 
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS
@@ -63,7 +67,7 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
 
             val manufacturerSpecificData = ManufacturerSpecificData()
             manufacturerSpecificData.manufacturerId = _manufacturerId
-            manufacturerSpecificData.manufacturerSpecificData = _prependedBytes.plus(deviceName.toByteArray())
+            manufacturerSpecificData.manufacturerSpecificData = _prependedBytes.plus(deviceName.key.toByteArray())
             advertisementSet.advertiseData.manufacturerData.add(manufacturerSpecificData)
             advertisementSet.advertiseData.includeTxPower = false
 
@@ -71,7 +75,7 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
             // advertisementSet.scanResponse.includeTxPower = false
 
             // General Data
-            advertisementSet.title = deviceName
+            advertisementSet.title = deviceName.key
 
             // Callbacks
             advertisementSet.advertisingSetCallback = GenericAdvertisingSetCallback()

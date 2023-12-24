@@ -510,8 +510,7 @@ class StartFragment : Fragment() {
             var database = AppDatabase.getInstance()
             if(database != null){
                 removeMissingRequirement("Database is not initialized")
-
-                if(!database.isSeeding){
+                if(!database.isSeeding && !database.inTransaction()){
                     removeMissingRequirement("Database is Seeding")
                     _viewModel!!.isSeeding.postValue(false)
                     var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()

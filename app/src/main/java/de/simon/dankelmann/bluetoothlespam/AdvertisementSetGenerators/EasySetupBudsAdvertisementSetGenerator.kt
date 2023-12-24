@@ -56,11 +56,13 @@ class EasySetupBudsAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "011716" to "Sleek Black Buds2",
     )
 
-    override fun getAdvertisementSets():List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
+        val data = inputData ?: _genuineBudsIds
+
         // BUDS
-        _genuineBudsIds.map {
+        data.map {
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS

@@ -100,10 +100,12 @@ class ContinuityNewAirtagPopUpAdvertisementSetGenerator: IAdvertisementSetGenera
         }
     }
 
-    override fun getAdvertisementSets(): List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-        deviceData.forEach{deviceData ->
+        val data = inputData ?: deviceData
+
+        data.forEach{deviceData ->
             val colorMap = getColorMap(deviceData.key)
             val prefix = "05" // => NEW AIRTAG
 
