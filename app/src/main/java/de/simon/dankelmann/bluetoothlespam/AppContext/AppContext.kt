@@ -7,6 +7,8 @@ import android.content.Context
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
+import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanService
 
 abstract class AppContext {
     companion object {
@@ -14,6 +16,7 @@ abstract class AppContext {
         private lateinit var _context: Context
         private lateinit var _activity: Activity
         private lateinit var _advertisementService: IAdvertisementService
+        private lateinit var _bluetoothLeScanService: IBluetoothLeScanService
         private lateinit var _advertisementSetQueueHandler: AdvertisementSetQueueHandler
 
         fun Context.bluetoothAdapter(): BluetoothAdapter? = (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
@@ -54,8 +57,20 @@ abstract class AppContext {
             return _advertisementService
         }
 
+        fun setBluetoothLeScanService(bluetoothLeScanService: IBluetoothLeScanService) {
+            _bluetoothLeScanService = bluetoothLeScanService
+        }
+
+        fun getBluetoothLeScanService(): IBluetoothLeScanService {
+            return _bluetoothLeScanService
+        }
+
         fun advertisementServiceIsInitialized(): Boolean {
             return this::_advertisementService.isInitialized
+        }
+
+        fun bluetoothLeScanServiceIsInitialized(): Boolean {
+            return this::_bluetoothLeScanService.isInitialized
         }
 
         fun setAdvertisementSetQueueHandler(advertisementSetQueueHandler: AdvertisementSetQueueHandler) {

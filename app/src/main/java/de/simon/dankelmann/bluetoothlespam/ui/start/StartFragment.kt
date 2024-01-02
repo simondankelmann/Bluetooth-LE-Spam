@@ -14,7 +14,6 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -27,16 +26,15 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
-import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
+import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanForegroundService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 import java.lang.Exception
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -572,9 +570,12 @@ class StartFragment : Fragment() {
             Manifest.permission.BLUETOOTH,
             Manifest.permission.BLUETOOTH_ADMIN,
             Manifest.permission.BLUETOOTH_ADVERTISE,
-            //Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.POST_NOTIFICATIONS
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()
@@ -620,6 +621,15 @@ class StartFragment : Fragment() {
                 AppContext.setAdvertisementService(advertisementService)
             } catch (e:Exception){
                 addMissingRequirement("Advertisement Service not initialized")
+                advertisementServiceIsReady = false
+            }
+        }
+
+        if(!AppContext.bluetoothLeScanServiceIsInitialized()){
+            try {
+                BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
+            } catch (e:Exception){
+                addMissingRequirement("Bluetooth LE Scan Service not initialized")
                 advertisementServiceIsReady = false
             }
         }

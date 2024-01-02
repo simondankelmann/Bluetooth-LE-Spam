@@ -13,10 +13,11 @@
          If your app doesn't use Bluetooth scan results to derive physical
          location information, you can
          <a href="#assert-never-for-location">strongly assert that your app
-         doesn't derive physical location</a>.
+         doesn't derive physical location</a>. -->
 
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
 
+<!--
  Needed only if your app makes the device discoverable to Bluetooth
          devices.
     -->
@@ -27,10 +28,10 @@
          devices.
 -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />  <!--Needed only if your app uses Bluetooth scan results to derive physical location. -->
-    <!--
+
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    -->
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -39,6 +40,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+
 
 
     <application
@@ -52,6 +56,8 @@
         android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
         tools:targetApi="31">
         <service android:foregroundServiceType="specialUse" android:name=".Services.AdvertisementForegroundService"></service>
+        <service android:foregroundServiceType="location" android:name=".Services.BluetoothLeScanForegroundService"></service>
+
         <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
         <receiver android:name=".Services.AdvertisementForegroundService$StopButtonListener" />
         <activity
