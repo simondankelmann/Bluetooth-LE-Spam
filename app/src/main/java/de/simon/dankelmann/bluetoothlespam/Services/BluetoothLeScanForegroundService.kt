@@ -28,6 +28,7 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHex
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.MainActivity
+import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 
@@ -216,23 +217,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onScanResult(scanResult: ScanResult) {
-
-        // get raw message
-        val scanRecord = scanResult.scanRecord
-        if(scanRecord != null){
-            val rawBytes =  scanResult.scanRecord!!.bytes
-            Log.d(_logTag, "RAW Result: ${rawBytes.toHexString()}")
-        }
-
-        // get device data
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
-            val deviceAddress = scanResult.device.address
-            val deviceName = scanResult.device.name
-            Log.d(_logTag, "Found Device: ${deviceName} - ${deviceAddress}")
-
-            updateNotification("Found Device: ${deviceName} - ${deviceAddress}")
-            //AppContext.getBluetoothLeScanService().stopScanning()
-            //Log.d(_logTag, "Stopped scanning from background")
-        }
+        var model = BluetoothLeScanResult.parseFromScanResult(scanResult)
+        updateNotification(model.deviceName)
     }
 }

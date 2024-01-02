@@ -12,6 +12,7 @@
 
     <string name="menu_preferences">Settings</string>
     <string name="menu_start">Start</string>
+    <string name="menu_spam_detector">Spam Detector</string>
     <string name="menu_advertisement">Advertisement</string>
 
     <string name="menu_fastPairing">Google Fast Pairing</string>

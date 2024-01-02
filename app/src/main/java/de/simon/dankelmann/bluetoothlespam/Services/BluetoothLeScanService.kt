@@ -4,15 +4,20 @@ import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothLeDeviceClassificationHelper
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
+import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
 class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
@@ -22,6 +27,8 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     private var _bluetoothLeScanner:BluetoothLeScanner? = null
     private var _scanning = false
     private var _bluetoothLeScanServiceCallbacks:MutableList<IBluetoothLeScanCallback> = mutableListOf()
+
+    private var _flipperDevicesList = mutableListOf<BluetoothLeScanResult>()
 
 
     init {
@@ -45,11 +52,14 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     override fun startScanning(){
         if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, AppContext.getActivity())){
             if(_bluetoothLeScanner != null){
-                _bluetoothLeScanner!!.startScan(this)
+                // SET THE FILTERS AND SETTINGS
+                val filterList:List<ScanFilter> = listOf(ScanFilter.Builder().build())
+                val settings = ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build()
+
+                _bluetoothLeScanner!!.startScan(filterList, settings, this)
                 Log.d(_logTag, "Started BLE Scan")
                 _scanning = true
             }
-
         }
     }
 
@@ -72,26 +82,19 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
 
     override fun onScanResult(callbackType: Int, result: ScanResult?) {
         super.onScanResult(callbackType, result)
-        Log.d(_logTag, "onScanResult called")
+        //Log.d(_logTag, "onScanResult called")
         if(result != null){
+            val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(result)
+
+            if(BluetoothLeDeviceClassificationHelper.isFlipperDevice(bluetoothLeScanResult)){
+                val flipperDeviceType = BluetoothLeDeviceClassificationHelper.getFlipperDeviceType(bluetoothLeScanResult)
+                Log.d(_logTag, "Found Flipper Device: ${bluetoothLeScanResult.deviceName} of Type: ${flipperDeviceType}")
+                _flipperDevicesList.add(bluetoothLeScanResult)
+            }
+
             _bluetoothLeScanServiceCallbacks.forEach { callback ->
                 callback.onScanResult(result)
             }
-
-            /*
-            val bluetoothDevice = result.device
-            val scanRecord = result.scanRecord
-            if(scanRecord != null){
-                val rawBytes =  result.scanRecord!!.bytes
-                Log.d(_logTag, "RAW Result: ${rawBytes.toHexString()}")
-            }
-
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
-                if(bluetoothDevice != null){
-                    Log.d(_logTag, "Found Device: ${bluetoothDevice.name} - ${bluetoothDevice.address}")
-                }
-            }
-            */
         }
     }
 
