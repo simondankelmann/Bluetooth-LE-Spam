@@ -1,6 +1,7 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.os.ParcelUuid
+import androidx.sqlite.db.SupportSQLiteDatabase
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseDataEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseDataManufacturerSpecificDataEntity
@@ -26,9 +27,10 @@ class DatabaseHelpers {
     companion object{
         private const val _logTag = "DatabaseHelpers"
 
-        fun saveAdvertisementSet(advertisementSet: AdvertisementSet):Int{
+        fun saveAdvertisementSet(advertisementSet: AdvertisementSet,):Int{
 
-            var database = AppDatabase.getInstance()
+
+            val database = AppDatabase.getInstance()
 
             var advertisementSetEntity:AdvertisementSetEntity = AdvertisementSetEntity(
                 advertisementSet.id,

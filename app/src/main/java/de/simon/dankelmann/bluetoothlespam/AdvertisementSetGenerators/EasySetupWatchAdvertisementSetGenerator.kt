@@ -54,13 +54,13 @@ class EasySetupWatchAdvertisementSetGenerator:IAdvertisementSetGenerator{
         "20" to "Green Watch6 Classic 43m",
     )
 
-    override fun getAdvertisementSets():List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-
+        val data = inputData ?: _genuineWatchIds
 
         // WATCHES
-        _genuineWatchIds.map {
+        data.map {
             var advertisementSet:AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH

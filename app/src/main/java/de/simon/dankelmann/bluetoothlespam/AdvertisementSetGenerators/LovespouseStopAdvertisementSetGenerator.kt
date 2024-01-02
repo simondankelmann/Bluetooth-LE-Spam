@@ -33,10 +33,12 @@ class LovespouseStopAdvertisementSetGenerator:IAdvertisementSetGenerator {
 
     private val _manufacturerId = 255 // 0xFF == 255 == Typo Products, LLC
 
-    override fun getAdvertisementSets(): List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets: MutableList<AdvertisementSet> = mutableListOf()
 
-        lovespouseStops.forEach { lovespouseStop ->
+        val data = inputData ?: lovespouseStops
+
+        data.forEach { lovespouseStop ->
             var advertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP

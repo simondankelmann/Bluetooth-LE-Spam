@@ -96,10 +96,12 @@ class ContinuityNewDevicePopUpAdvertisementSetGenerator: IAdvertisementSetGenera
         }
     }
 
-    override fun getAdvertisementSets(): List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 
-        deviceData.forEach{deviceData ->
+        val data = inputData ?: deviceData
+
+        data.forEach{deviceData ->
 
             val prefix = "07" // => NEW DEVICE
             val color = "00"

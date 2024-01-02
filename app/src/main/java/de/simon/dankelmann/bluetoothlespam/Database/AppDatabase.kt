@@ -42,6 +42,7 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisingSetParam
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociatonCollectionListEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociationListSetEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
+import de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_1_2
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 
 @androidx.room.Database(
@@ -56,7 +57,7 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
                 AssociatonCollectionListEntity::class,
                 AssociationListSetEntity::class,
                 PeriodicAdvertisingParametersEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -94,6 +95,8 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "BluetoothLeSpamDatabase.db")
                 .addCallback(seedDatabaseCallback(context))
+                .addMigrations(Migration_1_2)
+                //.fallbackToDestructiveMigration()
                 .build()
 
         private fun seedDatabaseCallback(context: Context): Callback {
@@ -136,7 +139,7 @@ abstract class AppDatabase : RoomDatabase() {
             )
 
             advertisementSetGenerators.forEach{ generator ->
-                val advertisementSets = generator.getAdvertisementSets()
+                val advertisementSets = generator.getAdvertisementSets(null)
                 advertisementSets.forEach{ advertisementSet ->
                     DatabaseHelpers.saveAdvertisementSet(advertisementSet)
                 }

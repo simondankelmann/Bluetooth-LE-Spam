@@ -88,10 +88,12 @@ class ContinuityIos17CrashAdvertisementSetGenerator: IAdvertisementSetGenerator 
             return advertisementSet
         }
     }
-    override fun getAdvertisementSets(): List<AdvertisementSet> {
+    override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets: MutableList<AdvertisementSet> = mutableListOf()
 
-        _nearbyActions.map { nearbyAction ->
+        val data = inputData ?: _nearbyActions
+
+        data.map { nearbyAction ->
             var advertisementSet: AdvertisementSet = AdvertisementSet()
             advertisementSet.target = AdvertisementTarget.ADVERTISEMENT_TARGET_IOS
             advertisementSet.type = AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH
