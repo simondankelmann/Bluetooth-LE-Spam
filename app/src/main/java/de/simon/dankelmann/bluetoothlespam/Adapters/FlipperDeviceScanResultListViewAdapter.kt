@@ -10,7 +10,7 @@ import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.R
 
-class FlipperDeviceScanResultListViewAdapter(private val context: Activity, var flipperDevices: List<FlipperDeviceScanResult>) : ArrayAdapter<FlipperDeviceScanResult>(context, R.layout.list_item_flipper_device_scan_result, flipperDevices) {
+class FlipperDeviceScanResultListViewAdapter(private val context: Activity, var flipperDevices: MutableList<FlipperDeviceScanResult>) : ArrayAdapter<FlipperDeviceScanResult>(context, R.layout.list_item_flipper_device_scan_result, flipperDevices) {
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         val inflater = context.layoutInflater
         val rowView = inflater.inflate(R.layout.list_item_flipper_device_scan_result, null, true)
@@ -19,7 +19,7 @@ class FlipperDeviceScanResultListViewAdapter(private val context: Activity, var 
         val addressText = rowView.findViewById(R.id.list_item_flipper_device_scan_result_address) as TextView
         val rssiText = rowView.findViewById(R.id.list_item_flipper_device_scan_result_rssi) as TextView
         val deviceTypeText = rowView.findViewById(R.id.list_item_flipper_device_scan_result_deviceType) as TextView
-        val icon = rowView.findViewById(R.id.list_item_flipper_device_scan_result_icon) as ImageView
+        //val icon = rowView.findViewById(R.id.list_item_flipper_device_scan_result_icon) as ImageView
 
 
         nameText.text = flipperDevices[position].deviceName

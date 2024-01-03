@@ -13,12 +13,15 @@ import android.widget.ExpandableListView
 import android.widget.ListView
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.Adapters.FlipperDeviceScanResultListViewAdapter
+import de.simon.dankelmann.bluetoothlespam.Adapters.SpamPackageScanResultListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
+import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanForegroundService
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementBinding
@@ -34,6 +37,9 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     private lateinit var _flipperDevicesListView: ListView
     private lateinit var _flipperDevicesListViewAdapter: FlipperDeviceScanResultListViewAdapter
 
+    private lateinit var _spamPackageListView: ListView
+    private lateinit var _spamPackageListViewAdapter: SpamPackageScanResultListViewAdapter
+
     companion object {
         fun newInstance() = SpamDetectorFragment()
     }
@@ -44,11 +50,18 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         super.onResume()
         AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
         // SYNC THE LISTS
+        syncWithScanServices()
     }
 
     override fun onPause() {
         super.onPause()
         AppContext.getBluetoothLeScanService().removeBluetoothLeScanServiceCallback(this)
+    }
+
+    private fun syncWithScanServices(){
+        _viewModel!!.isDetecting.postValue(AppContext.getBluetoothLeScanService().isScanning())
+        updateFlipperDevicesListView()
+        updateSpamPackageListView()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,9 +73,11 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         val root: View = _binding!!.root
 
         _flipperDevicesListView = _binding!!.spamDetectionFlipperDevicesList
+        _spamPackageListView = _binding!!.spamDetectionSpamPackageList
 
         setupUi()
         setupFlipperDevicesListView()
+        setupSpamPackagesListView()
 
 
         AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
@@ -95,9 +110,9 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     fun setupFlipperDevicesListView(){
-        Log.d(_logTag, "Setting up Flipper List")
-       _flipperDevicesListViewAdapter = FlipperDeviceScanResultListViewAdapter(requireActivity(), AppContext.getBluetoothLeScanService().getFlipperDevicesList() )
-       _flipperDevicesListView.adapter = _flipperDevicesListViewAdapter
+        _flipperDevicesListViewAdapter = FlipperDeviceScanResultListViewAdapter(requireActivity(), AppContext.getBluetoothLeScanService().getFlipperDevicesList())
+        _flipperDevicesListView.isScrollingCacheEnabled = true
+        _flipperDevicesListView.adapter = _flipperDevicesListViewAdapter
         /*
         listView.setOnItemClickListener(){adapterView, view, position, id ->
             // Maybe later...
@@ -105,14 +120,78 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         */
     }
 
+    fun setupSpamPackagesListView(){
+        _spamPackageListViewAdapter = SpamPackageScanResultListViewAdapter(requireActivity(), AppContext.getBluetoothLeScanService().getSpamPackageScanResultList())
+        _spamPackageListView.isScrollingCacheEnabled = true
+        _spamPackageListView.adapter = _spamPackageListViewAdapter
+        /*
+        listView.setOnItemClickListener(){adapterView, view, position, id ->
+            // Maybe later...
+        }
+        */
+    }
+
+    fun updateFlipperDevicesListView(){
+            if(_flipperDevicesListViewAdapter != null){
+                var newItems = AppContext.getBluetoothLeScanService().getFlipperDevicesList()
+                newItems.forEach { newFlipperDevice ->
+                    var oldFlipperListIndex = -1
+                    _flipperDevicesListViewAdapter.flipperDevices.forEachIndexed { index, oldFlipperDevice ->
+                        if(oldFlipperDevice.address == newFlipperDevice.address){
+                            oldFlipperListIndex = index
+                        }
+                    }
+
+                    if(oldFlipperListIndex != -1){
+                        // Update
+                        _flipperDevicesListViewAdapter.flipperDevices[oldFlipperListIndex] = newFlipperDevice
+                        Log.d(_logTag, "Updated existing Item")
+                    } else {
+                        // Add
+                        _flipperDevicesListViewAdapter.flipperDevices.add(newFlipperDevice)
+                        Log.d(_logTag, "Created existing Item")
+                    }
+                }
+
+                _flipperDevicesListViewAdapter.notifyDataSetChanged()
+            }
+    }
+
+    fun updateSpamPackageListView(){
+        if(_spamPackageListViewAdapter != null){
+            var newItems = AppContext.getBluetoothLeScanService().getSpamPackageScanResultList()
+            newItems.forEach { newSpamPackage ->
+                var oldListIndex = -1
+                _spamPackageListViewAdapter.spamPackages.forEachIndexed { index, oldSpamPackage ->
+                    if(oldSpamPackage.address == newSpamPackage.address){
+                        oldListIndex = index
+                    }
+                }
+
+                if(oldListIndex != -1){
+                    // Update
+                    _spamPackageListViewAdapter.spamPackages[oldListIndex] = newSpamPackage
+                } else {
+                    // Add
+                    _spamPackageListViewAdapter.spamPackages.add(newSpamPackage)
+                }
+            }
+
+            _spamPackageListViewAdapter.notifyDataSetChanged()
+        }
+    }
+
 
 
     fun onToggleButtonClicked(){
         if(_viewModel!!.isDetecting.value!!){
             BluetoothLeScanForegroundService.stopService(AppContext.getContext())
+            //AppContext.getBluetoothLeScanService().stopScanning()
+            Log.d(_logTag, "Should Stop")
             _viewModel!!.isDetecting.postValue(false)
         } else {
             BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service started...")
+            //AppContext.getBluetoothLeScanService().startScanning()
             _viewModel!!.isDetecting.postValue(true)
         }
     }
@@ -136,7 +215,24 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
             Log.d(_logTag, "New Flipper detected")
         }
 
-        setupFlipperDevicesListView()
+        updateFlipperDevicesListView()
+    }
+
+    override fun onFlipperListUpdated() {
+        updateFlipperDevicesListView()
+    }
+
+    override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
+        if(alreadyKnown){
+            Log.d(_logTag, "Spam updated")
+        } else {
+            Log.d(_logTag, "New Spam detected")
+        }
+
+    }
+
+    override fun onSpamResultPackageListUpdated() {
+        updateSpamPackageListView()
     }
 
 }

@@ -13,6 +13,7 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer.OnSubtitleDataListener
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -30,6 +31,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanS
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
+import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 
@@ -42,9 +44,11 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     private val _binder: IBinder = LocalBinder()
 
     companion object {
+        private val _logTag = "AdvertisementScanForegroundService"
         fun startService(context: Context, message: String) {
             val startIntent = Intent(context, BluetoothLeScanForegroundService::class.java)
             startIntent.putExtra("inputExtra", message)
+            //AppContext.getActivity().startForegroundService(startIntent)
             ContextCompat.startForegroundService(context, startIntent)
         }
         fun stopService(context: Context) {
@@ -57,8 +61,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         super.onCreate()
 
         createNotificationChannel()
-
-        startForeground(1, createNotification("Initial"))
+        startForeground(2, createNotification("Detecting Spam", "Searching Flippers and others"))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -78,11 +81,13 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
+        // Stop Scanning
+        AppContext.getBluetoothLeScanService().stopScanning()
         // Remove any Callbacks
         AppContext.getBluetoothLeScanService().removeBluetoothLeScanServiceCallback(this)
-        super.onDestroy()
+        Log.d(Companion._logTag, "Destroying the Service")
     }
-
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppContext.getActivity() != null) {
@@ -95,101 +100,35 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         }
     }
 
-    private fun createNotification(text:String): Notification {
+    private fun createNotification(title:String, subTitle: String): Notification {
 
         val pendingIntentTargeted = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.mobile_navigation)
-            .setDestination(R.id.nav_advertisement)
+            .setDestination(R.id.nav_spam_detector)
             //.setArguments(bundle)
             .createPendingIntent()
 
 
         // Custom Layout
-        val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
-
-        var title = "Test 1"
-        var subtitle = text
-        var targetImageId = R.drawable.bluetooth
-
-        val toggleImageSrc = when(AppContext.getAdvertisementSetQueueHandler().isActive()){
-            true -> R.drawable.pause
-            false -> R.drawable.play_arrow
-        }
+        val notificationView = RemoteViews(packageName, R.layout.bluetooth_le_scan_foreground_service_notification)
 
         // Views for Custom Layout
         notificationView.setTextViewText(
-            R.id.advertisementForegroundServiceNotificationTitleTextView,
+            R.id.bluetoothLeScanningForegroundNotificationTitle,
             title
         )
         notificationView.setTextViewText(
-            R.id.advertisementForegroundServiceNotificationSubTitleTextView,
-            subtitle
-        )
-        notificationView.setImageViewResource(
-            R.id.advertisementForegroundServiceNotificationTargetImageView,
-            targetImageId
+            R.id.bluetoothLeScanningForegroundNotificationSubTitle,
+            subTitle
         )
 
-        notificationView.setImageViewResource(
-            R.id.advertisementForegroundServiceNotificationToggleImageView,
-            toggleImageSrc
-        )
 
-        val targetIconColor =
-            resources.getColor(R.color.tint_target_icon, AppContext.getContext().theme)
-        val buttonActiveColor =
-            resources.getColor(R.color.tint_button_active, AppContext.getContext().theme)
-        val buttonInActiveColor =
-            resources.getColor(R.color.tint_button_inactive, AppContext.getContext().theme)
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            notificationView.setColorInt(
-                R.id.advertisementForegroundServiceNotificationTargetImageView,
-                "setColorFilter",
-                targetIconColor,
-                targetIconColor
-            )
-
-            notificationView.setColorInt(
-                R.id.advertisementForegroundServiceNotificationToggleImageView,
-                "setColorFilter",
-                buttonActiveColor,
-                buttonActiveColor
-            )
-
-            notificationView.setColorInt(
-                R.id.advertisementForegroundServiceNotificationStopImageView,
-                "setColorFilter",
-                buttonActiveColor,
-                buttonActiveColor
-            )
-        } else {
-            notificationView.setInt(
-                R.id.advertisementForegroundServiceNotificationTargetImageView,
-                "setColorFilter",
-                targetIconColor
-            )
-
-            notificationView.setInt(
-                R.id.advertisementForegroundServiceNotificationStopImageView,
-                "setColorFilter",
-                buttonActiveColor
-            )
-
-            notificationView.setInt(
-                R.id.advertisementForegroundServiceNotificationToggleImageView,
-                "setColorFilter",
-                buttonActiveColor
-            )
-        }
-
-        var contentText = "Bluetooth LE Spam"
+        //var contentText = "Bluetooth LE Spam"
 
         return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
             .setContentTitle("Bluetooth LE Spam")
-            .setContentText(contentText)
+            .setContentText(subTitle)
             .setSmallIcon(R.drawable.bluetooth)
             .setContentIntent(pendingIntentTargeted)
             //.setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
@@ -197,16 +136,18 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setChannelId(_channelId)
             .setOngoing(true)
-            .setOnlyAlertOnce(true)
+            .setOnlyAlertOnce(false)
             .setCustomBigContentView(notificationView)
             .setCustomContentView(notificationView)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE).build()
     }
 
-    private fun updateNotification(text:String){
-        val notification = createNotification(text)
-        val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, notification)
+    private fun updateNotification(title:String, subTitle: String){
+        if(AppContext.getBluetoothLeScanService().isScanning()){
+            val notification = createNotification(title, subTitle)
+            val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(1, notification)
+        }
     }
 
     override fun onScanResult(scanResult: ScanResult) {
@@ -216,7 +157,19 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     override fun onFlipperDeviceDetected(flipperDeviceScanResult: FlipperDeviceScanResult, alreadyKnown: Boolean) {
         if(!alreadyKnown){
-            updateNotification("Found new Flipper: " + flipperDeviceScanResult.deviceName)
+            updateNotification("New Flipper: " + flipperDeviceScanResult.deviceName, "${flipperDeviceScanResult.address} | ${flipperDeviceScanResult.rssi} dBm")
         }
+    }
+
+    override fun onFlipperListUpdated() {
+        // nothing to do here
+    }
+
+    override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
+        updateNotification("Spam Detected", spamPackageScanResult.spamPackageType.toString() + " | " + spamPackageScanResult.address)
+    }
+
+    override fun onSpamResultPackageListUpdated() {
+       // nothing to do here
     }
 }
