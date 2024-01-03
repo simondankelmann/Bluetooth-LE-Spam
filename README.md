@@ -35,6 +35,9 @@ With some modifications to the advertised BLE package, it is possible to trigger
 
 > **_NOTE:_** To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
+### Spam Detector (Detect Spammers)
+The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
+
 ### Lovespouse (Adult Toys)
 With this functionality, it is possible to enable or disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
 
@@ -63,6 +66,8 @@ If you're an end-user looking for a fully functional app, download the Release A
 - [mandomat](https://mandomat.github.io/aboutme/) for the research of [Denial of Pleasure](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
 
 - [tutozz](https://github.com/tutozz) for the research of Easy Setup Buds in Android
+
+- [K3YOMI](https://github.com/K3YOMI) for the spam detector idea
 
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
