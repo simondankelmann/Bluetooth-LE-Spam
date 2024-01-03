@@ -625,15 +625,17 @@ class StartFragment : Fragment() {
             }
         }
 
-        /*
+
         if(!AppContext.bluetoothLeScanServiceIsInitialized()){
             try {
-                BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
+                val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService()
+                AppContext.setBluetoothLeScanService(bluetoothLeScanService)
+                //BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
             } catch (e:Exception){
                 addMissingRequirement("Bluetooth LE Scan Service not initialized")
                 advertisementServiceIsReady = false
             }
-        }*/
+        }
 
         if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
             try {

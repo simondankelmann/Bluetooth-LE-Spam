@@ -1,8 +1,10 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
+import android.bluetooth.le.ScanResult
 import android.os.ParcelUuid
 import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
+import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 
 class BluetoothLeDeviceClassificationHelper {
     companion object {
@@ -27,6 +29,13 @@ class BluetoothLeDeviceClassificationHelper {
             }
 
             return FlipperDeviceType.UNKNOWN
+        }
+
+        fun getFlipperDeviceSanResult(scanResult: ScanResult):FlipperDeviceScanResult{
+            var flipperDeviceScanResult:FlipperDeviceScanResult = BluetoothLeScanResult.parseFromScanResult(scanResult) as FlipperDeviceScanResult
+
+            flipperDeviceScanResult.flipperDeviceType = getFlipperDeviceType(flipperDeviceScanResult)
+            return flipperDeviceScanResult
         }
     }
 }

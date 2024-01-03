@@ -29,6 +29,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScan
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
+import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 
@@ -61,18 +62,9 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //_bluetoothLeScanService = AppContext.getBluetoothLeScanService()
-        //_bluetoothLeScanService!!.addBluetoothLeScanServiceCallback(this)
-        //_bluetoothLeScanService!!.startScanning()
         Log.d(_logTag, "Started BLE Scan Foreground Service")
-
-        val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService()
-        AppContext.setBluetoothLeScanService(bluetoothLeScanService)
-        // Debugging -> Remove later
-        bluetoothLeScanService.startScanning()
-
         AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
-        //Thread.sleep(5000)
+        AppContext.getBluetoothLeScanService().startScanning()
         return START_STICKY
     }
 
@@ -87,6 +79,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     override fun onDestroy() {
         // Remove any Callbacks
+        AppContext.getBluetoothLeScanService().removeBluetoothLeScanServiceCallback(this)
         super.onDestroy()
     }
 
@@ -217,7 +210,13 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onScanResult(scanResult: ScanResult) {
-        var model = BluetoothLeScanResult.parseFromScanResult(scanResult)
-        updateNotification(model.deviceName)
+        //var model = BluetoothLeScanResult.parseFromScanResult(scanResult)
+        //updateNotification(model.deviceName)
+    }
+
+    override fun onFlipperDeviceDetected(flipperDeviceScanResult: FlipperDeviceScanResult, alreadyKnown: Boolean) {
+        if(!alreadyKnown){
+            updateNotification("Found new Flipper: " + flipperDeviceScanResult.deviceName)
+        }
     }
 }

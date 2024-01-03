@@ -10,7 +10,7 @@ import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import java.sql.Time
 import java.time.LocalDate
 
-class BluetoothLeScanResult {
+open class BluetoothLeScanResult {
     var deviceName = ""
     var address = ""
     var scanRecord = byteArrayOf()

@@ -8,6 +8,7 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.util.Log
+import androidx.room.util.recursiveFetchArrayMap
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
@@ -18,6 +19,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSe
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
+import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
 class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
@@ -28,7 +30,7 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     private var _scanning = false
     private var _bluetoothLeScanServiceCallbacks:MutableList<IBluetoothLeScanCallback> = mutableListOf()
 
-    private var _flipperDevicesList = mutableListOf<BluetoothLeScanResult>()
+    private var _flipperDevicesList = mutableListOf<FlipperDeviceScanResult>()
 
 
     init {
@@ -36,6 +38,10 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
         if(_bluetoothAdapter != null){
             _bluetoothLeScanner = _bluetoothAdapter!!.bluetoothLeScanner
         }
+    }
+
+    override fun getFlipperDevicesList():List<FlipperDeviceScanResult>{
+        return _flipperDevicesList.toList()
     }
 
     override fun addBluetoothLeScanServiceCallback(callback: IBluetoothLeScanCallback){
@@ -82,19 +88,40 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
 
     override fun onScanResult(callbackType: Int, result: ScanResult?) {
         super.onScanResult(callbackType, result)
-        //Log.d(_logTag, "onScanResult called")
         if(result != null){
             val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(result)
 
             if(BluetoothLeDeviceClassificationHelper.isFlipperDevice(bluetoothLeScanResult)){
-                val flipperDeviceType = BluetoothLeDeviceClassificationHelper.getFlipperDeviceType(bluetoothLeScanResult)
-                Log.d(_logTag, "Found Flipper Device: ${bluetoothLeScanResult.deviceName} of Type: ${flipperDeviceType}")
-                _flipperDevicesList.add(bluetoothLeScanResult)
+                val flipperDeviceScanResult = FlipperDeviceScanResult.parseFromBluetoothLeScanResult(bluetoothLeScanResult)
+                addFlipperDeviceToList(flipperDeviceScanResult)
             }
 
             _bluetoothLeScanServiceCallbacks.forEach { callback ->
                 callback.onScanResult(result)
             }
+        }
+    }
+
+    fun addFlipperDeviceToList(flipperDeviceScanResult: FlipperDeviceScanResult){
+        var elementIndex = -1
+        _flipperDevicesList.forEach {flipperDevice ->
+            if(flipperDevice.address == flipperDeviceScanResult.address){
+                elementIndex = _flipperDevicesList.indexOf(flipperDevice)
+            }
+        }
+
+        val alreadyKnown = elementIndex != -1
+
+        if(elementIndex == -1){
+            //  Add
+            _flipperDevicesList.add(flipperDeviceScanResult)
+        } else {
+            // Update
+            _flipperDevicesList[elementIndex] = flipperDeviceScanResult
+        }
+
+        _bluetoothLeScanServiceCallbacks.forEach {callback ->
+            callback.onFlipperDeviceDetected(flipperDeviceScanResult, alreadyKnown)
         }
     }
 
