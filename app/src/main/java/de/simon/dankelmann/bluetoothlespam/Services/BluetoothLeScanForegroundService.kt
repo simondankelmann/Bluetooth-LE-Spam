@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Enums.SpamPackageType
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
@@ -167,7 +168,21 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
-        updateNotification("Spam Detected", spamPackageScanResult.spamPackageType.toString() + " | " + spamPackageScanResult.address, !notifyOnNewSpam, 3)
+        val spamPackageTypeText = when(spamPackageScanResult.spamPackageType){
+            SpamPackageType.UNKNOWN -> "Unknown Spam"
+            SpamPackageType.FAST_PAIRING -> "Fast Pairing"
+            SpamPackageType.CONTINUITY_NEW_AIRTAG -> "Continuity Airtag"
+            SpamPackageType.CONTINUITY_NEW_DEVICE -> "Continuity new Device"
+            SpamPackageType.CONTINUITY_NOT_YOUR_DEVICE -> "Continuity not your Device"
+            SpamPackageType.CONTINUITY_ACTION_MODAL -> "Continuity Action Modal"
+            SpamPackageType.CONTINUITY_IOS_17_CRASH -> "Continuity iOS 17 Crash"
+            SpamPackageType.SWIFT_PAIRING -> "Swift Pairing"
+            SpamPackageType.EASY_SETUP_WATCH -> "Easy Setup Watch"
+            SpamPackageType.EASY_SETUP_BUDS -> "Easy Setup Buds"
+            SpamPackageType.LOVESPOUSE_PLAY -> "Lovespouse Play"
+            SpamPackageType.LOVESPOUSE_STOP -> "Lovespouse Stop"
+        }
+        updateNotification("Spam Detected", spamPackageTypeText + " | " + spamPackageScanResult.address, !notifyOnNewSpam, 3)
         notifyOnNewSpam = false
     }
 
