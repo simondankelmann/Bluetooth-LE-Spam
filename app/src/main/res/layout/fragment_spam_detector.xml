@@ -117,7 +117,7 @@
             android:id="@+id/spamDetectorSpamListTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Spam Packets"
+            android:text="Spam Packages"
             android:textStyle="bold"
             android:textColor="@color/text_color"
             android:textSize="@dimen/textSizeHeadline3"
