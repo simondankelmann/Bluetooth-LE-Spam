@@ -23,6 +23,9 @@ class BluetoothLeDeviceClassificationHelper {
 
         fun getFlipperDeviceType(bluetoothLeScanResult: BluetoothLeScanResult):FlipperDeviceType{
 
+            // Flipper UUID's taken from here:
+            // https://github.com/K3YOMI/Wall-of-Flippers/blob/main/WallofFlippers.py
+            // Credit to "Wall of Flippers" developers
             if(bluetoothLeScanResult.serviceUuids.isNotEmpty()){
                 if(bluetoothLeScanResult.serviceUuids.contains(ParcelUuid.fromString("00003082-0000-1000-8000-00805f9b34fb"))){
                     return FlipperDeviceType.FLIPPER_ZERO_WHITE
