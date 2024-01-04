@@ -145,11 +145,11 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
                     if(oldFlipperListIndex != -1){
                         // Update
                         _flipperDevicesListViewAdapter.flipperDevices[oldFlipperListIndex] = newFlipperDevice
-                        Log.d(_logTag, "Updated existing Item")
+                        //Log.d(_logTag, "Updated existing Item")
                     } else {
                         // Add
                         _flipperDevicesListViewAdapter.flipperDevices.add(newFlipperDevice)
-                        Log.d(_logTag, "Created existing Item")
+                        //Log.d(_logTag, "Created existing Item")
                     }
                 }
 
@@ -209,13 +209,8 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     override fun onFlipperDeviceDetected(flipperDeviceScanResult: FlipperDeviceScanResult, alreadyKnown:Boolean) {
-        if(alreadyKnown){
-            Log.d(_logTag, "Flipper updated")
-        } else {
-            Log.d(_logTag, "New Flipper detected")
-        }
-
-        updateFlipperDevicesListView()
+        // Nothing to do yet
+        //updateFlipperDevicesListView()
     }
 
     override fun onFlipperListUpdated() {
@@ -223,12 +218,8 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
-        if(alreadyKnown){
-            Log.d(_logTag, "Spam updated")
-        } else {
-            Log.d(_logTag, "New Spam detected")
-        }
-
+        // Nothing to do yet
+        //updateSpamPackageListView()
     }
 
     override fun onSpamResultPackageListUpdated() {

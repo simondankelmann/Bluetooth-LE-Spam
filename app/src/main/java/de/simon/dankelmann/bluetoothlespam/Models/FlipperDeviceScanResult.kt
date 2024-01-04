@@ -12,14 +12,7 @@ class FlipperDeviceScanResult: BluetoothLeScanResult() {
         fun parseFromBluetoothLeScanResult(bluetoothLeScanResult: BluetoothLeScanResult):FlipperDeviceScanResult{
             val flipperDeviceScanResult = FlipperDeviceScanResult()
 
-            flipperDeviceScanResult.deviceName = bluetoothLeScanResult.deviceName
-            flipperDeviceScanResult.address = bluetoothLeScanResult.address
-            flipperDeviceScanResult.scanRecord = bluetoothLeScanResult.scanRecord
-            flipperDeviceScanResult.rssi = bluetoothLeScanResult.rssi
-            flipperDeviceScanResult.firstSeen = bluetoothLeScanResult.firstSeen
-            flipperDeviceScanResult.lastSeen = bluetoothLeScanResult.lastSeen
-            flipperDeviceScanResult.serviceUuids = bluetoothLeScanResult.serviceUuids
-
+            flipperDeviceScanResult.parseFromBluetoothLeScanResult(bluetoothLeScanResult)
             flipperDeviceScanResult.flipperDeviceType = BluetoothLeDeviceClassificationHelper.getFlipperDeviceType(bluetoothLeScanResult)
 
             return flipperDeviceScanResult

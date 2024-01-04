@@ -5,6 +5,7 @@ import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSetParameters
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -36,7 +37,7 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
         "Device 10" to "Not used...",
     )
 
-    private val _manufacturerId = 6 // 0x0006 == 6 = Microsoft
+    private val _manufacturerId = Constants.MANUFACTURER_ID_MICROSOFT
     override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets:MutableList<AdvertisementSet> = mutableListOf()
 

@@ -575,7 +575,6 @@ class StartFragment : Fragment() {
             Manifest.permission.POST_NOTIFICATIONS,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
 
         var notGrantedPermissions:MutableList<String> = mutableListOf()
@@ -593,7 +592,15 @@ class StartFragment : Fragment() {
         }
 
         if(notGrantedPermissions.isEmpty()){
-            _viewModel!!.allPermissionsGranted.postValue(true)
+            val backgroundLocationAccessIsGranted = checkBackgroundLocationAccessPermission(promptForNotGranted)
+            var missingRequirementStringBgLocation = "Permission " + Manifest.permission.ACCESS_BACKGROUND_LOCATION.replace("android.permission.", "") + " not granted"
+            if(backgroundLocationAccessIsGranted){
+                removeMissingRequirement(missingRequirementStringBgLocation)
+                _viewModel!!.allPermissionsGranted.postValue(true)
+            } else {
+                addMissingRequirement(missingRequirementStringBgLocation)
+                checkBackgroundLocationAccessPermission(true)
+            }
         } else {
             _viewModel!!.allPermissionsGranted.postValue(false)
             // Request Missing Permissions
@@ -602,6 +609,15 @@ class StartFragment : Fragment() {
                 activityResultLauncher.launch(notGrantedPermissions.toTypedArray())
             }
         }
+    }
+
+    fun checkBackgroundLocationAccessPermission(promptForNotGranted:Boolean = false):Boolean{
+        val isGranted = PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, AppContext.getActivity(), false)
+        if(promptForNotGranted){
+            //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
+            activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        }
+        return isGranted
     }
 
     private var activityResultLauncher: ActivityResultLauncher<Array<String>>

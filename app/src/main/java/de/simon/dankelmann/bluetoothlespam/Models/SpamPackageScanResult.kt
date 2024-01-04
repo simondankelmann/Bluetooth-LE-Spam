@@ -13,14 +13,7 @@ class SpamPackageScanResult: BluetoothLeScanResult() {
         fun parseFromBluetoothLeScanResult(bluetoothLeScanResult: BluetoothLeScanResult):SpamPackageScanResult{
             val spamPackageScanResult = SpamPackageScanResult()
 
-            spamPackageScanResult.deviceName = bluetoothLeScanResult.deviceName
-            spamPackageScanResult.address = bluetoothLeScanResult.address
-            spamPackageScanResult.scanRecord = bluetoothLeScanResult.scanRecord
-            spamPackageScanResult.rssi = bluetoothLeScanResult.rssi
-            spamPackageScanResult.firstSeen = bluetoothLeScanResult.firstSeen
-            spamPackageScanResult.lastSeen = bluetoothLeScanResult.lastSeen
-            spamPackageScanResult.serviceUuids = bluetoothLeScanResult.serviceUuids
-
+            spamPackageScanResult.parseFromBluetoothLeScanResult(bluetoothLeScanResult)
             spamPackageScanResult.spamPackageType = BluetoothLeDeviceClassificationHelper.getSpamPackageType(bluetoothLeScanResult)
 
             return spamPackageScanResult

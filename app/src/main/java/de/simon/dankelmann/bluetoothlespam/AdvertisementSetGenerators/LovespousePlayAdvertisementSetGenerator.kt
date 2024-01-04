@@ -4,6 +4,7 @@ import android.bluetooth.le.AdvertisingSetParameters
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -25,7 +26,7 @@ class LovespousePlayAdvertisementSetGenerator:IAdvertisementSetGenerator {
 
     private val _logTag = "LovespousePlayAdvertisementSetGenerator"
 
-    private val lovespousePlays = mapOf(
+    val lovespousePlays = mapOf(
         "E49C6C" to "Classic 1",
         "E7075E" to "Classic 2",
         "E68E4F" to "Classic 3",
@@ -55,7 +56,7 @@ class LovespousePlayAdvertisementSetGenerator:IAdvertisementSetGenerator {
         "ACD0A2" to "Independent 2-9",
     )
 
-    private val _manufacturerId = 255 // 0xFF == 255 == Typo Products, LLC
+    private val _manufacturerId = Constants.MANUFACTURER_ID_TYPO_PRODUCTS
 
     override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets: MutableList<AdvertisementSet> = mutableListOf()

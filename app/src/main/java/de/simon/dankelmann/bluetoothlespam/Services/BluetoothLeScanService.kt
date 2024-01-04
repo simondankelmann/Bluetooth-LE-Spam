@@ -7,6 +7,8 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.os.Handler
+import android.os.Looper
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.room.util.recursiveFetchArrayMap
@@ -24,6 +26,9 @@ import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
 
@@ -35,12 +40,21 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     private var _flipperDevicesList = mutableListOf<FlipperDeviceScanResult>()
     private var _spamPackageScanResultList = mutableListOf<SpamPackageScanResult>()
 
+    private val _millis_housekeeping_flipper_devices:Long = 1000
+    private val _millis_housekeeping_spam_packages:Long = 1000
+    private val _millis_spam_package_lifetime = 5000
+    private val _millis_flipper_device_lifetime = 5000
+
+
     init {
         _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _bluetoothLeScanner = _bluetoothAdapter!!.bluetoothLeScanner
         }
 
+        // Start Housekeeping:
+        startFlipperDevicesHouseKeeping()
+        startSpamPackagesHouseKeeping()
         // Add Test Devices:
         /*
         for(i in 1..15){
@@ -52,6 +66,70 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
             _flipperDevicesList.add(f0Device)
         }*/
     }
+
+    // Cleanup Flipper Device List
+    fun startFlipperDevicesHouseKeeping(){
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                cleanFlipperDevicesList()
+                mainHandler.postDelayed(this, _millis_housekeeping_flipper_devices)
+            }
+        })
+    }
+
+    // Cleanup Flipper Device List
+    fun startSpamPackagesHouseKeeping(){
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                cleanSpamPackageList()
+                mainHandler.postDelayed(this, _millis_housekeeping_spam_packages)
+            }
+        })
+    }
+
+    private fun cleanFlipperDevicesList(){
+        val currentTime = LocalDateTime.now()
+        var itemsToRemove = mutableListOf<FlipperDeviceScanResult>()
+        _flipperDevicesList.forEachIndexed{ index, flipperDevice ->
+            val lifetime = Duration.between(flipperDevice.lastSeen, currentTime).toMillis()
+            if(lifetime >= _millis_flipper_device_lifetime){
+                itemsToRemove.add(flipperDevice)
+            }
+        }
+
+        if(itemsToRemove.count() > 0){
+            itemsToRemove.forEach{itemToRemove ->
+                _flipperDevicesList.remove(itemToRemove)
+            }
+            _bluetoothLeScanServiceCallbacks.forEach{callback ->
+                callback.onFlipperListUpdated()
+            }
+        }
+    }
+
+    private fun cleanSpamPackageList(){
+        val currentTime = LocalDateTime.now()
+        var itemsToRemove = mutableListOf<SpamPackageScanResult>()
+        _spamPackageScanResultList.forEachIndexed{ index, spamPackage ->
+            val lifetime = Duration.between(spamPackage.lastSeen, currentTime).toMillis()
+            if(lifetime >= _millis_spam_package_lifetime){
+                itemsToRemove.add(spamPackage)
+            }
+        }
+
+        if(itemsToRemove.count() > 0){
+            itemsToRemove.forEach{itemToRemove ->
+                _spamPackageScanResultList.remove(itemToRemove)
+            }
+            _bluetoothLeScanServiceCallbacks.forEach{callback ->
+                callback.onSpamResultPackageListUpdated()
+            }
+        }
+    }
+
+
 
     override fun getFlipperDevicesList():MutableList<FlipperDeviceScanResult>{
         return _flipperDevicesList
