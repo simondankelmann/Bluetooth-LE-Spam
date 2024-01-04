@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.ListView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.Adapters.FlipperDeviceScanResultListViewAdapter
 import de.simon.dankelmann.bluetoothlespam.Adapters.SpamPackageScanResultListViewAdapter
@@ -34,11 +36,21 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     private var _viewModel: SpamDetectorViewModel? = null
     private var _binding: FragmentSpamDetectorBinding? = null
 
+
+    /*
     private lateinit var _flipperDevicesListView: ListView
     private lateinit var _flipperDevicesListViewAdapter: FlipperDeviceScanResultListViewAdapter
 
     private lateinit var _spamPackageListView: ListView
     private lateinit var _spamPackageListViewAdapter: SpamPackageScanResultListViewAdapter
+    */
+
+    private lateinit var _flipperDevicesRecyclerView: RecyclerView
+    private lateinit var _flipperDevicesListViewAdapter: FlipperDeviceScanResultListViewAdapter
+
+    private lateinit var _spamPackageRecyclerView: RecyclerView
+    private lateinit var _spamPackageListViewAdapter: SpamPackageScanResultListViewAdapter
+
 
     companion object {
         fun newInstance() = SpamDetectorFragment()
@@ -72,8 +84,8 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         _binding = FragmentSpamDetectorBinding.inflate(inflater, container, false)
         val root: View = _binding!!.root
 
-        _flipperDevicesListView = _binding!!.spamDetectionFlipperDevicesList
-        _spamPackageListView = _binding!!.spamDetectionSpamPackageList
+        _flipperDevicesRecyclerView = _binding!!.spamDetectionFlipperDevicesList
+        _spamPackageRecyclerView = _binding!!.spamDetectionSpamPackageList
 
         setupUi()
         setupFlipperDevicesListView()
@@ -110,9 +122,13 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     fun setupFlipperDevicesListView(){
+        _flipperDevicesListViewAdapter = FlipperDeviceScanResultListViewAdapter(AppContext.getBluetoothLeScanService().getFlipperDevicesList())
+        _flipperDevicesRecyclerView.adapter = _flipperDevicesListViewAdapter
+        _flipperDevicesRecyclerView.layoutManager = LinearLayoutManager(AppContext.getActivity())
+        /*
         _flipperDevicesListViewAdapter = FlipperDeviceScanResultListViewAdapter(requireActivity(), AppContext.getBluetoothLeScanService().getFlipperDevicesList())
         _flipperDevicesListView.isScrollingCacheEnabled = true
-        _flipperDevicesListView.adapter = _flipperDevicesListViewAdapter
+        _flipperDevicesListView.adapter = _flipperDevicesListViewAdapter*/
         /*
         listView.setOnItemClickListener(){adapterView, view, position, id ->
             // Maybe later...
@@ -121,9 +137,14 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     fun setupSpamPackagesListView(){
+        _spamPackageListViewAdapter = SpamPackageScanResultListViewAdapter(AppContext.getBluetoothLeScanService().getSpamPackageScanResultList())
+        _spamPackageRecyclerView.adapter = _spamPackageListViewAdapter
+        _spamPackageRecyclerView.layoutManager = LinearLayoutManager(AppContext.getActivity())
+
+        /*
         _spamPackageListViewAdapter = SpamPackageScanResultListViewAdapter(requireActivity(), AppContext.getBluetoothLeScanService().getSpamPackageScanResultList())
         _spamPackageListView.isScrollingCacheEnabled = true
-        _spamPackageListView.adapter = _spamPackageListViewAdapter
+        _spamPackageListView.adapter = _spamPackageListViewAdapter*/
         /*
         listView.setOnItemClickListener(){adapterView, view, position, id ->
             // Maybe later...
@@ -136,7 +157,7 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
                 var newItems = AppContext.getBluetoothLeScanService().getFlipperDevicesList()
                 newItems.forEach { newFlipperDevice ->
                     var oldFlipperListIndex = -1
-                    _flipperDevicesListViewAdapter.flipperDevices.forEachIndexed { index, oldFlipperDevice ->
+                    _flipperDevicesListViewAdapter.mList.forEachIndexed { index, oldFlipperDevice ->
                         if(oldFlipperDevice.address == newFlipperDevice.address){
                             oldFlipperListIndex = index
                         }
@@ -144,11 +165,11 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
 
                     if(oldFlipperListIndex != -1){
                         // Update
-                        _flipperDevicesListViewAdapter.flipperDevices[oldFlipperListIndex] = newFlipperDevice
+                        _flipperDevicesListViewAdapter.mList[oldFlipperListIndex] = newFlipperDevice
                         //Log.d(_logTag, "Updated existing Item")
                     } else {
                         // Add
-                        _flipperDevicesListViewAdapter.flipperDevices.add(newFlipperDevice)
+                        _flipperDevicesListViewAdapter.mList.add(newFlipperDevice)
                         //Log.d(_logTag, "Created existing Item")
                     }
                 }
@@ -162,7 +183,8 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
             var newItems = AppContext.getBluetoothLeScanService().getSpamPackageScanResultList()
             newItems.forEach { newSpamPackage ->
                 var oldListIndex = -1
-                _spamPackageListViewAdapter.spamPackages.forEachIndexed { index, oldSpamPackage ->
+
+                _spamPackageListViewAdapter.mList.forEachIndexed { index, oldSpamPackage ->
                     if(oldSpamPackage.address == newSpamPackage.address){
                         oldListIndex = index
                     }
@@ -170,10 +192,10 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
 
                 if(oldListIndex != -1){
                     // Update
-                    _spamPackageListViewAdapter.spamPackages[oldListIndex] = newSpamPackage
+                    _spamPackageListViewAdapter.mList[oldListIndex] = newSpamPackage
                 } else {
                     // Add
-                    _spamPackageListViewAdapter.spamPackages.add(newSpamPackage)
+                    _spamPackageListViewAdapter.mList.add(newSpamPackage)
                 }
             }
 

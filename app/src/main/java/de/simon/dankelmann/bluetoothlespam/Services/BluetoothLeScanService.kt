@@ -63,8 +63,12 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
             f0Device.deviceName = "TestItem: ${i}"
             f0Device.address = i.toString()
 
+            // Dont let it disappear
+            f0Device.lastSeen = LocalDateTime.now().plusWeeks(1)
+
             _flipperDevicesList.add(f0Device)
-        }*/
+        }
+        */
     }
 
     // Cleanup Flipper Device List

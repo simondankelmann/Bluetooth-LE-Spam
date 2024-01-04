@@ -86,12 +86,22 @@
             >
         </TextView>
 
+        <!--
         <ListView
             android:id="@+id/spamDetectionFlipperDevicesList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/spamDetectorFlipperListTitle"
-            app:layout_constraintBottom_toBottomOf="@id/spamDetectorCenterLayout"/>
+            app:layout_constraintBottom_toBottomOf="@id/spamDetectorCenterLayout"/>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/spamDetectionFlipperDevicesList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/spamDetectorFlipperListTitle"
+            app:layout_constraintBottom_toBottomOf="@id/spamDetectorCenterLayout"
+            tools:itemCount="1"
+            tools:listitem="@layout/list_item_flipper_device_scan_result" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -114,12 +124,22 @@
             app:layout_constraintTop_toTopOf="@id/spamDetectorBottomLayout"            >
         </TextView>
 
+        <!--
         <ListView
             android:id="@+id/spamDetectionSpamPackageList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/spamDetectorSpamListTitle"
-            app:layout_constraintBottom_toBottomOf="@id/spamDetectorBottomLayout"/>
+            app:layout_constraintBottom_toBottomOf="@id/spamDetectorBottomLayout"/>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/spamDetectionSpamPackageList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/spamDetectorSpamListTitle"
+            app:layout_constraintBottom_toBottomOf="@id/spamDetectorBottomLayout"
+            tools:itemCount="1"
+            tools:listitem="@layout/list_item_spam_package_scan_result" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
