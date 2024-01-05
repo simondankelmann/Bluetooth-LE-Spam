@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:padding="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.start.StartFragment"
+    android:id="@+id/list_item_spam_package_scan_result_layout"
+    >
+
+    <ImageView
+        android:id="@+id/list_item_spam_package_scan_result_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/bluetooth"
+        app:tint="@color/tint_icon_light"
+        android:scaleType="fitCenter"
+        android:padding="10dp"
+        app:layout_constraintTop_toTopOf="@id/list_item_spam_package_scan_result_layout"
+        app:layout_constraintStart_toStartOf="@id/list_item_spam_package_scan_result_layout"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_spam_package_scan_result_layout"
+        />
+
+    <TextView
+        android:paddingLeft="5dp"
+        android:id="@+id/list_item_spam_package_scan_result_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Spam Type"
+        android:textSize="14dp"
+        android:textColor="@color/text_color"
+        app:layout_constraintStart_toEndOf="@id/list_item_spam_package_scan_result_icon"
+        app:layout_constraintTop_toTopOf="@id/list_item_spam_package_scan_result_icon"
+        />
+
+    <TextView
+        android:paddingLeft="5dp"
+        android:id="@+id/list_item_spam_package_scan_result_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Flipper MAC Address"
+        android:textColor="@color/text_color_light"
+        android:textSize="12dp"
+        app:layout_constraintStart_toEndOf="@id/list_item_spam_package_scan_result_icon"
+        app:layout_constraintTop_toBottomOf="@id/list_item_spam_package_scan_result_name"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_spam_package_scan_result_icon"
+        />
+
+    <TextView
+        android:paddingRight="5dp"
+        android:id="@+id/list_item_spam_package_scan_result_rssi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Rssi"
+        android:textColor="@color/text_color"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="@id/list_item_spam_package_scan_result_layout"
+        app:layout_constraintTop_toTopOf="@id/list_item_spam_package_scan_result_name"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_spam_package_scan_result_name"
+        />
+
+    <TextView
+        android:paddingRight="5dp"
+        android:id="@+id/list_item_spam_package_scan_result_deviceType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Flipper Device Type"
+        android:textColor="@color/text_color_light"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="@id/list_item_spam_package_scan_result_layout"
+        app:layout_constraintTop_toBottomOf="@id/list_item_spam_package_scan_result_rssi"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_spam_package_scan_result_layout"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="64dp"
+android:orientation="horizontal"
+android:padding="5dp">
+
+    <LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+       >
+
+       <ImageView
+           android:id="@+id/list_item_spam_package_scan_result_icon"
+           android:layout_width="50dp"
+           android:layout_height="50dp"
+           android:src="@drawable/dolphin"
+           app:tint="@color/foreground_color_rounded_button"
+           android:background="@drawable/roundedbutton"
+           android:scaleType="fitCenter"
+           android:padding="10dp"
+           />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingLeft="5dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/list_item_spam_package_scan_result_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Flipper Name"
+            android:textSize="@dimen/textSizeHeadline3"
+            android:textColor="@color/text_color"
+            />
+
+        <TextView
+            android:id="@+id/list_item_spam_package_scan_result_address"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Flipper MAC Address"
+            android:textColor="@color/text_color_light"
+            android:textSize="12dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:paddingLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="end"
+        >
+
+        <TextView
+            android:id="@+id/list_item_spam_package_scan_result_rssi"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Rssi"
+            android:textColor="@color/text_color"
+            android:textSize="12dp"
+            android:gravity="end"
+            />
+
+        <TextView
+            android:id="@+id/list_item_spam_package_scan_result_deviceType"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Flipper Device Type"
+            android:textColor="@color/text_color_light"
+            android:textSize="12dp"
+            android:gravity="end"
+            />
+
+    </LinearLayout>
+</LinearLayout>
+-->

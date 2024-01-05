@@ -31,9 +31,9 @@ import de.simon.dankelmann.bluetoothlespam.R
 class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisementSetQueueHandlerCallback, Service() {
 
     private val _logTag = "AdvertisementForegroundService"
-    private val _channelId = "AdvertisementForegroundService"
-    private val _channelName = "Advertisement Foreground Service"
-    private val _channelDescription = "Advertisement Foreground Service Description"
+    private val _channelId = "BluetoothLeSpam"
+    private val _channelName = "Bluetooth Le Spam"
+    private val _channelDescription = "Bluetooth Le Spam Notifications"
     private var _currentAdvertisementSet:AdvertisementSet? = null
     private val _binder: IBinder = LocalBinder()
 

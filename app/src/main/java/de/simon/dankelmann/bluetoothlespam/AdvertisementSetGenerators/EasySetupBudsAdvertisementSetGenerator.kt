@@ -4,6 +4,7 @@ import android.bluetooth.le.AdvertisingSetParameters
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -25,7 +26,7 @@ class EasySetupBudsAdvertisementSetGenerator:IAdvertisementSetGenerator{
     // Logic also from here:
     // https://github.com/tutozz/ble-spam-android/blob/main/app/src/main/java/com/tutozz/blespam/EasySetupSpam.java
 
-    private val _manufacturerId = 117 // 0x75 == 117 = Samsung
+    private val _manufacturerId = Constants.MANUFACTURER_ID_SAMSUNG
     private val prependedBudsBytes = StringHelpers.decodeHex("42098102141503210109")
     private val appendedBudsBytes = StringHelpers.decodeHex("063C948E00000000C700") // +16FF75
 

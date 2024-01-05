@@ -6,6 +6,7 @@ import android.bluetooth.le.AdvertisingSetParameters
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingSetCallback
 import de.simon.dankelmann.bluetoothlespam.Callbacks.GenericAdvertisingCallback
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertiseMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -18,7 +19,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificData
 import kotlin.random.Random
 
-class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator {
+class  ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator {
 
     private val _logTag = "ContinuityActionModalAdvertisementSetGenerator"
 
@@ -83,7 +84,7 @@ class ContinuityActionModalAdvertisementSetGenerator: IAdvertisementSetGenerator
         }
     }
 
-    private val _manufacturerId = 76 // 0x004c == 76 = Apple
+    private val _manufacturerId = Constants.MANUFACTURER_ID_APPLE
     override fun getAdvertisementSets(inputData: Map<String, String>?): List<AdvertisementSet> {
         var advertisementSets: MutableList<AdvertisementSet> = mutableListOf()
 
