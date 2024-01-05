@@ -39,11 +39,12 @@ import de.simon.dankelmann.bluetoothlespam.R
 class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     private val _logTag = "AdvertisementScanForegroundService"
-    private val _channelId = "BluetoothLeSpam"
-    private val _channelName = "Bluetooth Le Spam"
+    private val _channelId = "BluetoothLeSpamScanService"
+    private val _channelName = "Bluetooth Le Spam Scan Service"
     private val _channelDescription = "Bluetooth Le Spam Notifications"
     private val _binder: IBinder = LocalBinder()
     private var notifyOnNewSpam = true
+    private var notifyOnNewFlipper = true
 
     companion object {
         private val _logTag = "AdvertisementScanForegroundService"
@@ -158,13 +159,16 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onFlipperDeviceDetected(flipperDeviceScanResult: FlipperDeviceScanResult, alreadyKnown: Boolean) {
-        if(!alreadyKnown){
-            updateNotification("New Flipper: " + flipperDeviceScanResult.deviceName, "${flipperDeviceScanResult.address} | ${flipperDeviceScanResult.rssi} dBm", false, 2)
+        if(!alreadyKnown || notifyOnNewFlipper){
+            updateNotification("New Flipper: " + flipperDeviceScanResult.deviceName, "${flipperDeviceScanResult.address} | ${flipperDeviceScanResult.rssi} dBm", !notifyOnNewFlipper, 2)
         }
+        notifyOnNewFlipper = false
     }
 
     override fun onFlipperListUpdated() {
-        // nothing to do here
+        if(AppContext.getBluetoothLeScanService().getFlipperDevicesList().isEmpty()){
+            notifyOnNewFlipper = true
+        }
     }
 
     override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
@@ -182,12 +186,11 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
             SpamPackageType.LOVESPOUSE_PLAY -> "Lovespouse Play"
             SpamPackageType.LOVESPOUSE_STOP -> "Lovespouse Stop"
         }
-        updateNotification("Spam Detected", spamPackageTypeText + " | " + spamPackageScanResult.address, !notifyOnNewSpam, 3)
+        updateNotification("Spam Detected", spamPackageTypeText + " | " + spamPackageScanResult.address, !notifyOnNewSpam, 2)
         notifyOnNewSpam = false
     }
 
     override fun onSpamResultPackageListUpdated() {
-       // nothing to do here
         if(AppContext.getBluetoothLeScanService().getSpamPackageScanResultList().isEmpty()){
             notifyOnNewSpam = true
         }

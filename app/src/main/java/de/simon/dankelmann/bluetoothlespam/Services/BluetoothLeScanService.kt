@@ -232,8 +232,8 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
         }
 
         _bluetoothLeScanServiceCallbacks.forEach {callback ->
-            callback.onFlipperDeviceDetected(flipperDeviceScanResult, alreadyKnown)
             callback.onFlipperListUpdated()
+            callback.onFlipperDeviceDetected(flipperDeviceScanResult, alreadyKnown)
         }
     }
 
