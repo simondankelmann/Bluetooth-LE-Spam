@@ -35,14 +35,16 @@ With some modifications to the advertised BLE package, it is possible to trigger
 
 > **_NOTE:_** To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
-### Spam Detector (Detect Spammers)
-The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
-
 ### Lovespouse (Adult Toys)
 With this functionality, it is possible to enable or disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
 
 ### Kitchen Sink (Everything at once)
 Utilizing this functionality, the app randomly generates BLE advertisement packages based on all other features. This leads to the highest number of affected devices in the vicinity.
+
+### Spam Detector (Detect Spammers)
+The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
+
+> **_NOTE:_** Location permission and background location access are required for this feature to work. These permissions are necessary because Android mandates them for Bluetooth scanning in the background. It's important to note that the app will NOT collect your location data.
 
 ## Range
 Simply put, the range of Bluetooth Low Energy (BLE) can vary between devices; some may have a long range, while others may have a short range.
@@ -74,6 +76,8 @@ If you're an end-user looking for a fully functional app, download the Release A
 ## Screenshots
 ![](./Assets/Screenshots/1.0.5/start.jpeg)
 ![](./Assets/Screenshots/1.0.5/advertise.jpeg)
+![](./Assets/Screenshots/1.0.8/detector1.jpeg)
+![](./Assets/Screenshots/1.0.8/detector2.jpeg)
 ![](./Assets/Screenshots/1.0.5/settings.jpeg)
 
 ## Disclaimer
