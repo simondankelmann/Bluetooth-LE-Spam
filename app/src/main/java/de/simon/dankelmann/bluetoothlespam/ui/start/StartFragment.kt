@@ -550,7 +550,9 @@ class StartFragment : Fragment() {
                 } else {
                     addMissingRequirement("Bluetooth is disabled")
                     if(promptIfAdapterIsDisabled){
-                        promptEnableBluetooth(bluetoothAdapter)
+                        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
+                            promptEnableBluetooth(bluetoothAdapter)
+                        }
                     }
                 }
         } else {
