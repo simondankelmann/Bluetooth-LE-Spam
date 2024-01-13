@@ -54,7 +54,7 @@ The official Bluetooth Low Energy API provided by Google's Android SDK allows yo
 Devices like the Flipper Zero, however, have the capability to modify this byte, significantly extending their range.
 
 ## Installation
-You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
+You can clone the repository and open it in Android Studio to install the app, or simply use the installable APK files from the [Release Section](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases). You can also download it from F-Droid [here](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/).
 
 If you're an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one). If you're a developer or tester, opt for the Debug APK for testing and debugging purposes.
 
