@@ -7,8 +7,9 @@ This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functi
 <h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
 
 ## Requirements
-- Android 8.0 (API level 26) or later does not support IOS or PC
+- Android 8.0 (API level 26) or later
 > If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the Info tab in settings.
+- (Does not support running on IOS or PC)
 
 ## Functionality
 ### Google Fast Pair (Android Devices)
