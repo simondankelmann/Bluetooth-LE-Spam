@@ -30,8 +30,8 @@ This app can spoof various Apple devices via Bluetooth Low Energy, which can be 
 ### Apple Action Modals (Apple)
 By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to open unwanted modals and popups, imitating certain Apple-specific actions.
 
-### Apple iOS 17 Crash (Apple)
-With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices. This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
+### Apple iOS 17 Crash (Apple) SEMI-PATCHED
+With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices. This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting. (iOS Crash is considered half-fixed due to the release of iOS 17.2 , it may still work on some devices.).
 
 > **_NOTE:_** To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
