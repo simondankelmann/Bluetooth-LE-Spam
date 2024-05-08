@@ -9,25 +9,27 @@
         android:name="android.permission.BLUETOOTH_ADMIN"
         android:maxSdkVersion="30" />
     <!--
- Needed only if your app looks for Bluetooth devices.
+         Needed only if your app looks for Bluetooth devices.
          If your app doesn't use Bluetooth scan results to derive physical
          location information, you can
          <a href="#assert-never-for-location">strongly assert that your app
-         doesn't derive physical location</a>. -->
+         doesn't derive physical location</a>.
+    -->
 
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
 
-<!--
- Needed only if your app makes the device discoverable to Bluetooth
+    <!--
+         Needed only if your app makes the device discoverable to Bluetooth
          devices.
     -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
     <!--
- Needed only if your app communicates with already-paired Bluetooth
+         Needed only if your app communicates with already-paired Bluetooth
          devices.
--->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />  <!--Needed only if your app uses Bluetooth scan results to derive physical location. -->
+    -->
+    <!--Needed only if your app uses Bluetooth scan results to derive physical location. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> 
 
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -42,25 +44,23 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
-
-
-
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
         tools:targetApi="31">
+
         <service android:foregroundServiceType="specialUse" android:name=".Services.AdvertisementForegroundService" />
 
         <service android:foregroundServiceType="location" android:name=".Services.BluetoothLeScanForegroundService" />
 
         <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
+
         <receiver android:name=".Services.AdvertisementForegroundService$StopButtonListener" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -68,7 +68,6 @@
             android:theme="@style/Theme.BluetoothLESpam.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
