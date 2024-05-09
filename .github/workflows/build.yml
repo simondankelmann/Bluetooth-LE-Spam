@@ -8,6 +8,7 @@ on:
       - 'gradle/**'
       - '*.gradle.*'
       - '*.properties'
+  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -26,11 +27,12 @@ jobs:
           java-version: 17
 
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches/
             ~/.gradle/wrapper/
+            ./.gradle/
           key: ${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Build with Gradle

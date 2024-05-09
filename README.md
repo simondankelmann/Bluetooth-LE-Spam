@@ -1,10 +1,10 @@
-# Bluetooth LE Spam <a href="https://discord.gg/x4e4Gma585">![Discord](https://img.shields.io/discord/1170266776731406386?label=Discord&link=https://discord.gg/x4e4Gma585)</a>
+# Bluetooth LE Spam [![Discord](https://img.shields.io/discord/1170266776731406386?label=Discord&link=https://discord.gg/x4e4Gma585)](https://discord.gg/x4e4Gma585)
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
 > **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. Therefore, the app is currently quite unreliable, and there isn't much we can do about it.
 
-<h4><a href="https://discord.gg/x4e4Gma585">Join the Discord Server</a></h4>
+#### [Join the Discord Server](https://discord.gg/x4e4Gma585)
 
 ## Requirements
 - Android 8.0 (API level 26) or later
@@ -75,11 +75,14 @@ If you're an end-user looking for a fully functional app, download the Release A
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 ## Screenshots
-![](./Assets/Screenshots/1.0.5/start.jpeg)
-![](./Assets/Screenshots/1.0.5/advertise.jpeg)
-![](./Assets/Screenshots/1.0.8/detector1.jpeg)
-![](./Assets/Screenshots/1.0.8/detector2.jpeg)
-![](./Assets/Screenshots/1.0.5/settings.jpeg)
+<details>
+
+[![](Assets/Screenshots/1.0.5/start.jpeg)](#)
+[![](Assets/Screenshots/1.0.5/advertise.jpeg)](#)
+[![](Assets/Screenshots/1.0.8/detector1.jpeg)](#)
+[![](Assets/Screenshots/1.0.8/detector2.jpeg)](#)
+[![](Assets/Screenshots/1.0.5/settings.jpeg)](#)
+</details>
 
 ## Disclaimer
 Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
@@ -101,5 +104,3 @@ This repository contains code for the investigation and experimentation of the B
 By using and contributing to this repository, you agree to these disclaimers and guidelines. If you do not agree, please refrain from using or contributing to this repository.
 
 For any questions or concerns, please contact the repository maintainers on Discord or Github.
-
-
