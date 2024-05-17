@@ -1,8 +1,8 @@
 * text=auto eol=lf
 *.bat text eol=crlf
 *.jar binary
-*.apk binary
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.xcf binary
+*.psd binary
