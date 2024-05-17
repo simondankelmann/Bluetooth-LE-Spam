@@ -26,22 +26,34 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/
-            ./.gradle/
-          key: ${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set environments
+        run: |
+          {
+            echo "version=v$(grep -oP 'versionName\s*=\s*\"\K[^\"]+' app/build.gradle.kts)"
+            echo "commit=$(echo ${{ github.sha }} | cut -c-7)"
+            echo "repo=$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
+          } >> $GITHUB_ENV
 
       - name: Build with Gradle
         run: |
-          ./gradlew assemble --no-daemon
-          {
-            echo "version=v$(grep versionName app/build.gradle.kts | awk '{print $3}' | tr -d \")"
-            echo "commit=$(echo ${{ github.sha }} | cut -c-7)"
-          } >> "$GITHUB_ENV"
+          if [ "${{ secrets.STORE_FILE }}" == "" ]; then
+            echo -e "\nERROR!\nTo release, you need to set up a signing key!\n"
+            echo "STORE_FILE: A Base64 encoded string of the signing key in JKS format"
+            echo "STORE_PASSWORD: Key store password"
+            echo "KEY_ALIAS: Key alias"
+            echo "KEY_PASSWORD: Key password"
+            echo ""
+            exit 1
+          else
+            echo "${{ secrets.STORE_FILE }}" | base64 -d > app/release.jks
+            export STORE_PASSWORD="${{ secrets.STORE_PASSWORD }}"
+            export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
+            export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+          fi
+          ./gradlew assemble --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

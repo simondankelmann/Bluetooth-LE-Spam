@@ -18,10 +18,21 @@ android {
         versionCode = 2
         versionName = "1.0.8"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.jks")
+            storePassword = System.getenv("STORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
     }
 
     buildTypes {
+        configureEach {
+            signingConfig = signingConfigs["release"]
+        }
         release {
             resValue("string", "app_name", app_name)
             isMinifyEnabled = false
@@ -60,9 +71,9 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
     implementation("androidx.preference:preference:1.2.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    //testImplementation("junit:junit:4.13.2")
+    //androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    //androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.preference:preference-ktx:1.2.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
