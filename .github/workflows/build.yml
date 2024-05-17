@@ -10,12 +10,6 @@ on:
       - '*.properties'
   pull_request:
   workflow_dispatch:
-    inputs:
-      release:
-        description: 'Release'
-        type: boolean
-        required: true
-        default: false
 
 jobs:
   build:
@@ -42,24 +36,6 @@ jobs:
             echo "commit=$(echo ${{ github.sha }} | cut -c-7)"
             echo "repo=$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
           } >> $GITHUB_ENV
-
-      - name: Get previous version name
-        uses: oprypin/find-latest-tag@v1.1.2
-        if: github.event.inputs.release == 'true'
-        id: previous
-        with:
-          repository: ${{ github.repository }}
-          releases-only: true
-
-      - name: Release check
-        if: github.event.inputs.release == 'true'
-        run: |
-          if [ "${{ steps.previous.outputs.tag }}" == "${{ env.version }}" ]; then
-            echo -e "\nERROR!\nThe same tag already exists!\n"
-            echo "Please change versionName in build.gradle"
-            echo ""
-            exit 1
-          fi
 
       - name: Build with Gradle
         run: |
