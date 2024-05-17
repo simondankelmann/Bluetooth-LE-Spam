@@ -2,13 +2,18 @@
 
 This project focuses on utilizing the built-in Bluetooth Low Energy (BLE) functionality of Android smartphones to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While there are other apps available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-> **_NOTE:_**  This project is in its early stages of development. Contributions from anyone are welcome. Therefore, the app is currently quite unreliable, and there isn't much we can do about it.
+> [!NOTE]
+> This project is in its early stages of development.  
+> Contributions from anyone are welcome.  
+> Therefore, the app is currently quite unreliable, and there isn't much we can do about it.
 
 #### [Join the Discord Server](https://discord.gg/x4e4Gma585)
 
 ## Requirements
 - Android 8.0 (API level 26) or later
-> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms). You also can view your Android version in the Info tab in settings.
+> [!TIP]
+> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
+> You also can view your Android version in the Info tab in settings.
 - (Does not support running on IOS or PC)
 
 ## Functionality
@@ -34,7 +39,8 @@ By spoofing Bluetooth Low Energy advertisers, this app can prompt iOS devices to
 ### Apple iOS 17 Crash (Apple) SEMI-PATCHED
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices. This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting. (iOS Crash is considered half-fixed due to the release of iOS 17.2 , it may still work on some devices.).
 
-> **_NOTE:_** To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
+> [!NOTE]
+> To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds. Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
 ### Lovespouse (Adult Toys)
 With this functionality, it is possible to enable or disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
@@ -45,7 +51,10 @@ Utilizing this functionality, the app randomly generates BLE advertisement packa
 ### Spam Detector (Detect Spammers)
 The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
 
-> **_NOTE:_** Location permission and background location access are required for this feature to work. These permissions are necessary because Android mandates them for Bluetooth scanning in the background. It's important to note that the app will NOT collect your location data.
+> [!NOTE]
+> Location permission and background location access are required for this feature to work.
+> These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
+> It's important to note that the app will NOT collect your location data.
 
 ## Range
 Simply put, the range of Bluetooth Low Energy (BLE) can vary between devices; some may have a long range, while others may have a short range.
