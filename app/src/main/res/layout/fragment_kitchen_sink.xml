@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_color"
     tools:context=".ui.kitchenSink.KitchenSinkFragment"
     android:id="@+id/kitchenSinkLayout">
 
@@ -111,7 +112,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textSize="14sp"></TextView>
+                    android:textSize="14sp"/>
 
             </LinearLayout>
 
@@ -126,10 +127,7 @@
                     android:id="@+id/kitchenSinkLogLinearView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                </LinearLayout>
-
+                    android:orientation="vertical"/>
             </ScrollView>
 
         </LinearLayout>
@@ -150,8 +148,7 @@
                 android:text="Start Advertising"
                 app:layout_constraintStart_toStartOf="@id/kitchenSinkLayout"
                 app:layout_constraintTop_toTopOf="@id/kitchenSinkLayout"
-                android:layout_margin="5dp">
-            </Button>
+                android:layout_margin="5dp"/>
 
         </LinearLayout>
 

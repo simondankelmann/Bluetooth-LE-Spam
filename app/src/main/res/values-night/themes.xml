@@ -18,5 +18,25 @@
 
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.BluetoothLESpam.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- ACTION BAR -->
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/foreground_color_action_bar</item>
+    </style>
+    <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/settings</item>
+        <item name="color">@color/foreground_color_action_bar</item>
+        <item name="tint">@color/foreground_color_action_bar</item>
+    </style>
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
+    </style>
+
+    <style name="Theme.BluetoothLESpam.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

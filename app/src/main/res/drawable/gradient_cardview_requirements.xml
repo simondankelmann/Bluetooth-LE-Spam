@@ -1,0 +1,26 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Gradient background -->
+    <gradient
+        android:angle="135"
+        android:endColor="#d1cfcf"
+        android:startColor="#ebebeb"
+        android:type="linear" />
+
+    <!-- Rounded corners -->
+    <corners
+        android:radius="8dp" />
+
+    <!-- Padding inside the shape -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+
+    <!-- Shadow (available in API level 28 and higher) -->
+    <solid android:color="#80ffffff" />
+    <corners android:radius="8dp" />
+    <stroke android:width="1dp" android:color="#d1cfcf" />
+</shape>

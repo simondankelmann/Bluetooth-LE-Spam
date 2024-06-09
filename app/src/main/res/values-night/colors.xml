@@ -14,6 +14,7 @@
 
     <color name="blue_normal">#2d5eed</color>
     <color name="blue_dark">#164795</color>
+    <color name="blue_accent">#1E88E5</color>
 
     <color name="green_normal">#a2c03c</color>
     <color name="green_dark">#546320</color>
@@ -35,17 +36,17 @@
     <color name="text_color_light">#ababab</color>
 
     <!-- ACTIONBAR -->
-    <color name="background_color_action_bar">#000000</color>
+    <color name="background_color_action_bar">#151515</color>
     <color name="foreground_color_action_bar">#FFFFFF</color>
 
     <!-- CARDVIEW -->
     <color name="text_color_card_view_accent">#FFFFFF</color>
-    <color name="text_color_card_view_accent_light">#ababab</color>
+    <color name="text_color_card_view_accent_light">#FFFFFF</color>
 
     <!-- CARDVIEW ALTERNATIVE -->
-    <color name="text_color_card_view_alternative">#000000</color>
-    <color name="text_color_card_view_alternative_light">#ababab</color>
-    <color name="tint_icon_card_view_alternative">#373737</color>
+    <color name="text_color_card_view_alternative">@color/white</color>
+    <color name="text_color_card_view_alternative_light">@color/white</color>
+    <color name="tint_icon_card_view_alternative">#FFFFFF</color>
 
     <!-- LOADING SPINNER -->
     <color name="background_color_loading_spinner">#cc000000</color>
@@ -67,5 +68,7 @@
     <color name="color_subtitle">@color/text_color_light</color>
     <color name="tint_button_active">@color/text_color</color>
     <color name="tint_button_inactive">@color/text_color_light</color>
+    <!-- BACKGROUND -->
+    <color name="background_color">#1A1D29</color>
 
 </resources>

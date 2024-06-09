@@ -4,6 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@color/background_color"
  >
 
     <ImageView
@@ -17,7 +18,7 @@
 
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -63,9 +64,7 @@
             android:layout_height="50dp"
             android:src="@drawable/stop"
             app:tint="@color/tint_button_active"
-            >
-        </ImageView>
-
+           />
         <ImageView
             android:padding="10dp"
             android:id="@+id/advertisementForegroundServiceNotificationToggleImageView"
@@ -73,8 +72,7 @@
             android:layout_height="50dp"
             android:src="@drawable/pause"
             app:tint="@color/tint_button_active"
-            >
-        </ImageView>
+            />
 
 
 

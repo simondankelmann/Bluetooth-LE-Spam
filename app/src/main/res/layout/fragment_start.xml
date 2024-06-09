@@ -1,87 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/startFragmentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.start.StartFragment"
-    android:id="@+id/startFragmentLayout"
-   >
+    android:background="@color/background_color"
+    tools:context=".ui.start.StartFragment">
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/startFragmentLoadingSpinnerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_color_loading_spinner"
         android:elevation="2dp"
-        android:visibility="gone"
-        android:id="@+id/startFragmentLoadingSpinnerLayout"
         android:orientation="vertical"
-        >
+        android:visibility="gone">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/startFragmentLoadingSpinnerAnimationView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:lottie_rawRes="@raw/loading"
             app:lottie_autoPlay="true"
-            app:lottie_loop="true"
             app:lottie_colorFilter="@color/color_filter_loading_spinner"
-            />
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading" />
 
         <TextView
-            app:layout_constraintBottom_toBottomOf="@id/startFragmentLoadingSpinnerLayout"
+            android:id="@+id/startFragmentLoadingSpinnerMessage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:padding="20dp"
             android:text="Loading..."
             android:textAlignment="center"
-            android:textSize="@dimen/textSizeHeadline2"
-            android:padding="20dp"
             android:textColor="@color/color_loading_spinner_message"
-            android:id="@+id/startFragmentLoadingSpinnerMessage">
-        </TextView>
+            android:textSize="@dimen/textSizeHeadline2"
+            app:layout_constraintBottom_toBottomOf="@id/startFragmentLoadingSpinnerLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="@dimen/cornerRadiusCardview">
+        android:paddingBottom="@dimen/cornerRadiusCardview"
+        android:scrollbars="none"
+        app:layout_constraintTop_toTopOf="@id/startFragmentLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:orientation="vertical">
 
             <!-- SYSTEM INFO CARD -->
             <androidx.cardview.widget.CardView
-                app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
+                android:id="@+id/startFragmentSystemInfoCard"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                app:cardElevation="0dp"
                 app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                android:id="@+id/startFragmentSystemInfoCard"
-                >
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toTopOf="@id/startFragmentLayout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:background="@drawable/gradient_cardview_accent"
+                    android:orientation="vertical"
                     android:padding="@dimen/cornerRadiusCardview">
 
                     <TextView
-                        app:layout_constraintTop_toTopOf="@id/startFragmentLayout"
                         android:id="@+id/startFragmentSystemInfoHeadline"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingBottom="5dp"
                         android:text="Bluetooth LE Spam"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/textSizeHeadline"
                         android:textColor="@color/text_color_card_view_accent"
-                        android:paddingBottom="5dp"/>
+                        android:textSize="@dimen/textSizeHeadline"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="@id/startFragmentLayout" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -92,8 +89,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="3"
-                            android:orientation="vertical"
-                            >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/startFragmentTextViewAppVersion"
@@ -101,8 +97,7 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
                                 android:text="App Version:"
-                                android:textColor="@color/text_color_card_view_accent_light"
-                                />
+                                android:textColor="@color/text_color_card_view_accent_light" />
 
                             <TextView
                                 android:id="@+id/startFragmentTextViewAndroidVersion"
@@ -110,8 +105,7 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
                                 android:text="Android Version:"
-                                android:textColor="@color/text_color_card_view_accent_light"
-                                />
+                                android:textColor="@color/text_color_card_view_accent_light" />
 
                             <TextView
                                 android:id="@+id/startFragmentTextViewSdkVersion"
@@ -119,8 +113,7 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
                                 android:text="Sdk Version:"
-                                android:textColor="@color/text_color_card_view_accent_light"
-                                />
+                                android:textColor="@color/text_color_card_view_accent_light" />
 
                             <TextView
                                 android:id="@+id/startFragmentTextViewBluetooth"
@@ -128,23 +121,21 @@
                                 android:layout_height="0dp"
                                 android:layout_weight="1"
                                 android:text="Bluetooth:"
-                                android:textColor="@color/text_color_card_view_accent_light"
-                                />
+                                android:textColor="@color/text_color_card_view_accent_light" />
                         </LinearLayout>
 
                         <!-- Image Column -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            >
+                            android:layout_weight="1">
+
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:src="@drawable/logobrightnocircle"
-                                app:tint="@color/white"
-                                ></ImageView>
+                                app:tint="@color/white" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -152,77 +143,72 @@
             <!-- END: SYSTEM INFO CARD -->
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard"
                 android:id="@+id/startFragmentRequirementsHeadline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Requirements"
-                android:textStyle="bold"
-                android:textSize="@dimen/textSizeHeadline"
-                android:textColor="@color/text_color"
+                android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:paddingTop="15dp"/>
+                android:text="Requirements"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/textSizeHeadline"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard" />
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsHeadline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/startFragmentRequirementsTextView"
-                android:text="@string/startfragment_requirements_checking"
-                android:paddingBottom="5dp">
-            </TextView>
-
-            <TextView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:text="@string/startfragment_requirements_checking"
+                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsHeadline" />
+
+            <TextView
                 android:id="@+id/startFragmentMissingRequirementsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/cornerRadiusCardview"
                 android:text="---"
-                android:textStyle="italic"
                 android:textColor="@color/grey_normal"
-                android:paddingBottom="@dimen/cornerRadiusCardview">
-            </TextView>
+                android:textStyle="italic"
+                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsTextView" />
 
             <!-- PERMISSIONS CARD -->
             <androidx.cardview.widget.CardView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentMissingRequirementsTextView"
                 android:id="@+id/startFragmentPermissionsCardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="0dp"
                 android:layout_marginTop="5dp"
                 app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                >
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/startFragmentMissingRequirementsTextView">
 
                 <LinearLayout
                     android:id="@+id/startFragmentPermissionCardViewContentWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/gradient_cardview_alternative">
+                    android:background="@drawable/gradient_cardview_requirements"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:gravity="center">
+
                         <ImageView
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/key_24"
-                            app:tint="@color/tint_icon_card_view_alternative"
-                            >
-                        </ImageView>
+                            app:tint="@color/tint_icon_card_view_alternative" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Permissions"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/textSizeHeadline2"
+                        android:layout_weight="1"
+                        android:text="Permissions"
                         android:textColor="@color/text_color_card_view_alternative"
-                        ></TextView>
+                        android:textSize="@dimen/textSizeHeadline2" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -230,44 +216,41 @@
 
             <!-- BLUETOOTH CARD -->
             <androidx.cardview.widget.CardView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentPermissionsCardview"
                 android:id="@+id/start_fragment_bluetooth_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
                 android:layout_marginTop="@dimen/cornerRadiusCardview"
-                >
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/startFragmentPermissionsCardview">
 
                 <LinearLayout
                     android:id="@+id/startFragmentBluetoothCardViewContentWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/gradient_cardview_alternative">
+                    android:background="@drawable/gradient_cardview_requirements"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:gravity="center">
+
                         <ImageView
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/bluetooth"
-                            app:tint="@color/tint_icon_card_view_alternative"
-                            >
-                        </ImageView>
+                            app:tint="@color/tint_icon_card_view_alternative" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Bluetooth Adapter"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/textSizeHeadline2"
+                        android:layout_weight="1"
+                        android:text="Bluetooth Adapter"
                         android:textColor="@color/text_color_card_view_alternative"
-                        ></TextView>
+                        android:textSize="@dimen/textSizeHeadline2" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -275,44 +258,41 @@
 
             <!-- SERVICE CARD -->
             <androidx.cardview.widget.CardView
-                app:layout_constraintTop_toBottomOf="@id/start_fragment_bluetooth_cardview"
                 android:id="@+id/start_fragment_service_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
                 android:layout_marginTop="@dimen/cornerRadiusCardview"
-                >
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toBottomOf="@id/start_fragment_bluetooth_cardview">
 
                 <LinearLayout
                     android:id="@+id/startFragmentServiceCardViewContentWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/gradient_cardview_alternative">
+                    android:background="@drawable/gradient_cardview_requirements"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
                         android:gravity="center">
+
                         <ImageView
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/bluetooth_audio_24"
-                            app:tint="@color/tint_icon_card_view_alternative"
-                            >
-                        </ImageView>
+                            app:tint="@color/tint_icon_card_view_alternative" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Advertisement Service"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/textSizeHeadline2"
+                        android:layout_weight="1"
+                        android:text="Advertisement Service"
                         android:textColor="@color/text_color_card_view_alternative"
-                        ></TextView>
+                        android:textSize="@dimen/textSizeHeadline2" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -323,17 +303,16 @@
                 android:id="@+id/start_fragment_database_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="0dp"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
                 android:layout_marginTop="@dimen/cornerRadiusCardview"
-                >
+                app:cardCornerRadius="@dimen/cornerRadiusCardview"
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:id="@+id/startFragmentDatabaseCardViewContentWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/gradient_cardview_alternative">
+                    android:background="@drawable/gradient_cardview_requirements"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="50dp"
@@ -346,36 +325,31 @@
                             android:layout_width="35dp"
                             android:layout_height="35dp"
                             android:src="@drawable/data_array"
-                            app:tint="@color/tint_icon_card_view_alternative"
-                            >
-                        </ImageView>
+                            app:tint="@color/tint_icon_card_view_alternative" />
 
                         <com.airbnb.lottie.LottieAnimationView
                             android:id="@+id/startFragmentDatabaseCardSeedingAnimation"
-                            android:visibility="gone"
                             android:layout_width="35dp"
                             android:layout_height="35dp"
-                            app:lottie_rawRes="@raw/sandglass"
-                            app:lottie_autoPlay="true"
-                            app:lottie_repeatMode="restart"
-                            app:lottie_loop="true"
-                            app:lottie_colorFilter="@color/tint_icon_card_view_alternative"
                             android:scaleType="fitXY"
-                            />
-
+                            android:visibility="gone"
+                            app:lottie_autoPlay="true"
+                            app:lottie_colorFilter="@color/tint_icon_card_view_alternative"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/sandglass"
+                            app:lottie_repeatMode="restart" />
 
 
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:text="Database"
                         android:layout_gravity="center"
-                        android:textSize="@dimen/textSizeHeadline2"
+                        android:layout_weight="1"
+                        android:text="Database"
                         android:textColor="@color/text_color_card_view_alternative"
-                        ></TextView>
+                        android:textSize="@dimen/textSizeHeadline2" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -383,51 +357,41 @@
 
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@id/start_fragment_service_cardview"
                 android:id="@+id/startFragmentAdvertisementHeadline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Advertise"
-                android:textStyle="bold"
-                android:textSize="@dimen/textSizeHeadline"
-                android:textColor="@color/text_color"
+                android:paddingTop="15dp"
                 android:paddingBottom="5dp"
-                android:paddingTop="15dp"/>
+                android:text="Advertise"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/textSizeHeadline"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/start_fragment_service_cardview" />
 
             <TextView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisementHeadline"
+                android:id="@+id/startFragmentAdvertisingDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/startFragmentAdvertisingDescription"
+                android:paddingBottom="5dp"
                 android:text="Select a Collection and start BLE Advertising"
-                android:paddingBottom="5dp">
-            </TextView>
+                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisementHeadline" />
 
             <HorizontalScrollView
-                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisingDescription"
                 android:id="@+id/startFragmentAdvertisementSetsScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="@dimen/cornerRadiusCardview"
-                >
+                app:layout_constraintTop_toBottomOf="@id/startFragmentAdvertisingDescription">
+
                 <LinearLayout
                     android:id="@+id/listView"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    />
+                    android:orientation="horizontal" />
             </HorizontalScrollView>
 
         </LinearLayout>
     </ScrollView>
-
-
-
-
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

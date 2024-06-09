@@ -16,6 +16,7 @@
     <color name="blue_dark">#164795</color>
     <color name="blue_light">#577ce6</color>
     <color name="blue_lighter">#7894e3</color>
+    <color name="blue_accent">#1E88E5</color>
 
 
     <color name="green_normal">#a2c03c</color>
@@ -71,5 +72,7 @@
     <color name="color_subtitle">@color/text_color_light</color>
     <color name="tint_button_active">@color/text_color</color>
     <color name="tint_button_inactive">@color/text_color_light</color>
+    <!-- BACKGROUND -->
+    <color name="background_color">@color/white</color>
 
 </resources>

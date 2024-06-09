@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val _logTag = "MainActivity"
-    private lateinit var sharedPreferenceChangedListener:OnSharedPreferenceChangeListener
+    private lateinit var sharedPreferenceChangedListener: OnSharedPreferenceChangeListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,15 +142,17 @@ class MainActivity : AppCompatActivity() {
     private fun promptEnableBluetooth() {
         if (!bluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, this)){
+            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, this)) {
                 startActivityForResult(enableBtIntent, Constants.REQUEST_CODE_ENABLE_BLUETOOTH)
             }
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean
-    {
-        val menuItems = listOf<MenuItem?>(menu?.findItem(R.id.nav_preferences), menu?.findItem(R.id.nav_set_tx_power))
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val menuItems = listOf<MenuItem?>(
+            menu?.findItem(R.id.nav_preferences),
+            menu?.findItem(R.id.nav_set_tx_power)
+        )
 
         menuItems.forEach { menuItem ->
             val actionSettingsMenuItem = menuItem
@@ -158,7 +160,12 @@ class MainActivity : AppCompatActivity() {
             val spannable = SpannableString(title)
 
             val textColor = resources.getColor(R.color.text_color, AppContext.getContext().theme)
-            spannable.setSpan(ForegroundColorSpan(textColor), 0, spannable.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            spannable.setSpan(
+                ForegroundColorSpan(textColor),
+                0,
+                spannable.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+            )
             actionSettingsMenuItem?.title = spannable
         }
 
@@ -177,7 +184,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.nav_preferences -> {
                 val navController = findNavController(R.id.nav_host_fragment_content_main)
                 onNavDestinationSelected(item, navController)
@@ -191,29 +198,29 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun showSetTxPowerDialog(){
+    fun showSetTxPowerDialog() {
 
-        if(AppContext.getAdvertisementService() != null){
+        if (AppContext.getAdvertisementService() != null) {
 
             val dialog = Dialog(this)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.dialog_set_tx_power)
 
-            val seekBar:SeekBar = dialog.findViewById(R.id.setTxPowerDialogSeekbar)
-            val seekBarLabel:TextView = dialog.findViewById(R.id.setTxPowerDialogTxPowerTextView)
+            val seekBar: SeekBar = dialog.findViewById(R.id.setTxPowerDialogSeekbar)
+            val seekBarLabel: TextView = dialog.findViewById(R.id.setTxPowerDialogTxPowerTextView)
 
             // Set Current TxPowerLevel
             val currentTxPowerLevel = AppContext.getAdvertisementService().getTxPowerLevel()
 
-            val currentProgress = when(currentTxPowerLevel){
+            val currentProgress = when (currentTxPowerLevel) {
                 TxPowerLevel.TX_POWER_HIGH -> 3
                 TxPowerLevel.TX_POWER_MEDIUM -> 2
                 TxPowerLevel.TX_POWER_LOW -> 1
                 TxPowerLevel.TX_POWER_ULTRA_LOW -> 0
             }
 
-            val currentLabel = when(currentTxPowerLevel){
+            val currentLabel = when (currentTxPowerLevel) {
                 TxPowerLevel.TX_POWER_HIGH -> "High"
                 TxPowerLevel.TX_POWER_MEDIUM -> "Medium"
                 TxPowerLevel.TX_POWER_LOW -> "Low"
@@ -223,10 +230,10 @@ class MainActivity : AppCompatActivity() {
             seekBar.progress = currentProgress
             seekBarLabel.text = currentLabel
 
-            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 
-                    val newTxPowerLevel = when(progress){
+                    val newTxPowerLevel = when (progress) {
                         3 -> TxPowerLevel.TX_POWER_HIGH
                         2 -> TxPowerLevel.TX_POWER_MEDIUM
                         1 -> TxPowerLevel.TX_POWER_LOW
@@ -234,7 +241,7 @@ class MainActivity : AppCompatActivity() {
                         else -> TxPowerLevel.TX_POWER_HIGH
                     }
 
-                    val newTxPowerLabel = when(progress){
+                    val newTxPowerLabel = when (progress) {
                         3 -> "High"
                         2 -> "Medium"
                         1 -> "Low"
@@ -242,7 +249,7 @@ class MainActivity : AppCompatActivity() {
                         else -> "High"
                     }
 
-                    if(AppContext.getAdvertisementService() != null){
+                    if (AppContext.getAdvertisementService() != null) {
                         seekBarLabel.text = newTxPowerLabel
                         AppContext.getAdvertisementService()!!.setTxPowerLevel(newTxPowerLevel)
                     }

@@ -1,0 +1,26 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Gradient background with darker night colors -->
+    <gradient
+        android:angle="135"
+        android:endColor="#2e2e2e"
+        android:startColor="#4a4a4a"
+        android:type="linear" />
+
+    <!-- Rounded corners -->
+    <corners
+        android:radius="8dp" />
+
+    <!-- Padding inside the shape -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+
+    <!-- Optional stroke for a subtle border effect -->
+    <stroke
+        android:width="1dp"
+        android:color="#1f1f1f" />
+</shape>
