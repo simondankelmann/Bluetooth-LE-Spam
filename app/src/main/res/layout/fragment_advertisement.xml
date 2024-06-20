@@ -1,116 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/advertisementFragmentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.advertisement.AdvertisementFragment"
-    android:id="@+id/advertisementFragmentLayout">
+    tools:context=".ui.advertisement.AdvertisementFragment">
 
     <!-- Advertisement Top Container -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayout"
         android:id="@+id/advertisementFragmentLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.35"
         android:orientation="vertical"
         android:padding="10dp"
-        >
+        app:layout_constraintHeight_percent="0.35"
+        app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayout">
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/advertisementFragmentAdvertisingAnimation"
-            app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayoutTop"
-            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionTitle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:lottie_rawRes="@raw/advertisingdevices"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionTitle"
+            app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayoutTop"
             app:lottie_autoPlay="false"
             app:lottie_loop="true"
-            />
+            app:lottie_rawRes="@raw/advertisingdevices" />
 
         <TextView
             android:id="@+id/advertisementFragmentCollectionTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle"
             android:text="Collection Title"
-            android:textStyle="bold"
             android:textColor="@color/text_color"
             android:textSize="@dimen/textSizeHeadline"
-            >
-        </TextView>
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle" />
 
         <TextView
             android:id="@+id/advertisementFragmentCollectionSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:text="test"
-            android:textStyle="italic"
             android:textColor="@color/text_color"
-            >
-        </TextView>
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- End: Advertisement Top Container -->
 
     <!-- Advertisement Lower Top Container -->
     <LinearLayout
-        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutTop"
         android:id="@+id/advertisementFragmentLayoutLowerTop"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:orientation="horizontal"
-        >
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutTop">
+
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="5"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_gravity="start">
+            android:layout_gravity="start"
+            android:layout_weight="5"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeSingleButton"
                 android:layout_width="50dp"
-                android:padding="5dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/repeat_one"
-                app:tint="@color/text_color_light"
                 android:background="@android:color/transparent"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
-                ></ImageButton>
+                android:src="@drawable/repeat_one"
+                app:tint="@color/text_color_light" />
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeLinearButton"
                 android:layout_width="50dp"
-                android:padding="5dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/repeat"
-                app:tint="@color/text_color_light"
                 android:background="@android:color/transparent"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
-                ></ImageButton>
+                android:src="@drawable/repeat"
+                app:tint="@color/text_color_light" />
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeListButton"
                 android:layout_width="50dp"
-                android:padding="5dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/list"
-                app:tint="@color/text_color_light"
                 android:background="@android:color/transparent"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
-                ></ImageButton>
+                android:src="@drawable/list"
+                app:tint="@color/text_color_light" />
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeRandomButton"
                 android:layout_width="50dp"
-                android:padding="5dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/shuffle"
-                app:tint="@color/text_color_light"
                 android:background="@android:color/transparent"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
-                ></ImageButton>
+                android:src="@drawable/shuffle"
+                app:tint="@color/text_color_light" />
 
         </LinearLayout>
 
@@ -118,14 +109,15 @@
             android:layout_width="70dp"
             android:layout_height="match_parent"
             android:padding="10dp">
+
             <ImageButton
                 android:id="@+id/advertisementFragmentPlayButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/play_arrow"
-                app:tint="@color/foreground_color_rounded_button"
                 android:background="@drawable/roundedbutton"
-                android:scaleType="center"></ImageButton>
+                android:scaleType="center"
+                android:src="@drawable/play_arrow"
+                app:tint="@color/foreground_color_rounded_button" />
         </LinearLayout>
 
     </LinearLayout>
@@ -133,13 +125,12 @@
 
     <!-- Advertisement Center Container -->
     <LinearLayout
-        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutLowerTop"
-        app:layout_constraintBottom_toTopOf="@id/advertisementFragmentLayoutFooter"
         android:id="@+id/advertisementFragmentLayoutCenter"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        >
+        app:layout_constraintBottom_toTopOf="@id/advertisementFragmentLayoutFooter"
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutLowerTop">
 
         <ExpandableListView
             android:id="@+id/advertisementFragmentCollectionExpandableListview"
@@ -149,8 +140,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
     <!-- END: Advertisement Center Container -->
@@ -158,46 +148,43 @@
 
     <!-- Advertisement Footer Container -->
     <LinearLayout
-        app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayout"
         android:id="@+id/advertisementFragmentLayoutFooter"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
-        >
+        app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayout">
 
         <LinearLayout
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:padding="10dp">
+
             <ImageView
                 android:id="@+id/advertisementFragmentTargetImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/bluetooth"
-                app:tint="@color/tint_icon_light">
-            </ImageView>
+                app:tint="@color/tint_icon_light" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="5"
             android:layout_height="match_parent"
-            >
+            android:layout_weight="5">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="5dp">
+
                 <TextView
                     android:id="@+id/advertisementFragmentCurrentSetTitle"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="Current Advertising Set"
-                    android:textStyle="bold">
-                </TextView>
-
+                    android:textStyle="bold"/>
                 <TextView
                     android:id="@+id/advertisementFragmentCurrentSetSubTitle"
                     android:layout_width="match_parent"
@@ -205,8 +192,7 @@
                     android:layout_weight="1"
                     android:text="Current Advertising SubTitle"
                     android:textColor="@color/blue_normal"
-                    android:textStyle="italic">
-                </TextView>
+                    android:textStyle="italic" />
             </LinearLayout>
 
         </LinearLayout>

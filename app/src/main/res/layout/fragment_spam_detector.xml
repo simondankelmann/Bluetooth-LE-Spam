@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.spamDetector.SpamDetectorFragment"
+    android:background="@color/background_color"
     android:id="@+id/spamDetectorLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,9 +40,7 @@
                 android:textColor="@color/text_color"
                 android:textSize="@dimen/textSizeHeadline"
                 app:layout_constraintBottom_toTopOf="@id/spamDetectorFragmentSubTitle"
-                >
-            </TextView>
-
+               />
             <TextView
                 android:id="@+id/spamDetectorFragmentSubTitle"
                 android:layout_width="match_parent"
@@ -50,8 +49,7 @@
                 android:textStyle="italic"
                 android:textColor="@color/text_color"
                 app:layout_constraintBottom_toBottomOf="@id/spamDetectorTopLayout"
-                >
-            </TextView>
+               />
 
             <ImageButton
                 android:id="@+id/spamDetectorToggleButton"
@@ -83,9 +81,7 @@
             android:textColor="@color/text_color"
             android:textSize="@dimen/textSizeHeadline3"
             app:layout_constraintTop_toTopOf="@id/spamDetectorCenterLayout"
-            >
-        </TextView>
-
+            />
         <!--
         <ListView
             android:id="@+id/spamDetectionFlipperDevicesList"
@@ -121,8 +117,7 @@
             android:textStyle="bold"
             android:textColor="@color/text_color"
             android:textSize="@dimen/textSizeHeadline3"
-            app:layout_constraintTop_toTopOf="@id/spamDetectorBottomLayout"            >
-        </TextView>
+            app:layout_constraintTop_toTopOf="@id/spamDetectorBottomLayout" />
 
         <!--
         <ListView

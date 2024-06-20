@@ -2,7 +2,17 @@
     android:shape="rectangle">
     <gradient
         android:angle="135"
-        android:endColor="#d1cfcf"
-        android:startColor="#ebebeb"
+        android:endColor="#2c3e50"
+        android:startColor="#4ca1af"
         android:type="linear" />
+    <corners
+        android:radius="16dp" />
+    <padding
+        android:left="16dp"
+        android:top="16dp"
+        android:right="16dp"
+        android:bottom="16dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#1abc9c" /> <!-- Teal stroke -->
 </shape>

@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/listItemAdvertisementSetCollectionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:id="@+id/listItemAdvertisementSetCollectionLayout">
+    android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/listItemAdvertisementSetCollectionStartCardview"
         android:layout_width="250dp"
         android:layout_height="120dp"
-        app:cardElevation="0dp"
+        android:layout_marginEnd="@dimen/cornerRadiusCardview"
         app:cardCornerRadius="@dimen/cornerRadiusCardview"
-        android:id="@+id/listItemAdvertisementSetCollectionStartCardview"
-        android:layout_marginRight="@dimen/cornerRadiusCardview"
-        >
+        app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="@drawable/gradient_cardview_alternative"
+            android:orientation="vertical"
             android:padding="@dimen/cornerRadiusCardview">
 
             <TextView
                 android:id="@+id/listItemAdvertisementSetCollectionStartTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
                 android:text="Title"
-                android:textStyle="bold"
-                android:textSize="@dimen/textSizeHeadline"
                 android:textColor="@color/text_color_card_view_alternative"
-                android:paddingBottom="5dp"/>
+                android:textSize="@dimen/textSizeHeadline"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,8 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartTarget"
@@ -50,8 +48,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="Target: -"
-                        android:textColor="@color/text_color_card_view_alternative_light"
-                        />
+                        android:textColor="@color/text_color_card_view_alternative_light" />
 
                     <TextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartDistance"
@@ -59,29 +56,26 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="Distance: Mixed"
-                        android:textColor="@color/text_color_card_view_alternative_light"
-                        />
+                        android:textColor="@color/text_color_card_view_alternative_light" />
                 </LinearLayout>
 
                 <!-- Image Column -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
+                    android:layout_weight="1">
+
                     <ImageView
                         android:id="@+id/listItemAdvertisementSetCollectionStartImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_android"
-                        app:tint="@color/text_color_card_view_alternative_light"
-                        ></ImageView>
+                        app:tint="@color/text_color_card_view_alternative_light" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
 
 
 </LinearLayout>

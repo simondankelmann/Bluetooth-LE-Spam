@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:id="@+id/bluetoothLeScanningForegroundNotificationLayout"
+    android:background="@color/background_color"
  >
 
     <ImageView

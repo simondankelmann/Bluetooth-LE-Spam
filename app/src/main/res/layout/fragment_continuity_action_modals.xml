@@ -2,10 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/continuityActionModalsLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.continuityActionModals.ContinuityActionModalsFragment"
-    android:id="@+id/continuityActionModalsLayout">
+    android:background="@color/background_color"
+    tools:context=".ui.continuityActionModals.ContinuityActionModalsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,24 +25,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:lottie_rawRes="@raw/bluetooth"
                 app:lottie_autoPlay="false"
-                app:lottie_repeatMode="restart"
                 app:lottie_loop="true"
-                />
+                app:lottie_rawRes="@raw/bluetooth"
+                app:lottie_repeatMode="restart" />
 
             <TextView
                 android:id="@+id/statusLabelcontinuityActionModals"
-                android:text="Status"
-                android:textAlignment="center"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.10"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:textSize="20sp"
-                />
+                android:layout_weight="0.10"
+                android:text="Status"
+                android:textAlignment="center"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -50,7 +49,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
-
 
 
             <TextView
@@ -72,20 +70,19 @@
                 android:min="0"
                 android:progress="3"
                 android:progressDrawable="@drawable/seekbar"
-                android:thumb="@drawable/seekbarthumb"
-                />
+                android:thumb="@drawable/seekbarthumb" />
 
             <TextView
                 android:id="@+id/continuityActionModalsRepeatitionSeekbarLabel"
-                android:text="Advertise every 2 Seconds"
-                android:textAlignment="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:textSize="14sp"
-                />
+                android:text="Advertise every 2 Seconds"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
             <SeekBar
                 android:id="@+id/continuityActionModalsRepeatitionSeekbar"
                 android:layout_width="match_parent"
@@ -94,8 +91,7 @@
                 android:min="1"
                 android:progress="2"
                 android:progressDrawable="@drawable/seekbar"
-                android:thumb="@drawable/seekbarthumb"
-                />
+                android:thumb="@drawable/seekbarthumb" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -105,13 +101,13 @@
                 <TextView
                     android:id="@+id/continuityActionModalsLogLabel"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Log"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textSize="14sp"></TextView>
+                    android:layout_weight="1"
+                    android:text="Log"
+                    android:textSize="14sp"/>
 
             </LinearLayout>
 
@@ -122,13 +118,12 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:padding="8dp">
+
                 <LinearLayout
                     android:id="@+id/continuityActionModalsLogLinearView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
             </ScrollView>
 
@@ -138,21 +133,18 @@
             android:id="@+id/continuityActionModalsFooterLayout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            app:layout_constraintBottom_toBottomOf="@id/continuityActionModalsLayout"
             android:orientation="horizontal"
-            >
+            app:layout_constraintBottom_toBottomOf="@id/continuityActionModalsLayout">
 
             <Button
                 android:id="@+id/advertiseButton"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
                 android:text="Start Advertising"
                 app:layout_constraintStart_toStartOf="@id/continuityActionModalsLayout"
-                app:layout_constraintTop_toTopOf="@id/continuityActionModalsLayout"
-                android:layout_margin="5dp">
-            </Button>
-
+                app:layout_constraintTop_toTopOf="@id/continuityActionModalsLayout"/>
         </LinearLayout>
 
     </LinearLayout>
