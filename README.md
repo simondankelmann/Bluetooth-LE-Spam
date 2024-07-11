@@ -2,7 +2,8 @@
 
 This project focuses on utilizing Android smartphones' built-in Bluetooth Low Energy (BLE) functionality to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While other apps are available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
-#### [Join the Discord Server](https://discord.gg/x4e4Gma585)
+
+#### [For Support, Join the Discord Server](https://discord.gg/x4e4Gma585)
 
 > [!NOTE]
 > This project is not actively updated due to no further optimizations to the exploit.
@@ -13,7 +14,7 @@ This project focuses on utilizing Android smartphones' built-in Bluetooth Low En
 > [!TIP]
 > If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
 > You also can view your Android version in the Info tab in settings.
-- (Does not support running on IOS or PC)
+- Does not support running on IOS or PC (even with emulators)
 
 ## Functionality
 ### Google Fast Pair (Android Devices)
@@ -80,6 +81,7 @@ If you're an end-user looking for a fully functional app, download the Release A
 
 - [K3YOMI](https://github.com/K3YOMI) for the spam detector idea
 
+- [Glorious Gizmos](https://www.tiktok.com/discover/glorious-gizmos) for making content and tutorials on our app
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 ## Screenshots
