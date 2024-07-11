@@ -6,6 +6,8 @@ This project focuses on utilizing Android smartphones' built-in Bluetooth Low En
 > This project is not actively updated due to no further optimizations to the exploit 
 > Contributions from anyone are welcome.  
 
+>  Contributions from anyone are welcome.  
+
 #### [Join the Discord Server](https://discord.gg/x4e4Gma585)
 
 ## Requirements
