@@ -14,7 +14,7 @@ This project focuses on utilizing Android smartphones' built-in Bluetooth Low En
 > [!TIP]
 > If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
 > You also can view your Android version in the Info tab in settings.
-- Does not support running on IOS or PC (even with emulators)
+- You can not run the app on IOS or PC (even with emulators/VM's)
 
 ## Functionality
 ### Google Fast Pair (Android Devices)
