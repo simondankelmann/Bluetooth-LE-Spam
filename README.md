@@ -2,11 +2,11 @@
 
 This project focuses on utilizing Android smartphones' built-in Bluetooth Low Energy (BLE) functionality to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero. While other apps are available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
 
+#### [Join the Discord Server](https://discord.gg/x4e4Gma585)
+
 > [!NOTE]
 > This project is not actively updated due to no further optimizations to the exploit.
-> Contributions from anyone are welcome.   
-
-#### [Join the Discord Server](https://discord.gg/x4e4Gma585)
+> Contributions from anyone are appreciated.   
 
 ## Requirements
 - Android 8.0 (API level 26) or later
