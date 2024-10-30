@@ -22,10 +22,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file("/home/simon/Documents/KeyStores/BluetoothLeKeyStore_2024.jks")
-            storePassword = "wdTSFj\$5&R3DGVCc"
-            keyAlias = "key0"
-            keyPassword = "rY,K>%{V,&-(<-h5"
+            storeFile = file("release.jks")
+            storePassword = System.getenv("STORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
         }
     }
 
