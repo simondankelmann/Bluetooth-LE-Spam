@@ -366,7 +366,6 @@ class StartFragment : Fragment() {
                 startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
-
     }
 
     fun navigateToAdvertisementFragmentWithType(advertisementSetTypes: List<AdvertisementSetType>, advertisementSetCollectionTitle:String){
@@ -375,6 +374,17 @@ class StartFragment : Fragment() {
             // Initialize the Collection
             var advertisementSetCollection = AdvertisementSetCollection()
             advertisementSetCollection.title = advertisementSetCollectionTitle
+
+            if(advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE) ||
+                advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP) ||
+                advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION) ||
+                advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG)){
+                advertisementSetCollection.hints.add("Fast Pairing is patched on all modern devices due to this we no longer offer support for this feature")
+            }
+
+            if(advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH)){
+                advertisementSetCollection.hints.add("Devices on iOS 18 or above will not crash but still get pop-ups")
+            }
 
             advertisementSetTypes.forEach { advertisementSetType ->
                 var titlePrefix = when(advertisementSetType){
@@ -410,6 +420,7 @@ class StartFragment : Fragment() {
 
                 // Add List to the Collection
                 advertisementSetCollection.advertisementSetLists.add(advertisementSetList)
+
 
                 hideLoadingSpinner()
             }

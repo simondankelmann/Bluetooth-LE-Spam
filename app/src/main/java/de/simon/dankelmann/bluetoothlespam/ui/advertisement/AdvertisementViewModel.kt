@@ -22,6 +22,10 @@ class AdvertisementViewModel : ViewModel() {
         value = "-"
     }
 
+    var advertisementSetCollectionHint = MutableLiveData<String>().apply {
+        value = "-"
+    }
+
     var advertisementSetTitle = MutableLiveData<String>().apply {
         value = "-"
     }

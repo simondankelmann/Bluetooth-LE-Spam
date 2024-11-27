@@ -4,6 +4,7 @@ import java.io.Serializable
 
 class AdvertisementSetCollection : Serializable {
     var title = ""
+    var hints:MutableList<String> = mutableListOf()
     var advertisementSetLists:MutableList<AdvertisementSetList> = mutableListOf()
 
     fun getNumberOfLists():Int{

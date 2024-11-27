@@ -103,12 +103,36 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection){
         _viewModel!!.advertisementSetCollectionTitle.postValue(advertisementSetCollection.title)
         _viewModel!!.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(advertisementSetCollection))
+        _viewModel!!.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(advertisementSetCollection))
 
         // Update UI
         setupExpandableListView(advertisementSetCollection)
 
         // Pass the Collection to the Queue Handler
         //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+    }
+
+    fun getAdvertisementSetCollectionHint(advertisementSetCollection: AdvertisementSetCollection):String{
+        var hint = ""
+        var sep = ""
+        Log.d(_logTag, "Collection: " + advertisementSetCollection.advertisementSetLists.count())
+
+
+        if(advertisementSetCollection.hints.isNotEmpty()){
+
+            advertisementSetCollection.hints.forEach { it ->
+                Log.d(_logTag, "CURRENT HINT: " +it)
+                hint = hint + sep + it
+                //hint += sep + it
+                sep = ", "
+                Log.d(_logTag, "HINT IS NOW: " + hint)
+            }
+        } else {
+            hint = "-"
+        }
+
+        Log.d(_logTag, "Returning: " + hint)
+        return hint
     }
 
     private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
@@ -204,6 +228,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         var advertisementSetCollectionSubTitle = _binding!!.advertisementFragmentCollectionSubtitle
         var advertisementSetTitle = _binding!!.advertisementFragmentCurrentSetTitle
         var advertisementSetSubTitle = _binding!!.advertisementFragmentCurrentSetSubTitle
+        var advertisementSetCollectionHint = _binding!!.advertisementFragmentCollectionHint
         var queueModeButtonSingle = _binding!!.advertisementFragmentQueueModeSingleButton
         var queueModeButtonLinear = _binding!!.advertisementFragmentQueueModeLinearButton
         var queueModeButtonRandom = _binding!!.advertisementFragmentQueueModeRandomButton
@@ -261,6 +286,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
         _viewModel!!.advertisementSetCollectionSubTitle.observe(viewLifecycleOwner) { value ->
             advertisementSetCollectionSubTitle.text = value
+        }
+
+        _viewModel!!.advertisementSetCollectionHint.observe(viewLifecycleOwner) { value ->
+            advertisementSetCollectionHint.text = value
         }
 
         _viewModel!!.advertisementSetTitle.observe(viewLifecycleOwner) { value ->
