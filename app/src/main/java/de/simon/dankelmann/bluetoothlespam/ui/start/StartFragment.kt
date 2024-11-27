@@ -379,11 +379,11 @@ class StartFragment : Fragment() {
                 advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP) ||
                 advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION) ||
                 advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG)){
-                advertisementSetCollection.hints.add("Fast Pairing is mostly fixed in Android")
+                advertisementSetCollection.hints.add("Fast Pairing is patched on all modern devices due to this we no longer offer support for this feature")
             }
 
             if(advertisementSetTypes.contains(AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH)){
-                advertisementSetCollection.hints.add("Crash was fixed in iOS 18")
+                advertisementSetCollection.hints.add("Devices on iOS 18 or above will not crash but still get pop-ups")
             }
 
             advertisementSetTypes.forEach { advertisementSetType ->
