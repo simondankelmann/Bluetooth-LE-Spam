@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
@@ -204,86 +205,83 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         viewModel.advertisementQueueMode.postValue(advertisementQueueMode)
     }
 
-    fun setupUi(){
-
+    fun setupUi() {
         // Views
         var playButton = binding.advertisementFragmentPlayButton
-        var advertisingAnimation = binding.advertisementFragmentAdvertisingAnimation
-        var advertisingTargetImage = binding.advertisementFragmentTargetImage
-        var advertisementSetCollectionTitle = binding.advertisementFragmentCollectionTitle
-        var advertisementSetCollectionSubTitle = binding.advertisementFragmentCollectionSubtitle
-        var advertisementSetTitle = binding.advertisementFragmentCurrentSetTitle
-        var advertisementSetSubTitle = binding.advertisementFragmentCurrentSetSubTitle
-        var advertisementSetCollectionHint = binding.advertisementFragmentCollectionHint
         var queueModeButtonSingle = binding.advertisementFragmentQueueModeSingleButton
         var queueModeButtonLinear = binding.advertisementFragmentQueueModeLinearButton
         var queueModeButtonRandom = binding.advertisementFragmentQueueModeRandomButton
         var queueModeButtonList = binding.advertisementFragmentQueueModeListButton
 
         // Listeners
-        playButton.setOnClickListener{
+        playButton.setOnClickListener {
             onPlayButtonClicked()
         }
-
         queueModeButtonSingle.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE)
         }
-
         queueModeButtonLinear.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR)
         }
-
         queueModeButtonRandom.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
         }
-
         queueModeButtonList.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST)
         }
 
         // Observers
+        val advertisingAnimation = binding.advertisementFragmentAdvertisingAnimation
         viewModel.isAdvertising.observe(viewLifecycleOwner) { isAdvertising ->
-            if(isAdvertising){
-                playButton.setImageDrawable(resources.getDrawable(R.drawable.pause, AppContext.getContext().theme))
+            if (isAdvertising) {
+                playButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.pause, AppContext.getContext().theme
+                    )
+                )
                 advertisingAnimation.playAnimation()
             } else {
-                playButton.setImageDrawable(resources.getDrawable(R.drawable.play_arrow, AppContext.getContext().theme))
+                playButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.play_arrow, AppContext.getContext().theme
+                    )
+                )
                 advertisingAnimation.cancelAnimation()
                 advertisingAnimation.frame = 0
             }
         }
 
         viewModel.target.observe(viewLifecycleOwner) { target ->
-            var targetImageDrawable:Drawable = when(target){
-                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> resources.getDrawable(R.drawable.bluetooth, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> resources.getDrawable(R.drawable.apple, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> resources.getDrawable(R.drawable.ic_android, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> resources.getDrawable(R.drawable.microsoft, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> resources.getDrawable(R.drawable.samsung, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> resources.getDrawable(R.drawable.shuffle, AppContext.getContext().theme)
-                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> resources.getDrawable(R.drawable.heart, AppContext.getContext().theme)
+            val targetDrawableId = when (target) {
+                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> R.drawable.bluetooth
+                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> R.drawable.apple
+                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> R.drawable.ic_android
+                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> R.drawable.microsoft
+                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> R.drawable.samsung
+                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> R.drawable.shuffle
+                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> R.drawable.heart
             }
-            advertisingTargetImage.setImageDrawable(targetImageDrawable)
+            binding.advertisementFragmentTargetImage.setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    resources, targetDrawableId, AppContext.getContext().theme
+                )
+            )
         }
 
         viewModel.advertisementSetCollectionTitle.observe(viewLifecycleOwner) { value ->
-            advertisementSetCollectionTitle.text = value
+            binding.advertisementFragmentCollectionTitle.text = value
         }
-
         viewModel.advertisementSetCollectionSubTitle.observe(viewLifecycleOwner) { value ->
-            advertisementSetCollectionSubTitle.text = value
+            binding.advertisementFragmentCollectionSubtitle.text = value
         }
-
         viewModel.advertisementSetCollectionHint.observe(viewLifecycleOwner) { value ->
-            advertisementSetCollectionHint.text = value
+            binding.advertisementFragmentCollectionHint.text = value
         }
-
         viewModel.advertisementSetTitle.observe(viewLifecycleOwner) { value ->
-            advertisementSetTitle.text = value
+            binding.advertisementFragmentCurrentSetTitle.text = value
         }
-
         viewModel.advertisementSetSubTitle.observe(viewLifecycleOwner) { value ->
-            advertisementSetSubTitle.text = value
+            binding.advertisementFragmentCurrentSetSubTitle.text = value
         }
 
         viewModel.advertisementQueueMode.observe(viewLifecycleOwner) { mode ->

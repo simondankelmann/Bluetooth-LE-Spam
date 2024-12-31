@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.ListView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
@@ -97,7 +98,6 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     fun setupUi(){
-
         // Views
         var toggleButton = binding.spamDetectorToggleButton
         var detectionAnimation = binding.spamDetectionAnimation
@@ -109,11 +109,19 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
 
         // Observers
         viewModel.isDetecting.observe(viewLifecycleOwner) { isDetecting ->
-            if(isDetecting){
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.pause, AppContext.getContext().theme))
+            if (isDetecting) {
+                toggleButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.pause, AppContext.getContext().theme
+                    )
+                )
                 detectionAnimation.playAnimation()
             } else {
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.play_arrow, AppContext.getContext().theme))
+                toggleButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.play_arrow, AppContext.getContext().theme
+                    )
+                )
                 detectionAnimation.cancelAnimation()
                 detectionAnimation.frame = 0
             }
