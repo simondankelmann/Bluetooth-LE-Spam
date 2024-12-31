@@ -4,7 +4,5 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class SpamDetectorViewModel : ViewModel() {
-    var isDetecting = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+    val isDetecting = MutableLiveData<Boolean>(false)
 }

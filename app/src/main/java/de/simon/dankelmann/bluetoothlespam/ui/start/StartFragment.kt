@@ -49,8 +49,6 @@ class StartFragment : Fragment() {
         val root: View = binding.root
 
         viewModel.appVersion.postValue(getAppVersion())
-        viewModel.androidVersion.postValue(android.os.Build.VERSION.RELEASE)
-        viewModel.sdkVersion.postValue(android.os.Build.VERSION.SDK_INT.toString())
         viewModel.bluetoothSupport.postValue(getBluetoothSupportText())
 
         // register for bt enable callback

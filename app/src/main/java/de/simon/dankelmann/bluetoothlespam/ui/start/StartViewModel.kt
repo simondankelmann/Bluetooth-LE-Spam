@@ -5,53 +5,25 @@ import androidx.lifecycle.ViewModel
 
 class StartViewModel : ViewModel() {
 
-    var isLoading = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+    val isLoading = MutableLiveData<Boolean>(false)
+    val isSeeding = MutableLiveData<Boolean>(false)
 
-    var isSeeding = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+    val loadingMessage = MutableLiveData<String>("Loading...")
 
-    var loadingMessage = MutableLiveData<String>().apply {
-        value = "Loading..."
-    }
+    val appVersion = MutableLiveData<String>("0.0.0")
+    val androidVersion = MutableLiveData<String>(android.os.Build.VERSION.RELEASE)
+    val sdkVersion = MutableLiveData<String>(android.os.Build.VERSION.SDK_INT.toString())
 
-    var appVersion = MutableLiveData<String>().apply {
-        value = "0.0.0"
-    }
+    val bluetoothSupport = MutableLiveData<String>("-")
 
-    var androidVersion = MutableLiveData<String>().apply {
-        value = "0"
-    }
+    val allPermissionsGranted = MutableLiveData<Boolean>(false)
 
-    var sdkVersion = MutableLiveData<String>().apply {
-        value = "0"
-    }
+    val bluetoothAdapterIsReady = MutableLiveData<Boolean>(false)
 
-    var bluetoothSupport = MutableLiveData<String>().apply {
-        value = "-"
-    }
+    val advertisementServiceIsReady = MutableLiveData<Boolean>(false)
 
-    var allPermissionsGranted = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+    val databaseIsReady = MutableLiveData<Boolean>(false)
 
-    var bluetoothAdapterIsReady = MutableLiveData<Boolean>().apply {
-        value = false
-    }
-
-    var advertisementServiceIsReady = MutableLiveData<Boolean>().apply {
-        value = false
-    }
-
-    var databaseIsReady = MutableLiveData<Boolean>().apply {
-        value = false
-    }
-
-    var missingRequirements = MutableLiveData<MutableList<String>>().apply {
-        value = mutableListOf()
-    }
-
+    val missingRequirements = MutableLiveData<MutableList<String>>(mutableListOf())
 
 }
