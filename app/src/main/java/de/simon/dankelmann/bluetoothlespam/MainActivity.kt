@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -17,16 +16,14 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.Window
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
@@ -34,7 +31,6 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import com.google.android.material.navigation.NavigationView
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
@@ -42,7 +38,6 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
-import org.w3c.dom.Text
 
 
 class MainActivity : AppCompatActivity() {
@@ -91,29 +86,35 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-        prefs.registerOnSharedPreferenceChangeListener(sharedPreferenceChangedListener);
+        prefs.registerOnSharedPreferenceChangeListener(sharedPreferenceChangedListener)
 
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        setupNavController()
+    }
 
-        navView.getHeaderView(0).findViewById<TextView>(R.id.textViewGithubLink)
-            ?.setOnClickListener {
-                val uri = Uri.parse("https://github.com/simondankelmann/Bluetooth-LE-Spam")
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                startActivity(intent)
-            }
+    fun setupNavController() {
+        val navController = findNavController(R.id.nav_host_fragment)
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
-            setOf(
+            topLevelDestinationIds = setOf(
                 R.id.nav_start,
-            ), drawerLayout
+                R.id.nav_advertisement_collection,
+                R.id.nav_spam_detector,
+            ),
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.nav_start,
+                R.id.nav_advertisement_collection,
+                R.id.nav_spam_detector
+                    -> binding.bottomNav.visibility = View.VISIBLE
+
+                else -> binding.bottomNav.visibility = View.GONE
+            }
+        }
     }
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
@@ -133,10 +134,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     private fun promptEnableBluetooth() {
@@ -179,14 +176,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_preferences -> {
-                val navController = findNavController(R.id.nav_host_fragment_content_main)
+                val navController = findNavController(R.id.nav_host_fragment)
                 onNavDestinationSelected(item, navController)
             }
 

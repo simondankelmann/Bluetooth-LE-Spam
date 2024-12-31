@@ -7,6 +7,10 @@
     <string name="nav_header_subtitle">github.com/simondankelmann</string>
     <string name="nav_header_desc">Navigation header</string>
 
+    <string name="bottom_nav_start">Info</string>
+    <string name="bottom_nav_advertise">Advertise</string>
+    <string name="bottom_nav_detect">Detect</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_set_tx_power">TX Power</string>
 

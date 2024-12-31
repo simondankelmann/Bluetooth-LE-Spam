@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/nav_start">
+
+    <!-- 3 main locations (in bottom nav)-->
+
+    <fragment
+        android:id="@+id/nav_start"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.start.StartFragment"
+        android:label="@string/bottom_nav_start"
+        tools:layout="@layout/fragment_start">
+
+        <action
+            android:id="@+id/action_start_to_prefs"
+            app:destination="@id/nav_preferences" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_advertisement_collection"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.advertisementcollection.AdvertisementCollectionFragment"
+        android:label="@string/bottom_nav_advertise"
+        tools:layout="@layout/fragment_advertisement_collection">
+
+        <action
+            android:id="@+id/action_start_to_prefs"
+            app:destination="@id/nav_preferences" />
+
+        <action
+            android:id="@+id/action_ad_coll_to_ad"
+            app:destination="@id/nav_advertisement">
+            <argument
+                android:name="advertisementSetCollection"
+                android:defaultValue="@null"
+                app:argType="de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection"
+                app:nullable="true" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_spam_detector"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.spamDetector.SpamDetectorFragment"
+        android:label="@string/bottom_nav_detect"
+        tools:layout="@layout/fragment_spam_detector">
+
+        <action
+            android:id="@+id/action_start_to_prefs"
+            app:destination="@id/nav_preferences" />
+    </fragment>
+
+    <!-- Details screens (bottom nav hidden) -->
+
+    <fragment
+        android:id="@+id/nav_advertisement"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.advertisement.AdvertisementFragment"
+        android:label="@string/menu_advertisement"
+        tools:layout="@layout/fragment_advertisement">
+        <argument
+            android:name="advertisementSetCollection"
+            android:defaultValue="@null"
+            app:argType="de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_preferences"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment"
+        android:label="@string/menu_preferences" />
+
+</navigation>

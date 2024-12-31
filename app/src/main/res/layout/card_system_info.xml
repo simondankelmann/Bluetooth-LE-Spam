@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/startFragmentSystemInfoCard"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    app:cardCornerRadius="@dimen/cornerRadiusCardview"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_cardview_accent"
+        android:orientation="vertical"
+        android:padding="@dimen/cornerRadiusCardview">
+
+        <TextView
+            android:id="@+id/startFragmentSystemInfoHeadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="@string/app_name"
+            android:textColor="@color/text_color_card_view_accent"
+            android:textSize="@dimen/textSizeHeadline"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <!-- System Info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewAppVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="App Version:"
+                    android:textColor="@color/text_color_card_view_accent_light" />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewAndroidVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Android Version:"
+                    android:textColor="@color/text_color_card_view_accent_light" />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewSdkVersion"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Sdk Version:"
+                    android:textColor="@color/text_color_card_view_accent_light" />
+
+                <TextView
+                    android:id="@+id/startFragmentTextViewBluetooth"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="Bluetooth:"
+                    android:textColor="@color/text_color_card_view_accent_light" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/logobrightnocircle"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
