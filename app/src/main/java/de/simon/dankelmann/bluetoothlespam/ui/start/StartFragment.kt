@@ -34,25 +34,24 @@ import java.util.concurrent.TimeUnit
 class StartFragment : Fragment() {
 
     private val _logTag = "StartFragment"
-    private var _viewModel: StartViewModel? = null
-    private var _binding: FragmentStartBinding? = null
     private lateinit var registerForResult:ActivityResultLauncher<Intent>
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _viewModel: StartViewModel? = null
+    private val viewModel get() = _viewModel!!
+
+    private var _binding: FragmentStartBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val viewModel = ViewModelProvider(this)[StartViewModel::class.java]
-        _viewModel = viewModel
+        _viewModel = ViewModelProvider(this)[StartViewModel::class.java]
         _binding = FragmentStartBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        _viewModel!!.appVersion.postValue(getAppVersion())
-        _viewModel!!.androidVersion.postValue(android.os.Build.VERSION.RELEASE)
-        _viewModel!!.sdkVersion.postValue(android.os.Build.VERSION.SDK_INT.toString())
-        _viewModel!!.bluetoothSupport.postValue(getBluetoothSupportText())
+        viewModel.appVersion.postValue(getAppVersion())
+        viewModel.androidVersion.postValue(android.os.Build.VERSION.RELEASE)
+        viewModel.sdkVersion.postValue(android.os.Build.VERSION.SDK_INT.toString())
+        viewModel.bluetoothSupport.postValue(getBluetoothSupportText())
 
         // register for bt enable callback
         registerForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -97,7 +96,7 @@ class StartFragment : Fragment() {
 
         // Loading Animation
         val loadingSpinnerLayout: View = binding.startFragmentLoadingSpinnerLayout
-        _viewModel!!.isLoading.observe(viewLifecycleOwner) {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
             loadingSpinnerLayout.visibility = when(it){
                 true -> View.VISIBLE
                 false -> View.GONE
@@ -107,7 +106,7 @@ class StartFragment : Fragment() {
         // Seeding Animation
         val seedingAnimationView: View = binding.startFragmentDatabaseCardSeedingAnimation
         val databaseImageView: View = binding.startFragmentDatabaseCardIcon
-        _viewModel!!.isSeeding.observe(viewLifecycleOwner) {
+        viewModel.isSeeding.observe(viewLifecycleOwner) {
             seedingAnimationView.visibility = when(it){
                 true -> View.VISIBLE
                 false -> View.GONE
@@ -121,38 +120,38 @@ class StartFragment : Fragment() {
 
         // Loading Message
         val textViewLoadingMessage: TextView = binding.startFragmentLoadingSpinnerMessage
-        _viewModel!!.loadingMessage.observe(viewLifecycleOwner) {
+        viewModel.loadingMessage.observe(viewLifecycleOwner) {
             textViewLoadingMessage.text = it
         }
 
         // App Version
         val textViewAppVersion: TextView = binding.infoCard.startFragmentTextViewAppVersion
-        _viewModel!!.appVersion.observe(viewLifecycleOwner) {
+        viewModel.appVersion.observe(viewLifecycleOwner) {
             textViewAppVersion.text = "App Version: $it"
         }
 
         // Android Version
         val textViewAndroidVersion: TextView = binding.infoCard.startFragmentTextViewAndroidVersion
-        _viewModel!!.androidVersion.observe(viewLifecycleOwner) {
+        viewModel.androidVersion.observe(viewLifecycleOwner) {
             textViewAndroidVersion.text = "Android Version: $it"
         }
 
         // SDK Version
         val textViewSdkVersion: TextView = binding.infoCard.startFragmentTextViewSdkVersion
-        _viewModel!!.sdkVersion.observe(viewLifecycleOwner) {
+        viewModel.sdkVersion.observe(viewLifecycleOwner) {
             textViewSdkVersion.text = "SDK Version: $it"
         }
 
         // Bluetooth Support
         val textViewBluetoothSupport: TextView = binding.infoCard.startFragmentTextViewBluetooth
-        _viewModel!!.bluetoothSupport.observe(viewLifecycleOwner) {
+        viewModel.bluetoothSupport.observe(viewLifecycleOwner) {
             textViewBluetoothSupport.text = "Bluetooth: $it"
         }
 
         // Missing Requirements Text
         val textViewRequirementsDescription: TextView = binding.startFragmentRequirementsTextView
         val startFragmentMissingRequirementsTextView:  TextView = binding.startFragmentMissingRequirementsTextView
-        _viewModel!!.missingRequirements.observe(viewLifecycleOwner) {missingRequirementsList ->
+        viewModel.missingRequirements.observe(viewLifecycleOwner) {missingRequirementsList ->
           if(missingRequirementsList.isEmpty()){
               startFragmentMissingRequirementsTextView.visibility = View.GONE
               //textViewRequirementsDescription.visibility = View.GONE
@@ -180,7 +179,7 @@ class StartFragment : Fragment() {
 
         // Permissions CardView Content
         val startFragmentPermissionCardViewContentWrapper: LinearLayout = binding.startFragmentPermissionCardViewContentWrapper
-        _viewModel!!.allPermissionsGranted.observe(viewLifecycleOwner) {
+        viewModel.allPermissionsGranted.observe(viewLifecycleOwner) {
             if(it == true){
                 startFragmentPermissionCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
@@ -196,7 +195,7 @@ class StartFragment : Fragment() {
 
         // Bluetooth CardView Content
         val startFragmentBluetoothCardViewContentWrapper: LinearLayout = binding.startFragmentBluetoothCardViewContentWrapper
-        _viewModel!!.bluetoothAdapterIsReady.observe(viewLifecycleOwner) {
+        viewModel.bluetoothAdapterIsReady.observe(viewLifecycleOwner) {
             if(it == true){
                 startFragmentBluetoothCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
@@ -212,7 +211,7 @@ class StartFragment : Fragment() {
 
         // Service CardView Content
         val startFragmentServiceCardViewContentWrapper: LinearLayout = binding.startFragmentServiceCardViewContentWrapper
-        _viewModel!!.advertisementServiceIsReady.observe(viewLifecycleOwner) {
+        viewModel.advertisementServiceIsReady.observe(viewLifecycleOwner) {
             if(it == true){
                 startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
@@ -228,7 +227,7 @@ class StartFragment : Fragment() {
 
         // Service CardView Content
         val startFragmentDatabaseCardViewContentWrapper: LinearLayout = binding.startFragmentDatabaseCardViewContentWrapper
-        _viewModel!!.databaseIsReady.observe(viewLifecycleOwner) {
+        viewModel.databaseIsReady.observe(viewLifecycleOwner) {
             if(it == true){
                 startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
@@ -238,26 +237,26 @@ class StartFragment : Fragment() {
     }
 
     fun showLoadingSpinner(message:String){
-        _viewModel!!.loadingMessage.postValue(message)
-        _viewModel!!.isLoading.postValue(true)
+        viewModel.loadingMessage.postValue(message)
+        viewModel.isLoading.postValue(true)
     }
 
     fun hideLoadingSpinner(){
-        _viewModel!!.isLoading.postValue(false)
+        viewModel.isLoading.postValue(false)
     }
 
     fun addMissingRequirement(missingRequirement:String){
-        var newList = _viewModel!!.missingRequirements.value!!
+        var newList = viewModel.missingRequirements.value!!
         if(!newList.contains(missingRequirement)){
             newList.add(missingRequirement)
         }
-        _viewModel!!.missingRequirements.postValue(newList)
+        viewModel.missingRequirements.postValue(newList)
     }
 
     fun removeMissingRequirement(missingRequirement:String){
-        var newList = _viewModel!!.missingRequirements.value!!
+        var newList = viewModel.missingRequirements.value!!
         newList.remove(missingRequirement)
-        _viewModel!!.missingRequirements.postValue(newList)
+        viewModel.missingRequirements.postValue(newList)
     }
 
     fun checkDatabase(){
@@ -268,7 +267,7 @@ class StartFragment : Fragment() {
                 removeMissingRequirement("Database is not initialized")
                 if(!database.isSeeding && !database.inTransaction()){
                     removeMissingRequirement("Database is Seeding")
-                    _viewModel!!.isSeeding.postValue(false)
+                    viewModel.isSeeding.postValue(false)
                     var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
                     if(numberOfAdvertisementSetEntities > 0){
                         removeMissingRequirement("Database is empty")
@@ -278,13 +277,13 @@ class StartFragment : Fragment() {
                     }
                 } else {
                     addMissingRequirement("Database is Seeding")
-                    _viewModel!!.isSeeding.postValue(true)
+                    viewModel.isSeeding.postValue(true)
                 }
 
             } else {
                 addMissingRequirement("Database is not initialized")
             }
-            _viewModel!!.databaseIsReady.postValue(result)
+            viewModel.databaseIsReady.postValue(result)
 
             if(result == false){
                 // Check again in a few seconds
@@ -317,7 +316,7 @@ class StartFragment : Fragment() {
             addMissingRequirement("Bluetooth Adapter not found")
         }
 
-        _viewModel!!.bluetoothAdapterIsReady.postValue(bluetoothIsReady)
+        viewModel.bluetoothAdapterIsReady.postValue(bluetoothIsReady)
     }
 
     fun promptEnableBluetooth(bluetoothAdapter: BluetoothAdapter){
@@ -356,13 +355,13 @@ class StartFragment : Fragment() {
             var missingRequirementStringBgLocation = "Permission " + Manifest.permission.ACCESS_BACKGROUND_LOCATION.replace("android.permission.", "") + " not granted"
             if(backgroundLocationAccessIsGranted){
                 removeMissingRequirement(missingRequirementStringBgLocation)
-                _viewModel!!.allPermissionsGranted.postValue(true)
+                viewModel.allPermissionsGranted.postValue(true)
             } else {
                 addMissingRequirement(missingRequirementStringBgLocation)
                 checkBackgroundLocationAccessPermission(true)
             }
         } else {
-            _viewModel!!.allPermissionsGranted.postValue(false)
+            viewModel.allPermissionsGranted.postValue(false)
             // Request Missing Permissions
             if(promptForNotGranted){
                 //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
@@ -423,6 +422,6 @@ class StartFragment : Fragment() {
             }
         }
 
-        _viewModel!!.advertisementServiceIsReady.postValue(advertisementServiceIsReady)
+        viewModel.advertisementServiceIsReady.postValue(advertisementServiceIsReady)
     }
 }
