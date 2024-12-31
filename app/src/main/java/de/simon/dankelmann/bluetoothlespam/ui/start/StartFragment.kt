@@ -91,16 +91,6 @@ class StartFragment : Fragment() {
     }
 
     fun setupUi(){
-
-        // Loading Animation
-        val loadingSpinnerLayout: View = binding.startFragmentLoadingSpinnerLayout
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            loadingSpinnerLayout.visibility = when(it){
-                true -> View.VISIBLE
-                false -> View.GONE
-            }
-        }
-
         // Seeding Animation
         val seedingAnimationView: View = binding.startFragmentDatabaseCardSeedingAnimation
         val databaseImageView: View = binding.startFragmentDatabaseCardIcon
@@ -114,12 +104,6 @@ class StartFragment : Fragment() {
                 true -> View.GONE
                 false -> View.VISIBLE
             }
-        }
-
-        // Loading Message
-        val textViewLoadingMessage: TextView = binding.startFragmentLoadingSpinnerMessage
-        viewModel.loadingMessage.observe(viewLifecycleOwner) {
-            textViewLoadingMessage.text = it
         }
 
         // App Version
@@ -232,15 +216,6 @@ class StartFragment : Fragment() {
                 startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
-    }
-
-    fun showLoadingSpinner(message:String){
-        viewModel.loadingMessage.postValue(message)
-        viewModel.isLoading.postValue(true)
-    }
-
-    fun hideLoadingSpinner(){
-        viewModel.isLoading.postValue(false)
     }
 
     fun addMissingRequirement(missingRequirement:String){
