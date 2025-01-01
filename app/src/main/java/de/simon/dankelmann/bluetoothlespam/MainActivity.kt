@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -39,6 +40,7 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
+import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,12 +53,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // needs to be before setContentView
+        enableEdgeToEdge()
+
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
         AppContext.setContext(applicationContext)
         AppContext.setActivity(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setupEdgeToEdge(binding.appBar, bottom = false)
 
         // Custom toolbar
         val toolbar = findViewById<Toolbar>(R.id.customToolbar)
