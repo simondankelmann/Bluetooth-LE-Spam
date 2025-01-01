@@ -1,39 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-    <color name="blue_normal">#2d5eed</color>
-    <color name="blue_dark">#164795</color>
-    <color name="blue_accent">#1E88E5</color>
-
-    <color name="green_normal">#a2c03c</color>
-    <color name="green_dark">#546320</color>
-
-    <color name="grey_normal">#ababab</color>
-
-    <color name="color_accent_text">#ffffff</color>
-
     <color name="log_info">@color/grey_normal</color>
-    <color name="log_warning">#c19c00</color>
-    <color name="log_error">#c50f1f</color>
-    <color name="log_success">#13a10e</color>
-
-
-
 
     <!-- Text Colors -->
     <color name="text_color">#ffffff</color>
-    <color name="text_color_light">#ababab</color>
 
     <!-- ACTIONBAR -->
     <color name="background_color_action_bar">#151515</color>
@@ -52,10 +22,6 @@
     <color name="background_color_loading_spinner">#cc000000</color>
     <color name="color_filter_loading_spinner">@color/blue_normal</color>
     <color name="color_loading_spinner_message">#ababab</color>
-
-    <!-- ROUNDED BUTTON -->
-    <color name="background_color_rounded_button">@color/blue_normal</color>
-    <color name="foreground_color_rounded_button">@color/white</color>
 
     <!-- ICON TINT -->
     <color name="tint_icon">@color/grey_normal</color>
