@@ -42,6 +42,7 @@
 
     <!-- Advertisement Set Types -->
     <string name="ad_set_type_undefined">Undefined Type</string>
+    <string name="ad_set_type_fast_pairing">Fast Pairing</string>
     <string name="ad_set_type_fast_pairing_device">Fast Pairing Device</string>
     <string name="ad_set_type_fast_pairing_non_production">Fast Pairing Non-Production</string>
     <string name="ad_set_type_fast_pairing_phone_setup">Fast Pairing Phone Setup</string>
@@ -57,4 +58,8 @@
     <string name="ad_set_type_lovespouse_play">Lovespouse Play</string>
     <string name="ad_set_type_lovespouse_stop">Lovespouse Stop</string>
 
+    <string name="spam_unknown">Unknown Spam</string>
+    <string name="spam_detecting_title">Detecting Spam</string>
+    <string name="spam_detecting_text">Detecting Flipper Zero and other devices</string>
+    <string name="spam_detected_title">Spam Detected</string>
 </resources>
