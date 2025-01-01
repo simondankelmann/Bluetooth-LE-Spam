@@ -65,9 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         setupEdgeToEdge(binding.appBar, bottom = false)
 
-        // Custom toolbar
-        val toolbar = findViewById<Toolbar>(R.id.customToolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // Listen to Preference changes
         var prefs = PreferenceManager.getDefaultSharedPreferences(this);

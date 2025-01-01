@@ -29,9 +29,8 @@
         <item name="tint">@color/foreground_color_action_bar</item>
     </style>
 
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
     </style>
 
-    <style name="Theme.BluetoothLESpam.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
