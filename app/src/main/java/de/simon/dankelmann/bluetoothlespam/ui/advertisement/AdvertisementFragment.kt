@@ -19,6 +19,7 @@ import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -252,18 +253,9 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         }
 
         viewModel.target.observe(viewLifecycleOwner) { target ->
-            val targetDrawableId = when (target) {
-                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> R.drawable.bluetooth
-                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> R.drawable.apple
-                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> R.drawable.ic_android
-                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> R.drawable.microsoft
-                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> R.drawable.samsung
-                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> R.drawable.shuffle
-                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> R.drawable.heart
-            }
             binding.advertisementFragmentTargetImage.setImageDrawable(
                 ResourcesCompat.getDrawable(
-                    resources, targetDrawableId, AppContext.getContext().theme
+                    resources, target.getDrawableId(), AppContext.getContext().theme
                 )
             )
         }
