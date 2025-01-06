@@ -1,11 +1,6 @@
 <resources>
     <!-- Keep that commented out. It will lead to compile errors -->
     <!--<string name="app_name">Bluetooth LE Spam</string>-->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Bluetooth LE Spam</string>
-    <string name="nav_header_subtitle">github.com/simondankelmann</string>
-    <string name="nav_header_desc">Navigation header</string>
 
     <string name="bottom_nav_start">Info</string>
     <string name="bottom_nav_advertise">Advertise</string>
@@ -37,5 +32,5 @@
         <item name="tx_power_ultralow">Ultra Low</item>
     </string-array>
 
-    <string name="startfragment_requirements_checking">Checking Requirements...</string>
+    <string name="startfragment_requirements_checking">Checking Requirements…</string>
 </resources>
