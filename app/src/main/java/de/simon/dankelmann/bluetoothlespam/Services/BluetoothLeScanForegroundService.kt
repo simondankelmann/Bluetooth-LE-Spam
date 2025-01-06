@@ -1,19 +1,14 @@
 package de.simon.dankelmann.bluetoothlespam.Services
 
-import android.Manifest
 import android.app.Notification
 import android.app.Notification.FOREGROUND_SERVICE_IMMEDIATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.media.MediaPlayer.OnSubtitleDataListener
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -23,17 +18,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Enums.SpamPackageType
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.MainActivity
-import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
-import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 
 class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
@@ -107,7 +96,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
         val pendingIntentTargeted = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation)
+            .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.nav_spam_detector)
             //.setArguments(bundle)
             .createPendingIntent()

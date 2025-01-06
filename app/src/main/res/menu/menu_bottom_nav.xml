@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/nav_start"
+        android:icon="@drawable/ic_info"
+        android:title="@string/bottom_nav_start" />
+
+    <item
+        android:id="@id/nav_advertisement_collection"
+        android:icon="@drawable/bluetooth_searching"
+        android:title="@string/bottom_nav_advertise" />
+
+    <item
+        android:id="@id/nav_spam_detector"
+        android:icon="@drawable/ic_location_searching"
+        android:title="@string/bottom_nav_detect" />
+</menu>

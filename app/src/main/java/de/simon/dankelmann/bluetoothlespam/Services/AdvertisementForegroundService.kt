@@ -96,7 +96,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
         val pendingIntentTargeted = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
-            .setGraph(R.navigation.mobile_navigation)
+            .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.nav_advertisement)
             //.setArguments(bundle)
             .createPendingIntent()
