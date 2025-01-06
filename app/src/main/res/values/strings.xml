@@ -39,4 +39,27 @@
     </string-array>
 
     <string name="startfragment_requirements_checking">Checking Requirements…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">Undefined Type</string>
+    <string name="ad_set_type_fast_pairing">Fast Pairing</string>
+    <string name="ad_set_type_fast_pairing_device">Fast Pairing Device</string>
+    <string name="ad_set_type_fast_pairing_non_production">Fast Pairing Non-Production</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Fast Pairing Phone Setup</string>
+    <string name="ad_set_type_fast_pairing_debug">Fast Pairing Debug</string>
+    <string name="ad_set_type_continuity_new_device">New Apple Device</string>
+    <string name="ad_set_type_continuity_new_airtag">New Airtag</string>
+    <string name="ad_set_type_continuity_not_your_device">Not Your Device</string>
+    <string name="ad_set_type_continuity_action_modals">Apple Action Modal</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 Crash</string>
+    <string name="ad_set_type_swift_pairing">Swift Pairing</string>
+    <string name="ad_set_type_easy_setup_buds">Easy Setup Buds</string>
+    <string name="ad_set_type_easy_setup_watch">Easy Setup Watch</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse Play</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse Stop</string>
+
+    <string name="spam_unknown">Unknown Spam</string>
+    <string name="spam_detecting_title">Detecting Spam</string>
+    <string name="spam_detecting_text">Detecting Flipper Zero and other devices</string>
+    <string name="spam_detected_title">Spam Detected</string>
 </resources>

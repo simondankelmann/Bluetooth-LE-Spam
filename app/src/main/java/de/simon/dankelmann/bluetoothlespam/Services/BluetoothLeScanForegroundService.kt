@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.SpamPackageType
+import de.simon.dankelmann.bluetoothlespam.Enums.stringRes
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
@@ -53,7 +54,14 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         super.onCreate()
 
         createNotificationChannel()
-        startForeground(2, createNotification("Detecting Spam", "Searching Flippers and others", false))
+        startForeground(
+            2,
+            createNotification(
+                getString(R.string.spam_detecting_title),
+                getString(R.string.spam_detecting_text),
+                false
+            )
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -92,20 +100,19 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         }
     }
 
-    private fun createNotification(title:String, subTitle: String, alertOnlyOnce:Boolean): Notification {
+    private fun createNotification(
+        title: String,
+        subTitle: String,
+        alertOnlyOnce: Boolean
+    ): Notification {
 
         val pendingIntentTargeted = NavDeepLinkBuilder(this)
             .setComponentName(MainActivity::class.java)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.nav_spam_detector)
-            //.setArguments(bundle)
             .createPendingIntent()
 
-
-        // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.bluetooth_le_scan_foreground_service_notification)
-
-        // Views for Custom Layout
         notificationView.setTextViewText(
             R.id.bluetoothLeScanningForegroundNotificationTitle,
             title
@@ -115,16 +122,11 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
             subTitle
         )
 
-
-        //var contentText = "Bluetooth LE Spam"
-
         return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
-            .setContentTitle("Bluetooth LE Spam")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText(subTitle)
             .setSmallIcon(R.drawable.bluetooth)
             .setContentIntent(pendingIntentTargeted)
-            //.setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
-            //.setColorized(true)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setChannelId(_channelId)
             .setOngoing(true)
@@ -160,27 +162,22 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         }
     }
 
-    override fun onSpamResultPackageDetected(spamPackageScanResult: SpamPackageScanResult, alreadyKnown: Boolean) {
-        val spamPackageTypeText = when(spamPackageScanResult.spamPackageType){
-            SpamPackageType.UNKNOWN -> "Unknown Spam"
-            SpamPackageType.FAST_PAIRING -> "Fast Pairing"
-            SpamPackageType.CONTINUITY_NEW_AIRTAG -> "Continuity Airtag"
-            SpamPackageType.CONTINUITY_NEW_DEVICE -> "Continuity new Device"
-            SpamPackageType.CONTINUITY_NOT_YOUR_DEVICE -> "Continuity not your Device"
-            SpamPackageType.CONTINUITY_ACTION_MODAL -> "Continuity Action Modal"
-            SpamPackageType.CONTINUITY_IOS_17_CRASH -> "Continuity iOS 17 Crash"
-            SpamPackageType.SWIFT_PAIRING -> "Swift Pairing"
-            SpamPackageType.EASY_SETUP_WATCH -> "Easy Setup Watch"
-            SpamPackageType.EASY_SETUP_BUDS -> "Easy Setup Buds"
-            SpamPackageType.LOVESPOUSE_PLAY -> "Lovespouse Play"
-            SpamPackageType.LOVESPOUSE_STOP -> "Lovespouse Stop"
-        }
-        updateNotification("Spam Detected", spamPackageTypeText + " | " + spamPackageScanResult.address, !notifyOnNewSpam, 2)
+    override fun onSpamResultPackageDetected(
+        spamPackageScanResult: SpamPackageScanResult,
+        alreadyKnown: Boolean
+    ) {
+        val spamPackageTypeText = getString(spamPackageScanResult.spamPackageType.stringRes())
+        updateNotification(
+            getString(R.string.spam_detected_title),
+            spamPackageTypeText + " | " + spamPackageScanResult.address,
+            !notifyOnNewSpam,
+            2
+        )
         notifyOnNewSpam = false
     }
 
     override fun onSpamResultPackageListUpdated() {
-        if(AppContext.getBluetoothLeScanService().getSpamPackageScanResultList().isEmpty()){
+        if (AppContext.getBluetoothLeScanService().getSpamPackageScanResultList().isEmpty()) {
             notifyOnNewSpam = true
         }
     }

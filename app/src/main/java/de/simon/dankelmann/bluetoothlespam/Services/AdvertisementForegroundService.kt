@@ -19,9 +19,9 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
+import de.simon.dankelmann.bluetoothlespam.Enums.stringResId
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.MainActivity
@@ -80,7 +80,6 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         super.onDestroy()
     }
 
-
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppContext.getActivity() != null) {
             val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -101,52 +100,10 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             //.setArguments(bundle)
             .createPendingIntent()
 
-
         // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
-        var title = ""
-        var subtitle = ""
-        var targetImageId = R.drawable.bluetooth
-
-        if (advertisementSet != null) {
-            title = advertisementSet.title
-            subtitle = when (advertisementSet.type) {
-                AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED -> "Undefined Type"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS -> "Easy Setup Buds"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH -> "Easy Setup Watch"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE -> "Fast Pairing"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION -> "Fast Pairing"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP -> "Fast Pairing"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG -> "Fast Pairing"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> "New Apple Device"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> "New Airtag"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> "Not your Device"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> "Apple Action"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> "Apple iOs 17 Crash"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING -> "Swift Pairing"
-
-                AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY -> "Lovespouse Play"
-                AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP -> "Lovespouse Stop"
-            }
-
-            targetImageId = when (advertisementSet.target) {
-                AdvertisementTarget.ADVERTISEMENT_TARGET_SAMSUNG -> R.drawable.samsung
-                AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> R.drawable.ic_android
-                AdvertisementTarget.ADVERTISEMENT_TARGET_IOS -> R.drawable.apple
-                AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED -> R.drawable.bluetooth
-                AdvertisementTarget.ADVERTISEMENT_TARGET_WINDOWS -> R.drawable.microsoft
-                AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> R.drawable.shuffle
-                AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> R.drawable.heart
-            }
-        }
-
-        val toggleImageSrc = when(AppContext.getAdvertisementSetQueueHandler().isActive()){
+        val toggleImageSrc = when (AppContext.getAdvertisementSetQueueHandler().isActive()) {
             true -> R.drawable.pause
             false -> R.drawable.play_arrow
         }
@@ -154,15 +111,17 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         // Views for Custom Layout
         notificationView.setTextViewText(
             R.id.advertisementForegroundServiceNotificationTitleTextView,
-            title
+            advertisementSet?.title ?: ""
         )
-        notificationView.setTextViewText(
-            R.id.advertisementForegroundServiceNotificationSubTitleTextView,
-            subtitle
-        )
+        advertisementSet?.type?.stringResId()?.let { resId ->
+            notificationView.setTextViewText(
+                R.id.advertisementForegroundServiceNotificationSubTitleTextView,
+                getString(resId)
+            )
+        }
         notificationView.setImageViewResource(
             R.id.advertisementForegroundServiceNotificationTargetImageView,
-            targetImageId
+            advertisementSet?.target?.getDrawableId() ?: R.drawable.bluetooth
         )
 
         notificationView.setImageViewResource(
@@ -185,14 +144,12 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
                 targetIconColor,
                 targetIconColor
             )
-
             notificationView.setColorInt(
                 R.id.advertisementForegroundServiceNotificationToggleImageView,
                 "setColorFilter",
                 buttonActiveColor,
                 buttonActiveColor
             )
-
             notificationView.setColorInt(
                 R.id.advertisementForegroundServiceNotificationStopImageView,
                 "setColorFilter",
@@ -205,13 +162,11 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
                 "setColorFilter",
                 targetIconColor
             )
-
             notificationView.setInt(
                 R.id.advertisementForegroundServiceNotificationStopImageView,
                 "setColorFilter",
                 buttonActiveColor
             )
-
             notificationView.setInt(
                 R.id.advertisementForegroundServiceNotificationToggleImageView,
                 "setColorFilter",
@@ -220,31 +175,13 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         }
 
         if (advertisementSet != null) {
-            var titleColor = when (advertisementSet.advertisementState) {
-                AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED -> resources.getColor(
-                    R.color.color_title,
-                    AppContext.getContext().theme
-                )
-
-                AdvertisementState.ADVERTISEMENT_STATE_STARTED -> resources.getColor(
-                    R.color.color_title,
-                    AppContext.getContext().theme
-                )
-
-                AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED -> resources.getColor(
-                    R.color.color_title,
-                    AppContext.getContext().theme
-                )
-
-                AdvertisementState.ADVERTISEMENT_STATE_FAILED -> resources.getColor(
-                    R.color.log_error,
-                    AppContext.getContext().theme
-                )
+            val titleColorRes = when (advertisementSet.advertisementState) {
+                AdvertisementState.ADVERTISEMENT_STATE_FAILED -> R.color.log_error
+                else -> R.color.color_title
             }
-
             notificationView.setTextColor(
                 R.id.advertisementForegroundServiceNotificationTitleTextView,
-                titleColor
+                resources.getColor(titleColorRes, AppContext.getContext().theme)
             )
         }
 
@@ -275,18 +212,14 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             pendingStopSwitchIntent
         )
 
-        var contentText = "Bluetooth LE Spam"
-        if (advertisementSet != null) {
-            contentText = advertisementSet.title
-        }
+        val appName = getString(R.string.app_name)
+        val contentText = advertisementSet?.title ?: appName
 
         return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
-            .setContentTitle("Bluetooth LE Spam")
+            .setContentTitle(appName)
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
             .setContentIntent(pendingIntentTargeted)
-            //.setColor(resources.getColor(R.color.blue_normal, AppContext.getContext().theme))
-            //.setColorized(true)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setChannelId(_channelId)
             .setOngoing(true)
