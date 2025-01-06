@@ -1,6 +1,7 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+
     <!-- Base application theme. -->
-    <style name="Theme.BluetoothLESpam" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.BluetoothLESpam" parent="Theme.Material3.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_normal</item>
         <item name="colorPrimaryVariant">@color/blue_dark</item>
@@ -22,19 +23,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- ACTION BAR -->
-    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/foreground_color_action_bar</item>
-    </style>
     <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
         <item name="android:src">@drawable/settings</item>
         <item name="color">@color/foreground_color_action_bar</item>
         <item name="tint">@color/foreground_color_action_bar</item>
     </style>
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
     </style>
 
-    <style name="Theme.BluetoothLESpam.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

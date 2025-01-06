@@ -26,6 +26,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementBinding
+import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
 
 
 class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvertisementSetQueueHandlerCallback {
@@ -206,6 +207,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     }
 
     fun setupUi() {
+        setupEdgeToEdge(binding.root, top = false)
+
         // Views
         var playButton = binding.advertisementFragmentPlayButton
         var queueModeButtonSingle = binding.advertisementFragmentQueueModeSingleButton
