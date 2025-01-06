@@ -1,0 +1,6 @@
+1.0.9:
+- Bottom navigation (instead of navigation drawer)
+- Material 3
+- Edge-to-Edge display
+- Add hints about Android+iOS being patched
+- Code cleanup
