@@ -1,58 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/startFragmentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
+    android:clipToPadding="false"
     tools:context=".ui.start.StartFragment">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/startFragmentLoadingSpinnerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_color_loading_spinner"
-        android:elevation="2dp"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/startFragmentLoadingSpinnerAnimationView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:lottie_autoPlay="true"
-            app:lottie_colorFilter="@color/color_filter_loading_spinner"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/loading" />
-
-        <TextView
-            android:id="@+id/startFragmentLoadingSpinnerMessage"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="20dp"
-            android:text="Loading..."
-            android:textAlignment="center"
-            android:textColor="@color/color_loading_spinner_message"
-            android:textSize="@dimen/textSizeHeadline2"
-            app:layout_constraintBottom_toBottomOf="@id/startFragmentLoadingSpinnerLayout" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="@dimen/cornerRadiusCardview"
-        android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="@id/startFragmentLayout"
-        app:layout_constraintTop_toTopOf="@id/startFragmentLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="@dimen/activity_vertical_margin">
 
             <include
                 android:id="@+id/info_card"
@@ -268,6 +228,5 @@
             </androidx.cardview.widget.CardView>
             <!-- END: SERVICE CARD -->
 
-        </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>

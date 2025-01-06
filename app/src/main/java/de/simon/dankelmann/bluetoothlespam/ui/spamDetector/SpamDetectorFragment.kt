@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import android.widget.ListView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
@@ -33,9 +34,12 @@ import de.simon.dankelmann.bluetoothlespam.ui.advertisement.AdvertisementViewMod
 class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
 
     private val _logTag = "SpamDetectorFragment"
-    private var _viewModel: SpamDetectorViewModel? = null
-    private var _binding: FragmentSpamDetectorBinding? = null
 
+    private var _viewModel: SpamDetectorViewModel? = null
+    private val viewModel get() = _viewModel!!
+
+    private var _binding: FragmentSpamDetectorBinding? = null
+    private val binding get() = _binding!!
 
     /*
     private lateinit var _flipperDevicesListView: ListView
@@ -51,13 +55,6 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     private lateinit var _spamPackageRecyclerView: RecyclerView
     private lateinit var _spamPackageListViewAdapter: SpamPackageScanResultListViewAdapter
 
-
-    companion object {
-        fun newInstance() = SpamDetectorFragment()
-    }
-
-    private lateinit var viewModel: SpamDetectorViewModel
-
     override fun onResume() {
         super.onResume()
         AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
@@ -71,7 +68,7 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     }
 
     private fun syncWithScanServices(){
-        _viewModel!!.isDetecting.postValue(AppContext.getBluetoothLeScanService().isScanning())
+        viewModel.isDetecting.postValue(AppContext.getBluetoothLeScanService().isScanning())
         updateFlipperDevicesListView()
         updateSpamPackageListView()
     }
@@ -79,29 +76,31 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return inflater.inflate(R.layout.fragment_spam_detector, container, false)
         Log.d(_logTag, "onCreate")
-        val viewModel = ViewModelProvider(this)[SpamDetectorViewModel::class.java]
-        _viewModel = viewModel
+        _viewModel = ViewModelProvider(this)[SpamDetectorViewModel::class.java]
         _binding = FragmentSpamDetectorBinding.inflate(inflater, container, false)
-        val root: View = _binding!!.root
+        val root: View = binding.root
 
-        _flipperDevicesRecyclerView = _binding!!.spamDetectionFlipperDevicesList
-        _spamPackageRecyclerView = _binding!!.spamDetectionSpamPackageList
+        _flipperDevicesRecyclerView = binding.spamDetectionFlipperDevicesList
+        _spamPackageRecyclerView = binding.spamDetectionSpamPackageList
 
         setupUi()
         setupFlipperDevicesListView()
         setupSpamPackagesListView()
-
 
         AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
 
         return root
     }
 
-    fun setupUi(){
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
+    fun setupUi(){
         // Views
-        var toggleButton = _binding!!.spamDetectorToggleButton
-        var detectionAnimation = _binding!!.spamDetectionAnimation
+        var toggleButton = binding.spamDetectorToggleButton
+        var detectionAnimation = binding.spamDetectionAnimation
 
         // Listeners
         toggleButton.setOnClickListener{
@@ -109,12 +108,20 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         }
 
         // Observers
-        _viewModel!!.isDetecting.observe(viewLifecycleOwner) { isDetecting ->
-            if(isDetecting){
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.pause, AppContext.getContext().theme))
+        viewModel.isDetecting.observe(viewLifecycleOwner) { isDetecting ->
+            if (isDetecting) {
+                toggleButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.pause, AppContext.getContext().theme
+                    )
+                )
                 detectionAnimation.playAnimation()
             } else {
-                toggleButton.setImageDrawable(resources.getDrawable(R.drawable.play_arrow, AppContext.getContext().theme))
+                toggleButton.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources, R.drawable.play_arrow, AppContext.getContext().theme
+                    )
+                )
                 detectionAnimation.cancelAnimation()
                 detectionAnimation.frame = 0
             }
@@ -203,26 +210,17 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         }
     }
 
-
-
     fun onToggleButtonClicked(){
-        if(_viewModel!!.isDetecting.value!!){
+        if(viewModel.isDetecting.value == true){
             BluetoothLeScanForegroundService.stopService(AppContext.getContext())
             //AppContext.getBluetoothLeScanService().stopScanning()
             Log.d(_logTag, "Should Stop")
-            _viewModel!!.isDetecting.postValue(false)
+            viewModel.isDetecting.postValue(false)
         } else {
             BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service started...")
             //AppContext.getBluetoothLeScanService().startScanning()
-            _viewModel!!.isDetecting.postValue(true)
+            viewModel.isDetecting.postValue(true)
         }
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SpamDetectorViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
     // BluetoothLeScanResult Callback Implementation
