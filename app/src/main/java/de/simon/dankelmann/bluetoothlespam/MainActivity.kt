@@ -1,7 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam
 
 import android.Manifest
-import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -14,10 +13,10 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -31,9 +30,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
+import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
@@ -196,79 +197,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showSetTxPowerDialog() {
-
-        if (AppContext.getAdvertisementService() != null) {
-
-            val dialog = Dialog(this)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setCancelable(false)
-            dialog.setContentView(R.layout.dialog_set_tx_power)
-
-            val seekBar: SeekBar = dialog.findViewById(R.id.setTxPowerDialogSeekbar)
-            val seekBarLabel: TextView = dialog.findViewById(R.id.setTxPowerDialogTxPowerTextView)
-
-            // Set Current TxPowerLevel
-            val currentTxPowerLevel = AppContext.getAdvertisementService().getTxPowerLevel()
-
-            val currentProgress = when (currentTxPowerLevel) {
-                TxPowerLevel.TX_POWER_HIGH -> 3
-                TxPowerLevel.TX_POWER_MEDIUM -> 2
-                TxPowerLevel.TX_POWER_LOW -> 1
-                TxPowerLevel.TX_POWER_ULTRA_LOW -> 0
-            }
-
-            val currentLabel = when (currentTxPowerLevel) {
-                TxPowerLevel.TX_POWER_HIGH -> "High"
-                TxPowerLevel.TX_POWER_MEDIUM -> "Medium"
-                TxPowerLevel.TX_POWER_LOW -> "Low"
-                TxPowerLevel.TX_POWER_ULTRA_LOW -> "Ultra Low"
-            }
-
-            seekBar.progress = currentProgress
-            seekBarLabel.text = currentLabel
-
-            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-
-                    val newTxPowerLevel = when (progress) {
-                        3 -> TxPowerLevel.TX_POWER_HIGH
-                        2 -> TxPowerLevel.TX_POWER_MEDIUM
-                        1 -> TxPowerLevel.TX_POWER_LOW
-                        0 -> TxPowerLevel.TX_POWER_ULTRA_LOW
-                        else -> TxPowerLevel.TX_POWER_HIGH
-                    }
-
-                    val newTxPowerLabel = when (progress) {
-                        3 -> "High"
-                        2 -> "Medium"
-                        1 -> "Low"
-                        0 -> "Ultra Low"
-                        else -> "High"
-                    }
-
-                    if (AppContext.getAdvertisementService() != null) {
-                        seekBarLabel.text = newTxPowerLabel
-                        AppContext.getAdvertisementService()!!.setTxPowerLevel(newTxPowerLevel)
-                    }
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar) {
-                    // you can probably leave this empty
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    // you can probably leave this empty
-                }
-            })
-
-            val okBtn = dialog.findViewById(R.id.setTxPowerDialogOkButton) as TextView
-            okBtn.setOnClickListener {
-                dialog.dismiss()
-            }
-
-            dialog.show()
-        } else {
-            Toast.makeText(this, "Advertisement Service not initialized", Toast.LENGTH_SHORT)
+        if (AppContext.getAdvertisementService() == null) {
+            Toast.makeText(this, "Advertisement Service not initialized", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val dialogLayout = LayoutInflater.from(this).inflate(R.layout.dialog_set_tx_power, null)
+
+        val seekBar: SeekBar = dialogLayout.findViewById(R.id.setTxPowerDialogSeekbar)
+        val seekBarLabel: TextView = dialogLayout.findViewById(R.id.setTxPowerDialogTxPowerTextView)
+
+        // Set Current TxPowerLevel
+        val currentTxPowerLevel = AppContext.getAdvertisementService().getTxPowerLevel()
+        val currentProgress = when (currentTxPowerLevel) {
+            TxPowerLevel.TX_POWER_HIGH -> 3
+            TxPowerLevel.TX_POWER_MEDIUM -> 2
+            TxPowerLevel.TX_POWER_LOW -> 1
+            TxPowerLevel.TX_POWER_ULTRA_LOW -> 0
+        }
+        seekBar.progress = currentProgress
+        seekBarLabel.text = getString(currentTxPowerLevel.toStringId())
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val newTxPowerLevel = when (progress) {
+                    3 -> TxPowerLevel.TX_POWER_HIGH
+                    2 -> TxPowerLevel.TX_POWER_MEDIUM
+                    1 -> TxPowerLevel.TX_POWER_LOW
+                    0 -> TxPowerLevel.TX_POWER_ULTRA_LOW
+                    else -> TxPowerLevel.TX_POWER_HIGH
+                }
+                seekBarLabel.text = getString(newTxPowerLevel.toStringId())
+                AppContext.getAdvertisementService()!!.setTxPowerLevel(newTxPowerLevel)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // you can probably leave this empty
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // you can probably leave this empty
+            }
+        })
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.power_dialog_title))
+            .setView(dialogLayout)
+            .setPositiveButton(getString(android.R.string.ok), null)
+            .show()
     }
 }

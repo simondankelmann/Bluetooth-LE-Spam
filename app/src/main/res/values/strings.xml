@@ -25,6 +25,12 @@
     <string name="preference_title_use_legacy_advertising">Legacy Advertising</string>
     <string name="preference_summary_use_legacy_advertising">Use Bluetooth 4 Compatible BLE Advertising</string>
 
+    <string name="power_level_high">High</string>
+    <string name="power_level_medium">Medium</string>
+    <string name="power_level_low">Low</string>
+    <string name="power_level_ultra_low">Ultra Low</string>
+    <string name="power_dialog_title">Select TX Power</string>
+
     <string-array name="spinner_entries_tx_power">
         <item name="tx_power_high">High</item>
         <item name="tx_power_medium">Medium</item>
