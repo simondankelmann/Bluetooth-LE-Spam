@@ -1,5 +1,9 @@
 # Bluetooth LE Spam [![Discord](https://img.shields.io/discord/1170266776731406386?label=Discord&link=https://discord.gg/x4e4Gma585)](https://discord.gg/x4e4Gma585)
 
+[<img src="https://f-droid.org/badge/get-it-on.png"
+alt="Get it on F-Droid"
+height="80">](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/)
+
 This project uses the built-in Bluetooth Low Energy (BLE) functionality built into Android devices
 to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero.
 While other apps are available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
@@ -99,11 +103,10 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 ## Screenshots
 
 <details>
-<img src="Assets/Screenshots/1.0.5/start.jpeg" width=300>
-<img src="Assets/Screenshots/1.0.5/advertise.jpeg" width=300>
-<img src="Assets/Screenshots/1.0.8/detector1.jpeg" width=300>
-<img src="Assets/Screenshots/1.0.8/detector2.jpeg" width=300>
-<img src="Assets/Screenshots/1.0.5/settings.jpeg" width=300>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width=300>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width=300>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width=300>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width=300>
 </details>
 
 ## Disclaimer
