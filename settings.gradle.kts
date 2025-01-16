@@ -11,5 +11,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Bluetooth LE Spam"
-include(":app")
+rootProject.name = "Bluetooth-LE-Spam"
+include("app")

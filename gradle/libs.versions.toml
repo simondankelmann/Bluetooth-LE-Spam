@@ -1,0 +1,44 @@
+[versions]
+agp = "8.8.0"
+kotlin = "2.1.0"
+core = "1.15.0"
+preference = "1.2.1"
+coroutines = "1.10.1"
+appcompat = "1.7.0"
+navigation = "2.8.5"
+lifecycle = "2.8.7"
+legacy = "1.0.0"
+constraintlayout = "2.2.0"
+material = "1.12.0"
+room = "2.6.1"
+lottie = "6.6.2"
+
+[plugins]
+agp-app = { id = "com.android.application", version.ref = "agp" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
+
+[libraries]
+airbnb-lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
+preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference" }
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation"}
+navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+legacy-support = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacy" }
+
+android-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-rxjava2 = { group = "androidx.room", name = "room-rxjava2", version.ref = "room" }
+room-rxjava3 = { group = "androidx.room", name = "room-rxjava3", version.ref = "room" }
+room-guava = { group = "androidx.room", name = "room-guava", version.ref = "room" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
