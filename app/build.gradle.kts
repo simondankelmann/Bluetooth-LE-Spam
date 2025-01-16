@@ -9,16 +9,14 @@ val app_name = "Bluetooth LE Spam"
 
 android {
     namespace = "de.simon.dankelmann.bluetoothlespam"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "de.simon.dankelmann.bluetoothlespam"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 2
         versionName = "1.0.8"
-
-        //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         create("release") {
@@ -31,8 +29,10 @@ android {
 
     buildTypes {
         configureEach {
-            signingConfig = signingConfigs["release"]
-        }
+            if (File("release.jks").exists()) {
+                signingConfig = signingConfigs["release"]
+            } 
+       }
         release {
             resValue("string", "app_name", app_name)
             isMinifyEnabled = false
@@ -47,11 +47,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
     buildFeatures {
         viewBinding = true
@@ -60,23 +60,20 @@ android {
 
 
 dependencies {
-    implementation("com.airbnb.android:lottie:6.3.0")
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("com.airbnb.android:lottie:6.6.2")
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.5")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    //testImplementation("junit:junit:4.13.2")
-    //androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    //androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
