@@ -31,10 +31,9 @@ android {
 
     buildTypes {
         configureEach {
-            if (File("release.jks").exists()) {
-                signingConfig = signingConfigs["release"]
-            } 
-       }
+            val variant = if (File("release.jks").exists()) "release" else "debug"
+            signingConfig = signingConfigs[variant]
+        }
         release {
             resValue("string", "app_name", app_name)
             isMinifyEnabled = false
