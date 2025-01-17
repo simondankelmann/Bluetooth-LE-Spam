@@ -4,9 +4,15 @@
 alt="Get it on F-Droid"
 height="80">](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/)
 
+<details>
+<summary>How it works</summary>
+<br>
 This project uses the built-in Bluetooth Low Energy (BLE) functionality built into Android devices
 to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero.
 While other apps are available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
+</details>
+
+
 
 #### [For Support, Join the Discord Server](https://discord.gg/x4e4Gma585)
 
