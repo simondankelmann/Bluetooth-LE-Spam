@@ -49,7 +49,11 @@ End of Support Services:
 
 You can send BLE advertisements for all services or for selected targets only.
 
-#### Apple iOS 17 Crash (patched)
+#### <details>
+<summary>Apple iOS 17 Crash (patched)</summary>
+<br>
+This is how you dropdown.
+</details>
 
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices.
 This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
