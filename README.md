@@ -70,10 +70,6 @@ Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespou
 More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
 <br>
 
-
-
-
-
 ### Spam Detector
 
 The Spam Detector tool allows you to detect nearby spammers, even on the lock screen.
