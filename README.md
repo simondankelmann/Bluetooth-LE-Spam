@@ -4,15 +4,9 @@
 alt="Get it on F-Droid"
 height="80">](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/)
 
-<details>
-<summary>How it works</summary>
-<br>
 This project uses the built-in Bluetooth Low Energy (BLE) functionality built into Android devices
 to create Phantom Bluetooth Device Advertisements, similar to what is known, for instance, in the case of the Flipper Zero.
 While other apps are available that provide similar functionality, the objective of this app is to enhance convenience and user-friendliness in the process.
-</details>
-
-
 
 #### [For Support, Join the Discord Server](https://discord.gg/x4e4Gma585)
 
@@ -37,24 +31,20 @@ While other apps are available that provide similar functionality, the objective
 This app can send BLE advertisements that mimic the usage of various services.
 This can cause nearby devices that listen to such advertisements to show unwanted popup dialogs.
 
-Supported Services are:
+Supported services are:
 
 - Apple (new device popups, various action modals)
+- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 - [Microsoft Swift Pair](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair) (Windows Devices)
 - Samsung Easy Setup
-
-End of Support Services: 
-
-- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 
 You can send BLE advertisements for all services or for selected targets only.
 
 <details>
- <summary> Apple iOS 17 Crash (patched)</summary>
+<summary>Apple iOS 17 Crash (patched)</summary>
 <br>
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices.
 This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
-
 This is reported to be partially patched in iOS 17.2, and fully patched in iOS 18.
 </details>
 
@@ -62,13 +52,11 @@ This is reported to be partially patched in iOS 17.2, and fully patched in iOS 1
 > To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds.
 > Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
-<details>
- <summary> Lovespouse (Adult Toys)</summary>
-<br>
+#### Lovespouse (Adult Toys)
+
 With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
 Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
 More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
-<br>
 
 ### Spam Detector
 
