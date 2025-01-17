@@ -43,9 +43,6 @@ End of life services are:
 
 You can send BLE advertisements for all services or for selected targets only.
 </details>
-### 
-
-
 
 <details>
 <summary>Apple iOS 17 Crash (patched)</summary>
