@@ -46,11 +46,11 @@ You can send BLE advertisements for all services or for selected targets only.
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices.
 This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
 This is reported to be partially patched in iOS 17.2, and fully patched in iOS 18.
-</details>
-
 > [!NOTE]
 > To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds.
 > Additionally, locking and unlocking the targeted iPhone can aid in the process.
+</details>
+
 
 #### Lovespouse (Adult Toys)
 
