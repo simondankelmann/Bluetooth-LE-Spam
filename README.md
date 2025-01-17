@@ -26,19 +26,26 @@ While other apps are available that provide similar functionality, the objective
 
 ## Functionality
 
-### Sending BLE advertisements
-
+<details>
+<summary>Sending BLE advertisements (Pop-Ups)</summary>
+<br>
 This app can send BLE advertisements that mimic the usage of various services.
 This can cause nearby devices that listen to such advertisements to show unwanted popup dialogs.
 
 Supported services are:
 
 - Apple (new device popups, various action modals)
-- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 - [Microsoft Swift Pair](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair) (Windows Devices)
 - Samsung Easy Setup
 
+End of life services are:
+- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
+
 You can send BLE advertisements for all services or for selected targets only.
+</details>
+### 
+
+
 
 <details>
 <summary>Apple iOS 17 Crash (patched)</summary>
