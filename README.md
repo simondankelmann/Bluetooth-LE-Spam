@@ -16,6 +16,9 @@ While other apps are available that provide similar functionality, the objective
 
 ## Requirements
 
+<details >
+<summary>Details</summary>
+<br>
 - Android 8.0 (API level 26) or later
 
 > [!TIP]
@@ -23,6 +26,9 @@ While other apps are available that provide similar functionality, the objective
 > You also can view your Android version in the Info tab in settings.
 
 - You can not run the app on IOS or PC (even with emulators/VM's)
+
+</details>
+
 
 ## Functionality
 
