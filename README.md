@@ -63,7 +63,7 @@ This is reported to be partially patched in iOS 17.2, and fully patched in iOS 1
 <details>
 <summary>Lovespouse (Adult Toys)</summary>
 <br>
-With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
+With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found **https://mandomat.github.io/2023-11-13-denial-of-pleasure/**
 </details>
 
 <details>
