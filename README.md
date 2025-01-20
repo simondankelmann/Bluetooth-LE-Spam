@@ -56,24 +56,21 @@ Note: To achieve optimal results, it is recommended to set the advertising inter
 </details>
 
 <details>
-<summary> Lovespouse (Adult Toys) </summary>
+<summary>Lovespouse (Adult Toys)</summary>
 <br>
-With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
-Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
-More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
+With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app. Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
 </details>
 
-
-### Spam Detector
-
-The Spam Detector tool allows you to detect nearby spammers, even on the lock screen.
-It can identify spam from Flipper Zeros, our app, and various other software and scripts.
-Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
-
+<details>
+<summary>Spam Detector</summary>
+<br>
+The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
 > [!NOTE]
 > Location permission and background location access are required for this feature to work.
 > These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
 > It's important to note that the app will NOT collect your location data.
+</details>
+
 
 ## Range
 
