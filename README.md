@@ -97,12 +97,18 @@ Devices like the Flipper Zero, however, have the capability to modify this byte,
 
 
 ## Installation
+
+<details >
+<summary>Details</summary>
 <br>
-You can get installable APK files from the [Github Releases](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
-and from from [F-Droid](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/).
-You can clone the git repo and also build the app yourself. If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
+You can get installable APK files from the <a href="https://github.com/simondankelmann/Bluetooth-LE-Spam/releases">Github Releases</a>
+and from <a href="https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/">F-Droid</a>.
+You can clone the git repo and also build the app yourself.
+
+If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
 If you are a developer or tester, opt for the Debug APK for testing and debugging purposes.
 </details>
+
 ## Credits
 
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
@@ -124,9 +130,9 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 </details>
 
 ## Disclaimer
-
-Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
-
+<details >
+<summary>Disclaimer for Bluetooth Low Energy Protocol Investigation Repository</summary>
+<br>
 This repository contains code for the investigation and experimentation of the Bluetooth Low Energy (BLE) protocol.
 Please be aware of the following disclaimers before using or contributing to this repository:
 
@@ -151,3 +157,4 @@ By using and contributing to this repository, you agree to these disclaimers and
 If you do not agree, please refrain from using or contributing to this repository.
 
 For any questions or concerns, please contact the repository maintainers on Discord or Github.
+</details>
