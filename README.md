@@ -40,6 +40,7 @@ Supported services are:
 
 End of life services are:
 - [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
+  
 You can send BLE advertisements for all services or for selected targets only.
 
 </details>
