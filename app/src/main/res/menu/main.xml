@@ -17,4 +17,12 @@
         android:title="@string/action_set_tx_power"
         app:showAsAction="never"
         />
+
+    <item
+        android:visible="true"
+        android:id="@+id/send_log"
+        android:orderInCategory="300"
+        android:title="@string/send_log"
+        app:showAsAction="never"
+        />
 </menu>
