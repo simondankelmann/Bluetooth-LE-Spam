@@ -65,10 +65,9 @@ With these BLE advertisements, it is possible to enable and disable various adul
 <summary>Spam Detector</summary>
 <br>
 The Spam Detector tool allows you to detect nearby spammers, even on the lock screen. It can identify spam from Flipper Zeros, our app, and various other software and scripts. Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
-> [!NOTE]
-> Location permission and background location access are required for this feature to work.
-> These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
-> It's important to note that the app will NOT collect your location data.
+NOTE: Location permission and background location access are required for this feature to work.
+These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
+It's important to note that the app will NOT collect your location data.
 </details>
 
 
