@@ -114,8 +114,10 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 
 ## Disclaimer
 
-Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
 
+<details>
+<summary>Disclaimer for Bluetooth Low Energy Protocol Investigation Repository</summary>
+<br>
 This repository contains code for the investigation and experimentation of the Bluetooth Low Energy (BLE) protocol.
 Please be aware of the following disclaimers before using or contributing to this repository:
 
@@ -140,3 +142,4 @@ By using and contributing to this repository, you agree to these disclaimers and
 If you do not agree, please refrain from using or contributing to this repository.
 
 For any questions or concerns, please contact the repository maintainers on Discord or Github.
+</details>
