@@ -118,7 +118,7 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 ## Credits
 
 <details >
-<summary>Details</summary>
+<summary>Click to open</summary>
 <br>
 - <a href="https://www.mobile-hacker.com/author/boni11/">mh from mobile-hacker.com</a> for the <a href="https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/">Article / Guideline</a> about using the nRF Connect App to Spoof iOS Devices  
 - <a href="https://github.com/Willy-JL">Willy-JL</a>, <a href="https://github.com/ECTO-1A">ECTO-1A</a>, <a href="https://github.com/Spooks4576">Spooks4567</a> and <a href="https://github.com/Mr-Proxy-source">Mrproxy</a> for their contribution in the BLE Spam App on the Flipper Zero  
