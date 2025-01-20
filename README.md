@@ -35,10 +35,11 @@ This can cause nearby devices that listen to such advertisements to show unwante
 Supported services are:
 
 - Apple (new device popups, various action modals)
-- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 - [Microsoft Swift Pair](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair) (Windows Devices)
 - Samsung Easy Setup
 
+End of life services are:
+- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 You can send BLE advertisements for all services or for selected targets only.
 
 </details>
