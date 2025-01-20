@@ -111,14 +111,18 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 
 ## Credits
 
-- [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
-- [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576) and [Mrproxy](https://github.com/Mr-Proxy-source) for their contribution in the BLE Spam App on the Flipper Zero
-- [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
-- [mandomat](https://mandomat.github.io/aboutme/) for the research of [Denial of Pleasure](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
-- [tutozz](https://github.com/tutozz) for the research of Easy Setup Buds in Android
-- [K3YOMI](https://github.com/K3YOMI) for the spam detector idea
-- [Glorious Gizmos](https://www.tiktok.com/discover/glorious-gizmos) for making content and tutorials on our app
-- And special thanks to anyone else who has been involved in prior research and publications related to this topic.
+<details >
+<summary>Details</summary>
+<br>
+- <a href="https://www.mobile-hacker.com/author/boni11/">mh from mobile-hacker.com</a> for the <a href="https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/">Article / Guideline</a> about using the nRF Connect App to Spoof iOS Devices  
+- <a href="https://github.com/Willy-JL">Willy-JL</a>, <a href="https://github.com/ECTO-1A">ECTO-1A</a>, <a href="https://github.com/Spooks4576">Spooks4567</a> and <a href="https://github.com/Mr-Proxy-source">Mrproxy</a> for their contribution in the BLE Spam App on the Flipper Zero  
+- <a href="https://github.com/furiousMAC">FuriousMAC</a> and <a href="https://github.com/hexway">Hexway</a> for their prior researches  
+- <a href="https://mandomat.github.io/aboutme/">mandomat</a> for the research of <a href="https://mandomat.github.io/2023-11-13-denial-of-pleasure/">Denial of Pleasure</a>  
+- <a href="https://github.com/tutozz">tutozz</a> for the research of Easy Setup Buds in Android  
+- <a href="https://github.com/K3YOMI">K3YOMI</a> for the spam detector idea  
+- <a href="https://www.tiktok.com/discover/glorious-gizmos">Glorious Gizmos</a> for making content and tutorials on our app  
+- And special thanks to anyone else who has been involved in prior research and publications related to this topic.  
+</details>
 
 ## Screenshots
 
