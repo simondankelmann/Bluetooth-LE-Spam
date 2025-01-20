@@ -45,22 +45,39 @@ You can send BLE advertisements for all services or for selected targets only.
 
 </details>
 
-#### Apple iOS 17 Crash (patched)
-
+<details >
+<summary>Apple iOS 17 Crash (patched)</summary>
+<br>
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices.
 This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
 
 This is reported to be partially patched in iOS 17.2, and fully patched in iOS 18.
 
-> [!NOTE]
+> Note:
 > To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds.
-> Additionally, locking and unlocking the targeted iPhone can aid in the process.
+>Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
-#### Lovespouse (Adult Toys)
+</details>
 
+<details >
+<summary>Lovespouse (Adult Toys)</summary>
+<br>
 With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
 Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
-More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
+</details>
+
+<details >
+<summary>Spam Detector</summary>
+<br>
+The Spam Detector tool allows you to detect nearby spammers, even on the lock screen.
+It can identify spam from Flipper Zeros, our app, and various other software and scripts.
+Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
+
+  > NOTE:
+> Location permission and background location access are required for this feature to work.
+> These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
+> It's important to note that the app will NOT collect your location data.
+</details>
 
 ### Spam Detector
 
