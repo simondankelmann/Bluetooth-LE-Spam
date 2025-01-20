@@ -19,12 +19,11 @@ While other apps are available that provide similar functionality, the objective
 <details >
 <summary>Details</summary>
 <br>
-- Android 8.0 (API level 26) or later
-
-> Tip:
-> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
-> You also can view your Android version in the Info tab in settings.
-
+- Android 8.0 (API level 26) or later <br>
+ <br>
+Tip: If you don't know your API level visit <a href="https://developer.android.com/tools/releases/platforms">SDK Platform release notes</a>. You also can view your Android version in the Info tab in settings.
+ <br>
+   <br>
 - You can not run the app on IOS or PC (even with emulators/VM's)
 
 </details>
