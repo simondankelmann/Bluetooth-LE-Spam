@@ -80,6 +80,9 @@ It's important to note that the app will NOT collect your location data.
 
 ## Range
 
+<details >
+<summary>Details</summary>
+<br>
 The range of Bluetooth Low Energy (BLE) can vary between devices.
 Some may have a long range, while others may have a short range.
 
@@ -89,6 +92,7 @@ This limitation affects the range of the Fast Pair functionality.
 Receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used.
 
 Devices like the Flipper Zero, however, have the capability to modify this byte, significantly extending their range.
+</details>
 
 ## Installation
 
