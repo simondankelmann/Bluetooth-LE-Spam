@@ -60,7 +60,7 @@ Note: To achieve optimal results, it is recommended to set the advertising inter
 <br>
 With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
 Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
-More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)..
+More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
 </details>
 
 
