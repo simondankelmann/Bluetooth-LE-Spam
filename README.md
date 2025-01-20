@@ -16,7 +16,7 @@ While other apps are available that provide similar functionality, the objective
 
 ## Requirements
 
-<details open>
+<details >
 <summary>Details</summary>
 <br>
 - Android 8.0 (API level 26) or later
