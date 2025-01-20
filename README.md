@@ -21,7 +21,7 @@ While other apps are available that provide similar functionality, the objective
 <br>
 - Android 8.0 (API level 26) or later
 
-> [!TIP]
+
 > If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
 > You also can view your Android version in the Info tab in settings.
 
