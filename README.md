@@ -96,6 +96,9 @@ Devices like the Flipper Zero, however, have the capability to modify this byte,
 
 ## Installation
 
+<details >
+<summary>Details</summary>
+<br>
 You can get installable APK files from the [Github Releases](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
 and from from [F-Droid](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/).
 You can clone the git repo and also build the app yourself.
@@ -103,6 +106,7 @@ You can clone the git repo and also build the app yourself.
 If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
 If you are a developer or tester, opt for the Debug APK for testing and debugging purposes.
 
+</details>
 ## Credits
 
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
