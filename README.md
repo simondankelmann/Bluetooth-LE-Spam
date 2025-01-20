@@ -63,7 +63,7 @@ This is reported to be partially patched in iOS 17.2, and fully patched in iOS 1
 <summary>Lovespouse (Adult Toys)</summary>
 <br>
 With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
-Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
+Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found <a href="https://mandomat.github.io/2023-11-13-denial-of-pleasure/">here</a>.
 </details>
 
 <details >
@@ -79,19 +79,11 @@ Once your device has detected spam, it will send you a notification, indicating 
 > It's important to note that the app will NOT collect your location data.
 </details>
 
-### Spam Detector
-
-The Spam Detector tool allows you to detect nearby spammers, even on the lock screen.
-It can identify spam from Flipper Zeros, our app, and various other software and scripts.
-Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
-
-> [!NOTE]
-> Location permission and background location access are required for this feature to work.
-> These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
-> It's important to note that the app will NOT collect your location data.
-
 ## Range
 
+<details >
+<summary>Details</summary>
+<br>
 The range of Bluetooth Low Energy (BLE) can vary between devices.
 Some may have a long range, while others may have a short range.
 
@@ -101,16 +93,16 @@ This limitation affects the range of the Fast Pair functionality.
 Receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used.
 
 Devices like the Flipper Zero, however, have the capability to modify this byte, significantly extending their range.
+</details>
+
 
 ## Installation
-
+<br>
 You can get installable APK files from the [Github Releases](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
 and from from [F-Droid](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/).
-You can clone the git repo and also build the app yourself.
-
-If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
+You can clone the git repo and also build the app yourself. If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
 If you are a developer or tester, opt for the Debug APK for testing and debugging purposes.
-
+</details>
 ## Credits
 
 - [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
