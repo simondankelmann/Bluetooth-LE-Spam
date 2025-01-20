@@ -104,6 +104,7 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 - [tutozz](https://github.com/tutozz) for the research of Easy Setup Buds in Android
 - [K3YOMI](https://github.com/K3YOMI) for the spam detector idea
 - [Glorious Gizmos](https://www.tiktok.com/discover/glorious-gizmos) for making content and tutorials on our app
+- People who have helped moderate, offer support and setup bots on the Discord server
 - And special thanks to anyone else who has been involved in prior research and publications related to this topic.
 
 ## Screenshots
