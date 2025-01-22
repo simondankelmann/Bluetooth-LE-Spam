@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("androidx.navigation.safeargs")
+    alias(libs.plugins.agp.app)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.safeargs)
     id("kotlin-kapt")
 }
 
@@ -9,17 +9,17 @@ val app_name = "Bluetooth LE Spam"
 
 android {
     namespace = "de.simon.dankelmann.bluetoothlespam"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "de.simon.dankelmann.bluetoothlespam"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 2
         versionName = "1.0.8"
-
         //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     signingConfigs {
         create("release") {
             storeFile = file("release.jks")
@@ -31,7 +31,8 @@ android {
 
     buildTypes {
         configureEach {
-            signingConfig = signingConfigs["release"]
+            val variant = if (File("release.jks").exists()) "release" else "debug"
+            signingConfig = signingConfigs[variant]
         }
         release {
             resValue("string", "app_name", app_name)
@@ -46,13 +47,16 @@ android {
             applicationIdSuffix = ".debug"
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
+
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
+
     buildFeatures {
         viewBinding = true
     }
@@ -60,50 +64,44 @@ android {
 
 
 dependencies {
-    implementation("com.airbnb.android:lottie:6.3.0")
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    //testImplementation("junit:junit:4.13.2")
-    //androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    //androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation(libs.airbnb.lottie)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.core.ktx)
+    implementation(libs.preference.ktx)
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.legacy.support)
+    implementation(libs.android.constraintlayout)
+    implementation(libs.google.material)
 
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 
     // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    kapt(libs.room.compiler)
 
     // To use Kotlin Symbol Processing (KSP)
-    //ksp("androidx.room:room-compiler:$room_version")
+    //ksp(libs.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
-    //implementation("androidx.room:room-ktx:$room_version")
+    //implementation(libs.room.ktx)
 
     // optional - RxJava2 support for Room
-    //implementation("androidx.room:room-rxjava2:$room_version")
+    //implementation(libs.room.rxjava2)
 
     // optional - RxJava3 support for Room
-    implementation("androidx.room:room-rxjava3:$room_version")
+    implementation(libs.room.rxjava3)
 
     // optional - Guava support for Room, including Optional and ListenableFuture
-    //implementation("androidx.room:room-guava:$room_version")
+    //implementation(libs.room.guava)
 
     // optional - Test helpers
-    //testImplementation("androidx.room:room-testing:$room_version")
+    //testImplementation(libs.room.testing)
 
     // optional - Paging 3 Integration
-    //implementation("androidx.room:room-paging:$room_version")
-
+    //implementation(libs.room.paging)
 }
