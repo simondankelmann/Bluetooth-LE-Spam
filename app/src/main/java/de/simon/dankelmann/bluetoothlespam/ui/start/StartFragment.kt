@@ -75,7 +75,7 @@ class StartFragment : Fragment() {
         _binding = null
     }
 
-    fun getAppVersion():String{
+    fun getAppVersion():String?{
         val manager = AppContext.getContext()!!.packageManager
         val info = manager.getPackageInfo(AppContext.getContext().packageName, 0)
         val version = info.versionName

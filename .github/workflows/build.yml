@@ -2,12 +2,6 @@ name: Build
 
 on:
   push:
-    paths:
-      - '.github/workflows/build.yml'
-      - 'app/**'
-      - 'gradle/**'
-      - '*.gradle.*'
-      - '*.properties'
   pull_request:
   workflow_dispatch:
 
@@ -24,10 +18,10 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Set environments
         run: |
@@ -37,26 +31,18 @@ jobs:
             echo "repo=$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
           } >> $GITHUB_ENV
 
-      - name: Build with Gradle
+      - name: Build
         run: |
-          if [ "${{ secrets.STORE_FILE }}" == "" ]; then
-            echo -e "\nERROR!\nTo release, you need to set up a signing key!\n"
-            echo "STORE_FILE: A Base64 encoded string of the signing key in JKS format"
-            echo "STORE_PASSWORD: Key store password"
-            echo "KEY_ALIAS: Key alias"
-            echo "KEY_PASSWORD: Key password"
-            echo ""
-            exit 1
-          else
+          if [ "${{ secrets.STORE_FILE }}" != "" ]; then
             echo "${{ secrets.STORE_FILE }}" | base64 -d > app/release.jks
             export STORE_PASSWORD="${{ secrets.STORE_PASSWORD }}"
             export KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
             export KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
           fi
-          ./gradlew assemble --no-daemon --stacktrace
+          ./gradlew assemble --no-daemon --stacktrace --warning-mode=all
 
-      - name: Upload APK
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Bluetooth-LE-Spam(${{ env.version }}@${{ env.commit }})
+          name: ${{ env.repo }}(${{ env.version }}@${{ env.commit }})
           path: app/build/outputs/apk/**/app-*.apk
