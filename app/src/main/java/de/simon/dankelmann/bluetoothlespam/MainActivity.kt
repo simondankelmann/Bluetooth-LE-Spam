@@ -188,26 +188,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.nav_preferences -> {
                 val navController = findNavController(R.id.nav_host_fragment)
                 onNavDestinationSelected(item, navController)
-                true
             }
 
             R.id.nav_set_tx_power -> {
                 showSetTxPowerDialog()
-                true
-            }
-
-            R.id.send_log -> {
-                Toast.makeText(this, "Soon™️", Toast.LENGTH_SHORT).show()
-                true
-            }
-            else -> {
-                super.onOptionsItemSelected(item)
             }
         }
+
+        return super.onOptionsItemSelected(item)
     }
 
     fun showSetTxPowerDialog() {
