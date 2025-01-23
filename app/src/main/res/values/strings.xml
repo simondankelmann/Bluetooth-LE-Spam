@@ -62,5 +62,4 @@
     <string name="spam_detecting_title">Detecting Spam</string>
     <string name="spam_detecting_text">Detecting Flipper Zero and other devices</string>
     <string name="spam_detected_title">Spam Detected</string>
-    <string name="send_log">Send Logs</string>
 </resources>
