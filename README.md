@@ -16,60 +16,79 @@ While other apps are available that provide similar functionality, the objective
 
 ## Requirements
 
-- Android 8.0 (API level 26) or later
-
-> [!TIP]
-> If you don't know your API level visit [SDK Platform release notes](https://developer.android.com/tools/releases/platforms).
-> You also can view your Android version in the Info tab in settings.
-
+<details >
+<summary>Details</summary>
+<br>
+- Android 8.0 (API level 26) or later <br>
+ <br>
+Tip: If you don't know your API level visit <a href="https://developer.android.com/tools/releases/platforms">SDK Platform release notes</a>. You also can view your Android version in the Info tab in settings.
+ <br>
+   <br>
 - You can not run the app on IOS or PC (even with emulators/VM's)
+
+</details>
+
 
 ## Functionality
 
-### Sending BLE advertisements
-
+<details >
+<summary>Sending BLE advertisements (Pop-Ups)</summary>
+<br>
 This app can send BLE advertisements that mimic the usage of various services.
 This can cause nearby devices that listen to such advertisements to show unwanted popup dialogs.
 
 Supported services are:
 
 - Apple (new device popups, various action modals)
-- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
 - [Microsoft Swift Pair](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/bluetooth-swift-pair) (Windows Devices)
 - Samsung Easy Setup
 
+End of life services are:
+- [Google Fast Pair](https://developers.google.com/nearby/fast-pair/landing-page) (Android devices) -- patched on modern devices
+  
 You can send BLE advertisements for all services or for selected targets only.
 
-#### Apple iOS 17 Crash (patched)
+</details>
 
+<details >
+<summary>Apple iOS 17 Crash (patched)</summary>
+<br>
 With some modifications to the advertised BLE package, it is possible to trigger a reboot in various iOS 17 devices.
 This causes the targeted iPhone to temporarily freeze for a few minutes before automatically restarting.
 
 This is reported to be partially patched in iOS 17.2, and fully patched in iOS 18.
 
-> [!NOTE]
+> Note:
 > To achieve optimal results, it is recommended to set the advertising interval to a value between 20 and 100 milliseconds.
-> Additionally, locking and unlocking the targeted iPhone can aid in the process.
+>Additionally, locking and unlocking the targeted iPhone can aid in the process.
 
-#### Lovespouse (Adult Toys)
+</details>
 
+<details >
+<summary>Lovespouse (Adult Toys)</summary>
+<br>
 With these BLE advertisements, it is possible to enable and disable various adult toys that support the Lovespouse app.
-Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List.
-More information on this topic can be found [here](https://mandomat.github.io/2023-11-13-denial-of-pleasure/).
+Additionally, the "Denial of Pleasure" can be executed by selecting the Lovespouse Stops List and setting the repeat mode to Repeat List. More information on this topic can be found <a href="https://mandomat.github.io/2023-11-13-denial-of-pleasure/">here</a>.
+</details>
 
-### Spam Detector
-
+<details >
+<summary>Spam Detector</summary>
+<br>
 The Spam Detector tool allows you to detect nearby spammers, even on the lock screen.
 It can identify spam from Flipper Zeros, our app, and various other software and scripts.
 Once your device has detected spam, it will send you a notification, indicating whether it was sent by a Flipper Zero or another source.
 
-> [!NOTE]
+  > NOTE:
 > Location permission and background location access are required for this feature to work.
 > These permissions are necessary because Android mandates them for Bluetooth scanning in the background.
 > It's important to note that the app will NOT collect your location data.
+</details>
 
 ## Range
 
+<details >
+<summary>Details</summary>
+<br>
 The range of Bluetooth Low Energy (BLE) can vary between devices.
 Some may have a long range, while others may have a short range.
 
@@ -79,26 +98,36 @@ This limitation affects the range of the Fast Pair functionality.
 Receiving devices calculate the transmitter's proximity based on the actual received signal strength and the transmitted byte in the payload, which contains the TX Power level the transmitter used.
 
 Devices like the Flipper Zero, however, have the capability to modify this byte, significantly extending their range.
+</details>
+
 
 ## Installation
 
-You can get installable APK files from the [Github Releases](https://github.com/simondankelmann/Bluetooth-LE-Spam/releases)
-and from from [F-Droid](https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/).
+<details >
+<summary>Details</summary>
+<br>
+You can get installable APK files from the <a href="https://github.com/simondankelmann/Bluetooth-LE-Spam/releases">Github Releases</a>
+and from <a href="https://f-droid.org/packages/de.simon.dankelmann.bluetoothlespam/">F-Droid</a>.
 You can clone the git repo and also build the app yourself.
 
 If you are an end-user looking for a fully functional app, download the Release APK for optimal performance (simply go for this one).
 If you are a developer or tester, opt for the Debug APK for testing and debugging purposes.
+</details>
 
 ## Credits
 
-- [mh from mobile-hacker.com](https://www.mobile-hacker.com/author/boni11/) for the [Article / Guideline](https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/) about using the nRF Connect App to Spoof iOS Devices
-- [Willy-JL](https://github.com/Willy-JL), [ECTO-1A](https://github.com/ECTO-1A), [Spooks4567](https://github.com/Spooks4576) and [Mrproxy](https://github.com/Mr-Proxy-source) for their contribution in the BLE Spam App on the Flipper Zero
-- [FuriousMAC](https://github.com/furiousMAC) and [Hexway](https://github.com/hexway) for their prior researches
-- [mandomat](https://mandomat.github.io/aboutme/) for the research of [Denial of Pleasure](https://mandomat.github.io/2023-11-13-denial-of-pleasure/)
-- [tutozz](https://github.com/tutozz) for the research of Easy Setup Buds in Android
-- [K3YOMI](https://github.com/K3YOMI) for the spam detector idea
-- [Glorious Gizmos](https://www.tiktok.com/discover/glorious-gizmos) for making content and tutorials on our app
-- And special thanks to anyone else who has been involved in prior research and publications related to this topic.
+<details >
+<summary>Click to open</summary>
+<br>
+- <a href="https://www.mobile-hacker.com/author/boni11/">mh from mobile-hacker.com</a> for the <a href="https://www.mobile-hacker.com/2023/09/07/spoof-ios-devices-with-bluetooth-pairing-messages-using-android/">Article / Guideline</a> about using the nRF Connect App to Spoof iOS Devices  <br> 
+- <a href="https://github.com/Willy-JL">Willy-JL</a>, <a href="https://github.com/ECTO-1A">ECTO-1A</a>, <a href="https://github.com/Spooks4576">Spooks4567</a> and <a href="https://github.com/Mr-Proxy-source">Mrproxy</a> for their contribution in the BLE Spam App on the Flipper Zero <br>  
+- <a href="https://github.com/furiousMAC">FuriousMAC</a> and <a href="https://github.com/hexway">Hexway</a> for their prior researches <br>  
+- <a href="https://mandomat.github.io/aboutme/">mandomat</a> for the research of <a href="https://mandomat.github.io/2023-11-13-denial-of-pleasure/">Denial of Pleasure</a><br>
+- <a href="https://github.com/tutozz">tutozz</a> for the research of Easy Setup Buds in Android<br>
+- <a href="https://github.com/K3YOMI">K3YOMI</a> for the spam detector idea <br>  
+- <a href="https://www.tiktok.com/discover/glorious-gizmos">Glorious Gizmos</a> for making content and tutorials on our app <br>  
+- And special thanks to anyone else who has been involved in prior research and publications related to this topic. <br>  
+</details>
 
 ## Screenshots
 
@@ -110,9 +139,9 @@ If you are a developer or tester, opt for the Debug APK for testing and debuggin
 </details>
 
 ## Disclaimer
-
-Disclaimer for Bluetooth Low Energy Protocol Investigation Repository
-
+<details >
+<summary>Disclaimer for Bluetooth Low Energy Protocol Investigation Repository</summary>
+<br>
 This repository contains code for the investigation and experimentation of the Bluetooth Low Energy (BLE) protocol.
 Please be aware of the following disclaimers before using or contributing to this repository:
 
@@ -137,3 +166,4 @@ By using and contributing to this repository, you agree to these disclaimers and
 If you do not agree, please refrain from using or contributing to this repository.
 
 For any questions or concerns, please contact the repository maintainers on Discord or Github.
+</details>

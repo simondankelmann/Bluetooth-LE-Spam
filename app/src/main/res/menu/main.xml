@@ -17,4 +17,5 @@
         android:title="@string/action_set_tx_power"
         app:showAsAction="never"
         />
+    
 </menu>
