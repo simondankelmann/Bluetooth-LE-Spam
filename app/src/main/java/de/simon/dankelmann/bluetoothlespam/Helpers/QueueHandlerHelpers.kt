@@ -10,7 +10,7 @@ class QueueHandlerHelpers {
     companion object {
         private const val _logTag = "QueueHandlerHelpers"
 
-        fun getInterval(context: Context): Int {
+        fun getInterval(context: Context): Long {
             // Get from Settings, if present
             val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
             val prefKey =
@@ -20,7 +20,7 @@ class QueueHandlerHelpers {
                     val intervalString = it.value as? String
                     if (intervalString != null) {
                         try {
-                            val parsedInterval = intervalString.toInt()
+                            val parsedInterval = intervalString.toLong()
                             if (parsedInterval > 0) {
                                 return parsedInterval
                             }

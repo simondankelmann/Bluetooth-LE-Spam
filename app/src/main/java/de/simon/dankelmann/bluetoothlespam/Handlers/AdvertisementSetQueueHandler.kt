@@ -24,13 +24,20 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementForegroundService
 import kotlin.random.Random
 
-class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
+/**
+ * Handler that takes an advertisement set, and iterates over the set according to a given AdvertisementQueueMode.
+ *
+ * The job of this handler is to select the next set, and provide it to the IAdvertisementService.
+ */
+class AdvertisementSetQueueHandler(
+    context: Context,
+) : IAdvertisementServiceCallback {
 
-    // private
-    private var _logTag = "AdvertisementSetQueuHandler"
+    private var _logTag = "AdvertisementSetQueueHandler"
+
     private var _advertisementService:IAdvertisementService? = null
     private var _advertisementSetCollection:AdvertisementSetCollection = AdvertisementSetCollection()
-    private var _interval:Long = 1000
+    private var _intervalMillis: Long = QueueHandlerHelpers.getInterval(context)
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
     private var _advertisementQueueHandlerCallbacks:MutableList<IAdvertisementSetQueueHandlerCallback> = mutableListOf()
 
@@ -41,14 +48,15 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
     private var _currentAdvertisementSetListIndex = 0
     private var _currentAdvertisementSetIndex = 0
 
-
     init{
         _advertisementService = AppContext.getAdvertisementService()
         if(_advertisementService != null){
             _advertisementService!!.addAdvertisementServiceCallback(this)
         }
+    }
 
-        setInterval(QueueHandlerHelpers.getInterval(AppContext.getContext()))
+    fun isActive(): Boolean {
+        return _active
     }
 
     fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
@@ -59,15 +67,15 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         return _advertisementQueueMode
     }
 
+    fun setInterval(milliseconds: Long) {
+        if (milliseconds > 0) {
+            _intervalMillis = milliseconds
+        }
+    }
+
     fun setAdvertisementService(advertisementService: IAdvertisementService){
         _advertisementService = advertisementService
         _advertisementService!!.addAdvertisementServiceCallback(this)
-    }
-
-    fun setTxPowerLevel(txPowerLevel: TxPowerLevel){
-        if(_advertisementService != null){
-            _advertisementService!!.setTxPowerLevel(txPowerLevel)
-        }
     }
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
@@ -131,16 +139,6 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
     fun removeAdvertisementQueueHandlerCallback(callback: IAdvertisementSetQueueHandlerCallback){
         if(_advertisementQueueHandlerCallbacks.contains(callback)){
             _advertisementQueueHandlerCallbacks.remove(callback)
-        }
-    }
-
-    fun setIntervalSeconds(seconds:Int){
-        _interval = (seconds * 1000).toLong()
-    }
-
-    fun setInterval(milliseconds:Int){
-        if(milliseconds > 0){
-            _interval = milliseconds.toLong()
         }
     }
 
@@ -319,10 +317,6 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         }
     }
 
-    fun isActive():Boolean{
-        return _active
-    }
-
     fun onAdvertisementSucceeded(){
         if(_advertisementService != null){
             _advertisementService!!.stopAdvertisement()
@@ -349,7 +343,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
                     onAdvertisementFailed()
                 }
             }
-        }, _interval)
+        }, _intervalMillis)
     }
 
     // Callback Implementation, just pass to own Listeners

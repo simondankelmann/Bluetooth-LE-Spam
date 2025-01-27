@@ -396,7 +396,7 @@ class StartFragment : Fragment() {
 
         if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
             try {
-                var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
+                var advertisementSetQueueHandler = AdvertisementSetQueueHandler(context)
                 AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
             } catch (e:Exception){
                 addMissingRequirement("Queue Handler not initialized")
