@@ -76,10 +76,11 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         //AppContext.getAdvertisementSetQueueHandler().deactivate(true)
     }
 
-    private fun syncWithQueueHandler(context: Context){
-        setAdvertisementSetCollection(context, AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection())
-        viewModel.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
-        viewModel.isAdvertising.postValue(AppContext.getAdvertisementSetQueueHandler().isActive())
+    private fun syncWithQueueHandler(context: Context) {
+        val queue = AppContext.getAdvertisementSetQueueHandler()
+        setAdvertisementSetCollection(context, queue.getAdvertisementSetCollection())
+        viewModel.advertisementQueueMode.postValue(queue.getAdvertisementQueueMode())
+        viewModel.isAdvertising.postValue(queue.isActive())
     }
 
     fun onPlayButtonClicked(context: Context) {

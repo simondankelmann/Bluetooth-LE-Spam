@@ -234,10 +234,11 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     // Button Handlers
     class ToggleButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if(AppContext.getAdvertisementSetQueueHandler().isActive()){
-                AppContext.getAdvertisementSetQueueHandler().deactivate(context)
+            val queue = AppContext.getAdvertisementSetQueueHandler()
+            if (queue.isActive()) {
+                queue.deactivate(context)
             } else {
-                AppContext.getAdvertisementSetQueueHandler().activate(context)
+                queue.activate(context)
             }
         }
     }
