@@ -34,11 +34,12 @@ import kotlin.random.Random
  */
 class AdvertisementSetQueueHandler(
     context: Context,
+    adService: IAdvertisementService,
 ) : IAdvertisementServiceCallback {
 
     private var _logTag = "AdvertisementSetQueueHandler"
 
-    private var _advertisementService: IAdvertisementService? = null
+    private var _advertisementService: IAdvertisementService = adService
 
     private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
     private var _advertisementSetCollection: AdvertisementSetCollection =
@@ -56,8 +57,7 @@ class AdvertisementSetQueueHandler(
     private var _currentAdvertisementSetIndex = 0
 
     init {
-        val service = AppContext.getAdvertisementService()
-        setAdvertisementService(service)
+        _advertisementService.addAdvertisementServiceCallback(this)
     }
 
     fun isActive(): Boolean {
@@ -79,9 +79,12 @@ class AdvertisementSetQueueHandler(
     }
 
     fun setAdvertisementService(advertisementService: IAdvertisementService) {
+        _advertisementService.removeAdvertisementServiceCallback(this)
+
         _advertisementService = advertisementService
-        _advertisementService?.addAdvertisementServiceCallback(this)
+        _advertisementService.addAdvertisementServiceCallback(this)
     }
+
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
         if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex] != null){
@@ -167,7 +170,7 @@ class AdvertisementSetQueueHandler(
     fun deactivate(context: Context, stopService: Boolean = false) {
         _active = false
 
-        _advertisementService?.stopAdvertisement()
+        _advertisementService.stopAdvertisement()
 
         if (stopService) {
             Log.d(_logTag, "Stopping Foreground Service")
@@ -192,10 +195,9 @@ class AdvertisementSetQueueHandler(
             return
         }
 
-        val preparedSet = prepareAdvertisementSet(nextSet)
-
         if (_active) {
-            _advertisementService?.startAdvertisement(preparedSet)
+            val preparedSet = prepareAdvertisementSet(nextSet)
+            _advertisementService.startAdvertisement(preparedSet)
         }
     }
 
@@ -312,10 +314,9 @@ class AdvertisementSetQueueHandler(
     }
 
     private fun onAdvertisementSucceeded() {
-        val service = _advertisementService ?: return
-        service.stopAdvertisement()
+        _advertisementService.stopAdvertisement()
 
-        if (service.isLegacyService()) {
+        if (_advertisementService.isLegacyService()) {
             advertiseNextAdvertisementSet()
         } else {
             // Wait for the Stop Advertising Callback
@@ -359,7 +360,7 @@ class AdvertisementSetQueueHandler(
             }
         }
 
-        if(_advertisementService != null && !_advertisementService!!.isLegacyService()){
+        if (!_advertisementService.isLegacyService()) {
             advertiseNextAdvertisementSet()
         }
     }
