@@ -238,14 +238,14 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             if(AppContext.getAdvertisementSetQueueHandler().isActive()){
                 AppContext.getAdvertisementSetQueueHandler().deactivate(context)
             } else {
-                AppContext.getAdvertisementSetQueueHandler().activate()
+                AppContext.getAdvertisementSetQueueHandler().activate(context)
             }
         }
     }
 
     class StopButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            AppContext.getAdvertisementSetQueueHandler().deactivate(context)
+            AppContext.getAdvertisementSetQueueHandler().deactivate(context, true)
             stopService(context)
         }
     }

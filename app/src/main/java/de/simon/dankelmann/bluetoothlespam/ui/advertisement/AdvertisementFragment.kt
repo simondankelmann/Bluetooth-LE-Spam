@@ -87,7 +87,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             AppContext.getAdvertisementSetQueueHandler().deactivate(context)
             viewModel.isAdvertising.postValue(false)
         } else {
-            AppContext.getAdvertisementSetQueueHandler().activate(true)
+            AppContext.getAdvertisementSetQueueHandler().activate(context)
             viewModel.isAdvertising.postValue(true)
         }
     }

@@ -28,6 +28,9 @@ import kotlin.random.Random
  * Handler that takes an advertisement set, and iterates over the set according to a given AdvertisementQueueMode.
  *
  * The job of this handler is to select the next set, and provide it to the IAdvertisementService.
+ *
+ * The UI code should drive the advertising via this handler (via start, stop, set advertisement set, set queue mode).
+ * This handler takes care of starting and stopping services as appropriate.
  */
 class AdvertisementSetQueueHandler(
     context: Context,
@@ -35,24 +38,26 @@ class AdvertisementSetQueueHandler(
 
     private var _logTag = "AdvertisementSetQueueHandler"
 
-    private var _advertisementService:IAdvertisementService? = null
-    private var _advertisementSetCollection:AdvertisementSetCollection = AdvertisementSetCollection()
+    private var _advertisementService: IAdvertisementService? = null
+
+    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
+    private var _advertisementSetCollection: AdvertisementSetCollection =
+        AdvertisementSetCollection()
     private var _intervalMillis: Long = QueueHandlerHelpers.getInterval(context)
+
+    // Callbacks to listen to events of the underlying advertisement service
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
+    // Callbacks to listen to queue events
     private var _advertisementQueueHandlerCallbacks:MutableList<IAdvertisementSetQueueHandlerCallback> = mutableListOf()
 
     private var _active = false
-    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
-
     private var _currentAdvertisementSet: AdvertisementSet? = null
     private var _currentAdvertisementSetListIndex = 0
     private var _currentAdvertisementSetIndex = 0
 
-    init{
-        _advertisementService = AppContext.getAdvertisementService()
-        if(_advertisementService != null){
-            _advertisementService!!.addAdvertisementServiceCallback(this)
-        }
+    init {
+        val service = AppContext.getAdvertisementService()
+        setAdvertisementService(service)
     }
 
     fun isActive(): Boolean {
@@ -73,9 +78,9 @@ class AdvertisementSetQueueHandler(
         }
     }
 
-    fun setAdvertisementService(advertisementService: IAdvertisementService){
+    fun setAdvertisementService(advertisementService: IAdvertisementService) {
         _advertisementService = advertisementService
-        _advertisementService!!.addAdvertisementServiceCallback(this)
+        _advertisementService?.addAdvertisementServiceCallback(this)
     }
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
@@ -142,34 +147,29 @@ class AdvertisementSetQueueHandler(
         }
     }
 
-    fun activate(startService: Boolean = true){
-        if(!_active){
-            _active = true
-
-            if(startService){
-                AdvertisementForegroundService.startService(AppContext.getContext(), "Foreground Service is running...")
-            }
-
-            _advertisementQueueHandlerCallbacks.forEach { it ->
-                try {
-                    it.onQueueHandlerActivated()
-                } catch (e:Exception){
-                    Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerActivated")
-                }
-            }
-
-            advertiseNextAdvertisementSet()
+    fun activate(context: Context) {
+        if (_active) {
+            return
         }
+
+        _active = true
+        AdvertisementForegroundService.startService(context, "Foreground Service is running...")
+        _advertisementQueueHandlerCallbacks.forEach { it ->
+            try {
+                it.onQueueHandlerActivated()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerActivated: ${e.message}")
+            }
+        }
+        advertiseNextAdvertisementSet()
     }
 
     fun deactivate(context: Context, stopService: Boolean = false) {
         _active = false
 
-        if (AppContext.getAdvertisementService() != null) {
-            AppContext.getAdvertisementService().stopAdvertisement()
-        }
+        _advertisementService?.stopAdvertisement()
 
-        if(stopService){
+        if (stopService) {
             Log.d(_logTag, "Stopping Foreground Service")
             AdvertisementForegroundService.stopService(context)
         }
@@ -177,8 +177,8 @@ class AdvertisementSetQueueHandler(
         _advertisementQueueHandlerCallbacks.forEach { it ->
             try {
                 it.onQueueHandlerDeactivated()
-            } catch (e:Exception){
-                Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerDeactivated")
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerDeactivated: ${e.message}")
             }
         }
     }
@@ -311,19 +311,18 @@ class AdvertisementSetQueueHandler(
         _currentAdvertisementSetIndex = nextAdvertisementSetIndex
     }
 
-    fun onAdvertisementSucceeded(){
-        if(_advertisementService != null){
-            _advertisementService!!.stopAdvertisement()
+    private fun onAdvertisementSucceeded() {
+        val service = _advertisementService ?: return
+        service.stopAdvertisement()
 
-            if(_advertisementService!!.isLegacyService()){
-                advertiseNextAdvertisementSet()
-            } else {
-                // Wait for the Stop Advertising Callback
-            }
+        if (service.isLegacyService()) {
+            advertiseNextAdvertisementSet()
+        } else {
+            // Wait for the Stop Advertising Callback
         }
     }
 
-    fun onAdvertisementFailed(){
+    private fun onAdvertisementFailed() {
         Log.d(_logTag, "Advertisement failed, trying again")
         onAdvertisementSucceeded()
     }
