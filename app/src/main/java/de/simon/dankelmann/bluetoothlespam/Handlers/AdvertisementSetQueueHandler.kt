@@ -158,11 +158,7 @@ class AdvertisementSetQueueHandler(
                 }
             }
 
-            if(_currentAdvertisementSet != null){
-                handleAdvertisementSet(_currentAdvertisementSet!!)
-            } else {
-                advertiseNextAdvertisementSet()
-            }
+            advertiseNextAdvertisementSet()
         }
     }
 
@@ -187,30 +183,34 @@ class AdvertisementSetQueueHandler(
         }
     }
 
-    fun advertiseNextAdvertisementSet(){
+    private fun advertiseNextAdvertisementSet() {
         selectNextAdvertisementSet()
-        if(_currentAdvertisementSet != null){
-            handleAdvertisementSet(prepareAdvertisementSet(_currentAdvertisementSet!!))
-        } else {
+
+        val nextSet = _currentAdvertisementSet
+        if (nextSet == null) {
             Log.e(_logTag, "Current Advertisement Set is null.")
+            return
+        }
+
+        val preparedSet = prepareAdvertisementSet(nextSet)
+
+        if (_active) {
+            _advertisementService?.startAdvertisement(preparedSet)
         }
     }
 
-    fun prepareAdvertisementSet(advertisementSet: AdvertisementSet):AdvertisementSet{
-        when(advertisementSet.type){
-            // Continuity
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> return ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> return ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> return ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> return ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> return ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            else -> return advertisementSet
+    private fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet {
+        return when (advertisementSet.type) {
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            else -> advertisementSet
         }
     }
 
-    fun selectNextAdvertisementSet(){
+    private fun selectNextAdvertisementSet() {
         var nextAdvertisementSet: AdvertisementSet? = _currentAdvertisementSet
         var nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
         var nextAdvertisementSetIndex = _currentAdvertisementSetIndex
@@ -309,12 +309,6 @@ class AdvertisementSetQueueHandler(
         _currentAdvertisementSet = nextAdvertisementSet
         _currentAdvertisementSetListIndex = nextAdvertisementSetListIndex
         _currentAdvertisementSetIndex = nextAdvertisementSetIndex
-    }
-
-    private fun handleAdvertisementSet(advertisementSet: AdvertisementSet){
-        if(_active && _advertisementService != null){
-            _advertisementService!!.startAdvertisement(advertisementSet)
-        }
     }
 
     fun onAdvertisementSucceeded(){
