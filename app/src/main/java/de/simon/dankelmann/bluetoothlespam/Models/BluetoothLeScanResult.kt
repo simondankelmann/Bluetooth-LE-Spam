@@ -66,8 +66,11 @@ open class BluetoothLeScanResult {
             model.address = scanResult.device.address
 
             // get device data
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
-                if(scanResult.device != null && scanResult.device.name != null){
+            if (PermissionCheck.checkPermission(
+                    Manifest.permission.BLUETOOTH_CONNECT, AppContext.getContext()
+                )
+            ) {
+                if (scanResult.device != null && scanResult.device.name != null) {
                     model.deviceName = scanResult.device.name
                 }
             }

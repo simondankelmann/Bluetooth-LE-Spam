@@ -7,6 +7,7 @@ import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSet
 import android.bluetooth.le.AdvertisingSetCallback
 import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
@@ -21,7 +22,9 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementSer
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
-class ModernAdvertisementService: IAdvertisementService{
+class ModernAdvertisementService(
+    private val context: Context,
+): IAdvertisementService{
 
     // private
     private val _logTag = "AdvertisementService"
@@ -53,7 +56,7 @@ class ModernAdvertisementService: IAdvertisementService{
     override fun startAdvertisement(advertisementSet: AdvertisementSet) {
         if(_advertiser != null){
             if(advertisementSet.validate()){
-                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, context)){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
                     if(preparedAdvertisementSet.scanResponse != null){
                         _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse!!.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
@@ -79,8 +82,11 @@ class ModernAdvertisementService: IAdvertisementService{
 
     override fun stopAdvertisement() {
         if(_advertiser != null){
-            if(_currentAdvertisementSet != null){
-                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+            if (_currentAdvertisementSet != null) {
+                if (PermissionCheck.checkPermission(
+                        Manifest.permission.BLUETOOTH_ADVERTISE, context
+                    )
+                ) {
                     _advertiser!!.stopAdvertisingSet(_currentAdvertisementSet!!.advertisingSetCallback)
                     _currentAdvertisementSet = null
                 } else {

@@ -281,7 +281,7 @@ class StartFragment : Fragment() {
             } else {
                 addMissingRequirement("Bluetooth is disabled")
                 if (promptIfAdapterIsDisabled) {
-                    if (PermissionCheck.checkPermission(
+                    if (PermissionCheck.checkPermissionAndRequest(
                                 Manifest.permission.BLUETOOTH_CONNECT, activity
                             )
                         ) {
@@ -317,7 +317,7 @@ class StartFragment : Fragment() {
             var missingRequirementString =
                 "Permission " + permission.replace("android.permission.", "") + " not granted"
             val activity = requireActivity()
-            val isGranted = PermissionCheck.checkPermission(permission, activity, false)
+            val isGranted = PermissionCheck.checkPermissionAndRequest(permission, activity)
 
             if (isGranted) {
                removeMissingRequirement(missingRequirementString)
@@ -348,9 +348,8 @@ class StartFragment : Fragment() {
     }
 
     fun checkBackgroundLocationAccessPermission(promptForNotGranted:Boolean = false):Boolean{
-        val activity = requireActivity()
         val isGranted = PermissionCheck.checkPermission(
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity, false
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION, requireContext()
         )
         if (promptForNotGranted) {
             //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
@@ -379,9 +378,9 @@ class StartFragment : Fragment() {
         }
 
 
-        if(!AppContext.bluetoothLeScanServiceIsInitialized()){
+        if (!AppContext.bluetoothLeScanServiceIsInitialized()) {
             try {
-                val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService()
+                val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService(context)
                 AppContext.setBluetoothLeScanService(bluetoothLeScanService)
                 //BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
             } catch (e:Exception){

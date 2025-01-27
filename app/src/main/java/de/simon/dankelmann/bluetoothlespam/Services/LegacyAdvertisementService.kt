@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.Context
 import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
@@ -16,7 +17,9 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementSer
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
-class LegacyAdvertisementService: IAdvertisementService {
+class LegacyAdvertisementService(
+    private val context: Context,
+): IAdvertisementService {
 
     // private
     private val _logTag = "AdvertisementService"
@@ -34,11 +37,14 @@ class LegacyAdvertisementService: IAdvertisementService {
     }
 
     override fun startAdvertisement(advertisementSet:AdvertisementSet){
-        if(_advertiser != null){
-            if(advertisementSet.validate()){
-                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+        if(_advertiser != null) {
+            if (advertisementSet.validate()) {
+                if (PermissionCheck.checkPermission(
+                        Manifest.permission.BLUETOOTH_ADVERTISE, context
+                    )
+                ) {
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
-                    if(preparedAdvertisementSet.scanResponse != null){
+                    if (preparedAdvertisementSet.scanResponse != null) {
                         _advertiser!!.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse!!.build(), preparedAdvertisementSet.advertisingCallback)
                     } else {
                         _advertiser!!.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
@@ -61,8 +67,11 @@ class LegacyAdvertisementService: IAdvertisementService {
 
     override fun stopAdvertisement(){
         if(_advertiser != null){
-            if(_currentAdvertisementSet != null){
-                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
+            if(_currentAdvertisementSet != null) {
+                if (PermissionCheck.checkPermission(
+                        Manifest.permission.BLUETOOTH_ADVERTISE, context
+                    )
+                ) {
                     _advertiser!!.stopAdvertising(_currentAdvertisementSet!!.advertisingCallback)
 
                     _advertisementServiceCallbacks.map {

@@ -7,6 +7,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.ParcelUuid
@@ -30,7 +31,9 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
+class BluetoothLeScanService(
+    private val context: Context,
+) : IBluetoothLeScanService, ScanCallback() {
 
     private val _logTag = "BluetoothLeScanService"
     private var _bluetoothAdapter:BluetoothAdapter? = null
@@ -159,8 +162,8 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     }
 
     override fun startScanning(){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, AppContext.getActivity())){
-            if(_bluetoothLeScanner != null){
+        if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, context)) {
+            if (_bluetoothLeScanner != null) {
                 // SET THE FILTERS AND SETTINGS
                 val filterList:List<ScanFilter> = mutableListOf(ScanFilter.Builder().build())
 
@@ -173,9 +176,9 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
         }
     }
 
-    override fun stopScanning(){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, AppContext.getActivity())){
-            if(_bluetoothLeScanner != null) {
+    override fun stopScanning() {
+        if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, context)) {
+            if (_bluetoothLeScanner != null) {
                 _bluetoothLeScanner!!.stopScan(this)
                 Log.d(_logTag, "Stopped BLE Scan")
                 _scanning = false

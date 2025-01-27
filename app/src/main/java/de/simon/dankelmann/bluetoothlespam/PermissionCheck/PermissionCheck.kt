@@ -2,21 +2,32 @@ package de.simon.dankelmann.bluetoothlespam.PermissionCheck
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 
 class PermissionCheck (){
     companion object {
+
         private val _logTag = "PermissionCheck"
-        fun checkPermission(permission:String, activity: Activity, requestIfNotGranted:Boolean = true):Boolean{
-            if (permission == "android.permission.BLUETOOTH_ADVERTISE" && Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
-            {
+
+        fun checkPermissionAndRequest(permission: String, activity: Activity): Boolean {
+            val isGranted = checkPermission(permission, activity)
+            if (!isGranted) {
+                ActivityCompat.requestPermissions(
+                    activity, arrayOf(permission), Constants.REQUEST_CODE_SINGLE_PERMISSION
+                )
+            }
+            return isGranted
+        }
+
+        fun checkPermission(permission: String, context: Context): Boolean {
+            if (permission == "android.permission.BLUETOOTH_ADVERTISE" && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 // android.permission.BLUETOOTH_ADVERTISE was first introduced in api level 31
                 return true
             }
@@ -57,16 +68,7 @@ class PermissionCheck (){
                 return true
             }
 
-            if(ContextCompat.checkSelfPermission(AppContext.getContext(), permission) == PackageManager.PERMISSION_GRANTED){
-                //Log.d(_logTag, "Permission granted: $permission")
-                return true
-            } else {
-                if(requestIfNotGranted){
-                    ActivityCompat.requestPermissions(activity, arrayOf(permission), Constants.REQUEST_CODE_SINGLE_PERMISSION)
-                }
-            }
-            Log.d(_logTag, "Permission not granted: $permission")
-            return false
+            return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         }
 
         fun requireAllPermissions(activity: Activity, permissions: Array<String>){
