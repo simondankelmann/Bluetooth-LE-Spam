@@ -2,16 +2,10 @@ package de.simon.dankelmann.bluetoothlespam.Models
 
 import android.Manifest
 import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.os.ParcelUuid
-import android.util.Log
 import androidx.core.util.forEach
-import androidx.core.util.plus
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
-import java.sql.Time
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 open class BluetoothLeScanResult {
@@ -37,8 +31,10 @@ open class BluetoothLeScanResult {
     }
 
     companion object {
+
         private const val _logTag = "BluetoothLeScanResult"
-        fun parseFromScanResult(scanResult: ScanResult):BluetoothLeScanResult{
+
+        fun parseFromScanResult(context: Context, scanResult: ScanResult): BluetoothLeScanResult {
             var model = BluetoothLeScanResult()
 
             // get raw message
@@ -66,10 +62,7 @@ open class BluetoothLeScanResult {
             model.address = scanResult.device.address
 
             // get device data
-            if (PermissionCheck.checkPermission(
-                    Manifest.permission.BLUETOOTH_CONNECT, AppContext.getContext()
-                )
-            ) {
+            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, context)) {
                 if (scanResult.device != null && scanResult.device.name != null) {
                     model.deviceName = scanResult.device.name
                 }

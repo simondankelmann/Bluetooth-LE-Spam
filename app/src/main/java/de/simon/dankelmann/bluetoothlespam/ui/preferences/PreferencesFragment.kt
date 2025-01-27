@@ -5,27 +5,20 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
-import android.view.ContextMenu
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceFragmentCompat
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.R
 
 
-class PreferencesFragment: PreferenceFragmentCompat(), MenuProvider {
+class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
+
     private val _logTag = "PreferencesFragment"
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
@@ -47,21 +40,32 @@ class PreferencesFragment: PreferenceFragmentCompat(), MenuProvider {
 
     override fun onPrepareMenu(menu: Menu) {
         super.onPrepareMenu(menu)
-        val menuItems = listOf<MenuItem?>(menu?.findItem(R.id.nav_preferences), menu?.findItem(R.id.nav_set_tx_power))
+
+        val menuItems = listOf<MenuItem?>(
+            menu.findItem(R.id.nav_preferences),
+            menu.findItem(R.id.nav_set_tx_power)
+        )
+
+        val context = requireContext()
 
         menuItems.forEach { menuItem ->
             val actionSettingsMenuItem = menuItem
             val title = actionSettingsMenuItem?.title.toString()
             val spannable = SpannableString(title)
 
-            var textColor = resources.getColor(R.color.text_color, AppContext.getContext().theme)
+            var textColor = resources.getColor(R.color.text_color, context.theme)
 
-            if(menuItem?.itemId == R.id.nav_preferences) {
-                textColor = resources.getColor(R.color.text_color_light, AppContext.getContext().theme)
-                menuItem?.isEnabled = false
+            if (menuItem?.itemId == R.id.nav_preferences) {
+                textColor = resources.getColor(R.color.text_color_light, context.theme)
+                menuItem.isEnabled = false
             }
 
-            spannable.setSpan(ForegroundColorSpan(textColor), 0, spannable.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            spannable.setSpan(
+                ForegroundColorSpan(textColor),
+                0,
+                spannable.length,
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE
+            )
             actionSettingsMenuItem?.title = spannable
         }
     }

@@ -67,7 +67,7 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         _flipperDevicesRecyclerView = binding.spamDetectionFlipperDevicesList
         _spamPackageRecyclerView = binding.spamDetectionSpamPackageList
 
-        setupUi()
+        setupUi(root.context)
         setupFlipperDevicesListView()
         setupSpamPackagesListView(root.context)
 
@@ -81,30 +81,26 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         _binding = null
     }
 
-    fun setupUi() {
+    fun setupUi(context: Context) {
         // Views
         val toggleButton = binding.spamDetectorToggleButton
         val detectionAnimation = binding.spamDetectionAnimation
 
         // Listeners
         toggleButton.setOnClickListener {
-            onToggleButtonClicked()
+            onToggleButtonClicked(context)
         }
 
         // Observers
         viewModel.isDetecting.observe(viewLifecycleOwner) { isDetecting ->
             if (isDetecting) {
                 toggleButton.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources, R.drawable.pause, AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.pause, context.theme)
                 )
                 detectionAnimation.playAnimation()
             } else {
                 toggleButton.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources, R.drawable.play_arrow, AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.play_arrow, context.theme)
                 )
                 detectionAnimation.cancelAnimation()
                 detectionAnimation.frame = 0
@@ -177,15 +173,15 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
         }
     }
 
-    fun onToggleButtonClicked() {
+    fun onToggleButtonClicked(context: Context) {
         if (viewModel.isDetecting.value == true) {
-            BluetoothLeScanForegroundService.stopService(AppContext.getContext())
+            BluetoothLeScanForegroundService.stopService(context)
             //AppContext.getBluetoothLeScanService().stopScanning()
             Log.d(_logTag, "Should Stop")
             viewModel.isDetecting.postValue(false)
         } else {
             BluetoothLeScanForegroundService.startService(
-                AppContext.getContext(),
+                context,
                 "Bluetooth LE Scan Foreground Service started..."
             )
             //AppContext.getBluetoothLeScanService().startScanning()
