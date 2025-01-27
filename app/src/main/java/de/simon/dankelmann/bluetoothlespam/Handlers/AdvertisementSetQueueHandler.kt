@@ -1,5 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.Handlers
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -47,7 +48,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
             _advertisementService!!.addAdvertisementServiceCallback(this)
         }
 
-        setInterval(QueueHandlerHelpers.getInterval())
+        setInterval(QueueHandlerHelpers.getInterval(AppContext.getContext()))
     }
 
     fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
@@ -167,16 +168,16 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         }
     }
 
-    fun deactivate(stopService: Boolean = false){
+    fun deactivate(context: Context, stopService: Boolean = false) {
         _active = false
 
-        if(AppContext.getAdvertisementService() != null){
+        if (AppContext.getAdvertisementService() != null) {
             AppContext.getAdvertisementService().stopAdvertisement()
         }
 
         if(stopService){
             Log.d(_logTag, "Stopping Foreground Service")
-            AdvertisementForegroundService.stopService(AppContext.getActivity())
+            AdvertisementForegroundService.stopService(context)
         }
 
         _advertisementQueueHandlerCallbacks.forEach { it ->

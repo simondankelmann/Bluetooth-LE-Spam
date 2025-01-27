@@ -90,8 +90,8 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppContext.getActivity() != null) {
-            val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val mChannel = NotificationChannel(_channelId, _channelName, NotificationManager.IMPORTANCE_HIGH)
             mChannel.description = _channelDescription
             mChannel.enableLights(true)
@@ -122,7 +122,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
             subTitle
         )
 
-        return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
+        return NotificationCompat.Builder(this, _channelId)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(subTitle)
             .setSmallIcon(R.drawable.bluetooth)
@@ -139,7 +139,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     private fun updateNotification(title:String, subTitle: String, alertOnlyOnce:Boolean, id:Int){
         if(AppContext.getBluetoothLeScanService().isScanning()){
             val notification = createNotification(title, subTitle, alertOnlyOnce)
-            val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(id, notification)
         }
     }

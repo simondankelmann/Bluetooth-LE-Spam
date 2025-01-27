@@ -69,24 +69,24 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // Listen to Preference changes
-        var prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         sharedPreferenceChangedListener =
             OnSharedPreferenceChangeListener { sharedPreferences, key ->
                 run {
                     var legacyAdvertisingKey =
-                        AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)
+                        resources.getString(R.string.preference_key_use_legacy_advertising)
                     if (key == legacyAdvertisingKey) {
-                        val advertisementService = BluetoothHelpers.getAdvertisementService()
+                        val advertisementService = BluetoothHelpers.getAdvertisementService(this)
                         AppContext.setAdvertisementService(advertisementService)
                         AppContext.getAdvertisementSetQueueHandler()
                             .setAdvertisementService(advertisementService)
                     }
 
                     var intervalKey =
-                        AppContext.getActivity().resources.getString(R.string.preference_key_interval_advertising_queue_handler)
+                        resources.getString(R.string.preference_key_interval_advertising_queue_handler)
                     if (key == intervalKey) {
-                        var newInterval = QueueHandlerHelpers.getInterval()
+                        val newInterval = QueueHandlerHelpers.getInterval(this)
                         Log.d(_logTag, "Setting new Interval: $newInterval")
                         AppContext.getAdvertisementSetQueueHandler().setInterval(newInterval)
                     }

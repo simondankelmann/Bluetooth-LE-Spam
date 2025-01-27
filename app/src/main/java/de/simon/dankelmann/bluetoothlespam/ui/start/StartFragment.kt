@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam.ui.start
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -64,7 +65,7 @@ class StartFragment : Fragment() {
 
         checkRequiredPermissions(true)
         checkBluetoothAdapter(true)
-        checkAdvertisementService()
+        checkAdvertisementService(root.context)
         checkDatabase()
 
         return root
@@ -188,7 +189,7 @@ class StartFragment : Fragment() {
         // Service CardView
         val startFragmentServiceCardview: CardView = binding.startFragmentServiceCardview
         startFragmentServiceCardview.setOnClickListener {
-            checkAdvertisementService()
+            checkAdvertisementService(startFragmentServiceCardview.context)
         }
 
         // Service CardView Content
@@ -268,19 +269,22 @@ class StartFragment : Fragment() {
     }
 
     fun checkBluetoothAdapter(promptIfAdapterIsDisabled:Boolean = false){
-        var bluetoothIsReady = false
-        // Get Bluetooth Adapter
-        val bluetoothAdapter:BluetoothAdapter? = AppContext.getContext().bluetoothAdapter()
-        if(bluetoothAdapter != null){
+        val activity = requireActivity()
+        viewModel.bluetoothAdapterIsReady.postValue(false)
+
+        val bluetoothAdapter: BluetoothAdapter? = AppContext.getContext().bluetoothAdapter()
+        if (bluetoothAdapter != null) {
             removeMissingRequirement("Bluetooth Adapter not found")
-            // Check if Bluetooth Adapter is enabled
-                if(bluetoothAdapter.isEnabled){
-                    removeMissingRequirement("Bluetooth is disabled")
-                    bluetoothIsReady = true
-                } else {
-                    addMissingRequirement("Bluetooth is disabled")
-                    if(promptIfAdapterIsDisabled){
-                        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
+            if (bluetoothAdapter.isEnabled) {
+                removeMissingRequirement("Bluetooth is disabled")
+                viewModel.bluetoothAdapterIsReady.postValue(true)
+            } else {
+                addMissingRequirement("Bluetooth is disabled")
+                if (promptIfAdapterIsDisabled) {
+                    if (PermissionCheck.checkPermission(
+                                Manifest.permission.BLUETOOTH_CONNECT, activity
+                            )
+                        ) {
                             promptEnableBluetooth(bluetoothAdapter)
                         }
                     }
@@ -288,8 +292,6 @@ class StartFragment : Fragment() {
         } else {
             addMissingRequirement("Bluetooth Adapter not found")
         }
-
-        viewModel.bluetoothAdapterIsReady.postValue(bluetoothIsReady)
     }
 
     fun promptEnableBluetooth(bluetoothAdapter: BluetoothAdapter){
@@ -309,13 +311,15 @@ class StartFragment : Fragment() {
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
 
-        var notGrantedPermissions:MutableList<String> = mutableListOf()
+        val notGrantedPermissions: MutableList<String> = mutableListOf()
 
-        allPermissions.forEach {permission ->
-            var missingRequirementString = "Permission " + permission.replace("android.permission.", "") + " not granted"
-            val isGranted = PermissionCheck.checkPermission(permission, AppContext.getActivity(), false)
+        allPermissions.forEach { permission ->
+            var missingRequirementString =
+                "Permission " + permission.replace("android.permission.", "") + " not granted"
+            val activity = requireActivity()
+            val isGranted = PermissionCheck.checkPermission(permission, activity, false)
 
-            if(isGranted){
+            if (isGranted) {
                removeMissingRequirement(missingRequirementString)
             } else {
                 notGrantedPermissions.add(permission)
@@ -344,28 +348,29 @@ class StartFragment : Fragment() {
     }
 
     fun checkBackgroundLocationAccessPermission(promptForNotGranted:Boolean = false):Boolean{
-        val isGranted = PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, AppContext.getActivity(), false)
-        if(promptForNotGranted){
+        val activity = requireActivity()
+        val isGranted = PermissionCheck.checkPermission(
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity, false
+        )
+        if (promptForNotGranted) {
             //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
             activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
         }
         return isGranted
     }
 
-    private var activityResultLauncher: ActivityResultLauncher<Array<String>>
-    init{
-        this.activityResultLauncher = registerForActivityResult(
+    private var activityResultLauncher: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()) {result ->
             checkRequiredPermissions(false)
         }
-    }
 
-    fun checkAdvertisementService(){
+    fun checkAdvertisementService(context: Context){
         var advertisementServiceIsReady = true
 
         if(!AppContext.advertisementServiceIsInitialized()){
             try {
-                val advertisementService = BluetoothHelpers.getAdvertisementService()
+                val advertisementService = BluetoothHelpers.getAdvertisementService(context)
                 AppContext.setAdvertisementService(advertisementService)
             } catch (e:Exception){
                 addMissingRequirement("Advertisement Service not initialized")
