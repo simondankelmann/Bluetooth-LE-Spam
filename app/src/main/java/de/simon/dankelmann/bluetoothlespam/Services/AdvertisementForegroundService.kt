@@ -38,9 +38,8 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     private val _binder: IBinder = LocalBinder()
 
     companion object {
-        fun startService(context: Context, message: String) {
+        fun startService(context: Context) {
             val startIntent = Intent(context, AdvertisementForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
             ContextCompat.startForegroundService(context, startIntent)
         }
         fun stopService(context: Context) {

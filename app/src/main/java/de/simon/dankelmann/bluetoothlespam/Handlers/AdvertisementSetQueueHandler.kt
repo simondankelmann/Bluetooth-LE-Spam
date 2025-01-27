@@ -153,7 +153,7 @@ class AdvertisementSetQueueHandler(
         }
 
         _active = true
-        AdvertisementForegroundService.startService(context, "Foreground Service is running...")
+        AdvertisementForegroundService.startService(context)
         _advertisementQueueHandlerCallbacks.forEach { it ->
             try {
                 it.onQueueHandlerActivated()
