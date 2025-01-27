@@ -85,10 +85,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     fun onPlayButtonClicked(context: Context) {
         if (viewModel.isAdvertising.value == true) {
             AppContext.getAdvertisementSetQueueHandler().deactivate(context)
-            viewModel.isAdvertising.postValue(false)
         } else {
             AppContext.getAdvertisementSetQueueHandler().activate(context)
-            viewModel.isAdvertising.postValue(true)
         }
     }
 
