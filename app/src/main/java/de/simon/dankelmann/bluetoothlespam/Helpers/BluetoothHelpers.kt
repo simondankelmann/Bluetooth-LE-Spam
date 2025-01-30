@@ -41,15 +41,15 @@ class BluetoothHelpers {
             }
 
             return when (useLegacyAdvertisementService) {
-                true -> LegacyAdvertisementService()
+                true -> LegacyAdvertisementService(context)
                 else -> {
-                    ModernAdvertisementService()
+                    ModernAdvertisementService(context)
                 }
             }
         }
 
-        fun getBluetoothLeScanService(): IBluetoothLeScanService {
-            return BluetoothLeScanService()
+        fun getBluetoothLeScanService(context: Context): IBluetoothLeScanService {
+            return BluetoothLeScanService(context)
         }
     }
 }

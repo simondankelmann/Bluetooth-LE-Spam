@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
         AppContext.setContext(applicationContext)
-        AppContext.setActivity(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

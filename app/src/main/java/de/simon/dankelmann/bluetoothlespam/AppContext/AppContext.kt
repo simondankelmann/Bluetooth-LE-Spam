@@ -1,20 +1,16 @@
 package de.simon.dankelmann.bluetoothlespam.AppContext
 
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanService
 
 abstract class AppContext {
     companion object {
 
         private lateinit var _context: Context
-        private lateinit var _activity: Activity
         private lateinit var _advertisementService: IAdvertisementService
         private lateinit var _bluetoothLeScanService: IBluetoothLeScanService
         private lateinit var _advertisementSetQueueHandler: AdvertisementSetQueueHandler
@@ -39,14 +35,6 @@ abstract class AppContext {
 
         fun getContext(): Context {
             return _context
-        }
-
-        fun setActivity(activity: Activity) {
-            _activity = activity
-        }
-
-        fun getActivity(): Activity {
-            return _activity
         }
 
         fun setAdvertisementService(advertisementService: IAdvertisementService) {
