@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             val title = actionSettingsMenuItem?.title.toString()
             val spannable = SpannableString(title)
 
-            val textColor = resources.getColor(R.color.text_color, AppContext.getContext().theme)
+            val textColor = resources.getColor(R.color.text_color, theme)
             spannable.setSpan(
                 ForegroundColorSpan(textColor),
                 0,

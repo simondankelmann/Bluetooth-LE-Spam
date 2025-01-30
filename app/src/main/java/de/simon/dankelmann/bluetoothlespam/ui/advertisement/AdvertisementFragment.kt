@@ -51,7 +51,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         val root: View = binding.root
 
         _expandableListView = binding.advertisementFragmentCollectionExpandableListview
-        setupUi()
+        setupUi(root.context)
 
         return root
     }
@@ -60,7 +60,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         super.onResume()
         AppContext.getAdvertisementSetQueueHandler().addAdvertisementServiceCallback(this)
         AppContext.getAdvertisementSetQueueHandler().addAdvertisementQueueHandlerCallback(this)
-        syncWithQueueHandler()
+        syncWithQueueHandler(requireContext())
     }
 
     override fun onPause() {
@@ -76,8 +76,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         //AppContext.getAdvertisementSetQueueHandler().deactivate(true)
     }
 
-    private fun syncWithQueueHandler(){
-        setAdvertisementSetCollection(AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection())
+    private fun syncWithQueueHandler(context: Context){
+        setAdvertisementSetCollection(context, AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection())
         viewModel.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
         viewModel.isAdvertising.postValue(AppContext.getAdvertisementSetQueueHandler().isActive())
     }
@@ -92,13 +92,13 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         }
     }
 
-    fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection){
+    fun setAdvertisementSetCollection(context: Context, advertisementSetCollection: AdvertisementSetCollection){
         viewModel.advertisementSetCollectionTitle.postValue(advertisementSetCollection.title)
         viewModel.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(advertisementSetCollection))
         viewModel.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(advertisementSetCollection))
 
         // Update UI
-        setupExpandableListView(advertisementSetCollection)
+        setupExpandableListView(context, advertisementSetCollection)
 
         // Pass the Collection to the Queue Handler
         //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
@@ -126,7 +126,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         return hint
     }
 
-    private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
+    private fun setupExpandableListView(
+        context: Context,
+        advertisementSetCollection: AdvertisementSetCollection,
+    ) {
 
         Log.d(_logTag, "Collection: " + advertisementSetCollection.advertisementSetLists.count())
         // Setup grouped Data
@@ -136,7 +139,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             dataList[advertisementSetList] = advertisementSetList.advertisementSets
         }
 
-        _adapter = AdvertisementSetCollectionExpandableListViewAdapter(AppContext.getContext(),titleList,dataList)
+        _adapter = AdvertisementSetCollectionExpandableListViewAdapter(context,titleList,dataList)
         _expandableListView.setAdapter(_adapter)
 
         if(_adapter.advertisementSetLists.isNotEmpty() && advertisementSetCollection.advertisementSetLists.size == 1){
@@ -145,12 +148,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
         _expandableListView.setOnGroupExpandListener { groupPosition ->
             var advertisementSetList = titleList[groupPosition]
-            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Expanded.", Toast.LENGTH_SHORT).show()
         }
 
         _expandableListView.setOnGroupCollapseListener { groupPosition ->
             var advertisementSetList = titleList[groupPosition]
-            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Collapsed.", Toast.LENGTH_SHORT).show()
         }
 
         _expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
@@ -208,7 +209,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         viewModel.advertisementQueueMode.postValue(advertisementQueueMode)
     }
 
-    fun setupUi() {
+    fun setupUi(context: Context) {
         setupEdgeToEdge(binding.root, top = false)
 
         // Views
@@ -241,14 +242,14 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             if (isAdvertising) {
                 playButton.setImageDrawable(
                     ResourcesCompat.getDrawable(
-                        resources, R.drawable.pause, AppContext.getContext().theme
+                        resources, R.drawable.pause, context.theme
                     )
                 )
                 advertisingAnimation.playAnimation()
             } else {
                 playButton.setImageDrawable(
                     ResourcesCompat.getDrawable(
-                        resources, R.drawable.play_arrow, AppContext.getContext().theme
+                        resources, R.drawable.play_arrow, context.theme
                     )
                 )
                 advertisingAnimation.cancelAnimation()
@@ -259,7 +260,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         viewModel.target.observe(viewLifecycleOwner) { target ->
             binding.advertisementFragmentTargetImage.setImageDrawable(
                 ResourcesCompat.getDrawable(
-                    resources, target.getDrawableId(), AppContext.getContext().theme
+                    resources, target.getDrawableId(), context.theme
                 )
             )
         }
@@ -281,8 +282,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         }
 
         viewModel.advertisementQueueMode.observe(viewLifecycleOwner) { mode ->
-            val colorInactive = resources.getColor(R.color.text_color_light, AppContext.getContext().theme)
-            val colorActive = resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
+            val colorInactive = resources.getColor(R.color.text_color_light, context.theme)
+            val colorActive = resources.getColor(R.color.blue_normal, context.theme)
 
             queueModeButtonSingle.setColorFilter(colorInactive)
             queueModeButtonLinear.setColorFilter(colorInactive)
@@ -340,7 +341,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
         if(advertisementSet != null){
             highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_FAILED)
-            Toast.makeText(AppContext.getContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
         }
     }
     // END: AdvertismentServiceCallback

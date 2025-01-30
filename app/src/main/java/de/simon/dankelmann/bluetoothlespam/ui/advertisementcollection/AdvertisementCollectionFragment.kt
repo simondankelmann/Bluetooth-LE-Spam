@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -20,9 +21,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementCollectionBinding
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -67,6 +66,7 @@ class AdvertisementCollectionFragment : Fragment() {
         // Get Layout View
         val advertisementSetCollectionView: View =
             layoutInflater.inflate(R.layout.listitem_advertisement_collection_start, null)
+        val context = advertisementSetCollectionView.context
 
         // Insert Data
         var titleTextView: TextView =
@@ -84,10 +84,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Android"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.ic_android,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_android, context.theme)
                 )
             }
 
@@ -96,10 +93,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: iOS"
                 distanceTextView.text = "Distance: Mixed"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.apple,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.apple, context.theme)
                 )
             }
 
@@ -108,10 +102,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Samsung"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.samsung,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.samsung, context.theme)
                 )
             }
 
@@ -120,10 +111,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Windows"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.microsoft,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.microsoft, context.theme)
                 )
             }
 
@@ -132,10 +120,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: All"
                 distanceTextView.text = "Distance: Mixed"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.shuffle,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.shuffle, context.theme)
                 )
             }
 
@@ -144,10 +129,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: undefined"
                 distanceTextView.text = "Distance: Undefined"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.ic_info,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_info, context.theme)
                 )
             }
 
@@ -156,10 +138,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Lovespouse"
                 distanceTextView.text = "Distance: Far"
                 iconImageView.setImageDrawable(
-                    resources.getDrawable(
-                        R.drawable.heart,
-                        AppContext.getContext().theme
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.heart, context.theme)
                 )
             }
         }

@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
@@ -49,7 +50,7 @@ class StartFragment : Fragment() {
         _binding = FragmentStartBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        viewModel.appVersion.postValue(getAppVersion())
+        viewModel.appVersion.postValue(getAppVersion(root.context))
         viewModel.bluetoothSupport.postValue(getBluetoothSupportText())
 
         // register for bt enable callback
@@ -61,7 +62,7 @@ class StartFragment : Fragment() {
             }
         }
 
-        setupUi()
+        setupUi(root.context)
 
         checkRequiredPermissions(true)
         checkBluetoothAdapter(true)
@@ -76,9 +77,9 @@ class StartFragment : Fragment() {
         _binding = null
     }
 
-    fun getAppVersion():String?{
-        val manager = AppContext.getContext()!!.packageManager
-        val info = manager.getPackageInfo(AppContext.getContext().packageName, 0)
+    fun getAppVersion(context: Context): String? {
+        val manager = context.packageManager
+        val info = manager.getPackageInfo(context.packageName, 0)
         val version = info.versionName
         return version
     }
@@ -91,7 +92,7 @@ class StartFragment : Fragment() {
         }
     }
 
-    fun setupUi(){
+    fun setupUi(context: Context){
         // Seeding Animation
         val seedingAnimationView: View = binding.startFragmentDatabaseCardSeedingAnimation
         val databaseImageView: View = binding.startFragmentDatabaseCardIcon
@@ -160,13 +161,18 @@ class StartFragment : Fragment() {
             checkRequiredPermissions(true)
         }
 
+        val successBackground =
+            ResourcesCompat.getDrawable(resources, R.drawable.gradient_success, context.theme)
+        val errorBackground =
+            ResourcesCompat.getDrawable(resources, R.drawable.gradient_error, context.theme)
+
         // Permissions CardView Content
         val startFragmentPermissionCardViewContentWrapper: LinearLayout = binding.startFragmentPermissionCardViewContentWrapper
         viewModel.allPermissionsGranted.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentPermissionCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+                startFragmentPermissionCardViewContentWrapper.background = successBackground
             } else {
-                startFragmentPermissionCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+                startFragmentPermissionCardViewContentWrapper.background = errorBackground
             }
         }
 
@@ -180,9 +186,9 @@ class StartFragment : Fragment() {
         val startFragmentBluetoothCardViewContentWrapper: LinearLayout = binding.startFragmentBluetoothCardViewContentWrapper
         viewModel.bluetoothAdapterIsReady.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentBluetoothCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+                startFragmentBluetoothCardViewContentWrapper.background = successBackground
             } else {
-                startFragmentBluetoothCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+                startFragmentBluetoothCardViewContentWrapper.background = errorBackground
             }
         }
 
@@ -196,9 +202,9 @@ class StartFragment : Fragment() {
         val startFragmentServiceCardViewContentWrapper: LinearLayout = binding.startFragmentServiceCardViewContentWrapper
         viewModel.advertisementServiceIsReady.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+                startFragmentServiceCardViewContentWrapper.background = successBackground
             } else {
-                startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+                startFragmentServiceCardViewContentWrapper.background = errorBackground
             }
         }
 
@@ -212,9 +218,9 @@ class StartFragment : Fragment() {
         val startFragmentDatabaseCardViewContentWrapper: LinearLayout = binding.startFragmentDatabaseCardViewContentWrapper
         viewModel.databaseIsReady.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+                startFragmentDatabaseCardViewContentWrapper.background = successBackground
             } else {
-                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+                startFragmentDatabaseCardViewContentWrapper.background = errorBackground
             }
         }
     }
@@ -272,7 +278,7 @@ class StartFragment : Fragment() {
         val activity = requireActivity()
         viewModel.bluetoothAdapterIsReady.postValue(false)
 
-        val bluetoothAdapter: BluetoothAdapter? = AppContext.getContext().bluetoothAdapter()
+        val bluetoothAdapter: BluetoothAdapter? = activity.bluetoothAdapter()
         if (bluetoothAdapter != null) {
             removeMissingRequirement("Bluetooth Adapter not found")
             if (bluetoothAdapter.isEnabled) {
@@ -382,7 +388,6 @@ class StartFragment : Fragment() {
             try {
                 val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService(context)
                 AppContext.setBluetoothLeScanService(bluetoothLeScanService)
-                //BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
             } catch (e:Exception){
                 addMissingRequirement("Bluetooth LE Scan Service not initialized")
                 advertisementServiceIsReady = false

@@ -35,7 +35,7 @@ class ModernAdvertisementService(
     private var _txPowerLevel:TxPowerLevel? = null
 
     init {
-        _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
+        _bluetoothAdapter = context.bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _advertiser = _bluetoothAdapter!!.bluetoothLeAdvertiser
         }
