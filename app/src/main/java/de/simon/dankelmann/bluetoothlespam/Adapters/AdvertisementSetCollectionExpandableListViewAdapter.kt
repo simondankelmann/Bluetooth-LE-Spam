@@ -15,7 +15,7 @@ import de.simon.dankelmann.bluetoothlespam.databinding.ListItemAdvertisementList
 import de.simon.dankelmann.bluetoothlespam.databinding.ListItemAdvertisementSetBinding
 
 
-class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
+class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
     private val context: Context,
     val advertisementSetLists: List<AdvertisementSetList>,
     val dataList: HashMap<AdvertisementSetList, List<AdvertisementSet>>
@@ -52,25 +52,25 @@ class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
             holder = convertView.tag as ItemViewHolder
         }
 
-        var advertisementSet = getChild(listPosition, expandedListPosition) as AdvertisementSet
+        val advertisementSet = getChild(listPosition, expandedListPosition) as AdvertisementSet
 
-        var textColor = when(advertisementSet.currentlyAdvertising){
-            true -> AppContext.getActivity().resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
-            false -> AppContext.getActivity().resources.getColor(R.color.text_color, AppContext.getContext().theme)
+        var textColor = when (advertisementSet.currentlyAdvertising) {
+            true -> context.resources.getColor(R.color.blue_normal, context.theme)
+            false -> context.resources.getColor(R.color.text_color, context.theme)
         }
 
-        if(advertisementSet.currentlyAdvertising){
-            if(advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED){
-                textColor = AppContext.getActivity().resources.getColor(R.color.log_success, AppContext.getContext().theme)
-            } else if(advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_FAILED){
-                textColor = AppContext.getActivity().resources.getColor(R.color.log_error, AppContext.getContext().theme)
+        if (advertisementSet.currentlyAdvertising) {
+            if (advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_SUCCEEDED) {
+                textColor = context.resources.getColor(R.color.log_success, context.theme)
+            } else if (advertisementSet.advertisementState == AdvertisementState.ADVERTISEMENT_STATE_FAILED) {
+                textColor = context.resources.getColor(R.color.log_error, context.theme)
             }
         } else {
-            textColor = AppContext.getActivity().resources.getColor(R.color.text_color, AppContext.getContext().theme)
+            textColor = context.resources.getColor(R.color.text_color, context.theme)
         }
 
-        holder.label!!.text = advertisementSet.title
-        holder.label!!.setTextColor(textColor)
+        holder.label?.text = advertisementSet.title
+        holder.label?.setTextColor(textColor)
         return convertView
     }
 
@@ -90,7 +90,12 @@ class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
         return listPosition.toLong()
     }
 
-    override fun getGroupView(listPosition: Int, isExpanded: Boolean, view: View?, parent: ViewGroup): View {
+    override fun getGroupView(
+        listPosition: Int,
+        isExpanded: Boolean,
+        view: View?,
+        parent: ViewGroup
+    ): View {
         var convertView = view
         val holder: GroupViewHolder
 
@@ -104,17 +109,15 @@ class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
             holder = convertView.tag as GroupViewHolder
         }
 
-        var advertisementSetList = getGroup(listPosition) as AdvertisementSetList
+        val advertisementSetList = getGroup(listPosition) as AdvertisementSetList
 
-        var textColor = when(advertisementSetList.currentlyAdvertising){
-            true -> AppContext.getActivity().resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
-            false -> AppContext.getActivity().resources.getColor(R.color.text_color, AppContext.getContext().theme)
+        val textColor = when (advertisementSetList.currentlyAdvertising) {
+            true -> context.resources.getColor(R.color.blue_normal, context.theme)
+            false -> context.resources.getColor(R.color.text_color, context.theme)
         }
 
-        val listTitle = advertisementSetList.title
-
-        holder.label!!.text = listTitle
-        holder.label!!.setTextColor(textColor)
+        holder.label?.text = advertisementSetList.title
+        holder.label?.setTextColor(textColor)
 
         return convertView
     }

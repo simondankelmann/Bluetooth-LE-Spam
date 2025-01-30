@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
@@ -21,6 +22,7 @@ import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementCollectionBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -205,19 +207,21 @@ class AdvertisementCollectionFragment : Fragment() {
         advertisementSetTypes: List<AdvertisementSetType>,
         advertisementSetCollectionTitle: String
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        // TODO: Move this work into a ViewModel
+        lifecycleScope.launch(Dispatchers.IO) {
             // Run database work in background
             val advertisementSetCollection =
                 buildAdvertisementCollection(advertisementSetTypes, advertisementSetCollectionTitle)
 
-            AppContext.getActivity().runOnUiThread {
-                // Pass Collection to Advertisement Fragment
-                val navController =
-                    AppContext.getActivity().findNavController(R.id.nav_host_fragment)
-                AppContext.getAdvertisementSetQueueHandler().deactivate()
-                AppContext.getAdvertisementSetQueueHandler()
-                    .setAdvertisementSetCollection(advertisementSetCollection)
-                navController.navigate(R.id.action_ad_coll_to_ad)
+            activity?.let {
+                it.runOnUiThread {
+                    // Pass Collection to Advertisement Fragment
+                    val navController = it.findNavController(R.id.nav_host_fragment)
+                    AppContext.getAdvertisementSetQueueHandler().deactivate(it)
+                    AppContext.getAdvertisementSetQueueHandler()
+                        .setAdvertisementSetCollection(advertisementSetCollection)
+                    navController.navigate(R.id.action_ad_coll_to_ad)
+                }
             }
         }
     }

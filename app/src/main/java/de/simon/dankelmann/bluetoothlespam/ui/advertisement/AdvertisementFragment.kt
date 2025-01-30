@@ -1,5 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.ui.advertisement
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -81,9 +82,9 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         viewModel.isAdvertising.postValue(AppContext.getAdvertisementSetQueueHandler().isActive())
     }
 
-    fun onPlayButtonClicked(){
-        if(viewModel.isAdvertising.value == true){
-            AppContext.getAdvertisementSetQueueHandler().deactivate()
+    fun onPlayButtonClicked(context: Context) {
+        if (viewModel.isAdvertising.value == true) {
+            AppContext.getAdvertisementSetQueueHandler().deactivate(context)
             viewModel.isAdvertising.postValue(false)
         } else {
             AppContext.getAdvertisementSetQueueHandler().activate(true)
@@ -219,7 +220,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
         // Listeners
         playButton.setOnClickListener {
-            onPlayButtonClicked()
+            onPlayButtonClicked(playButton.context)
         }
         queueModeButtonSingle.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE)

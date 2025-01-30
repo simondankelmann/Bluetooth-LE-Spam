@@ -81,8 +81,8 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppContext.getActivity() != null) {
-            val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val mChannel = NotificationChannel(_channelId, _channelName, NotificationManager.IMPORTANCE_HIGH)
             mChannel.description = _channelDescription
             mChannel.enableLights(true)
@@ -129,13 +129,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             toggleImageSrc
         )
 
-        val targetIconColor =
-            resources.getColor(R.color.tint_target_icon, AppContext.getContext().theme)
-        val buttonActiveColor =
-            resources.getColor(R.color.tint_button_active, AppContext.getContext().theme)
-        val buttonInActiveColor =
-            resources.getColor(R.color.tint_button_inactive, AppContext.getContext().theme)
-
+        val targetIconColor = resources.getColor(R.color.tint_target_icon, theme)
+        val buttonActiveColor = resources.getColor(R.color.tint_button_active, theme)
+        val buttonInActiveColor = resources.getColor(R.color.tint_button_inactive, theme)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             notificationView.setColorInt(
@@ -181,14 +177,14 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             }
             notificationView.setTextColor(
                 R.id.advertisementForegroundServiceNotificationTitleTextView,
-                resources.getColor(titleColorRes, AppContext.getContext().theme)
+                resources.getColor(titleColorRes, theme)
             )
         }
 
         // Listeners for Custom Layout
-        val toggleIntent = Intent(AppContext.getActivity(), ToggleButtonListener::class.java)
+        val toggleIntent = Intent(this, ToggleButtonListener::class.java)
         val pendingToggleSwitchIntent = PendingIntent.getBroadcast(
-            AppContext.getActivity(),
+            this,
             0,
             toggleIntent,
             PendingIntent.FLAG_MUTABLE
@@ -199,9 +195,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             pendingToggleSwitchIntent
         )
 
-        val stopIntent = Intent(AppContext.getActivity(), StopButtonListener::class.java)
+        val stopIntent = Intent(this, StopButtonListener::class.java)
         val pendingStopSwitchIntent = PendingIntent.getBroadcast(
-            AppContext.getActivity(),
+            this,
             0,
             stopIntent,
             PendingIntent.FLAG_MUTABLE
@@ -215,7 +211,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         val appName = getString(R.string.app_name)
         val contentText = advertisementSet?.title ?: appName
 
-        return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
+        return NotificationCompat.Builder(this, _channelId)
             .setContentTitle(appName)
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
@@ -226,12 +222,13 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .setOnlyAlertOnce(true)
             .setCustomBigContentView(notificationView)
             .setCustomContentView(notificationView)
-            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE).build()
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
+            .build()
     }
 
     private fun updateNotification(advertisementSet: AdvertisementSet?){
         val notification = createNotification(advertisementSet)
-        val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notification)
     }
 
@@ -239,7 +236,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     class ToggleButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if(AppContext.getAdvertisementSetQueueHandler().isActive()){
-                AppContext.getAdvertisementSetQueueHandler().deactivate()
+                AppContext.getAdvertisementSetQueueHandler().deactivate(context)
             } else {
                 AppContext.getAdvertisementSetQueueHandler().activate()
             }
@@ -248,8 +245,8 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
     class StopButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            AppContext.getAdvertisementSetQueueHandler().deactivate()
-            stopService(AppContext.getActivity())
+            AppContext.getAdvertisementSetQueueHandler().deactivate(context)
+            stopService(context)
         }
     }
 

@@ -12,6 +12,7 @@ import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.ParcelUuid
 import android.util.Log
@@ -28,7 +29,10 @@ import de.simon.dankelmann.bluetoothlespam.R
 import java.util.UUID
 
 
-class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
+class BluetoothLeAdvertisementService(
+    _bluetoothAdapter: BluetoothAdapter,
+    private val context: Context,
+) {
 
     // private
     private val _bluetoothAdapter = _bluetoothAdapter
@@ -54,10 +58,10 @@ class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
     }
 
     private fun useAdvertisingWithSettings():Boolean{
-        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
-
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
+        val prefKey = context.resources.getString(R.string.preference_key_use_legacy_advertising)
         preferences.forEach {
-            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
+            if(it.key == prefKey){
                 val useAdvertisingWithSettings = it.value as Boolean
                 return !useAdvertisingWithSettings
             }
