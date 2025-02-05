@@ -50,7 +50,7 @@ class BluetoothLeScanService(
 
 
     init {
-        _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
+        _bluetoothAdapter = context.bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _bluetoothLeScanner = _bluetoothAdapter!!.bluetoothLeScanner
         }
@@ -196,7 +196,7 @@ class BluetoothLeScanService(
     override fun onScanResult(callbackType: Int, result: ScanResult?) {
         super.onScanResult(callbackType, result)
         if(result != null){
-            val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(result)
+            val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(context, result)
 
             // Check if its a Flipper
             if(BluetoothLeDeviceClassificationHelper.isFlipperDevice(bluetoothLeScanResult)){
