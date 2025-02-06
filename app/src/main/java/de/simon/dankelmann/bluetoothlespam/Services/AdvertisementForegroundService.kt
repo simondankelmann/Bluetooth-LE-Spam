@@ -38,13 +38,19 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     private val _binder: IBinder = LocalBinder()
 
     companion object {
+        private const val NOTIFICATION_ID = 1
+
         fun startService(context: Context) {
             val startIntent = Intent(context, AdvertisementForegroundService::class.java)
             ContextCompat.startForegroundService(context, startIntent)
         }
+
         fun stopService(context: Context) {
             val stopIntent = Intent(context, AdvertisementForegroundService::class.java)
             context.stopService(stopIntent)
+
+            val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(NOTIFICATION_ID)
         }
     }
 
@@ -53,7 +59,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
         createNotificationChannel()
 
-        startForeground(1, createNotification(null))
+        startForeground(NOTIFICATION_ID, createNotification(null))
 
         // Setup Callbacks
         AppContext.getAdvertisementService().addAdvertisementServiceCallback(this)
@@ -225,10 +231,10 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .build()
     }
 
-    private fun updateNotification(advertisementSet: AdvertisementSet?){
+    private fun updateNotification(advertisementSet: AdvertisementSet?) {
         val notification = createNotification(advertisementSet)
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, notification)
+        notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
     // Button Handlers
