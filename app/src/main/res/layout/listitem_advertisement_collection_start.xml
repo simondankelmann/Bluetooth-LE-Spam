@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:text="Title"
-                android:textColor="@color/text_color_card_view_alternative"
+                android:textColor="@color/text_color_card_view_accent"
                 android:textSize="@dimen/textSizeHeadline"
                 android:textStyle="bold" />
 
@@ -48,14 +48,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Target: -"
-                        android:textColor="@color/text_color_card_view_alternative_light" />
+                        android:textColor="@color/text_color_card_view_accent_light" />
 
                     <TextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Distance: Mixed"
-                        android:textColor="@color/text_color_card_view_alternative_light" />
+                        android:textColor="@color/text_color_card_view_accent_light" />
                 </LinearLayout>
 
                 <!-- Image Column -->
@@ -65,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_android"
-                    app:tint="@color/text_color_card_view_alternative_light" />
+                    app:tint="@color/text_color_card_view_accent_light" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
