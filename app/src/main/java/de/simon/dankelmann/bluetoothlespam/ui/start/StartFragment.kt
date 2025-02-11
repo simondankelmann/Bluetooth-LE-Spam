@@ -18,10 +18,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.isBluetooth5Supported
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
@@ -51,7 +52,7 @@ class StartFragment : Fragment() {
         val root: View = binding.root
 
         viewModel.appVersion.postValue(getAppVersion(root.context))
-        viewModel.bluetoothSupport.postValue(getBluetoothSupportText())
+        viewModel.bluetoothSupport.postValue(getBluetoothSupportText(root.context))
 
         // register for bt enable callback
         registerForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -84,8 +85,8 @@ class StartFragment : Fragment() {
         return version
     }
 
-    fun getBluetoothSupportText():String{
-        if(AppContext.isBluetooth5Supported()){
+    fun getBluetoothSupportText(context: Context): String {
+        if (context.isBluetooth5Supported()) {
             return "Modern & Legacy"
         } else {
             return "Legacy only"

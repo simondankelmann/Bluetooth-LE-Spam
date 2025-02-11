@@ -10,17 +10,9 @@ import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.os.ParcelUuid
 import android.util.Log
-import androidx.room.util.recursiveFetchArrayMap
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
-import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothLeDeviceClassificationHelper
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
@@ -28,7 +20,6 @@ import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class BluetoothLeScanService(
@@ -47,7 +38,6 @@ class BluetoothLeScanService(
     private val _millis_housekeeping_spam_packages:Long = 1000
     private val _millis_spam_package_lifetime = 5000
     private val _millis_flipper_device_lifetime = 5000
-
 
     init {
         _bluetoothAdapter = context.bluetoothAdapter()
