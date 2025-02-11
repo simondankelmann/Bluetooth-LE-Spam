@@ -6,9 +6,7 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 
@@ -48,10 +46,6 @@ class BluetoothHelpers {
                     ModernAdvertisementService(context)
                 }
             }
-        }
-
-        fun getBluetoothLeScanService(context: Context): IBluetoothLeScanService {
-            return BluetoothLeScanService(context)
         }
     }
 }

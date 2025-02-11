@@ -17,10 +17,10 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.Enums.SpamPackageType
+import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.stringRes
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
+import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
@@ -28,20 +28,23 @@ import de.simon.dankelmann.bluetoothlespam.R
 
 class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
-    private val _logTag = "AdvertisementScanForegroundService"
     private val _channelId = "BluetoothLeSpamScanService"
     private val _channelName = "Bluetooth Le Spam Scan Service"
     private val _channelDescription = "Bluetooth Le Spam Notifications"
+
     private val _binder: IBinder = LocalBinder()
+
     private var notifyOnNewSpam = true
     private var notifyOnNewFlipper = true
 
     companion object {
         private val _logTag = "AdvertisementScanForegroundService"
+
         fun startService(context: Context) {
             val startIntent = Intent(context, BluetoothLeScanForegroundService::class.java)
             ContextCompat.startForegroundService(context, startIntent)
         }
+
         fun stopService(context: Context) {
             val stopIntent = Intent(context, BluetoothLeScanForegroundService::class.java)
             context.stopService(stopIntent)
@@ -64,8 +67,11 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(_logTag, "Started BLE Scan Foreground Service")
-        AppContext.getBluetoothLeScanService().addBluetoothLeScanServiceCallback(this)
-        AppContext.getBluetoothLeScanService().startScanning()
+
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        scanService.addBluetoothLeScanServiceCallback(this)
+        scanService.startScanning()
+
         return START_STICKY
     }
 
@@ -79,12 +85,12 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onDestroy() {
+        Log.d(_logTag, "Destroying the Service")
         super.onDestroy()
-        // Stop Scanning
-        AppContext.getBluetoothLeScanService().stopScanning()
-        // Remove any Callbacks
-        AppContext.getBluetoothLeScanService().removeBluetoothLeScanServiceCallback(this)
-        Log.d(Companion._logTag, "Destroying the Service")
+
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        scanService.stopScanning()
+        scanService.removeBluetoothLeScanServiceCallback(this)
     }
 
     private fun createNotificationChannel() {
@@ -135,7 +141,8 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     private fun updateNotification(title:String, subTitle: String, alertOnlyOnce:Boolean, id:Int){
-        if(AppContext.getBluetoothLeScanService().isScanning()){
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        if (scanService.isScanning()) {
             val notification = createNotification(title, subTitle, alertOnlyOnce)
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(id, notification)
@@ -155,7 +162,8 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onFlipperListUpdated() {
-        if(AppContext.getBluetoothLeScanService().getFlipperDevicesList().isEmpty()){
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        if (scanService.getFlipperDevicesList().isEmpty()) {
             notifyOnNewFlipper = true
         }
     }
@@ -175,7 +183,8 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     }
 
     override fun onSpamResultPackageListUpdated() {
-        if (AppContext.getBluetoothLeScanService().getSpamPackageScanResultList().isEmpty()) {
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        if (scanService.getSpamPackageScanResultList().isEmpty()) {
             notifyOnNewSpam = true
         }
     }
