@@ -24,31 +24,44 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementForegroundService
 import kotlin.random.Random
 
-class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
+/**
+ * Handler that takes an advertisement set, and iterates over the set according to a given AdvertisementQueueMode.
+ *
+ * The job of this handler is to select the next set, and provide it to the IAdvertisementService.
+ *
+ * The UI code should drive the advertising via this handler (via start, stop, set advertisement set, set queue mode).
+ * This handler takes care of starting and stopping services as appropriate.
+ */
+class AdvertisementSetQueueHandler(
+    context: Context,
+    adService: IAdvertisementService,
+) : IAdvertisementServiceCallback {
 
-    // private
-    private var _logTag = "AdvertisementSetQueuHandler"
-    private var _advertisementService:IAdvertisementService? = null
-    private var _advertisementSetCollection:AdvertisementSetCollection = AdvertisementSetCollection()
-    private var _interval:Long = 1000
+    private var _logTag = "AdvertisementSetQueueHandler"
+
+    private var _advertisementService: IAdvertisementService = adService
+
+    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
+    private var _advertisementSetCollection: AdvertisementSetCollection =
+        AdvertisementSetCollection()
+    private var _intervalMillis: Long = QueueHandlerHelpers.getInterval(context)
+
+    // Callbacks to listen to events of the underlying advertisement service
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
+    // Callbacks to listen to queue events
     private var _advertisementQueueHandlerCallbacks:MutableList<IAdvertisementSetQueueHandlerCallback> = mutableListOf()
 
     private var _active = false
-    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
-
     private var _currentAdvertisementSet: AdvertisementSet? = null
     private var _currentAdvertisementSetListIndex = 0
     private var _currentAdvertisementSetIndex = 0
 
+    init {
+        _advertisementService.addAdvertisementServiceCallback(this)
+    }
 
-    init{
-        _advertisementService = AppContext.getAdvertisementService()
-        if(_advertisementService != null){
-            _advertisementService!!.addAdvertisementServiceCallback(this)
-        }
-
-        setInterval(QueueHandlerHelpers.getInterval(AppContext.getContext()))
+    fun isActive(): Boolean {
+        return _active
     }
 
     fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
@@ -59,16 +72,19 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         return _advertisementQueueMode
     }
 
-    fun setAdvertisementService(advertisementService: IAdvertisementService){
-        _advertisementService = advertisementService
-        _advertisementService!!.addAdvertisementServiceCallback(this)
-    }
-
-    fun setTxPowerLevel(txPowerLevel: TxPowerLevel){
-        if(_advertisementService != null){
-            _advertisementService!!.setTxPowerLevel(txPowerLevel)
+    fun setInterval(milliseconds: Long) {
+        if (milliseconds > 0) {
+            _intervalMillis = milliseconds
         }
     }
+
+    fun setAdvertisementService(advertisementService: IAdvertisementService) {
+        _advertisementService.removeAdvertisementServiceCallback(this)
+
+        _advertisementService = advertisementService
+        _advertisementService.addAdvertisementServiceCallback(this)
+    }
+
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
         if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex] != null){
@@ -134,48 +150,29 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         }
     }
 
-    fun setIntervalSeconds(seconds:Int){
-        _interval = (seconds * 1000).toLong()
-    }
-
-    fun setInterval(milliseconds:Int){
-        if(milliseconds > 0){
-            _interval = milliseconds.toLong()
+    fun activate(context: Context) {
+        if (_active) {
+            return
         }
-    }
 
-    fun activate(startService: Boolean = true){
-        if(!_active){
-            _active = true
-
-            if(startService){
-                AdvertisementForegroundService.startService(AppContext.getContext(), "Foreground Service is running...")
-            }
-
-            _advertisementQueueHandlerCallbacks.forEach { it ->
-                try {
-                    it.onQueueHandlerActivated()
-                } catch (e:Exception){
-                    Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerActivated")
-                }
-            }
-
-            if(_currentAdvertisementSet != null){
-                handleAdvertisementSet(_currentAdvertisementSet!!)
-            } else {
-                advertiseNextAdvertisementSet()
+        _active = true
+        AdvertisementForegroundService.startService(context)
+        _advertisementQueueHandlerCallbacks.forEach { it ->
+            try {
+                it.onQueueHandlerActivated()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerActivated: ${e.message}")
             }
         }
+        advertiseNextAdvertisementSet()
     }
 
     fun deactivate(context: Context, stopService: Boolean = false) {
         _active = false
 
-        if (AppContext.getAdvertisementService() != null) {
-            AppContext.getAdvertisementService().stopAdvertisement()
-        }
+        _advertisementService.stopAdvertisement()
 
-        if(stopService){
+        if (stopService) {
             Log.d(_logTag, "Stopping Foreground Service")
             AdvertisementForegroundService.stopService(context)
         }
@@ -183,36 +180,39 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         _advertisementQueueHandlerCallbacks.forEach { it ->
             try {
                 it.onQueueHandlerDeactivated()
-            } catch (e:Exception){
-                Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerDeactivated")
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerDeactivated: ${e.message}")
             }
         }
     }
 
-    fun advertiseNextAdvertisementSet(){
+    private fun advertiseNextAdvertisementSet() {
         selectNextAdvertisementSet()
-        if(_currentAdvertisementSet != null){
-            handleAdvertisementSet(prepareAdvertisementSet(_currentAdvertisementSet!!))
-        } else {
+
+        val nextSet = _currentAdvertisementSet
+        if (nextSet == null) {
             Log.e(_logTag, "Current Advertisement Set is null.")
+            return
+        }
+
+        if (_active) {
+            val preparedSet = prepareAdvertisementSet(nextSet)
+            _advertisementService.startAdvertisement(preparedSet)
         }
     }
 
-    fun prepareAdvertisementSet(advertisementSet: AdvertisementSet):AdvertisementSet{
-        when(advertisementSet.type){
-            // Continuity
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> return ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> return ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> return ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> return ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> return ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            else -> return advertisementSet
+    private fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet {
+        return when (advertisementSet.type) {
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            else -> advertisementSet
         }
     }
 
-    fun selectNextAdvertisementSet(){
+    private fun selectNextAdvertisementSet() {
         var nextAdvertisementSet: AdvertisementSet? = _currentAdvertisementSet
         var nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
         var nextAdvertisementSetIndex = _currentAdvertisementSetIndex
@@ -313,29 +313,17 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         _currentAdvertisementSetIndex = nextAdvertisementSetIndex
     }
 
-    private fun handleAdvertisementSet(advertisementSet: AdvertisementSet){
-        if(_active && _advertisementService != null){
-            _advertisementService!!.startAdvertisement(advertisementSet)
+    private fun onAdvertisementSucceeded() {
+        _advertisementService.stopAdvertisement()
+
+        if (_advertisementService.isLegacyService()) {
+            advertiseNextAdvertisementSet()
+        } else {
+            // Wait for the Stop Advertising Callback
         }
     }
 
-    fun isActive():Boolean{
-        return _active
-    }
-
-    fun onAdvertisementSucceeded(){
-        if(_advertisementService != null){
-            _advertisementService!!.stopAdvertisement()
-
-            if(_advertisementService!!.isLegacyService()){
-                advertiseNextAdvertisementSet()
-            } else {
-                // Wait for the Stop Advertising Callback
-            }
-        }
-    }
-
-    fun onAdvertisementFailed(){
+    private fun onAdvertisementFailed() {
         Log.d(_logTag, "Advertisement failed, trying again")
         onAdvertisementSucceeded()
     }
@@ -349,7 +337,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
                     onAdvertisementFailed()
                 }
             }
-        }, _interval)
+        }, _intervalMillis)
     }
 
     // Callback Implementation, just pass to own Listeners
@@ -372,7 +360,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
             }
         }
 
-        if(_advertisementService != null && !_advertisementService!!.isLegacyService()){
+        if (!_advertisementService.isLegacyService()) {
             advertiseNextAdvertisementSet()
         }
     }

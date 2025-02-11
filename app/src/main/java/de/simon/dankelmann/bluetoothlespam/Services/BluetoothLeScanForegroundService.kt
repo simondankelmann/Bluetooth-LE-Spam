@@ -38,10 +38,8 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     companion object {
         private val _logTag = "AdvertisementScanForegroundService"
-        fun startService(context: Context, message: String) {
+        fun startService(context: Context) {
             val startIntent = Intent(context, BluetoothLeScanForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
-            //AppContext.getActivity().startForegroundService(startIntent)
             ContextCompat.startForegroundService(context, startIntent)
         }
         fun stopService(context: Context) {
