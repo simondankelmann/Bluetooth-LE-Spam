@@ -384,17 +384,6 @@ class StartFragment : Fragment() {
             }
         }
 
-
-        if (!AppContext.bluetoothLeScanServiceIsInitialized()) {
-            try {
-                val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService(context)
-                AppContext.setBluetoothLeScanService(bluetoothLeScanService)
-            } catch (e:Exception){
-                addMissingRequirement("Bluetooth LE Scan Service not initialized")
-                advertisementServiceIsReady = false
-            }
-        }
-
         if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
             try {
                 val service = AppContext.getAdvertisementService()
