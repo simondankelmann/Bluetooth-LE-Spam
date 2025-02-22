@@ -17,6 +17,7 @@ class LogFileManager private constructor() {
     private var currentLogFile: File? = null
     private var logcatThread: Thread? = null
     private var isLogging = false
+    private var isLoggingEnabled = false
 
     companion object {
         @Volatile
@@ -29,12 +30,24 @@ class LogFileManager private constructor() {
         }
     }
 
+    fun enableLogging(context: Context) {
+        isLoggingEnabled = true
+        initializeLogFile(context)
+    }
+
+    fun disableLogging() {
+        isLoggingEnabled = false
+        stopLogging()
+    }
+
     fun initializeLogFile(context: Context) {
+        if (!isLoggingEnabled) return
+
         try {
             val timestamp = fileNameDateFormat.format(Date())
             val logFileName = "app_logs_${timestamp}.txt"
             
-            val directory = context.getExternalFilesDir(null)
+            val directory = getLogDirectory(context)
             directory?.mkdirs()
             
             currentLogFile = directory?.let { dir ->
@@ -95,6 +108,7 @@ class LogFileManager private constructor() {
         logcatThread?.join()
         logcatThread = null
     }
+
     private fun getLogFile(context: Context): File {
         return currentLogFile ?: run {
             initializeLogFile(context)
@@ -103,10 +117,12 @@ class LogFileManager private constructor() {
     }
 
     fun writeToLog(logEntry: LogEntryModel, context: Context) {
+        if (!isLoggingEnabled) return
         writeToLog(logEntry.message, logEntry.level.toString(), context)
     }
 
     private fun writeToLog(message: String, level: String, context: Context) {
+        if (!isLoggingEnabled) return
         try {
             val logFile = getLogFile(context)
             val timestamp = dateFormat.format(Date())
@@ -119,5 +135,9 @@ class LogFileManager private constructor() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun getLogDirectory(context: Context): File? {
+        return context.getExternalFilesDir(null)
     }
 }

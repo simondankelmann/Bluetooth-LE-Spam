@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="General Settings"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="enable_logging"
+            android:title="Enable Logging"
+            android:summary="Enable application logging"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="enable_notifications"
+            android:title="Enable Notifications"
+            android:summary="Show notifications for important events"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Advanced Settings"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            android:key="scan_interval"
+            android:title="Scan Interval"
+            android:summary="Set the interval for BLE scanning (in seconds)"
+            android:defaultValue="30"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:key="scan_mode"
+            android:title="Scan Mode"
+            android:summary="Select the BLE scan mode"
+            android:entries="@array/scan_mode_entries"
+            android:entryValues="@array/scan_mode_values"
+            android:defaultValue="balanced"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

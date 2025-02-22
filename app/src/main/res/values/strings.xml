@@ -62,4 +62,14 @@
     <string name="spam_detecting_title">Detecting Spam</string>
     <string name="spam_detecting_text">Detecting Flipper Zero and other devices</string>
     <string name="spam_detected_title">Spam Detected</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Enable Logging</string>
+    <string name="preference_summary_enable_logging">Enable application logging to external storage</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Open Log Folder</string>
+    <string name="preference_summary_open_log_folder">View application logs in external storage</string>
 </resources>

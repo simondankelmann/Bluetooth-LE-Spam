@@ -20,5 +20,16 @@
             android:title="Advertisement Duration (ms)" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Debug Settings">
+        <SwitchPreferenceCompat
+            app:key="@string/preference_key_enable_logging"
+            app:title="@string/preference_title_enable_logging"
+            app:summary="@string/preference_summary_enable_logging"
+            app:defaultValue="false" />
+        <Preference
+            app:key="@string/preference_key_open_log_folder"
+            app:title="@string/preference_title_open_log_folder"
+            app:summary="@string/preference_summary_open_log_folder" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
