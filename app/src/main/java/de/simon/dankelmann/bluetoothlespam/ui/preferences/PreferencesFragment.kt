@@ -1,29 +1,49 @@
 package de.simon.dankelmann.bluetoothlespam.ui.preferences
 
-
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
-import android.widget.Toast
-
+import de.simon.dankelmann.bluetoothlespam.Helpers.LogDirectoryPicker
+import de.simon.dankelmann.bluetoothlespam.R
+import java.io.File
 
 class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
 
     private val _logTag = "PreferencesFragment"
+    private lateinit var directoryPickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var logDirectoryPicker: LogDirectoryPicker
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        logDirectoryPicker = LogDirectoryPicker(requireActivity())
+        directoryPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { uri ->
+                    logDirectoryPicker.handleResult(uri)
+                }
+            }
+        }
+        logDirectoryPicker.initialize(directoryPickerLauncher)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
@@ -32,11 +52,16 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
         findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
             if (enabled) {
-                LogFileManager.getInstance().enableLogging(requireContext())
+                logDirectoryPicker.pickDirectory { directory ->
+                    LogFileManager.getInstance().setCustomLogDirectory(directory)
+                    LogFileManager.getInstance().initializeLogFile(requireContext())
+                    findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))?.isChecked = true
+                }
+                false // Don't update switch until directory is selected
             } else {
                 LogFileManager.getInstance().disableLogging()
+                true
             }
-            true
         }
 
         findPreference<Preference>(getString(R.string.preference_key_open_log_folder))?.setOnPreferenceClickListener {
@@ -67,7 +92,6 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val menuHost: MenuHost = requireActivity()
-
         menuHost.addMenuProvider(this, viewLifecycleOwner)
     }
 
