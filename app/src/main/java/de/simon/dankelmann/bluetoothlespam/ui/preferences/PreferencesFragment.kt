@@ -49,17 +49,19 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         // Set up logging switch listener
-        findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))?.setOnPreferenceChangeListener { _, newValue ->
+        val loggingSwitch = findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))
+        loggingSwitch?.isChecked = LogFileManager.getInstance().isLoggingEnabledAndValid()
+        loggingSwitch?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
             if (enabled) {
                 logDirectoryPicker.pickDirectory { directory ->
-                    LogFileManager.getInstance().setCustomLogDirectory(directory)
+                    LogFileManager.getInstance().setCustomLogDirectory(directory, requireContext())
                     LogFileManager.getInstance().initializeLogFile(requireContext())
-                    findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))?.isChecked = true
+                    loggingSwitch.isChecked = LogFileManager.getInstance().isLoggingEnabledAndValid()
                 }
                 false // Don't update switch until directory is selected
             } else {
-                LogFileManager.getInstance().disableLogging()
+                LogFileManager.getInstance().disableLogging(requireContext())
                 true
             }
         }

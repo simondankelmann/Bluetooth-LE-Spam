@@ -113,12 +113,18 @@ class LogDirectoryPicker(private val activity: FragmentActivity) {
         try {
             val path = uri.path ?: return null
             if (path.contains("primary:")) {
-                val basePath = "/storage/emulated/0/"
+                val basePath = Environment.getExternalStorageDirectory().absolutePath
                 val relativePath = path.substringAfter("primary:")
                     .split("/")
                     .filter { it.isNotEmpty() }
                     .joinToString("/")
-                return File(basePath, relativePath)
+                val file = File(basePath, relativePath)
+                return if (file.exists() || file.mkdirs()) {
+                    file
+                } else {
+                    Log.e(_logTag, "Failed to create directory: ${file.absolutePath}")
+                    null
+                }
             }
             return null
         } catch (e: Exception) {

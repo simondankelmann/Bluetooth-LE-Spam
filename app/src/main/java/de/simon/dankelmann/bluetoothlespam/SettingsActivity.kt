@@ -37,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             logDirectoryPicker = LogDirectoryPicker(requireActivity())
+            logFileManager.initialize(requireContext())
             directoryPickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     result.data?.data?.let { uri ->
@@ -58,11 +59,11 @@ class SettingsActivity : AppCompatActivity() {
             findPreference<SwitchPreferenceCompat>("enable_logging")?.setOnPreferenceChangeListener { _, newValue ->
                 if (newValue as Boolean) {
                     logDirectoryPicker.pickDirectory { directory ->
-                        logFileManager.setCustomLogDirectory(directory)
+                        logFileManager.setCustomLogDirectory(directory, requireContext())
                         logFileManager.initializeLogFile(requireContext())
                     }
                 } else {
-                    logFileManager.disableLogging()
+                    logFileManager.disableLogging(requireContext())
                 }
                 true
             }
