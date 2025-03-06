@@ -54,6 +54,10 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
         loggingSwitch?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
             if (enabled) {
+                // Check if we have any accessible directories first
+                val accessibleDirs = LogFileManager.getInstance().listAccessibleDirectories(requireContext())
+                Log.d(_logTag, "Available accessible directories: ${accessibleDirs.size}")
+                
                 logDirectoryPicker.pickDirectory { directory ->
                     LogFileManager.getInstance().setCustomLogDirectory(directory, requireContext())
                     LogFileManager.getInstance().initializeLogFile(requireContext())

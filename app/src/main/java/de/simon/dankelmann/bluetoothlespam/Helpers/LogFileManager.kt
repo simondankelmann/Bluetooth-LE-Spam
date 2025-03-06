@@ -53,27 +53,52 @@ class LogFileManager private constructor() {
                 if (savedLoggingEnabled && savedDirPath != null) {
                     val savedDir = File(savedDirPath)
                     if (savedDir.exists() && savedDir.canWrite()) {
-                        // Verify directory is actually writable by testing file creation
-                        val testFile = File(savedDir, ".test_write")
-                        try {
-                            if (testFile.createNewFile()) {
-                                testFile.delete() // Clean up test file
-                                customLogDirectory = savedDir
-                                isLoggingEnabled = true
-                                Log.d("LogFileManager", "Restored logging state with directory: ${savedDir.absolutePath}")
-                                return
-                            } else {
-                                Log.e("LogFileManager", "Failed write test in directory: ${savedDir.absolutePath}")
-                            }
-                        } catch (e: Exception) {
-                            Log.e("LogFileManager", "Error testing directory write access: ${e.message}")
-                        } finally {
-                            testFile.delete() // Ensure test file is cleaned up
-                        }
+                        customLogDirectory = savedDir
+                        isLoggingEnabled = true
+                        Log.d("LogFileManager", "Restored logging state with directory: ${savedDir.absolutePath}")
+                        return
                     } else {
                         Log.e("LogFileManager", "Saved directory is not accessible: ${savedDir.absolutePath}")
+                        // Don't clear logging state yet, try to create the directory
+                        try {
+                            if (savedDir.mkdirs() && savedDir.canWrite()) {
+                                customLogDirectory = savedDir
+                                isLoggingEnabled = true
+                                Log.d("LogFileManager", "Created and restored logging directory: ${savedDir.absolutePath}")
+                                return
+                            }
+                        } catch (e: Exception) {
+                            Log.e("LogFileManager", "Failed to create directory: ${e.message}")
+                        }
+                        clearLoggingState(context)
                     }
-                    clearLoggingState(context)
+                }
+                
+                // Also check the directory file as a backup method
+                val dirFile = File(context.dataDir, DIRECTORY_FILE_NAME)
+                if (dirFile.exists() && dirFile.canRead()) {
+                    try {
+                        val dirPath = dirFile.readText().trim()
+                        if (dirPath.isNotEmpty()) {
+                            val dir = File(dirPath)
+                            if ((dir.exists() || dir.mkdirs()) && dir.canWrite()) {
+                                customLogDirectory = dir
+                                isLoggingEnabled = true
+                                
+                                // Update SharedPreferences to ensure consistency
+                                prefs.edit().apply {
+                                    putString(KEY_CUSTOM_DIRECTORY, dir.absolutePath)
+                                    putBoolean(KEY_LOGGING_ENABLED, true)
+                                    commit()
+                                }
+                                
+                                Log.d("LogFileManager", "Restored logging state from backup file: ${dir.absolutePath}")
+                                return
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("LogFileManager", "Error reading directory file: ${e.message}")
+                    }
                 }
                 
                 Log.d("LogFileManager", "No valid logging state to restore. Last known directory: ${customLogDirectory?.absolutePath ?: "none"}")
@@ -90,11 +115,14 @@ class LogFileManager private constructor() {
     private fun clearLoggingState(context: Context) {
         isLoggingEnabled = false
         isLogging = false
-        customLogDirectory = null
+        // Don't clear customLogDirectory here, just update the flags
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
-            clear()
+            // Only clear logging state flags, preserve the directory path
+            putBoolean(KEY_LOGGING_ENABLED, false)
+            putBoolean(KEY_LOGGER_STATE, false)
             apply()
         }
+        Log.d("LogFileManager", "Logging state cleared but directory path preserved: ${customLogDirectory?.absolutePath}")
     }
 
     private fun isLogDirectoryValid(): Boolean {
@@ -106,88 +134,18 @@ class LogFileManager private constructor() {
     fun initialize(context: Context) {
         synchronized(this) {
             try {
-                // First restore the logging state
-                restoreLoggingState(context)
-                
                 // Stop any existing logging first
                 stopLogging()
                 
-                // Try to restore from SharedPreferences first
-                val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                val prefsDirPath = prefs.getString(KEY_CUSTOM_DIRECTORY, null)
-                val prefsLoggingEnabled = prefs.getBoolean(KEY_LOGGING_ENABLED, false)
+                // First try to restore from SharedPreferences
+                restoreLoggingState(context)
                 
-                // Then check the backup file
-                val dirFile = File(context.dataDir, DIRECTORY_FILE_NAME)
-                val fileDirPath = if (dirFile.exists()) {
-                    try {
-                        dirFile.readText().trim().takeIf { it.isNotEmpty() }
-                    } catch (e: Exception) {
-                        Log.e("LogFileManager", "Error reading backup file: ${e.message}")
-                        null
-                    }
-                } else null
-                
-                // Determine which path to use (prefer SharedPreferences, fall back to file)
-                val finalDirPath = when {
-                    prefsDirPath != null -> prefsDirPath
-                    fileDirPath != null -> fileDirPath
-                    else -> null
-                }
-                
-                if (finalDirPath != null) {
-                    val savedDir = File(finalDirPath)
-                    if (savedDir.exists() && savedDir.canWrite()) {
-                        // Ensure directory is actually writable by testing file creation
-                        val testFile = File(savedDir, ".test_write")
-                        try {
-                            if (testFile.createNewFile()) {
-                                testFile.delete() // Clean up test file
-                                
-                                // Synchronize both storage mechanisms
-                                dirFile.parentFile?.mkdirs() // Ensure parent directory exists
-                                dirFile.writeText(finalDirPath)
-                                
-                                prefs.edit().apply {
-                                    putString(KEY_CUSTOM_DIRECTORY, finalDirPath)
-                                    putBoolean(KEY_LOGGING_ENABLED, true)
-                                    putBoolean(KEY_LOGGER_STATE, true)
-                                    commit() // Use commit for immediate write
-                                }
-                                
-                                // Update memory state
-                                customLogDirectory = savedDir
-                                isLoggingEnabled = true
-                                
-                                try {
-                                    if (isLogDirectoryValid()) {
-                                        initializeLogFile(context)
-                                        startLogcatCapture(context)
-                                        Log.d("LogFileManager", "Logging initialized successfully with directory: ${savedDir.absolutePath}")
-                                        return
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e("LogFileManager", "Failed to initialize logging: ${e.message}")
-                                    e.printStackTrace()
-                                }
-                            } else {
-                                Log.e("LogFileManager", "Failed write test in directory: ${savedDir.absolutePath}")
-                            }
-                        } catch (e: Exception) {
-                            Log.e("LogFileManager", "Error testing directory write access: ${e.message}")
-                        } finally {
-                            testFile.delete() // Ensure test file is cleaned up
-                        }
-                    } else {
-                        Log.e("LogFileManager", "Saved directory is not accessible: ${savedDir.absolutePath}")
-                        // Clean up invalid state
-                        dirFile.delete()
-                        prefs.edit().apply {
-                            remove(KEY_CUSTOM_DIRECTORY)
-                            putBoolean(KEY_LOGGING_ENABLED, false)
-                            commit()
-                        }
-                    }
+                // If we have a valid directory after restoration, initialize logging
+                if (isLogDirectoryValid()) {
+                    initializeLogFile(context)
+                    startLogcatCapture(context)
+                    Log.d("LogFileManager", "Logging initialized successfully with directory: ${customLogDirectory?.absolutePath}")
+                    return
                 }
                 
                 // If we reach here, no valid state was found or initialization failed
@@ -219,17 +177,13 @@ class LogFileManager private constructor() {
                     throw IOException("No write permission for directory")
                 }
 
-                // Create a text file to store the directory path
+                // Create a text file to store the directory path as backup
                 val dirFile = File(context.dataDir, DIRECTORY_FILE_NAME)
                 try {
-                    // Ensure parent directory exists
-                    dirFile.parentFile?.mkdirs()
                     dirFile.writeText(directory.absolutePath)
-                    Log.d("LogFileManager", "Directory path saved to: ${dirFile.absolutePath}")
+                    Log.d("LogFileManager", "Directory path saved to backup file: ${dirFile.absolutePath}")
                 } catch (e: Exception) {
                     Log.e("LogFileManager", "Failed to write directory path to backup file: ${e.message}")
-                    e.printStackTrace()
-                    // Continue anyway as we'll still save to SharedPreferences
                 }
 
                 // Stop existing logging first to ensure clean state
@@ -238,7 +192,7 @@ class LogFileManager private constructor() {
                 // Save state to preferences BEFORE updating memory state
                 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 prefs.edit().apply {
-                    clear() // Clear any existing state first
+                    // Don't clear existing state, just update what we need
                     putString(KEY_CUSTOM_DIRECTORY, directory.absolutePath)
                     putBoolean(KEY_LOGGING_ENABLED, true)
                     putBoolean(KEY_LOGGER_STATE, true)
@@ -417,10 +371,6 @@ class LogFileManager private constructor() {
             }
         }
     }
-    
-    fun isLoggingEnabledAndValid(): Boolean {
-        return isLoggingEnabled && isLogDirectoryValid()
-    }
 
     fun disableLogging(context: Context) {
         synchronized(this) {
@@ -428,10 +378,12 @@ class LogFileManager private constructor() {
             isLoggingEnabled = false
             isLogging = false
             
-            // Clear all logging-related preferences
+            // Update preferences but preserve the directory path
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
-                clear()
-                commit() // Use commit instead of apply for immediate effect
+                // Don't clear the KEY_CUSTOM_DIRECTORY, just update the logging state
+                putBoolean(KEY_LOGGING_ENABLED, false)
+                putBoolean(KEY_LOGGER_STATE, false)
+                apply()
             }
             
             // Clean up resources
@@ -445,10 +397,10 @@ class LogFileManager private constructor() {
                 Log.e("LogFileManager", "Error cleaning up log file: ${e.message}")
             }
             
-            customLogDirectory = null
+            // Don't clear customLogDirectory, keep it for future use
             currentLogFile = null
             
-            Log.d("LogFileManager", "Logging disabled and resources cleaned up")
+            Log.d("LogFileManager", "Logging disabled but directory path preserved: ${customLogDirectory?.absolutePath}")
         }
     }
 
@@ -501,7 +453,7 @@ class LogFileManager private constructor() {
                     bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
 
                     var line: String?
-                    while (isLoggingEnabled && !Thread.currentThread().isInterrupted) {
+                    while (isLogging && !Thread.currentThread().isInterrupted) {
                         line = bufferedReader.readLine()
                         if (line == null) break
                         
@@ -516,7 +468,7 @@ class LogFileManager private constructor() {
                         }
 
                         synchronized(this) {
-                            if (isLoggingEnabled && currentLogFile?.exists() == true) {
+                            if (isLogging && currentLogFile?.exists() == true) {
                                 writeToLog(logLine, level, context)
                             }
                         }
@@ -532,9 +484,9 @@ class LogFileManager private constructor() {
                         Log.e("LogFileManager", "Error cleaning up resources: ${cleanupError.message}")
                     }
                     isLogging = false
-                    isLoggingEnabled = false
+                    // Don't set isLoggingEnabled to false here, as it will cause the directory to be forgotten
+                    // Only update the logger state in SharedPreferences
                     context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().apply {
-                        putBoolean(KEY_LOGGING_ENABLED, false)
                         putBoolean(KEY_LOGGER_STATE, false)
                         apply()
                     }
@@ -568,6 +520,45 @@ class LogFileManager private constructor() {
     fun writeToLog(logEntry: LogEntryModel, context: Context) {
         if (!isLoggingEnabled) return
         writeToLog(logEntry.message, logEntry.level.toString(), context)
+    }
+
+    fun listAccessibleDirectories(context: Context): List<File> {
+        val accessibleDirs = mutableListOf<File>()
+
+        // Check app's private directory
+        context.dataDir?.let { dataDir ->
+            if (dataDir.exists() && dataDir.canWrite()) {
+                accessibleDirs.add(dataDir)
+            }
+        }
+
+        // Check external storage directories
+        context.getExternalFilesDirs(null).forEach { externalDir ->
+            if (externalDir != null && externalDir.exists() && externalDir.canWrite()) {
+                accessibleDirs.add(externalDir)
+            }
+        }
+
+        // Check persisted URI permissions for directories
+        context.contentResolver.persistedUriPermissions.forEach { permission ->
+            try {
+                val docFile = DocumentFile.fromTreeUri(context, permission.uri)
+                if (docFile != null && docFile.exists() && docFile.canWrite()) {
+                    val path = permission.uri.path
+                    if (path != null) {
+                        val file = File(path)
+                        if (file.exists() && file.canWrite()) {
+                            accessibleDirs.add(file)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("LogFileManager", "Error accessing URI permission: ${e.message}")
+            }
+        }
+
+        Log.d("LogFileManager", "Found ${accessibleDirs.size} accessible directories")
+        return accessibleDirs
     }
 
     fun requestManageAllFilesAccess(context: Context) {
@@ -605,9 +596,8 @@ class LogFileManager private constructor() {
             prefs.edit().apply {
                 putBoolean(KEY_LOGGING_ENABLED, isLoggingEnabled)
                 putBoolean(KEY_LOGGER_STATE, isLogging)
-                if (!isLoggingEnabled) {
-                    remove(KEY_CUSTOM_DIRECTORY)
-                }
+                // Never remove the custom directory path, even when logging is disabled
+                // This ensures the directory path is preserved for future use
                 apply()
             }
 
