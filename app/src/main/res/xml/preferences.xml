@@ -30,6 +30,13 @@
             app:key="@string/preference_key_open_log_folder"
             app:title="@string/preference_title_open_log_folder"
             app:summary="@string/preference_summary_open_log_folder" />
+        <ListPreference
+            app:key="theme_mode"
+            app:title="Theme Mode"
+            app:summary="Select app theme mode"
+            app:entries="@array/theme_mode_entries"
+            app:entryValues="@array/theme_mode_values"
+            app:defaultValue="default" />
     </PreferenceCategory>
 
 </PreferenceScreen>

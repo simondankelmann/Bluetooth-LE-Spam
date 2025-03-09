@@ -19,10 +19,12 @@ import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.documentfile.provider.DocumentFile
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogDirectoryPicker
+import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
 import de.simon.dankelmann.bluetoothlespam.R
 import java.io.File
 
@@ -91,6 +93,14 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
             } ?: run {
                 Toast.makeText(requireContext(), "Log directory not available", Toast.LENGTH_SHORT).show()
             }
+            true
+        }
+        
+        // Set up theme mode preference
+        val themePreference = findPreference<ListPreference>("theme_mode")
+        themePreference?.setOnPreferenceChangeListener { _, newValue ->
+            val themeMode = newValue as String
+            ThemeManager.getInstance().setTheme(requireContext(), themeMode)
             true
         }
     }

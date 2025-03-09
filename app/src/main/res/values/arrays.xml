@@ -11,4 +11,16 @@
         <item>balanced</item>
         <item>low_latency</item>
     </string-array>
+    
+    <string-array name="theme_mode_entries">
+        <item>System Default</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="theme_mode_values">
+        <item>default</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
 </resources>
