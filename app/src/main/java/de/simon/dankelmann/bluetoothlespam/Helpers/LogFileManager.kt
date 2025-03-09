@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam.Helpers
 import android.content.Context
 import android.content.Intent
 import android.app.Activity
+import android.app.Application
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.FragmentActivity
@@ -23,7 +24,7 @@ import android.net.Uri
 import android.widget.Toast
 import android.content.SharedPreferences
 
-class LogFileManager private constructor() {
+class LogFileManager private constructor(context: Context) {
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     private val fileNameDateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault())
     private var currentLogFile: File? = null
@@ -41,10 +42,12 @@ class LogFileManager private constructor() {
     init {
         // Instance will be available during initialization
         instance = this
+        initialize(context)
     }
 
     private fun restoreLoggingState(context: Context) {
         synchronized(this) {
+            Log.d("LogFileManager", "Trying to restore")
             try {
                 val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 val savedLoggingEnabled = prefs.getBoolean(KEY_LOGGING_ENABLED, false)
@@ -133,6 +136,7 @@ class LogFileManager private constructor() {
 
     fun initialize(context: Context) {
         synchronized(this) {
+            Log.d("LogFileManager", "Initializing")
             try {
                 // Stop any existing logging first
                 stopLogging()
@@ -365,9 +369,9 @@ class LogFileManager private constructor() {
         private var instance: LogFileManager? = null
         const val FOLDER_PICKER_REQUEST_CODE = 1001
 
-        fun getInstance(): LogFileManager {
+        fun getInstance(context: Context): LogFileManager {
             return instance ?: synchronized(this) {
-                instance ?: LogFileManager().also { instance = it }
+                instance ?: LogFileManager(context).also { instance = it }
             }
         }
     }

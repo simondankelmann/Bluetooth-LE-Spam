@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Initialize log file
-        LogFileManager.getInstance().initializeLogFile(this)
+        LogFileManager.getInstance(applicationContext).initializeLogFile(this)
 
         // needs to be before setContentView
         enableEdgeToEdge()

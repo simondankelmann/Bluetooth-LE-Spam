@@ -50,29 +50,29 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
 
         // Set up logging switch listener
         val loggingSwitch = findPreference<androidx.preference.SwitchPreferenceCompat>(getString(R.string.preference_key_enable_logging))
-        loggingSwitch?.isChecked = LogFileManager.getInstance().isLoggingEnabledAndValid()
+        loggingSwitch?.isChecked = LogFileManager.getInstance(requireContext()).isLoggingEnabledAndValid()
         loggingSwitch?.setOnPreferenceChangeListener { _, newValue ->
             val enabled = newValue as Boolean
             if (enabled) {
                 // Check if we have any accessible directories first
-                val accessibleDirs = LogFileManager.getInstance().listAccessibleDirectories(requireContext())
+                val accessibleDirs = LogFileManager.getInstance(requireContext()).listAccessibleDirectories(requireContext())
                 Log.d(_logTag, "Available accessible directories: ${accessibleDirs.size}")
                 
                 logDirectoryPicker.pickDirectory { directory ->
-                    LogFileManager.getInstance().setCustomLogDirectory(directory, requireContext())
-                    LogFileManager.getInstance().initializeLogFile(requireContext())
-                    loggingSwitch.isChecked = LogFileManager.getInstance().isLoggingEnabledAndValid()
+                    LogFileManager.getInstance(requireContext()).setCustomLogDirectory(directory, requireContext())
+                    LogFileManager.getInstance(requireContext()).initializeLogFile(requireContext())
+                    loggingSwitch.isChecked = LogFileManager.getInstance(requireContext()).isLoggingEnabledAndValid()
                 }
                 false // Don't update switch until directory is selected
             } else {
-                LogFileManager.getInstance().disableLogging(requireContext())
+                LogFileManager.getInstance(requireContext()).disableLogging(requireContext())
                 true
             }
         }
 
         findPreference<Preference>(getString(R.string.preference_key_open_log_folder))?.setOnPreferenceClickListener {
             // Use LogFileManager to get the log directory
-            val logDir = LogFileManager.getInstance().getLogDirectory(requireContext())
+            val logDir = LogFileManager.getInstance(requireContext()).getLogDirectory(requireContext())
             logDir?.let { directory ->
                 try {
                     val intent = Intent(Intent.ACTION_VIEW)

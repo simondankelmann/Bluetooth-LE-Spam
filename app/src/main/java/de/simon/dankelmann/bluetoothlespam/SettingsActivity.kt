@@ -30,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-        private val logFileManager = LogFileManager.getInstance()
+        private val logFileManager = LogFileManager.getInstance(requireContext())
         private lateinit var logDirectoryPicker: LogDirectoryPicker
         private lateinit var directoryPickerLauncher: ActivityResultLauncher<Intent>
 
@@ -70,7 +70,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun openLogDirectory() {
-            val logDir = LogFileManager.getInstance().getLogDirectory(requireContext())
+            val logDir = LogFileManager.getInstance(requireContext()).getLogDirectory(requireContext())
             logDir?.let { directory ->
                 try {
                     val intent = Intent(Intent.ACTION_VIEW)
