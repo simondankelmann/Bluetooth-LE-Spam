@@ -136,8 +136,9 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             permissionLauncher.launch(locationPermission)
         }
         
+        settingsButton.text = "Close App"
         settingsButton.setOnClickListener {
-            openAppSettings()
+            activity.finishAffinity()
         }
         
         // Show dialog and make it persistent
@@ -215,8 +216,9 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             backgroundPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
         
+        settingsButton.text = "Close App"
         settingsButton.setOnClickListener {
-            openAppSettings()
+            activity.finishAffinity()
         }
         
         // Show dialog and make it persistent
