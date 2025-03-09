@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -14,6 +15,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import android.util.Log
@@ -24,6 +26,8 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
     private var dialog: Dialog? = null
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private lateinit var backgroundPermissionLauncher: ActivityResultLauncher<String>
+    private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+    private val PREF_KEY_DIALOG_SHOWN = "location_permission_dialog_shown"
     
     init {
         // Initialize permission launcher for foreground location
@@ -38,10 +42,12 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
                 } else {
                     // For older Android versions, foreground permission is sufficient
                     dismissDialog()
+                    setDialogShownPreference(false)
                 }
             } else {
                 // Permission still denied, keep dialog showing
                 showPermissionExplanationDialog()
+                setDialogShownPreference(true)
             }
         }
         
@@ -49,8 +55,14 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
         backgroundPermissionLauncher = activity.registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
-            // Whether granted or not, we dismiss the dialog as we've done all we can
             Log.d(TAG, "Background location permission granted: $isGranted")
+            if (isGranted) {
+                // Permission granted, no need to show dialog anymore
+                setDialogShownPreference(false)
+            } else {
+                // Permission denied, keep showing dialog on next app start
+                setDialogShownPreference(true)
+            }
             dismissDialog()
         }
     }
@@ -62,9 +74,31 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             Manifest.permission.ACCESS_FINE_LOCATION
         }
         
-        if (!PermissionCheck.checkPermission(locationPermission, activity)) {
+        // Check if we need background location permission
+        val needsBackgroundPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && 
+                !PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity)
+        
+        // If either permission is missing or dialog was previously shown but dismissed without granting
+        if (!PermissionCheck.checkPermission(locationPermission, activity) || 
+            (needsBackgroundPermission && shouldShowDialog())) {
             showPermissionExplanationDialog()
+            setDialogShownPreference(true)
+        } else if (needsBackgroundPermission) {
+            // If we only need background permission
+            showBackgroundPermissionExplanationDialog()
+            setDialogShownPreference(true)
+        } else {
+            // All permissions granted
+            setDialogShownPreference(false)
         }
+    }
+    
+    private fun shouldShowDialog(): Boolean {
+        return sharedPreferences.getBoolean(PREF_KEY_DIALOG_SHOWN, false)
+    }
+    
+    private fun setDialogShownPreference(shown: Boolean) {
+        sharedPreferences.edit().putBoolean(PREF_KEY_DIALOG_SHOWN, shown).apply()
     }
     
     private fun showPermissionExplanationDialog() {
@@ -72,7 +106,7 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             return
         }
         
-        dialog = Dialog(activity, android.R.style.Theme_Material_Light_Dialog_Alert)
+        dialog = Dialog(activity, R.style.Theme_BluetoothLESpam_Dialog)
         dialog!!.setContentView(R.layout.dialog_persistent_location_permission)
         
         // Prevent dialog from being dismissed by back button or touching outside
@@ -136,6 +170,7 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             } else {
                 // Already have background permission
                 dismissDialog()
+                setDialogShownPreference(false)
             }
         }
     }
@@ -145,7 +180,7 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
         dialog?.dismiss()
         
         // Create a new dialog for background permission explanation
-        dialog = Dialog(activity, android.R.style.Theme_Material_Light_Dialog_Alert)
+        dialog = Dialog(activity, R.style.Theme_BluetoothLESpam_Dialog)
         dialog!!.setContentView(R.layout.dialog_persistent_location_permission)
         
         // Prevent dialog from being dismissed by back button or touching outside
@@ -250,8 +285,21 @@ class PersistentLocationPermissionDialog(private val activity: AppCompatActivity
             Manifest.permission.ACCESS_FINE_LOCATION
         }
         
-        if (PermissionCheck.checkPermission(locationPermission, activity)) {
+        val backgroundPermissionNeeded = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        
+        if (PermissionCheck.checkPermission(locationPermission, activity) && 
+            (!backgroundPermissionNeeded || PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity))) {
+            // All permissions granted
             dismissDialog()
+            setDialogShownPreference(false)
+        } else if (shouldShowDialog()) {
+            // Still missing permissions and dialog should be shown
+            if (!PermissionCheck.checkPermission(locationPermission, activity)) {
+                showPermissionExplanationDialog()
+            } else if (backgroundPermissionNeeded && 
+                !PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity)) {
+                showBackgroundPermissionExplanationDialog()
+            }
         }
     }
 }
