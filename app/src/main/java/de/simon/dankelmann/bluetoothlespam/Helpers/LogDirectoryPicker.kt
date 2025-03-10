@@ -92,7 +92,8 @@ class LogDirectoryPicker(private val activity: FragmentActivity) {
                 Log.d(_logTag, "Getting DocumentFile from URI")
                 val documentFile = DocumentFile.fromTreeUri(activity, uri)
                 if (documentFile?.isDirectory == true && documentFile.canWrite()) {
-                    val selectedDir = getFileFromUri(uri)
+                    val path = getPathFromUri(uri)
+                    val selectedDir = if (path != null) File(path) else null
                     if (selectedDir != null && (selectedDir.exists() || selectedDir.mkdirs())) {
                         Log.d(_logTag, "Successfully created/accessed directory: ${selectedDir.absolutePath}")
                         onDirectorySelected?.invoke(selectedDir)
@@ -109,26 +110,30 @@ class LogDirectoryPicker(private val activity: FragmentActivity) {
         }
     }
 
-    private fun getFileFromUri(uri: Uri): File? {
+    private fun getPathFromUri(uri: Uri): String? {
         try {
-            val path = uri.path ?: return null
-            if (path.contains("primary:")) {
-                val basePath = Environment.getExternalStorageDirectory().absolutePath
-                val relativePath = path.substringAfter("primary:")
-                    .split("/")
-                    .filter { it.isNotEmpty() }
-                    .joinToString("/")
-                val file = File(basePath, relativePath)
-                return if (file.exists() || file.mkdirs()) {
-                    file
+            val docId = DocumentsContract.getTreeDocumentId(uri)
+            val split = docId.split(":")
+            if (split.size >= 2) {
+                val type = split[0]
+                var path = split[1]
+                if (type == "primary") {
+                    path = Environment.getExternalStorageDirectory().absolutePath + "/" + path
+                    Log.d(_logTag, "Resolved path: $path")
+                    return path
                 } else {
-                    Log.e(_logTag, "Failed to create directory: ${file.absolutePath}")
-                    null
+                    // Handle non-primary volumes
+                    val storageDir = File("/storage/", type)
+                    if (storageDir.exists()) {
+                        path = storageDir.absolutePath + "/" + path
+                        Log.d(_logTag, "Resolved path: $path")
+                        return path
+                    }
                 }
             }
             return null
         } catch (e: Exception) {
-            Log.e(_logTag, "Error converting URI to file path: ${e.message}")
+            Log.e(_logTag, "Error getting path from URI: ${e.message}")
             return null
         }
     }

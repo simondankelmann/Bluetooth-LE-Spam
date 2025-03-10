@@ -71,30 +71,6 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
                 true
             }
         }
-
-        findPreference<Preference>(getString(R.string.preference_key_open_log_folder))?.setOnPreferenceClickListener {
-            // Use LogFileManager to get the log directory
-            val logDir = LogFileManager.getInstance(requireContext()).getLogDirectory(requireContext())
-            logDir?.let { directory ->
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    val uri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "${requireContext().packageName}.provider",
-                        directory
-                    )
-                    intent.setDataAndType(uri, "*/*")
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(requireContext(), "Could not open log directory", Toast.LENGTH_SHORT).show()
-                }
-            } ?: run {
-                Toast.makeText(requireContext(), "Log directory not available", Toast.LENGTH_SHORT).show()
-            }
-            true
-        }
         
         // Set up theme mode preference
         val themePreference = findPreference<ListPreference>("theme_mode")
