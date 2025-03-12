@@ -195,8 +195,15 @@ class AdvertisementSetQueueHandler(
         }
 
         if (_active) {
-            val preparedSet = prepareAdvertisementSet(nextSet)
-            _advertisementService.startAdvertisement(preparedSet)
+            // Only advertise if the set is checked
+            if (nextSet.isChecked) {
+                val preparedSet = prepareAdvertisementSet(nextSet)
+                _advertisementService.startAdvertisement(preparedSet)
+            } else {
+                // If the set is not checked, immediately move to the next one
+                Log.d(_logTag, "Skipping unchecked advertisement set: ${nextSet.title}")
+                onAdvertisementSucceeded()
+            }
         }
     }
 
@@ -223,9 +230,19 @@ class AdvertisementSetQueueHandler(
                     if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
                         val firstList = _advertisementSetCollection.advertisementSetLists.first()
                         if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
+                            // Find the first checked advertisement set
+                            val firstCheckedIndex = firstList.advertisementSets.indexOfFirst { it.isChecked }
+                            if (firstCheckedIndex >= 0) {
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = firstCheckedIndex
+                                nextAdvertisementSet = firstList.advertisementSets[firstCheckedIndex]
+                            } else {
+                                // If no checked items, use the first one but don't advertise
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = 0
+                                nextAdvertisementSet = firstList.advertisementSets.first()
+                                nextAdvertisementSet.isChecked = false
+                            }
                         }
                     }
                 }
@@ -235,36 +252,76 @@ class AdvertisementSetQueueHandler(
                 // If no AdvertisementSet is selected, select the first set in the first list
                 if(_currentAdvertisementSet == null){
                     if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
-                        val firstList = _advertisementSetCollection.advertisementSetLists.first()
-                        if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
+                        // Find the first list with checked items
+                        for (listIndex in _advertisementSetCollection.advertisementSetLists.indices) {
+                            val list = _advertisementSetCollection.advertisementSetLists[listIndex]
+                            val firstCheckedIndex = list.advertisementSets.indexOfFirst { it.isChecked }
+                            if (firstCheckedIndex >= 0) {
+                                nextAdvertisementSetListIndex = listIndex
+                                nextAdvertisementSetIndex = firstCheckedIndex
+                                nextAdvertisementSet = list.advertisementSets[firstCheckedIndex]
+                                break
+                            }
+                        }
+                        
+                        // If no checked items found, use the first item but don't advertise
+                        if (nextAdvertisementSet == null && _advertisementSetCollection.advertisementSetLists.isNotEmpty()) {
+                            val firstList = _advertisementSetCollection.advertisementSetLists.first()
+                            if (firstList.advertisementSets.isNotEmpty()) {
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = 0
+                                nextAdvertisementSet = firstList.advertisementSets.first()
+                            }
                         }
                     }
                 } else {
                     var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
                     Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
-                    if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
-                        // SET ADVERTISEMENT SET INDEX TO 0
-                        nextAdvertisementSetIndex = 0
-
-                        // SELECT NEXT LIST
-                        if(_currentAdvertisementSetListIndex >= (_advertisementSetCollection.advertisementSetLists.count() - 1)){
-                            nextAdvertisementSetListIndex = 0
-                        } else {
-                            nextAdvertisementSetListIndex++
+                    
+                    // Find the next checked item in the current list
+                    var foundNextChecked = false
+                    for (i in (_currentAdvertisementSetIndex + 1) until selectedList.advertisementSets.size) {
+                        if (selectedList.advertisementSets[i].isChecked) {
+                            nextAdvertisementSetIndex = i
+                            nextAdvertisementSet = selectedList.advertisementSets[i]
+                            foundNextChecked = true
+                            break
                         }
-
-                        selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
-
-                        // SET THE ITEM
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    } else {
-                        nextAdvertisementSetIndex++
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
                     }
-
+                    
+                    // If we didn't find a checked item in the current list, move to the next list
+                    if (!foundNextChecked) {
+                        // Find the next list with checked items
+                        var nextListFound = false
+                        var startListIndex = _currentAdvertisementSetListIndex
+                        
+                        // Loop through lists starting from the next one
+                        for (listOffset in 1.._advertisementSetCollection.advertisementSetLists.size) {
+                            val listIndex = (startListIndex + listOffset) % _advertisementSetCollection.advertisementSetLists.size
+                            val list = _advertisementSetCollection.advertisementSetLists[listIndex]
+                            
+                            // Find the first checked item in this list
+                            val firstCheckedIndex = list.advertisementSets.indexOfFirst { it.isChecked }
+                            if (firstCheckedIndex >= 0) {
+                                nextAdvertisementSetListIndex = listIndex
+                                nextAdvertisementSetIndex = firstCheckedIndex
+                                nextAdvertisementSet = list.advertisementSets[firstCheckedIndex]
+                                nextListFound = true
+                                break
+                            }
+                        }
+                        
+                        // If no checked items found in any list, go back to the first list and first item
+                        if (!nextListFound) {
+                            // If we've gone through all lists and found no checked items, start over
+                            val firstList = _advertisementSetCollection.advertisementSetLists.first()
+                            if (firstList.advertisementSets.isNotEmpty()) {
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = 0
+                                nextAdvertisementSet = firstList.advertisementSets.first()
+                            }
+                        }
+                    }
                 }
             }
 
@@ -274,36 +331,82 @@ class AdvertisementSetQueueHandler(
                     if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
                         val firstList = _advertisementSetCollection.advertisementSetLists.first()
                         if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
+                            // Find the first checked advertisement set
+                            val firstCheckedIndex = firstList.advertisementSets.indexOfFirst { it.isChecked }
+                            if (firstCheckedIndex >= 0) {
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = firstCheckedIndex
+                                nextAdvertisementSet = firstList.advertisementSets[firstCheckedIndex]
+                            } else {
+                                // If no checked items, use the first one but don't advertise
+                                nextAdvertisementSetListIndex = 0
+                                nextAdvertisementSetIndex = 0
+                                nextAdvertisementSet = firstList.advertisementSets.first()
+                            }
                         }
                     }
                 } else {
                     var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
                     Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
-                    if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
-                        // SET ADVERTISEMENT SET INDEX TO 0
-                        nextAdvertisementSetIndex = 0
-
-                        selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
-
-                        // SET THE ITEM
-                        nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    } else {
-                        nextAdvertisementSetIndex++
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
+                    
+                    // Find the next checked item in the current list
+                    var foundNextChecked = false
+                    for (i in (_currentAdvertisementSetIndex + 1) until selectedList.advertisementSets.size) {
+                        if (selectedList.advertisementSets[i].isChecked) {
+                            nextAdvertisementSetIndex = i
+                            nextAdvertisementSet = selectedList.advertisementSets[i]
+                            foundNextChecked = true
+                            break
+                        }
                     }
-
+                    
+                    // If we didn't find a checked item, loop back to the beginning of the same list
+                    if (!foundNextChecked) {
+                        // Loop through the current list from the beginning
+                        for (i in 0.._currentAdvertisementSetIndex) {
+                            if (selectedList.advertisementSets[i].isChecked) {
+                                nextAdvertisementSetIndex = i
+                                nextAdvertisementSet = selectedList.advertisementSets[i]
+                                foundNextChecked = true
+                                break
+                            }
+                        }
+                        
+                        // If still no checked items found, keep the current item but don't advertise
+                        if (!foundNextChecked) {
+                            nextAdvertisementSetIndex = 0
+                            nextAdvertisementSet = selectedList.advertisementSets[0]
+                        }
+                    }
                 }
             }
 
             AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> {
-                nextAdvertisementSetListIndex = Random.nextInt(_advertisementSetCollection.advertisementSetLists.size);
-                val nextAdvertisementSetList = _advertisementSetCollection.advertisementSetLists.get(nextAdvertisementSetListIndex)
-                nextAdvertisementSetIndex = Random.nextInt(nextAdvertisementSetList.advertisementSets.size)
-                nextAdvertisementSet = nextAdvertisementSetList.advertisementSets[nextAdvertisementSetIndex]
+                // Create a list of all checked advertisement sets across all lists
+                val checkedSets = mutableListOf<Triple<Int, Int, AdvertisementSet>>()
+                
+                _advertisementSetCollection.advertisementSetLists.forEachIndexed { listIndex, list ->
+                    list.advertisementSets.forEachIndexed { setIndex, set ->
+                        if (set.isChecked) {
+                            checkedSets.add(Triple(listIndex, setIndex, set))
+                        }
+                    }
+                }
+                
+                // If we have checked items, randomly select one of them
+                if (checkedSets.isNotEmpty()) {
+                    val randomIndex = Random.nextInt(checkedSets.size)
+                    val selected = checkedSets[randomIndex]
+                    nextAdvertisementSetListIndex = selected.first
+                    nextAdvertisementSetIndex = selected.second
+                    nextAdvertisementSet = selected.third
+                } else {
+                    // If no checked items, just pick a random one but don't advertise it
+                    nextAdvertisementSetListIndex = Random.nextInt(_advertisementSetCollection.advertisementSetLists.size)
+                    val nextAdvertisementSetList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
+                    nextAdvertisementSetIndex = Random.nextInt(nextAdvertisementSetList.advertisementSets.size)
+                    nextAdvertisementSet = nextAdvertisementSetList.advertisementSets[nextAdvertisementSetIndex]
+                }
             }
         }
 

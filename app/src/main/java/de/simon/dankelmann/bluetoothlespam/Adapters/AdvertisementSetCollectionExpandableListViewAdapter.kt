@@ -47,6 +47,7 @@ class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
             convertView = itemBinding.root
             holder = ItemViewHolder()
             holder.label = itemBinding.listItemAdvertisementSetTextView
+            holder.checkbox = itemBinding.checkboxAdvertisementSet
             convertView.tag = holder
         } else {
             holder = convertView.tag as ItemViewHolder
@@ -71,6 +72,18 @@ class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
 
         holder.label?.text = advertisementSet.title
         holder.label?.setTextColor(textColor)
+        
+        // Set checkbox state from the model
+        holder.checkbox?.isChecked = advertisementSet.isChecked
+        
+        // Add listener to update the model when checkbox state changes
+        holder.checkbox?.setOnClickListener { view ->
+            val isChecked = (view as android.widget.CheckBox).isChecked
+            advertisementSet.isChecked = isChecked
+            // Prevent the click from propagating to the parent view
+            view.isPressed = false
+        }
+        
         return convertView
     }
 
@@ -104,6 +117,7 @@ class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
             convertView = groupBinding.root
             holder = GroupViewHolder()
             holder.label = groupBinding.listItemAdvertisementSetList
+            holder.checkbox = groupBinding.checkboxAdvertisementList
             convertView.tag = holder
         } else {
             holder = convertView.tag as GroupViewHolder
@@ -118,6 +132,26 @@ class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
 
         holder.label?.text = advertisementSetList.title
         holder.label?.setTextColor(textColor)
+        
+        // Set initial checkbox state based on children's state
+        val allChildrenChecked = dataList[advertisementSetList]?.all { it.isChecked } ?: false
+        holder.checkbox?.isChecked = allChildrenChecked
+        
+        // Handle checkbox click to update all children and prevent interference with group expansion
+        holder.checkbox?.setOnClickListener { view ->
+            val isChecked = (view as android.widget.CheckBox).isChecked
+            
+            // Update all children in this group
+            dataList[advertisementSetList]?.forEach { advertisementSet ->
+                advertisementSet.isChecked = isChecked
+            }
+            
+            // Notify data set changed to refresh all child views
+            notifyDataSetChanged()
+            
+            // Prevent the click from propagating to the parent view
+            view.isPressed = false
+        }
 
         return convertView
     }
@@ -132,10 +166,12 @@ class AdvertisementSetCollectionExpandableListViewAdapter internal constructor(
 
     inner class ItemViewHolder {
         internal var label: TextView? = null
+        internal var checkbox: android.widget.CheckBox? = null
     }
 
     inner class GroupViewHolder {
         internal var label: TextView? = null
+        internal var checkbox: android.widget.CheckBox? = null
     }
 }
 
@@ -229,10 +265,12 @@ class AdvertisementSetCollectionExpandableListViewAdapter  internal constructor(
 
     inner class ItemViewHolder {
         internal var label: TextView? = null
+        internal var checkbox: android.widget.CheckBox? = null
     }
 
     inner class GroupViewHolder {
         internal var label: TextView? = null
+        internal var checkbox: android.widget.CheckBox? = null
     }
 }
 */
