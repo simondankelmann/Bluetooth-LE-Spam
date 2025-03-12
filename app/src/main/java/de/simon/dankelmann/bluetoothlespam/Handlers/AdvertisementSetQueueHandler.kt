@@ -149,8 +149,27 @@ class AdvertisementSetQueueHandler(
         }
     }
 
+    fun hasCheckedItems(): Boolean {
+        // Check if any advertisement set is checked
+        for (list in _advertisementSetCollection.advertisementSetLists) {
+            for (set in list.advertisementSets) {
+                if (set.isChecked) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     fun activate(context: Context) {
         if (_active) {
+            return
+        }
+
+        // Check if any items are selected before activating
+        if (!hasCheckedItems()) {
+            // Show toast message if no items are selected
+            android.widget.Toast.makeText(context, "No items selected", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
 
