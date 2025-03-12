@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.1"
 kotlin = "2.1.0"
 core = "1.15.0"
 preference = "1.2.1"

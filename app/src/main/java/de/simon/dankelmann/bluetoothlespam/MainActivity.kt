@@ -21,6 +21,8 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -37,10 +39,13 @@ import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
 import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
+import android.app.Activity
+import de.simon.dankelmann.bluetoothlespam.Dialogs.PersistentLocationPermissionDialog
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,6 +57,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize log file
+        LogFileManager.getInstance(applicationContext).initializeLogFile(this)
 
         // needs to be before setContentView
         enableEdgeToEdge()
@@ -66,6 +74,10 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        
+        // Check for location permission and show persistent dialog if needed
+        persistentLocationPermissionDialog = PersistentLocationPermissionDialog(this)
+        persistentLocationPermissionDialog.checkAndRequestLocationPermission()
 
         // Listen to Preference changes
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -142,11 +154,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val enableBluetoothLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Bluetooth enabled successfully
+        }
+    }
+
     private fun promptEnableBluetooth() {
         if (!bluetoothAdapter.isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, this)) {
-                startActivityForResult(enableBtIntent, Constants.REQUEST_CODE_ENABLE_BLUETOOTH)
+                enableBluetoothLauncher.launch(enableBtIntent)
             }
         }
     }
@@ -250,5 +270,17 @@ class MainActivity : AppCompatActivity() {
             .setView(dialogLayout)
             .setPositiveButton(getString(android.R.string.ok), null)
             .show()
+    }
+    
+    // Handle permission dialog when returning from settings
+    private lateinit var persistentLocationPermissionDialog: PersistentLocationPermissionDialog
+    
+    override fun onResume() {
+        super.onResume()
+        
+        // Check if permission has been granted when returning from settings
+        if (::persistentLocationPermissionDialog.isInitialized) {
+            persistentLocationPermissionDialog.onResume()
+        }
     }
 }

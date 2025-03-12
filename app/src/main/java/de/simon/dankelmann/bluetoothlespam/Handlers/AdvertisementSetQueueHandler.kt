@@ -87,12 +87,11 @@ class AdvertisementSetQueueHandler(
 
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
-        if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex] != null){
-            if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex].advertisementSets[advertisementSetIndex] != null){
-                _currentAdvertisementSetListIndex = advertisementSetListIndex
-                _currentAdvertisementSetIndex = advertisementSetIndex
-                _currentAdvertisementSet = _advertisementSetCollection.advertisementSetLists[advertisementSetListIndex].advertisementSets[advertisementSetIndex]
-            }
+        val advertisementSet = _advertisementSetCollection.advertisementSetLists[advertisementSetListIndex]?.advertisementSets?.get(advertisementSetIndex)
+        if (advertisementSet != null) {
+            _currentAdvertisementSetListIndex = advertisementSetListIndex
+            _currentAdvertisementSetIndex = advertisementSetIndex
+            _currentAdvertisementSet = advertisementSet
         }
     }
 
