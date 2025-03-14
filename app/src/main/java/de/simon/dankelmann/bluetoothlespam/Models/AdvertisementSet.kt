@@ -36,6 +36,7 @@ class AdvertisementSet : Serializable {
     // Ui Data
     var currentlyAdvertising = false
     var advertisementState = AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED
+    var isChecked = true // Default to true to maintain backward compatibility
 
     fun validate():Boolean{
         //@todo: implement checks here

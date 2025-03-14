@@ -3,25 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-
-    <CheckBox
-        android:id="@+id/checkboxAdvertisementSet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:checked="true"
-        android:focusable="false"
-        android:clickable="true" />
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/listItemAdvertisementSetTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="10dp"
-        android:paddingStart="8dp"
         android:textSize="@dimen/textSizeHeadline4"
         android:text="Item"/>
 
