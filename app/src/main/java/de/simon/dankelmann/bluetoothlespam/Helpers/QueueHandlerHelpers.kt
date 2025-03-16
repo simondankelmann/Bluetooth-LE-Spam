@@ -12,6 +12,9 @@ class QueueHandlerHelpers {
         private var cachedInterval: Long? = null
 
         fun getInterval(context: Context): Long {
+            // Always clear the cache to ensure we get the latest value from preferences
+            clearCache()
+            
             cachedInterval?.let { return it }
 
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
