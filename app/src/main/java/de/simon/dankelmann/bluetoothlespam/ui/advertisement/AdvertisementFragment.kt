@@ -213,26 +213,18 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
         // Views
         var playButton = binding.advertisementFragmentPlayButton
-        var queueModeButtonSingle = binding.advertisementFragmentQueueModeSingleButton
         var queueModeButtonLinear = binding.advertisementFragmentQueueModeLinearButton
         var queueModeButtonRandom = binding.advertisementFragmentQueueModeRandomButton
-        var queueModeButtonList = binding.advertisementFragmentQueueModeListButton
 
         // Listeners
         playButton.setOnClickListener {
             onPlayButtonClicked(playButton.context)
-        }
-        queueModeButtonSingle.setOnClickListener{
-            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE)
         }
         queueModeButtonLinear.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR)
         }
         queueModeButtonRandom.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
-        }
-        queueModeButtonList.setOnClickListener{
-            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST)
         }
 
         // Observers
@@ -284,16 +276,12 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             val colorInactive = resources.getColor(R.color.text_color_light, context.theme)
             val colorActive = resources.getColor(R.color.blue_normal, context.theme)
 
-            queueModeButtonSingle.setColorFilter(colorInactive)
             queueModeButtonLinear.setColorFilter(colorInactive)
             queueModeButtonRandom.setColorFilter(colorInactive)
-            queueModeButtonList.setColorFilter(colorInactive)
 
-            when(mode){
-                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> queueModeButtonSingle.setColorFilter(colorActive)
+            when (mode) {
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> queueModeButtonLinear.setColorFilter(colorActive)
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> queueModeButtonRandom.setColorFilter(colorActive)
-                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> queueModeButtonList.setColorFilter(colorActive)
             }
         }
     }
