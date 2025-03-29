@@ -8,35 +8,25 @@ import de.simon.dankelmann.bluetoothlespam.R
 
 class QueueHandlerHelpers {
     companion object {
-        private const val _logTag = "QueueHandlerHelpers"
-        private var cachedInterval: Long? = null
+        private const val TAG = "QueueHandlerHelpers"
 
         fun getInterval(context: Context): Long {
-            // Always clear the cache to ensure we get the latest value from preferences
-            clearCache()
-            
-            cachedInterval?.let { return it }
-
-            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-            val prefKey = context.resources.getString(R.string.preference_key_interval_advertising_queue_handler)
-            val intervalString = preferences.getString(prefKey, "1000")
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val prefKey =
+                context.resources.getString(R.string.preference_key_interval_advertising_queue_handler)
+            val intervalString = prefs.getString(prefKey, "1000")
 
             return try {
                 val parsedInterval = intervalString?.toLong() ?: 1000L
                 if (parsedInterval > 0) {
-                    cachedInterval = parsedInterval
                     parsedInterval
                 } else {
                     1000L
                 }
             } catch (e: NumberFormatException) {
-                Log.d(_logTag, "Invalid interval specified: $intervalString")
+                Log.d(TAG, "Invalid interval specified: $intervalString")
                 1000L
             }
-        }
-
-        fun clearCache() {
-            cachedInterval = null
         }
     }
 }
