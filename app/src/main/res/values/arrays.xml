@@ -13,9 +13,9 @@
     </string-array>
     
     <string-array name="theme_mode_entries">
-        <item>System Default</item>
-        <item>Light</item>
-        <item>Dark</item>
+        <item>@string/preference_theme_mode_follow_system</item>
+        <item>@string/preference_theme_mode_light</item>
+        <item>@string/preference_theme_mode_dark</item>
     </string-array>
 
     <string-array name="theme_mode_values">

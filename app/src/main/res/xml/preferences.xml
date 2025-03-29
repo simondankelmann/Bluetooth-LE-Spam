@@ -26,10 +26,10 @@
             app:title="@string/preference_title_enable_logging"
             app:summary="@string/preference_summary_enable_logging"
             app:defaultValue="false" />
+
         <ListPreference
             app:key="theme_mode"
-            app:title="Theme Mode"
-            app:summary="Select app theme mode"
+            app:title="@string/preference_theme_mode"
             app:entries="@array/theme_mode_entries"
             app:entryValues="@array/theme_mode_values"
             app:defaultValue="default" />

@@ -14,9 +14,9 @@ class BleSpamApplication : Application() {
         // Apply the user's theme preference before calling super.onCreate()
         // to ensure the theme is set before any UI is created
         ThemeManager.getInstance().applyTheme(this)
-        
+
         super.onCreate()
 
         scanService = BluetoothLeScanService(this)
-}
+    }
 }
