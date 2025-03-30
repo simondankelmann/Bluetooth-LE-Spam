@@ -1,13 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -21,10 +14,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.onNavDestinationSelected
@@ -39,10 +29,8 @@ import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
-import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
 import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
-import android.app.Activity
 
 
 class MainActivity : AppCompatActivity() {
@@ -124,42 +112,6 @@ class MainActivity : AppCompatActivity() {
                     -> binding.bottomNav.visibility = View.VISIBLE
 
                 else -> binding.bottomNav.visibility = View.GONE
-            }
-        }
-    }
-
-    private val bluetoothAdapter: BluetoothAdapter by lazy {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothManager.adapter
-    }
-
-    fun Context.hasPermission(permissionType: String): Boolean {
-        return ContextCompat.checkSelfPermission(this, permissionType) ==
-                PackageManager.PERMISSION_GRANTED
-    }
-
-    fun Context.hasRequiredRuntimePermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            hasPermission(Manifest.permission.BLUETOOTH_SCAN) &&
-                    hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
-        } else {
-            hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    private val enableBluetoothLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // Bluetooth enabled successfully
-        }
-    }
-
-    private fun promptEnableBluetooth() {
-        if (!bluetoothAdapter.isEnabled) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, this)) {
-                enableBluetoothLauncher.launch(enableBtIntent)
             }
         }
     }
