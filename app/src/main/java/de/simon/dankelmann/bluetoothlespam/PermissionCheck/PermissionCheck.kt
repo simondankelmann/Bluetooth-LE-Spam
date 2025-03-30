@@ -1,5 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.PermissionCheck
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -8,10 +9,30 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 
-class PermissionCheck (){
+class PermissionCheck() {
     companion object {
 
         private val _logTag = "PermissionCheck"
+
+        /**
+         * Gets a list of permissions that are relevant for the SDK level we are running on.
+         */
+        fun getAllRelevantPermissions(): List<String> {
+            val allPermissions = mutableListOf<String>(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_ADVERTISE,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                allPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
+            return allPermissions
+        }
 
         fun checkPermissionAndRequest(permission: String, activity: Activity): Boolean {
             val isGranted = checkPermission(permission, activity)

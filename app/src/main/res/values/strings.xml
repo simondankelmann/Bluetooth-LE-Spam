@@ -82,4 +82,9 @@
     <!-- Toasts -->
     <string name="toast_no_items_selected">No items selected</string>
 
+    <!-- Permissions -->
+    <string name="missing_permissions_title">Missing Permissions</string>
+    <string name="missing_permissions_text">Some permissions are missing. Without them, Bluetooth LE Spam will not work properly.</string>
+    <string name="missing_permissions_grant">Grant Permissions</string>
+
 </resources>

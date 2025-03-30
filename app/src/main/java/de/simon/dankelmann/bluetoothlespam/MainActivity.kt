@@ -24,7 +24,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -35,7 +34,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
@@ -45,7 +43,6 @@ import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
 import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
 import android.app.Activity
-import de.simon.dankelmann.bluetoothlespam.Dialogs.PersistentLocationPermissionDialog
 
 
 class MainActivity : AppCompatActivity() {
@@ -74,10 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        
-        // Check for location permission and show persistent dialog if needed
-        persistentLocationPermissionDialog = PersistentLocationPermissionDialog(this)
-        persistentLocationPermissionDialog.checkAndRequestLocationPermission()
 
         // Listen to Preference changes
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -270,17 +263,5 @@ class MainActivity : AppCompatActivity() {
             .setView(dialogLayout)
             .setPositiveButton(getString(android.R.string.ok), null)
             .show()
-    }
-    
-    // Handle permission dialog when returning from settings
-    private lateinit var persistentLocationPermissionDialog: PersistentLocationPermissionDialog
-    
-    override fun onResume() {
-        super.onResume()
-        
-        // Check if permission has been granted when returning from settings
-        if (::persistentLocationPermissionDialog.isInitialized) {
-            persistentLocationPermissionDialog.onResume()
-        }
     }
 }
