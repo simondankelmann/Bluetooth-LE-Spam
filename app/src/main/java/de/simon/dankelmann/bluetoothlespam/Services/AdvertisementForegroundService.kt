@@ -17,7 +17,7 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavDeepLinkBuilder
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
@@ -62,8 +62,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         startForeground(NOTIFICATION_ID, createNotification(null))
 
         // Setup Callbacks
-        AppContext.getAdvertisementService().addAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().addAdvertisementQueueHandlerCallback(this)
+        val app = applicationContext as BleSpamApplication
+        app.advertisementService.addAdvertisementServiceCallback(this)
+        app.queueHandler.addAdvertisementQueueHandlerCallback(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -80,8 +81,10 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     }
 
     override fun onDestroy() {
-        AppContext.getAdvertisementService().removeAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementQueueHandlerCallback(this)
+        val app = applicationContext as BleSpamApplication
+        app.advertisementService.removeAdvertisementServiceCallback(this)
+        app.queueHandler.removeAdvertisementQueueHandlerCallback(this)
+
         super.onDestroy()
     }
 
@@ -108,7 +111,8 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
-        val toggleImageSrc = when (AppContext.getAdvertisementSetQueueHandler().isActive()) {
+        val app = applicationContext as BleSpamApplication
+        val toggleImageSrc = when (app.queueHandler.isActive()) {
             true -> R.drawable.pause
             false -> R.drawable.play_arrow
         }
@@ -240,18 +244,14 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     // Button Handlers
     class ToggleButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val queue = AppContext.getAdvertisementSetQueueHandler()
-            if (queue.isActive()) {
-                queue.deactivate(context)
-            } else {
-                queue.activate(context)
-            }
+            (context.applicationContext as BleSpamApplication).queueHandler.toggle(context)
         }
     }
 
     class StopButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            AppContext.getAdvertisementSetQueueHandler().deactivate(context, true)
+            (context.applicationContext as BleSpamApplication)
+                .queueHandler.deactivate(context, true)
             stopService(context)
         }
     }

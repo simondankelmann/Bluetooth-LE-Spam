@@ -161,6 +161,14 @@ class AdvertisementSetQueueHandler(
         return false
     }
 
+    fun toggle(context: Context) {
+        if (_active) {
+            deactivate(context)
+        } else {
+            activate(context)
+        }
+    }
+
     fun activate(context: Context) {
         if (_active) {
             return

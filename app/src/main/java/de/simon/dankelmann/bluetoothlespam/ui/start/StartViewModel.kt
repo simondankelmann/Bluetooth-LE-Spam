@@ -17,8 +17,6 @@ class StartViewModel : ViewModel() {
 
     val bluetoothAdapterIsReady = MutableLiveData<Boolean>(false)
 
-    val advertisementServiceIsReady = MutableLiveData<Boolean>(false)
-
     val databaseIsReady = MutableLiveData<Boolean>(false)
 
     val missingRequirements = MutableLiveData<MutableList<String>>(mutableListOf())
