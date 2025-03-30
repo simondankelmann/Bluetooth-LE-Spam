@@ -18,19 +18,31 @@ class PermissionCheck() {
          * Gets a list of permissions that are relevant for the SDK level we are running on.
          */
         fun getAllRelevantPermissions(): List<String> {
-            val allPermissions = mutableListOf<String>(
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.BLUETOOTH_ADVERTISE,
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT,
-                Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                allPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            val allPermissions = mutableListOf<String>()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                allPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
             }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                allPermissions.add(Manifest.permission.BLUETOOTH_ADVERTISE)
+                allPermissions.add(Manifest.permission.BLUETOOTH_SCAN)
+                allPermissions.add(Manifest.permission.BLUETOOTH_CONNECT)
+            } else {
+                allPermissions.add(Manifest.permission.BLUETOOTH)
+                allPermissions.add(Manifest.permission.BLUETOOTH_ADMIN)
+
+                // On SDK 31 "S" and above, we declare in the manifest that we won't use Bluetooth to get the location
+                allPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    allPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                }
+            }
+
+            // Coarse location is still needed, only fine location can be dropped
+            allPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+
             return allPermissions
         }
 
