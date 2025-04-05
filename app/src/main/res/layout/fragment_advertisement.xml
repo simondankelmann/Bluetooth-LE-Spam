@@ -73,16 +73,6 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/advertisementFragmentQueueModeSingleButton"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="5dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/repeat_one"
-                app:tint="@color/text_color_light" />
-
-            <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeLinearButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
@@ -90,16 +80,6 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/repeat"
-                app:tint="@color/text_color_light" />
-
-            <ImageButton
-                android:id="@+id/advertisementFragmentQueueModeListButton"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="5dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/list"
                 app:tint="@color/text_color_light" />
 
             <ImageButton
