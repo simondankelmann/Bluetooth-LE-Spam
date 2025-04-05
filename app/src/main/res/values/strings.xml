@@ -72,4 +72,7 @@
     <string name="preference_key_open_log_folder">open_log_folder</string>
     <string name="preference_title_open_log_folder">Open Log Folder</string>
     <string name="preference_summary_open_log_folder">View application logs in external storage</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">No items selected</string>
 </resources>
