@@ -73,6 +73,13 @@
     <string name="preference_title_open_log_folder">Open Log Folder</string>
     <string name="preference_summary_open_log_folder">View application logs in external storage</string>
 
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">Theme Mode</string>
+    <string name="preference_theme_mode_light">Light</string>
+    <string name="preference_theme_mode_dark">Dark</string>
+    <string name="preference_theme_mode_follow_system">System Default</string>
+
     <!-- Toasts -->
     <string name="toast_no_items_selected">No items selected</string>
+
 </resources>

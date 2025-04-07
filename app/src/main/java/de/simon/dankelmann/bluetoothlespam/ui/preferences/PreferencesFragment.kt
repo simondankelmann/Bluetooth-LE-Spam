@@ -2,7 +2,6 @@ package de.simon.dankelmann.bluetoothlespam.ui.preferences
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
@@ -12,21 +11,17 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.documentfile.provider.DocumentFile
 import androidx.preference.ListPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogDirectoryPicker
 import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
+import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager.Companion.THEME_MODE_KEY
 import de.simon.dankelmann.bluetoothlespam.R
-import java.io.File
 
 class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
 
@@ -71,14 +66,21 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
                 true
             }
         }
-        
+
         // Set up theme mode preference
-        val themePreference = findPreference<ListPreference>("theme_mode")
+        val themePreference = findPreference<ListPreference>(THEME_MODE_KEY)
         themePreference?.setOnPreferenceChangeListener { _, newValue ->
             val themeMode = newValue as String
             ThemeManager.getInstance().setTheme(requireContext(), themeMode)
+
+            // If the system is in dark mode, then when switching between FOLLOW_SYSTEM and DARK,
+            // the fragment will not be recreated. Same for light mode.
+            // Thus we need to manually update this.
+            themePreference.summary = ThemeManager.getInstance().getThemeString(requireContext())
+
             true
         }
+        themePreference?.summary = ThemeManager.getInstance().getThemeString(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
