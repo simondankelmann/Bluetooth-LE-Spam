@@ -33,12 +33,4 @@
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
     </style>
 
-    <style name="Theme.BluetoothLESpam.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="android:background">@color/background_color</item>
-        <item name="android:textColor">@color/text_color</item>
-        <item name="android:buttonBarButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
-        <item name="buttonBarPositiveButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.Material3.Button.TextButton.Dialog</item>
-    </style>
-
 </resources>

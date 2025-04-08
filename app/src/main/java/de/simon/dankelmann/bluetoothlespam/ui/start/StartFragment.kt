@@ -5,6 +5,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
@@ -65,8 +67,7 @@ class StartFragment : Fragment() {
 
         setupUi(root.context)
 
-        checkRequiredPermissions(true)
-        checkBluetoothAdapter(true)
+        // These _should_ only need one-time initialisation, and thus don't need to be in onResume.
         checkAdvertisementService(root.context)
         checkDatabase()
 
@@ -76,6 +77,13 @@ class StartFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        checkRequiredPermissions(requireContext())
+        checkBluetoothAdapter(true)
     }
 
     fun getAppVersion(context: Context): String? {
@@ -159,7 +167,7 @@ class StartFragment : Fragment() {
         // Permissions CardView
         val startFragmentPermissionCardView: CardView = binding.startFragmentPermissionsCardview
         startFragmentPermissionCardView.setOnClickListener {
-            checkRequiredPermissions(true)
+            checkRequiredPermissions(context)
         }
 
         val successBackground =
@@ -306,70 +314,43 @@ class StartFragment : Fragment() {
         registerForResult.launch(enableBtIntent)
     }
 
-    fun checkRequiredPermissions(promptForNotGranted:Boolean = false){
-        val allPermissions = arrayOf(
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_ADVERTISE,
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.POST_NOTIFICATIONS,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        )
+    fun checkRequiredPermissions(context: Context) {
+        var allGranted = true
 
-        val notGrantedPermissions: MutableList<String> = mutableListOf()
-
+        val allPermissions = PermissionCheck.getAllRelevantPermissions()
         allPermissions.forEach { permission ->
-            var missingRequirementString =
+            val missingRequirementString =
                 "Permission " + permission.replace("android.permission.", "") + " not granted"
-            val activity = requireActivity()
-            val isGranted = PermissionCheck.checkPermissionAndRequest(permission, activity)
 
+            val isGranted = PermissionCheck.checkPermission(permission, context)
             if (isGranted) {
-               removeMissingRequirement(missingRequirementString)
+                removeMissingRequirement(missingRequirementString)
             } else {
-                notGrantedPermissions.add(permission)
+                allGranted = false
                 addMissingRequirement(missingRequirementString)
             }
         }
+        viewModel.allPermissionsGranted.postValue(allGranted)
 
-        if(notGrantedPermissions.isEmpty()){
-            val backgroundLocationAccessIsGranted = checkBackgroundLocationAccessPermission(promptForNotGranted)
-            var missingRequirementStringBgLocation = "Permission " + Manifest.permission.ACCESS_BACKGROUND_LOCATION.replace("android.permission.", "") + " not granted"
-            if(backgroundLocationAccessIsGranted){
-                removeMissingRequirement(missingRequirementStringBgLocation)
-                viewModel.allPermissionsGranted.postValue(true)
-            } else {
-                addMissingRequirement(missingRequirementStringBgLocation)
-                checkBackgroundLocationAccessPermission(true)
-            }
-        } else {
-            viewModel.allPermissionsGranted.postValue(false)
-            // Request Missing Permissions
-            if(promptForNotGranted){
-                //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
-                activityResultLauncher.launch(notGrantedPermissions.toTypedArray())
-            }
+        if (!allGranted) {
+            MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.missing_permissions_title)
+                .setMessage(R.string.missing_permissions_text)
+                .setPositiveButton(
+                    R.string.missing_permissions_grant,
+                    { _, _ -> requestRequiredPermissions() }
+                )
+                .setNegativeButton(android.R.string.cancel, null /* dismiss dialog */)
+                .show()
         }
     }
 
-    fun checkBackgroundLocationAccessPermission(promptForNotGranted:Boolean = false):Boolean{
-        val isGranted = PermissionCheck.checkPermission(
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION, requireContext()
-        )
-        if (promptForNotGranted) {
-            //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
-            activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+    fun requestRequiredPermissions() {
+        val allPermissions = PermissionCheck.getAllRelevantPermissions()
+        allPermissions.forEach { permission ->
+            PermissionCheck.checkPermissionAndRequest(permission, requireActivity())
         }
-        return isGranted
     }
-
-    private var activityResultLauncher: ActivityResultLauncher<Array<String>> =
-        registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()) {result ->
-            checkRequiredPermissions(false)
-        }
 
     fun checkAdvertisementService(context: Context){
         var advertisementServiceIsReady = true
