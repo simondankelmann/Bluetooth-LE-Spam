@@ -26,7 +26,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.databinding.ActivityMainBinding
@@ -66,13 +65,11 @@ class MainActivity : AppCompatActivity() {
         sharedPreferenceChangedListener =
             OnSharedPreferenceChangeListener { sharedPreferences, key ->
                 run {
+                    val app = (applicationContext as BleSpamApplication)
                     var legacyAdvertisingKey =
                         resources.getString(R.string.preference_key_use_legacy_advertising)
                     if (key == legacyAdvertisingKey) {
-                        val advertisementService = BluetoothHelpers.getAdvertisementService(this)
-                        AppContext.setAdvertisementService(advertisementService)
-                        AppContext.getAdvertisementSetQueueHandler()
-                            .setAdvertisementService(advertisementService)
+                        app.setupAdvertisementService()
                     }
 
                     var intervalKey =
@@ -80,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                     if (key == intervalKey) {
                         val newInterval = QueueHandlerHelpers.getInterval(this)
                         Log.d(_logTag, "Setting new Interval: $newInterval")
-                        AppContext.getAdvertisementSetQueueHandler().setInterval(newInterval)
+                        app.queueHandler.setInterval(newInterval)
                     }
                 }
             }
@@ -167,10 +164,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showSetTxPowerDialog() {
-        if (AppContext.getAdvertisementService() == null) {
-            Toast.makeText(this, "Advertisement Service not initialized", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val app = applicationContext as BleSpamApplication
 
         val dialogLayout = LayoutInflater.from(this).inflate(R.layout.dialog_set_tx_power, null)
 
@@ -178,7 +172,7 @@ class MainActivity : AppCompatActivity() {
         val seekBarLabel: TextView = dialogLayout.findViewById(R.id.setTxPowerDialogTxPowerTextView)
 
         // Set Current TxPowerLevel
-        val currentTxPowerLevel = AppContext.getAdvertisementService().getTxPowerLevel()
+        val currentTxPowerLevel = app.advertisementService.getTxPowerLevel()
         val currentProgress = when (currentTxPowerLevel) {
             TxPowerLevel.TX_POWER_HIGH -> 3
             TxPowerLevel.TX_POWER_MEDIUM -> 2
@@ -198,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                     else -> TxPowerLevel.TX_POWER_HIGH
                 }
                 seekBarLabel.text = getString(newTxPowerLevel.toStringId())
-                AppContext.getAdvertisementService()!!.setTxPowerLevel(newTxPowerLevel)
+                app.advertisementService.setTxPowerLevel(newTxPowerLevel)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {

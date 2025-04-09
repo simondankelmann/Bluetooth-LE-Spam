@@ -1,7 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.ui.advertisement
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,14 +12,14 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
+import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -58,15 +57,21 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
     override fun onResume() {
         super.onResume()
-        AppContext.getAdvertisementSetQueueHandler().addAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().addAdvertisementQueueHandlerCallback(this)
-        syncWithQueueHandler(requireContext())
+
+        val context = requireContext()
+        val queue = (context.applicationContext as BleSpamApplication).queueHandler
+        queue.addAdvertisementServiceCallback(this)
+        queue.addAdvertisementQueueHandlerCallback(this)
+
+        syncUiStateWithQueue(context, queue)
     }
 
     override fun onPause() {
         super.onPause()
-        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementQueueHandlerCallback(this)
+
+        val app = (requireContext().applicationContext as BleSpamApplication)
+        app.queueHandler.removeAdvertisementServiceCallback(this)
+        app.queueHandler.removeAdvertisementQueueHandlerCallback(this)
         //AppContext.getAdvertisementSetQueueHandler().deactivate()
     }
 
@@ -76,31 +81,25 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         //AppContext.getAdvertisementSetQueueHandler().deactivate(true)
     }
 
-    private fun syncWithQueueHandler(context: Context) {
-        val queue = AppContext.getAdvertisementSetQueueHandler()
-        setAdvertisementSetCollection(context, queue.getAdvertisementSetCollection())
-        viewModel.advertisementQueueMode.postValue(queue.getAdvertisementQueueMode())
-        viewModel.isAdvertising.postValue(queue.isActive())
-    }
-
     fun onPlayButtonClicked(context: Context) {
+        val queue = (context.applicationContext as BleSpamApplication).queueHandler
         if (viewModel.isAdvertising.value == true) {
-            AppContext.getAdvertisementSetQueueHandler().deactivate(context)
+            queue.deactivate(context)
         } else {
-            AppContext.getAdvertisementSetQueueHandler().activate(context)
+            queue.activate(context)
         }
     }
 
-    fun setAdvertisementSetCollection(context: Context, advertisementSetCollection: AdvertisementSetCollection){
-        viewModel.advertisementSetCollectionTitle.postValue(advertisementSetCollection.title)
-        viewModel.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(advertisementSetCollection))
-        viewModel.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(advertisementSetCollection))
+    fun syncUiStateWithQueue(context: Context, queue: AdvertisementSetQueueHandler) {
+        viewModel.advertisementQueueMode.postValue(queue.getAdvertisementQueueMode())
+        viewModel.isAdvertising.postValue(queue.isActive())
 
-        // Update UI
-        setupExpandableListView(context, advertisementSetCollection)
+        val collection = queue.getAdvertisementSetCollection()
+        viewModel.advertisementSetCollectionTitle.postValue(collection.title)
+        viewModel.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(collection))
+        viewModel.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(collection))
 
-        // Pass the Collection to the Queue Handler
-        //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+        setupExpandableListView(context, collection)
     }
 
     fun getAdvertisementSetCollectionHint(advertisementSetCollection: AdvertisementSetCollection):String{
@@ -154,9 +153,11 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         }
 
         _expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+            val app = (context.applicationContext as BleSpamApplication)
+            app.queueHandler.setSelectedAdvertisementSet(groupPosition, childPosition)
+
             var advertisementSetList = titleList[groupPosition]
             var advertisementSet = dataList[titleList[groupPosition]]!![childPosition]
-            AppContext.getAdvertisementSetQueueHandler().setSelectedAdvertisementSet(groupPosition, childPosition)
             highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED)
             false
         }
@@ -203,8 +204,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         return "Type: $type, Range: $range"
     }
 
-    fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
-        AppContext.getAdvertisementSetQueueHandler().setAdvertisementQueueMode(advertisementQueueMode)
+    fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode) {
+        val app = (requireContext().applicationContext as BleSpamApplication)
+        app.queueHandler.setAdvertisementQueueMode(advertisementQueueMode)
+
         viewModel.advertisementQueueMode.postValue(advertisementQueueMode)
     }
 

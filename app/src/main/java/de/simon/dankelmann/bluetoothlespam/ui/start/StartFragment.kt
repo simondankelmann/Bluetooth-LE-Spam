@@ -18,10 +18,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
-import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.isBluetooth5Supported
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
@@ -65,7 +62,6 @@ class StartFragment : Fragment() {
         setupUi(root.context)
 
         // These _should_ only need one-time initialisation, and thus don't need to be in onResume.
-        checkAdvertisementService(root.context)
         checkDatabase()
 
         return root
@@ -195,22 +191,6 @@ class StartFragment : Fragment() {
                 startFragmentBluetoothCardViewContentWrapper.background = successBackground
             } else {
                 startFragmentBluetoothCardViewContentWrapper.background = errorBackground
-            }
-        }
-
-        // Service CardView
-        val startFragmentServiceCardview: CardView = binding.startFragmentServiceCardview
-        startFragmentServiceCardview.setOnClickListener {
-            checkAdvertisementService(startFragmentServiceCardview.context)
-        }
-
-        // Service CardView Content
-        val startFragmentServiceCardViewContentWrapper: LinearLayout = binding.startFragmentServiceCardViewContentWrapper
-        viewModel.advertisementServiceIsReady.observe(viewLifecycleOwner) {
-            if(it == true){
-                startFragmentServiceCardViewContentWrapper.background = successBackground
-            } else {
-                startFragmentServiceCardViewContentWrapper.background = errorBackground
             }
         }
 
@@ -347,32 +327,5 @@ class StartFragment : Fragment() {
         allPermissions.forEach { permission ->
             PermissionCheck.checkPermissionAndRequest(permission, requireActivity())
         }
-    }
-
-    fun checkAdvertisementService(context: Context){
-        var advertisementServiceIsReady = true
-
-        if(!AppContext.advertisementServiceIsInitialized()){
-            try {
-                val advertisementService = BluetoothHelpers.getAdvertisementService(context)
-                AppContext.setAdvertisementService(advertisementService)
-            } catch (e:Exception){
-                addMissingRequirement("Advertisement Service not initialized")
-                advertisementServiceIsReady = false
-            }
-        }
-
-        if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
-            try {
-                val service = AppContext.getAdvertisementService()
-                var advertisementSetQueueHandler = AdvertisementSetQueueHandler(context, service)
-                AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
-            } catch (e:Exception){
-                addMissingRequirement("Queue Handler not initialized")
-                advertisementServiceIsReady = false
-            }
-        }
-
-        viewModel.advertisementServiceIsReady.postValue(advertisementServiceIsReady)
     }
 }

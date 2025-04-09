@@ -1,5 +1,6 @@
 package de.simon.dankelmann.bluetoothlespam.ui.advertisementcollection
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
@@ -146,7 +147,7 @@ class AdvertisementCollectionFragment : Fragment() {
         // Hookup Events
         var cardView: CardView =
             advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartCardview)
-        cardView.setOnClickListener {
+        cardView.setOnClickListener { view ->
             when (advertisementTarget) {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> {
                     onFastPairCardViewClicked()
@@ -165,7 +166,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 }
 
                 AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> {
-                    onKitchenSinkCardViewClicked()
+                    onKitchenSinkCardViewClicked(view.context)
                 }
 
                 AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> {
@@ -192,13 +193,14 @@ class AdvertisementCollectionFragment : Fragment() {
             val advertisementSetCollection =
                 buildAdvertisementCollection(advertisementSetTypes, advertisementSetCollectionTitle)
 
-            activity?.let {
-                it.runOnUiThread {
+            activity?.let { ac ->
+                ac.runOnUiThread {
                     // Pass Collection to Advertisement Fragment
-                    val navController = it.findNavController(R.id.nav_host_fragment)
-                    AppContext.getAdvertisementSetQueueHandler().deactivate(it)
-                    AppContext.getAdvertisementSetQueueHandler()
-                        .setAdvertisementSetCollection(advertisementSetCollection)
+                    val navController = ac.findNavController(R.id.nav_host_fragment)
+                    (ac.applicationContext as BleSpamApplication).queueHandler.apply {
+                        deactivate(ac)
+                        setAdvertisementSetCollection(advertisementSetCollection)
+                    }
                     navController.navigate(R.id.action_ad_coll_to_ad)
                 }
             }
@@ -289,9 +291,9 @@ class AdvertisementCollectionFragment : Fragment() {
         )
     }
 
-    fun onKitchenSinkCardViewClicked() {
+    fun onKitchenSinkCardViewClicked(context: Context) {
         // Set Random Mode for Kitchen Sink
-        AppContext.getAdvertisementSetQueueHandler()
+        (context.applicationContext as BleSpamApplication).queueHandler
             .setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
 
         navigateToAdvertisementFragmentWithType(
