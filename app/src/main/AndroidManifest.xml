@@ -15,8 +15,8 @@
          <a href="#assert-never-for-location">strongly assert that your app
          doesn't derive physical location</a>.
     -->
-
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
 
     <!--
          Needed only if your app makes the device discoverable to Bluetooth
@@ -24,16 +24,18 @@
     -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
-    <!--
-         Needed only if your app communicates with already-paired Bluetooth
-         devices.
-    -->
-    <!--Needed only if your app uses Bluetooth scan results to derive physical location. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> 
+    <!-- Needed to turn Bluetooth on -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!-- On SDK 31 and higher we assert above that we won't use Bluetooth for location.
+        ACCESS_COARSE_LOCATION is still needed! -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_BACKGROUND_LOCATION"
+        android:maxSdkVersion="30" />
 
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
 
@@ -42,6 +44,7 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
@@ -54,8 +57,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BluetoothLESpam.NoActionBar"
-        tools:targetApi="31">
+        android:theme="@style/Theme.BluetoothLESpam.NoActionBar">
 
         <service android:foregroundServiceType="specialUse" android:name=".Services.AdvertisementForegroundService" />
 
@@ -78,7 +80,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.BluetoothLESpam.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

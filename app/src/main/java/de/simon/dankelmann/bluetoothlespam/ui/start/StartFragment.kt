@@ -5,7 +5,6 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +38,7 @@ import java.util.concurrent.TimeUnit
 class StartFragment : Fragment() {
 
     private val _logTag = "StartFragment"
-    private lateinit var registerForResult:ActivityResultLauncher<Intent>
+    private lateinit var enableBluetoothLauncher: ActivityResultLauncher<Intent>
 
     private var _viewModel: StartViewModel? = null
     private val viewModel get() = _viewModel!!
@@ -56,14 +55,12 @@ class StartFragment : Fragment() {
         viewModel.appVersion.postValue(getAppVersion(root.context))
         viewModel.bluetoothSupport.postValue(getBluetoothSupportText(root.context))
 
-        // register for bt enable callback
-        registerForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val intent = result.data
-                // Handle the Intent
-                checkBluetoothAdapter(false)
+        enableBluetoothLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    checkBluetoothAdapter(false)
+                }
             }
-        }
 
         setupUi(root.context)
 
@@ -283,7 +280,7 @@ class StartFragment : Fragment() {
         }
     }
 
-    fun checkBluetoothAdapter(promptIfAdapterIsDisabled:Boolean = false){
+    fun checkBluetoothAdapter(promptIfAdapterIsDisabled: Boolean = false) {
         val activity = requireActivity()
         viewModel.bluetoothAdapterIsReady.postValue(false)
 
@@ -296,22 +293,22 @@ class StartFragment : Fragment() {
             } else {
                 addMissingRequirement("Bluetooth is disabled")
                 if (promptIfAdapterIsDisabled) {
-                    if (PermissionCheck.checkPermissionAndRequest(
-                                Manifest.permission.BLUETOOTH_CONNECT, activity
-                            )
-                        ) {
-                            promptEnableBluetooth(bluetoothAdapter)
-                        }
-                    }
+                    promptEnableBluetooth()
                 }
+            }
         } else {
             addMissingRequirement("Bluetooth Adapter not found")
         }
     }
 
-    fun promptEnableBluetooth(bluetoothAdapter: BluetoothAdapter){
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        registerForResult.launch(enableBtIntent)
+    fun promptEnableBluetooth() {
+        if (PermissionCheck.checkPermission(
+                Manifest.permission.BLUETOOTH_CONNECT, requireContext()
+            )
+        ) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            enableBluetoothLauncher.launch(enableBtIntent)
+        }
     }
 
     fun checkRequiredPermissions(context: Context) {
