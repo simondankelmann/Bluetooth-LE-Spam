@@ -1,0 +1,90 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">Информация</string>
+    <string name="bottom_nav_advertise">Спам</string>
+    <string name="bottom_nav_detect">Обнаружить</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="action_set_tx_power">Мощность передачи данных</string>
+
+    <string name="menu_preferences">Настройки</string>
+    <string name="menu_start">Запустить</string>
+    <string name="menu_spam_detector">Обнаружение спама</string>
+    <string name="menu_advertisement">Спам</string>
+
+    <string name="menu_fastPairing">Быстрое сопряжение Google</string>
+    <string name="menu_swiftPair">Быстрое сопряжение Microsoft</string>
+    <string name="menu_continuityDevicePopup">Всплывающин окна устройств Apple</string>
+    <string name="menu_continuityActionModal">Всплывающие окна Apple</string>
+    <string name="menu_kitchenSink">Все способы</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">Старый метод спама</string>
+    <string name="preference_summary_use_legacy_advertising">Использовать метод спама совместимый с Bluetooth 4</string>
+
+    <string name="power_level_high">Высокая</string>
+    <string name="power_level_medium">Средняя</string>
+    <string name="power_level_low">Низкая</string>
+    <string name="power_level_ultra_low">Очень низкая</string>
+    <string name="power_dialog_title">Выберите мощность передачи данных</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">Высокая</item>
+        <item name="tx_power_medium">Средняя</item>
+        <item name="tx_power_low">Низкая</item></item>
+        <item name="tx_power_ultralow">Очень низкая</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">Проверка требований…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">Неизвестный тип</string>
+    <string name="ad_set_type_fast_pairing">Быстрое сопряжение</string>
+    <string name="ad_set_type_fast_pairing_device">Быстрое сопряжение устройств</string>
+    <string name="ad_set_type_fast_pairing_non_production">Быстрое сопряжение для непроизводственных целей</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Быстрое сопряжение для настройки телефона</string>
+    <string name="ad_set_type_fast_pairing_debug">Быстрое сопряжение для откладки</string>
+    <string name="ad_set_type_continuity_new_device">Новое устройство Apple</string>
+    <string name="ad_set_type_continuity_new_airtag">Новый Airtag</string>
+    <string name="ad_set_type_continuity_not_your_device">Не ваше устройство</string>
+    <string name="ad_set_type_continuity_action_modals">Всплывающие окна Apple</string>
+    <string name="ad_set_type_continuity_ios17_crash">Вызов сбоя в iOS 17</string>
+    <string name="ad_set_type_swift_pairing">Быстрое сопряжение</string>
+    <string name="ad_set_type_easy_setup_buds">Быстрая настройка наушников</string>
+    <string name="ad_set_type_easy_setup_watch">Быстрая настройка часов</string>
+    <string name="ad_set_type_lovespouse_play">Включить любовные устройства</string>
+    <string name="ad_set_type_lovespouse_stop">Выключить любовные устройства</string>
+
+    <string name="spam_unknown">Неизвестный спам</string>
+    <string name="spam_detecting_title">Обнаружение спама</string>
+    <string name="spam_detecting_text">Обнаружение Flipper Zero и других устройств</string>
+    <string name="spam_detected_title">Обнаружен спам</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Включить сбор журналов</string>
+    <string name="preference_summary_enable_logging">Включить сбор журналов во внутреннее хранилище</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Открыть Папку Журналов</string>
+    <string name="preference_summary_open_log_folder">Посмотреть журналы приложения во внутреннем хранилище</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">Тема</string>
+    <string name="preference_theme_mode_light">Светлая</string>
+    <string name="preference_theme_mode_dark">Тёмная</string>
+    <string name="preference_theme_mode_follow_system">Как в системе</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">Ничего не выбрано</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">Отсутствуют разрешения</string>
+    <string name="missing_permissions_text">Не хватает некоторых разрешений. Без них Bluetooth LE Spam не будет работать должным образом.</string>
+    <string name="missing_permissions_grant">Выдать разрешения</string>
+
+</resources>
