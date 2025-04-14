@@ -34,7 +34,7 @@
     <string-array name="spinner_entries_tx_power">
         <item name="tx_power_high">Высокая</item>
         <item name="tx_power_medium">Средняя</item>
-        <item name="tx_power_low">Низкая</item></item>
+        <item name="tx_power_low">Низкая</item>
         <item name="tx_power_ultralow">Очень низкая</item>
     </string-array>
 
