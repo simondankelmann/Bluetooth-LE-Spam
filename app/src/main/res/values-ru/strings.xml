@@ -86,5 +86,4 @@
     <string name="missing_permissions_title">Отсутствуют разрешения</string>
     <string name="missing_permissions_text">Не хватает некоторых разрешений. Без них Bluetooth LE Spam не будет работать должным образом.</string>
     <string name="missing_permissions_grant">Выдать разрешения</string>
-
 </resources>
