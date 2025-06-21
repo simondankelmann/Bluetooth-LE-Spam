@@ -1,17 +1,17 @@
 [versions]
-agp = "8.8.1"
-kotlin = "2.1.0"
-core = "1.15.0"
+agp = "8.10.1"
+kotlin = "2.1.21"
+core = "1.16.0"
 preference = "1.2.1"
-coroutines = "1.10.1"
-appcompat = "1.7.0"
-navigation = "2.8.5"
-lifecycle = "2.8.7"
+coroutines = "1.10.2"
+appcompat = "1.7.1"
+navigation = "2.9.0"
+lifecycle = "2.9.1"
 legacy = "1.0.0"
-constraintlayout = "2.2.0"
+constraintlayout = "2.2.1"
 material = "1.12.0"
-room = "2.6.1"
-lottie = "6.6.2"
+room = "2.7.1"
+lottie = "6.6.6"
 
 [plugins]
 agp-app = { id = "com.android.application", version.ref = "agp" }
