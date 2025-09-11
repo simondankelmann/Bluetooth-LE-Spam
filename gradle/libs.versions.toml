@@ -1,16 +1,16 @@
 [versions]
-agp = "8.12.0"
-kotlin = "2.2.10"
+agp = "8.13.0"
+kotlin = "2.2.20"
 core = "1.17.0"
 preference = "1.2.1"
 coroutines = "1.10.2"
 appcompat = "1.7.1"
-navigation = "2.9.3"
-lifecycle = "2.9.2"
+navigation = "2.9.4"
+lifecycle = "2.9.3"
 legacy = "1.0.0"
 constraintlayout = "2.2.1"
-material = "1.12.0"
-room = "2.7.2"
+material = "1.13.0"
+room = "2.8.0"
 lottie = "6.6.7"
 
 [plugins]
