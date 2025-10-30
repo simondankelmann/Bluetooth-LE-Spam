@@ -1,0 +1,91 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">जानकारी</string>
+    <string name="bottom_nav_advertise">प्रसारण</string>
+    <string name="bottom_nav_detect">पता लगाएँ</string>
+
+    <string name="action_settings">सेटिंग्स</string>
+    <string name="action_set_tx_power">TX पावर</string>
+
+    <string name="menu_preferences">सेटिंग्स</string>
+    <string name="menu_start">प्रारंभ</string>
+    <string name="menu_spam_detector">स्पैम डिटेक्टर</string>
+    <string name="menu_advertisement">विज्ञापन</string>
+
+    <string name="menu_fastPairing">Google फास्ट पेयर</string>
+    <string name="menu_swiftPair">Microsoft फास्ट पेयर</string>
+    <string name="menu_continuityDevicePopup">Apple डिवाइस पॉप-अप</string>
+    <string name="menu_continuityActionModal">Apple एक्शन मोडल</string>
+    <string name="menu_kitchenSink">सब रैंडम करें</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">पुराना विज्ञापन</string>
+    <string name="preference_summary_use_legacy_advertising">Bluetooth 4 अनुकूल BLE विज्ञापन का उपयोग करें</string>
+
+    <string name="power_level_high">उच्च</string>
+    <string name="power_level_medium">मध्यम</string>
+    <string name="power_level_low">कम</string>
+    <string name="power_level_ultra_low">अत्यंत कम</string>
+    <string name="power_dialog_title">TX पावर चुनें</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">उच्च</item>
+        <item name="tx_power_medium">मध्यम</item>
+        <item name="tx_power_low">कम</item>
+        <item name="tx_power_ultralow">अत्यंत कम</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">आवश्यकताएँ जाँची जा रही हैं…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">अपरिभाषित प्रकार</string>
+    <string name="ad_set_type_fast_pairing">फास्ट पेयर</string>
+    <string name="ad_set_type_fast_pairing_device">फास्ट पेयर डिवाइस</string>
+    <string name="ad_set_type_fast_pairing_non_production">फास्ट पेयर (ग़ैर-प्रोडक्शन)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">फास्ट पेयर फ़ोन सेटअप</string>
+    <string name="ad_set_type_fast_pairing_debug">फास्ट पेयर डिबग</string>
+    <string name="ad_set_type_continuity_new_device">नया Apple डिवाइस</string>
+    <string name="ad_set_type_continuity_new_airtag">नया AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">यह आपका डिवाइस नहीं है</string>
+    <string name="ad_set_type_continuity_action_modals">Apple एक्शन मोडल</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 क्रैश</string>
+    <string name="ad_set_type_swift_pairing">Swift पेयरिंग</string>
+    <string name="ad_set_type_easy_setup_buds">ईयरबड्स की आसान सेटअप</string>
+    <string name="ad_set_type_easy_setup_watch">घड़ी की आसान सेटअप</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse चलाएँ</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse रोकें</string>
+
+    <string name="spam_unknown">अज्ञात स्पैम</string>
+    <string name="spam_detecting_title">स्पैम की पहचान</string>
+    <string name="spam_detecting_text">Flipper Zero और अन्य डिवाइस का पता लगाया जा रहा है</string>
+    <string name="spam_detected_title">स्पैम मिला</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">लॉग सक्षम करें</string>
+    <string name="preference_summary_enable_logging">एप लॉग्स को बाहरी स्टोरेज में सक्षम करें</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">लॉग फ़ोल्डर खोलें</string>
+    <string name="preference_summary_open_log_folder">बाहरी स्टोरेज में एप लॉग्स देखें</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">थीम मोड</string>
+    <string name="preference_theme_mode_light">लाइट</string>
+    <string name="preference_theme_mode_dark">डार्क</string>
+    <string name="preference_theme_mode_follow_system">सिस्टम डिफ़ॉल्ट</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">कोई आइटम चयनित नहीं</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">अनुमतियाँ गुम हैं</string>
+    <string name="missing_permissions_text">कुछ अनुमतियाँ गुम हैं। इनके बिना Bluetooth LE Spam सही से काम नहीं करेगा।</string>
+    <string name="missing_permissions_grant">अनुमतियाँ दें</string>
+
+</resources>
+
