@@ -1,0 +1,91 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">اطلاعات</string>
+    <string name="bottom_nav_advertise">پخش</string>
+    <string name="bottom_nav_detect">شناسایی</string>
+
+    <string name="action_settings">تنظیمات</string>
+    <string name="action_set_tx_power">قدرت TX</string>
+
+    <string name="menu_preferences">تنظیمات</string>
+    <string name="menu_start">شروع</string>
+    <string name="menu_spam_detector">تشخیص اسپم</string>
+    <string name="menu_advertisement">آگهی</string>
+
+    <string name="menu_fastPairing">جفت‌سازی سریع گوگل</string>
+    <string name="menu_swiftPair">جفت‌سازی سریع مایکروسافت</string>
+    <string name="menu_continuityDevicePopup">پنجره‌های دستگاه اپل</string>
+    <string name="menu_continuityActionModal">پنجره‌های اقدام اپل</string>
+    <string name="menu_kitchenSink">ترکیب همه (تصادفی)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">تبلیغات قدیمی</string>
+    <string name="preference_summary_use_legacy_advertising">استفاده از تبلیغات BLE سازگار با Bluetooth 4</string>
+
+    <string name="power_level_high">زیاد</string>
+    <string name="power_level_medium">متوسط</string>
+    <string name="power_level_low">کم</string>
+    <string name="power_level_ultra_low">خیلی کم</string>
+    <string name="power_dialog_title">انتخاب قدرت TX</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">زیاد</item>
+        <item name="tx_power_medium">متوسط</item>
+        <item name="tx_power_low">کم</item>
+        <item name="tx_power_ultralow">خیلی کم</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">در حال بررسی نیازمندی‌ها…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">نوع نامشخص</string>
+    <string name="ad_set_type_fast_pairing">جفت‌سازی سریع</string>
+    <string name="ad_set_type_fast_pairing_device">دستگاه جفت‌سازی سریع</string>
+    <string name="ad_set_type_fast_pairing_non_production">جفت‌سازی سریع (غیرتولیدی)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">تنظیم تلفن جفت‌سازی سریع</string>
+    <string name="ad_set_type_fast_pairing_debug">اشکال‌زدایی جفت‌سازی سریع</string>
+    <string name="ad_set_type_continuity_new_device">دستگاه جدید اپل</string>
+    <string name="ad_set_type_continuity_new_airtag">ایرتگ جدید</string>
+    <string name="ad_set_type_continuity_not_your_device">دستگاه شما نیست</string>
+    <string name="ad_set_type_continuity_action_modals">پنجره اقدام اپل</string>
+    <string name="ad_set_type_continuity_ios17_crash">کرش iOS 17</string>
+    <string name="ad_set_type_swift_pairing">جفت‌سازی Swift</string>
+    <string name="ad_set_type_easy_setup_buds">تنظیم آسان هدفون</string>
+    <string name="ad_set_type_easy_setup_watch">تنظیم آسان ساعت</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse پخش</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse توقف</string>
+
+    <string name="spam_unknown">اسپم ناشناخته</string>
+    <string name="spam_detecting_title">در حال شناسایی اسپم</string>
+    <string name="spam_detecting_text">در حال شناسایی Flipper Zero و دستگاه‌های دیگر</string>
+    <string name="spam_detected_title">اسپم شناسایی شد</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">فعال‌سازی گزارش‌ها</string>
+    <string name="preference_summary_enable_logging">فعال‌سازی گزارش‌های برنامه در حافظهٔ خارجی</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">باز کردن پوشهٔ گزارش‌ها</string>
+    <string name="preference_summary_open_log_folder">مشاهدهٔ گزارش‌ها در حافظهٔ خارجی</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">حالت پوسته</string>
+    <string name="preference_theme_mode_light">روشن</string>
+    <string name="preference_theme_mode_dark">تیره</string>
+    <string name="preference_theme_mode_follow_system">پیش‌فرض سیستم</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">هیچ موردی انتخاب نشده است</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">مجوزها ناقص است</string>
+    <string name="missing_permissions_text">برخی مجوزها وجود ندارند. بدون آن‌ها، Bluetooth LE Spam به‌درستی کار نخواهد کرد.</string>
+    <string name="missing_permissions_grant">اعطای مجوزها</string>
+
+</resources>
+
