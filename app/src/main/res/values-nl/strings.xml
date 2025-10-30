@@ -1,0 +1,91 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">Info</string>
+    <string name="bottom_nav_advertise">Uitvinden</string>
+    <string name="bottom_nav_detect">Detecteren</string>
+
+    <string name="action_settings">Instellingen</string>
+    <string name="action_set_tx_power">TX-vermogen</string>
+
+    <string name="menu_preferences">Instellingen</string>
+    <string name="menu_start">Start</string>
+    <string name="menu_spam_detector">Spamdetector</string>
+    <string name="menu_advertisement">Advertentie</string>
+
+    <string name="menu_fastPairing">Google Snel Koppelen</string>
+    <string name="menu_swiftPair">Microsoft Snel Koppelen</string>
+    <string name="menu_continuityDevicePopup">Apple apparaatsvensters</string>
+    <string name="menu_continuityActionModal">Apple actievensters</string>
+    <string name="menu_kitchenSink">Alles mixen (willekeurig)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">Verouderde advertenties</string>
+    <string name="preference_summary_use_legacy_advertising">Gebruik BLE-advertenties compatibel met Bluetooth 4</string>
+
+    <string name="power_level_high">Hoog</string>
+    <string name="power_level_medium">Middel</string>
+    <string name="power_level_low">Laag</string>
+    <string name="power_level_ultra_low">Zeer laag</string>
+    <string name="power_dialog_title">Selecteer TX-vermogen</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">Hoog</item>
+        <item name="tx_power_medium">Middel</item>
+        <item name="tx_power_low">Laag</item>
+        <item name="tx_power_ultralow">Zeer laag</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">Vereisten controleren…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">Ongedefinieerd type</string>
+    <string name="ad_set_type_fast_pairing">Snel koppelen</string>
+    <string name="ad_set_type_fast_pairing_device">Apparaat voor snel koppelen</string>
+    <string name="ad_set_type_fast_pairing_non_production">Snel koppelen (niet-productie)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Telefooninstelling snel koppelen</string>
+    <string name="ad_set_type_fast_pairing_debug">Debuggen snel koppelen</string>
+    <string name="ad_set_type_continuity_new_device">Nieuw Apple-apparaat</string>
+    <string name="ad_set_type_continuity_new_airtag">Nieuwe AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">Niet jouw apparaat</string>
+    <string name="ad_set_type_continuity_action_modals">Apple actievenster</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 crash</string>
+    <string name="ad_set_type_swift_pairing">Swift-koppeling</string>
+    <string name="ad_set_type_easy_setup_buds">Eenvoudige installatie oordopjes</string>
+    <string name="ad_set_type_easy_setup_watch">Eenvoudige installatie horloge</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse afspelen</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse stoppen</string>
+
+    <string name="spam_unknown">Onbekende spam</string>
+    <string name="spam_detecting_title">Spam detecteren</string>
+    <string name="spam_detecting_text">Flipper Zero en andere apparaten detecteren</string>
+    <string name="spam_detected_title">Spam gedetecteerd</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Loggen inschakelen</string>
+    <string name="preference_summary_enable_logging">App-logboeken inschakelen in externe opslag</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Logmap openen</string>
+    <string name="preference_summary_open_log_folder">Bekijk logboeken in externe opslag</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">Themamodus</string>
+    <string name="preference_theme_mode_light">Licht</string>
+    <string name="preference_theme_mode_dark">Donker</string>
+    <string name="preference_theme_mode_follow_system">Systeemstandaard</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">Geen items geselecteerd</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">Ontbrekende rechten</string>
+    <string name="missing_permissions_text">Sommige rechten ontbreken. Zonder deze werkt Bluetooth LE Spam niet correct.</string>
+    <string name="missing_permissions_grant">Machtigingen geven</string>
+
+</resources>
+
