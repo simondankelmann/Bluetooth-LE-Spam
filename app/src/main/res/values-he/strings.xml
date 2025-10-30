@@ -1,0 +1,84 @@
+<resources>
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">מידע</string>
+    <string name="bottom_nav_advertise">שידור</string>
+    <string name="bottom_nav_detect">זיהוי</string>
+
+    <string name="action_settings">הגדרות</string>
+    <string name="action_set_tx_power">עוצמת TX</string>
+
+    <string name="menu_preferences">הגדרות</string>
+    <string name="menu_start">התחל</string>
+    <string name="menu_spam_detector">מזהה ספאם</string>
+    <string name="menu_advertisement">פרסומת</string>
+
+    <string name="menu_fastPairing">צימוד מהיר של Google</string>
+    <string name="menu_swiftPair">צימוד מהיר של Microsoft</string>
+    <string name="menu_continuityDevicePopup">חלונות קופצים של מכשירי Apple</string>
+    <string name="menu_continuityActionModal">חלונות פעולה של Apple</string>
+    <string name="menu_kitchenSink">ערבב הכל (אקראי)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">פרסום ישן</string>
+    <string name="preference_summary_use_legacy_advertising">השתמש בפרסום BLE תואם Bluetooth 4</string>
+
+    <string name="power_level_high">גבוה</string>
+    <string name="power_level_medium">בינוני</string>
+    <string name="power_level_low">נמוך</string>
+    <string name="power_level_ultra_low">נמוך מאוד</string>
+    <string name="power_dialog_title">בחר עוצמת TX</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">גבוה</item>
+        <item name="tx_power_medium">בינוני</item>
+        <item name="tx_power_low">נמוך</item>
+        <item name="tx_power_ultralow">נמוך מאוד</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">בודק דרישות…</string>
+
+    <string name="ad_set_type_undefined">סוג לא מוגדר</string>
+    <string name="ad_set_type_fast_pairing">צימוד מהיר</string>
+    <string name="ad_set_type_fast_pairing_device">מכשיר צימוד מהיר</string>
+    <string name="ad_set_type_fast_pairing_non_production">צימוד מהיר (לא ייצור)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">הגדרת טלפון לצימוד מהיר</string>
+    <string name="ad_set_type_fast_pairing_debug">ניפוי צימוד מהיר</string>
+    <string name="ad_set_type_continuity_new_device">מכשיר Apple חדש</string>
+    <string name="ad_set_type_continuity_new_airtag">AirTag חדש</string>
+    <string name="ad_set_type_continuity_not_your_device">לא המכשיר שלך</string>
+    <string name="ad_set_type_continuity_action_modals">חלון פעולה של Apple</string>
+    <string name="ad_set_type_continuity_ios17_crash">קריסה ב-iOS 17</string>
+    <string name="ad_set_type_swift_pairing">צימוד Swift</string>
+    <string name="ad_set_type_easy_setup_buds">הגדרה קלה לאוזניות</string>
+    <string name="ad_set_type_easy_setup_watch">הגדרה קלה לשעון</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse הפעלה</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse עצירה</string>
+
+    <string name="spam_unknown">ספאם לא ידוע</string>
+    <string name="spam_detecting_title">מזהה ספאם</string>
+    <string name="spam_detecting_text">מזהה Flipper Zero ומכשירים אחרים</string>
+    <string name="spam_detected_title">זוהה ספאם</string>
+
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">הפעל רישום</string>
+    <string name="preference_summary_enable_logging">הפעל רישום אפליקציה לאחסון חיצוני</string>
+
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">פתח תיקיית יומנים</string>
+    <string name="preference_summary_open_log_folder">הצג יומנים באחסון חיצוני</string>
+
+    <string name="preference_theme_mode">מצב ערכת נושא</string>
+    <string name="preference_theme_mode_light">בהיר</string>
+    <string name="preference_theme_mode_dark">כהה</string>
+    <string name="preference_theme_mode_follow_system">ברירת מחדל מערכת</string>
+
+    <string name="toast_no_items_selected">לא נבחרו פריטים</string>
+
+    <string name="missing_permissions_title">הרשאות חסרות</string>
+    <string name="missing_permissions_text">חסרות הרשאות. בלעדיהן, Bluetooth LE Spam לא יעבוד כראוי.</string>
+    <string name="missing_permissions_grant">הענק הרשאות</string>
+
+</resources>
+
