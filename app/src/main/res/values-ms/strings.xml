@@ -1,0 +1,84 @@
+<resources>
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">Maklumat</string>
+    <string name="bottom_nav_advertise">Siar</string>
+    <string name="bottom_nav_detect">Kesan</string>
+
+    <string name="action_settings">Tetapan</string>
+    <string name="action_set_tx_power">Kuasa TX</string>
+
+    <string name="menu_preferences">Tetapan</string>
+    <string name="menu_start">Mula</string>
+    <string name="menu_spam_detector">Pengesan spam</string>
+    <string name="menu_advertisement">Iklan</string>
+
+    <string name="menu_fastPairing">Pemasangan pantas Google</string>
+    <string name="menu_swiftPair">Pemasangan pantas Microsoft</string>
+    <string name="menu_continuityDevicePopup">Tetingkap timbul peranti Apple</string>
+    <string name="menu_continuityActionModal">Tetingkap tindakan Apple</string>
+    <string name="menu_kitchenSink">Rawak semuanya</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">Iklan lama</string>
+    <string name="preference_summary_use_legacy_advertising">Guna iklan BLE serasi Bluetooth 4</string>
+
+    <string name="power_level_high">Tinggi</string>
+    <string name="power_level_medium">Sederhana</string>
+    <string name="power_level_low">Rendah</string>
+    <string name="power_level_ultra_low">Sangat rendah</string>
+    <string name="power_dialog_title">Pilih kuasa TX</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">Tinggi</item>
+        <item name="tx_power_medium">Sederhana</item>
+        <item name="tx_power_low">Rendah</item>
+        <item name="tx_power_ultralow">Sangat rendah</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">Menyemak keperluan…</string>
+
+    <string name="ad_set_type_undefined">Jenis tidak ditakrif</string>
+    <string name="ad_set_type_fast_pairing">Pemasangan pantas</string>
+    <string name="ad_set_type_fast_pairing_device">Peranti pemasangan pantas</string>
+    <string name="ad_set_type_fast_pairing_non_production">Pemasangan pantas (bukan produksi)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Persediaan telefon pemasangan pantas</string>
+    <string name="ad_set_type_fast_pairing_debug">Nyahpepijat pemasangan pantas</string>
+    <string name="ad_set_type_continuity_new_device">Peranti Apple baharu</string>
+    <string name="ad_set_type_continuity_new_airtag">AirTag baharu</string>
+    <string name="ad_set_type_continuity_not_your_device">Bukan peranti anda</string>
+    <string name="ad_set_type_continuity_action_modals">Tetingkap tindakan Apple</string>
+    <string name="ad_set_type_continuity_ios17_crash">Ralat iOS 17</string>
+    <string name="ad_set_type_swift_pairing">Pemasangan Swift</string>
+    <string name="ad_set_type_easy_setup_buds">Persediaan mudah fon telinga</string>
+    <string name="ad_set_type_easy_setup_watch">Persediaan mudah jam</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse main</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse henti</string>
+
+    <string name="spam_unknown">Spam tidak diketahui</string>
+    <string name="spam_detecting_title">Mengesan spam</string>
+    <string name="spam_detecting_text">Mengesan Flipper Zero dan peranti lain</string>
+    <string name="spam_detected_title">Spam dikesan</string>
+
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Dayakan pembalakan</string>
+    <string name="preference_summary_enable_logging">Dayakan log aplikasi ke storan luaran</string>
+
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Buka folder log</string>
+    <string name="preference_summary_open_log_folder">Lihat log dalam storan luaran</string>
+
+    <string name="preference_theme_mode">Mod tema</string>
+    <string name="preference_theme_mode_light">Cerah</string>
+    <string name="preference_theme_mode_dark">Gelap</string>
+    <string name="preference_theme_mode_follow_system">Lalai sistem</string>
+
+    <string name="toast_no_items_selected">Tiada item dipilih</string>
+
+    <string name="missing_permissions_title">Kebenaran hilang</string>
+    <string name="missing_permissions_text">Beberapa kebenaran hilang. Tanpanya, Bluetooth LE Spam tidak akan berfungsi dengan betul.</string>
+    <string name="missing_permissions_grant">Beri kebenaran</string>
+
+</resources>
+
