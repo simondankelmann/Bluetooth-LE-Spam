@@ -1,0 +1,91 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">Info</string>
+    <string name="bottom_nav_advertise">Werben</string>
+    <string name="bottom_nav_detect">Erkennen</string>
+
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_set_tx_power">TX-Leistung</string>
+
+    <string name="menu_preferences">Einstellungen</string>
+    <string name="menu_start">Starten</string>
+    <string name="menu_spam_detector">Spam-Detektor</string>
+    <string name="menu_advertisement">Anzeige</string>
+
+    <string name="menu_fastPairing">Google Schnellkopplung</string>
+    <string name="menu_swiftPair">Microsoft Schnellkopplung</string>
+    <string name="menu_continuityDevicePopup">Apple Gerät-Popups</string>
+    <string name="menu_continuityActionModal">Apple Aktionsmodale</string>
+    <string name="menu_kitchenSink">Alles mischen (zufällig)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">Legacy-Werbung</string>
+    <string name="preference_summary_use_legacy_advertising">BLE-Werbung kompatibel mit Bluetooth 4 verwenden</string>
+
+    <string name="power_level_high">Hoch</string>
+    <string name="power_level_medium">Mittel</string>
+    <string name="power_level_low">Niedrig</string>
+    <string name="power_level_ultra_low">Sehr niedrig</string>
+    <string name="power_dialog_title">TX-Leistung wählen</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">Hoch</item>
+        <item name="tx_power_medium">Mittel</item>
+        <item name="tx_power_low">Niedrig</item>
+        <item name="tx_power_ultralow">Sehr niedrig</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">Anforderungen werden geprüft…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">Undefinierter Typ</string>
+    <string name="ad_set_type_fast_pairing">Schnellkopplung</string>
+    <string name="ad_set_type_fast_pairing_device">Schnellkopplungsgerät</string>
+    <string name="ad_set_type_fast_pairing_non_production">Schnellkopplung (nicht Produktion)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Schnellkopplung Telefoneinrichtung</string>
+    <string name="ad_set_type_fast_pairing_debug">Schnellkopplung Debug</string>
+    <string name="ad_set_type_continuity_new_device">Neues Apple Gerät</string>
+    <string name="ad_set_type_continuity_new_airtag">Neuer AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">Nicht dein Gerät</string>
+    <string name="ad_set_type_continuity_action_modals">Apple Aktionsmodal</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 Absturz</string>
+    <string name="ad_set_type_swift_pairing">Swift-Kopplung</string>
+    <string name="ad_set_type_easy_setup_buds">Einfache Einrichtung Kopfhörer</string>
+    <string name="ad_set_type_easy_setup_watch">Einfache Einrichtung Uhr</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse abspielen</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse stoppen</string>
+
+    <string name="spam_unknown">Unbekannter Spam</string>
+    <string name="spam_detecting_title">Spam wird erkannt</string>
+    <string name="spam_detecting_text">Flipper Zero und andere Geräte werden erkannt</string>
+    <string name="spam_detected_title">Spam erkannt</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Protokollierung aktivieren</string>
+    <string name="preference_summary_enable_logging">App-Protokolle im externen Speicher aktivieren</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Protokollordner öffnen</string>
+    <string name="preference_summary_open_log_folder">Protokolle im externen Speicher anzeigen</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">Designmodus</string>
+    <string name="preference_theme_mode_light">Hell</string>
+    <string name="preference_theme_mode_dark">Dunkel</string>
+    <string name="preference_theme_mode_follow_system">Systemstandard</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">Kein Element ausgewählt</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">Fehlende Berechtigungen</string>
+    <string name="missing_permissions_text">Einige Berechtigungen fehlen. Ohne sie funktioniert Bluetooth LE Spam nicht richtig.</string>
+    <string name="missing_permissions_grant">Berechtigungen erteilen</string>
+
+</resources>
+
