@@ -1,0 +1,84 @@
+<resources>
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">Információ</string>
+    <string name="bottom_nav_advertise">Sugárzás</string>
+    <string name="bottom_nav_detect">Észlelés</string>
+
+    <string name="action_settings">Beállítások</string>
+    <string name="action_set_tx_power">TX teljesítmény</string>
+
+    <string name="menu_preferences">Beállítások</string>
+    <string name="menu_start">Indítás</string>
+    <string name="menu_spam_detector">Spam detektor</string>
+    <string name="menu_advertisement">Hirdetés</string>
+
+    <string name="menu_fastPairing">Google gyors párosítás</string>
+    <string name="menu_swiftPair">Microsoft gyors párosítás</string>
+    <string name="menu_continuityDevicePopup">Apple eszköz felugrók</string>
+    <string name="menu_continuityActionModal">Apple műveleti ablakok</string>
+    <string name="menu_kitchenSink">Mindet kever (véletlen)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">Hagyományos hirdetés</string>
+    <string name="preference_summary_use_legacy_advertising">Bluetooth 4 kompatibilis BLE hirdetés használata</string>
+
+    <string name="power_level_high">Magas</string>
+    <string name="power_level_medium">Közepes</string>
+    <string name="power_level_low">Alacsony</string>
+    <string name="power_level_ultra_low">Nagyon alacsony</string>
+    <string name="power_dialog_title">TX teljesítmény kiválasztása</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">Magas</item>
+        <item name="tx_power_medium">Közepes</item>
+        <item name="tx_power_low">Alacsony</item>
+        <item name="tx_power_ultralow">Nagyon alacsony</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">Követelmények ellenőrzése…</string>
+
+    <string name="ad_set_type_undefined">Meghatározatlan típus</string>
+    <string name="ad_set_type_fast_pairing">Gyors párosítás</string>
+    <string name="ad_set_type_fast_pairing_device">Gyors párosítás eszköz</string>
+    <string name="ad_set_type_fast_pairing_non_production">Gyors párosítás (nem gyártási)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Gyors párosítás telefon beállítás</string>
+    <string name="ad_set_type_fast_pairing_debug">Gyors párosítás hibakeresés</string>
+    <string name="ad_set_type_continuity_new_device">Új Apple eszköz</string>
+    <string name="ad_set_type_continuity_new_airtag">Új AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">Nem a te eszközöd</string>
+    <string name="ad_set_type_continuity_action_modals">Apple műveleti ablak</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 összeomlás</string>
+    <string name="ad_set_type_swift_pairing">Swift párosítás</string>
+    <string name="ad_set_type_easy_setup_buds">Könnyű beállítás fülhallgató</string>
+    <string name="ad_set_type_easy_setup_watch">Könnyű beállítás óra</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse lejátszás</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse leállítás</string>
+
+    <string name="spam_unknown">Ismeretlen spam</string>
+    <string name="spam_detecting_title">Spam észlelése</string>
+    <string name="spam_detecting_text">Flipper Zero és más eszközök észlelése</string>
+    <string name="spam_detected_title">Spam észlelve</string>
+
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">Naplózás engedélyezése</string>
+    <string name="preference_summary_enable_logging">Alkalmazásnaplók engedélyezése külső tárhelyre</string>
+
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">Naplómappa megnyitása</string>
+    <string name="preference_summary_open_log_folder">Naplók megtekintése külső tárhelyen</string>
+
+    <string name="preference_theme_mode">Témamód</string>
+    <string name="preference_theme_mode_light">Világos</string>
+    <string name="preference_theme_mode_dark">Sötét</string>
+    <string name="preference_theme_mode_follow_system">Rendszer alapértelmezett</string>
+
+    <string name="toast_no_items_selected">Nincs kiválasztott elem</string>
+
+    <string name="missing_permissions_title">Hiányzó engedélyek</string>
+    <string name="missing_permissions_text">Néhány engedély hiányzik. Nélkülük a Bluetooth LE Spam nem fog megfelelően működni.</string>
+    <string name="missing_permissions_grant">Engedélyek megadása</string>
+
+</resources>
+
