@@ -1,0 +1,84 @@
+<resources>
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">তথ্য</string>
+    <string name="bottom_nav_advertise">সম্প্রচার</string>
+    <string name="bottom_nav_detect">সনাক্ত</string>
+
+    <string name="action_settings">সেটিংস</string>
+    <string name="action_set_tx_power">TX পাওয়ার</string>
+
+    <string name="menu_preferences">সেটিংস</string>
+    <string name="menu_start">শুরু</string>
+    <string name="menu_spam_detector">স্প্যাম ডিটেক্টর</string>
+    <string name="menu_advertisement">বিজ্ঞাপন</string>
+
+    <string name="menu_fastPairing">গুগল ফাস্ট পেয়ার</string>
+    <string name="menu_swiftPair">মাইক্রোসফট ফাস্ট পেয়ার</string>
+    <string name="menu_continuityDevicePopup">অ্যাপল ডিভাইস পপ-আপ</string>
+    <string name="menu_continuityActionModal">অ্যাপল অ্যাকশন মডাল</string>
+    <string name="menu_kitchenSink">সব মিশ্রিত (র‍্যান্ডম)</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">লিগ্যাসি বিজ্ঞাপন</string>
+    <string name="preference_summary_use_legacy_advertising">Bluetooth 4 সামঞ্জস্যপূর্ণ BLE বিজ্ঞাপন ব্যবহার করুন</string>
+
+    <string name="power_level_high">উচ্চ</string>
+    <string name="power_level_medium">মাঝারি</string>
+    <string name="power_level_low">নিম্ন</string>
+    <string name="power_level_ultra_low">খুব নিম্ন</string>
+    <string name="power_dialog_title">TX পাওয়ার নির্বাচন করুন</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">উচ্চ</item>
+        <item name="tx_power_medium">মাঝারি</item>
+        <item name="tx_power_low">নিম্ন</item>
+        <item name="tx_power_ultralow">খুব নিম্ন</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">প্রয়োজনীয়তা যাচাই হচ্ছে…</string>
+
+    <string name="ad_set_type_undefined">অনির্দিষ্ট ধরন</string>
+    <string name="ad_set_type_fast_pairing">ফাস্ট পেয়ার</string>
+    <string name="ad_set_type_fast_pairing_device">ফাস্ট পেয়ার ডিভাইস</string>
+    <string name="ad_set_type_fast_pairing_non_production">ফাস্ট পেয়ার (নন-প্রোডাকশন)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">ফাস্ট পেয়ার ফোন সেটআপ</string>
+    <string name="ad_set_type_fast_pairing_debug">ফাস্ট পেয়ার ডিবাগ</string>
+    <string name="ad_set_type_continuity_new_device">নতুন অ্যাপল ডিভাইস</string>
+    <string name="ad_set_type_continuity_new_airtag">নতুন AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">আপনার ডিভাইস নয়</string>
+    <string name="ad_set_type_continuity_action_modals">অ্যাপল অ্যাকশন মডাল</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 ক্র্যাশ</string>
+    <string name="ad_set_type_swift_pairing">Swift পেয়ারিং</string>
+    <string name="ad_set_type_easy_setup_buds">ইয়ারবাড সহজ সেটআপ</string>
+    <string name="ad_set_type_easy_setup_watch">ঘড়ি সহজ সেটআপ</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse চালু</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse বন্ধ</string>
+
+    <string name="spam_unknown">অজানা স্প্যাম</string>
+    <string name="spam_detecting_title">স্প্যাম সনাক্ত করা হচ্ছে</string>
+    <string name="spam_detecting_text">Flipper Zero এবং অন্যান্য ডিভাইস সনাক্ত করা হচ্ছে</string>
+    <string name="spam_detected_title">স্প্যাম সনাক্ত হয়েছে</string>
+
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">লগিং সক্ষম করুন</string>
+    <string name="preference_summary_enable_logging">বাহ্যিক স্টোরেজে অ্যাপ লগিং সক্ষম করুন</string>
+
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">লগ ফোল্ডার খুলুন</string>
+    <string name="preference_summary_open_log_folder">বাহ্যিক স্টোরেজে অ্যাপ লগ দেখুন</string>
+
+    <string name="preference_theme_mode">থিম মোড</string>
+    <string name="preference_theme_mode_light">হালকা</string>
+    <string name="preference_theme_mode_dark">গাঢ়</string>
+    <string name="preference_theme_mode_follow_system">সিস্টেম ডিফল্ট</string>
+
+    <string name="toast_no_items_selected">কোনো আইটেম নির্বাচিত হয়নি</string>
+
+    <string name="missing_permissions_title">অনুমতি অনুপস্থিত</string>
+    <string name="missing_permissions_text">কিছু অনুমতি অনুপস্থিত। এগুলি ছাড়া Bluetooth LE Spam সঠিকভাবে কাজ করবে না।</string>
+    <string name="missing_permissions_grant">অনুমতি দিন</string>
+
+</resources>
+
