@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="log_info">@color/grey_normal</color>
+    <!-- 旧颜色引用的夜间覆盖:自动指向深色语义色 -->
+    <color name="log_info">@color/md_theme_dark_onSurfaceVariant</color>
 
-    <!-- Text Colors -->
-    <color name="text_color">#ffffff</color>
+    <color name="text_color">@color/md_theme_dark_onBackground</color>
+    <color name="text_color_light">@color/md_theme_dark_onSurfaceVariant</color>
 
-    <!-- ACTIONBAR -->
-    <color name="background_color_action_bar">#151515</color>
-    <color name="foreground_color_action_bar">#FFFFFF</color>
+    <color name="background_color_action_bar">@color/md_theme_dark_surface</color>
+    <color name="foreground_color_action_bar">@color/md_theme_dark_primary</color>
 
-    <!-- CARDVIEW -->
-    <color name="text_color_card_view_accent">#FFFFFF</color>
-    <color name="text_color_card_view_accent_light">#D1D1D1</color>
+    <color name="text_color_card_view_accent">@color/md_theme_dark_onPrimary</color>
+    <color name="text_color_card_view_accent_light">@color/md_theme_dark_onPrimaryContainer</color>
 
-    <!-- CARDVIEW ALTERNATIVE -->
-    <color name="text_color_card_view_alternative">@color/white</color>
-    <color name="text_color_card_view_alternative_light">@color/white</color>
-    <color name="tint_icon_card_view_alternative">#FFFFFF</color>
+    <color name="text_color_card_view_alternative">@color/md_theme_dark_onSurface</color>
+    <color name="text_color_card_view_alternative_light">@color/md_theme_dark_onSurfaceVariant</color>
+    <color name="tint_icon_card_view_alternative">@color/md_theme_dark_onSurfaceVariant</color>
 
-    <!-- LOADING SPINNER -->
-    <color name="background_color_loading_spinner">#cc000000</color>
-    <color name="color_filter_loading_spinner">@color/blue_normal</color>
-    <color name="color_loading_spinner_message">#ababab</color>
+    <color name="background_color_loading_spinner">#CC000000</color>
+    <color name="color_filter_loading_spinner">@color/md_theme_dark_primary</color>
+    <color name="color_loading_spinner_message">@color/md_theme_dark_onSurface</color>
 
-    <!-- ICON TINT -->
-    <color name="tint_icon">@color/grey_normal</color>
-    <color name="tint_icon_light">@color/grey_normal</color>
-    <color name="tint_icon_accent">@color/blue_normal</color>
+    <color name="tint_icon">@color/md_theme_dark_onSurface</color>
+    <color name="tint_icon_light">@color/md_theme_dark_onSurfaceVariant</color>
+    <color name="tint_icon_accent">@color/md_theme_dark_primary</color>
 
-    <!-- NOTIFICATION -->
-    <color name="tint_target_icon">@color/text_color_light</color>
-    <color name="color_title">@color/text_color</color>
-    <color name="color_subtitle">@color/text_color_light</color>
-    <color name="tint_button_active">@color/text_color</color>
-    <color name="tint_button_inactive">@color/text_color_light</color>
-    <!-- BACKGROUND -->
-    <color name="background_color">#1A1D29</color>
+    <color name="tint_target_icon">@color/md_theme_dark_onSurfaceVariant</color>
+    <color name="color_title">@color/md_theme_dark_onSurface</color>
+    <color name="color_subtitle">@color/md_theme_dark_onSurfaceVariant</color>
+    <color name="tint_button_active">@color/md_theme_dark_primary</color>
+    <color name="tint_button_inactive">@color/md_theme_dark_onSurfaceVariant</color>
 
+    <color name="background_color">@color/md_theme_dark_background</color>
+
+    <color name="blue_normal">@color/md_theme_dark_primary</color>
+    <color name="blue_dark">@color/md_theme_dark_primaryContainer</color>
+    <color name="blue_light">@color/md_theme_dark_primaryContainer</color>
+    <color name="blue_lighter">@color/md_theme_dark_primaryContainer</color>
+    <color name="blue_accent">@color/md_theme_dark_tertiary</color>
+
+    <color name="background_color_rounded_button">@color/md_theme_dark_primary</color>
+    <color name="foreground_color_rounded_button">@color/md_theme_dark_onPrimary</color>
 </resources>

@@ -52,20 +52,7 @@ class SpamPackageScanResultListViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val itemsViewModel = mList[position]
 
-        holder.nameText.text = when (itemsViewModel.spamPackageType) {
-            SpamPackageType.UNKNOWN -> "Unknown Spam"
-            SpamPackageType.FAST_PAIRING -> "Fast Pairing"
-            SpamPackageType.CONTINUITY_NEW_AIRTAG -> "Continuity Airtag"
-            SpamPackageType.CONTINUITY_NEW_DEVICE -> "Continuity new Device"
-            SpamPackageType.CONTINUITY_NOT_YOUR_DEVICE -> "Continuity not your Device"
-            SpamPackageType.CONTINUITY_ACTION_MODAL -> "Continuity Action Modal"
-            SpamPackageType.CONTINUITY_IOS_17_CRASH -> "Continuity iOS 17 Crash"
-            SpamPackageType.SWIFT_PAIRING -> "Swift Pairing"
-            SpamPackageType.EASY_SETUP_WATCH -> "Easy Setup Watch"
-            SpamPackageType.EASY_SETUP_BUDS -> "Easy Setup Buds"
-            SpamPackageType.LOVESPOUSE_PLAY -> "Lovespouse Play"
-            SpamPackageType.LOVESPOUSE_STOP -> "Lovespouse Stop"
-        }
+        holder.nameText.text = context.getString(itemsViewModel.spamPackageType.stringRes())
 
         val spamPackageIconId: Int = when (itemsViewModel.spamPackageType) {
             SpamPackageType.UNKNOWN -> R.drawable.bluetooth

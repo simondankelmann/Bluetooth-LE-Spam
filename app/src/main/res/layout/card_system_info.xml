@@ -1,81 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/startFragmentSystemInfoCard"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
-    app:cardCornerRadius="@dimen/cornerRadiusCardview"
-    app:cardElevation="0dp">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_small"
+    app:cardBackgroundColor="?attr/colorPrimaryContainer"
+    app:cardCornerRadius="@dimen/cardview_corner_radius"
+    app:cardElevation="@dimen/cardview_elevation">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_cardview_accent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/cornerRadiusCardview">
+        android:padding="@dimen/spacing_medium">
 
         <TextView
             android:id="@+id/startFragmentSystemInfoHeadline"
+            style="?attr/textAppearanceHeadlineMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
+            android:paddingBottom="@dimen/spacing_small"
             android:text="@string/app_name"
-            android:textColor="@color/text_color_card_view_accent"
-            android:textSize="@dimen/textSizeHeadline"
-            android:textStyle="bold" />
+            android:textColor="?attr/colorOnPrimaryContainer" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- System Info -->
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/startFragmentTextViewAppVersion"
+                    style="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="App Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:text="@string/label_app_version"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewAndroidVersion"
+                    style="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Android Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:text="@string/label_android_version"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewSdkVersion"
+                    style="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Sdk Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:text="@string/label_sdk_version"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewBluetooth"
+                    style="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Bluetooth:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="2dp"
+                    android:text="@string/label_bluetooth"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
             </LinearLayout>
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:src="@drawable/logobrightnocircle"
-                app:tint="@color/white" />
+                app:tint="?attr/colorOnPrimaryContainer" />
 
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

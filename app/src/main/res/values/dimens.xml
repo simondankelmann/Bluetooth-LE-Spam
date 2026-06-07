@@ -9,10 +9,16 @@
     <dimen name="seek_bar_thickness">4dp</dimen>
     <dimen name="seek_bar_thumb_size">20dp</dimen>
 
-    <!-- CARDVIEW -->
+    <!-- Material 3 Expressive 间距 -->
+    <dimen name="cardview_corner_radius">16dp</dimen>
+    <dimen name="cardview_elevation">2dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+
+    <!-- 保留旧尺寸以兼容现有代码,新代码请使用 cardview_corner_radius / spacing_* -->
     <dimen name="cornerRadiusCardview">15dp</dimen>
 
-    <!-- Headline -->
+    <!-- Headline (保留旧名称,新代码请使用 ?attr/textAppearanceHeadlineMedium 等) -->
     <dimen name="textSizeHeadline">24dp</dimen>
     <dimen name="textSizeHeadline2">20dp</dimen>
     <dimen name="textSizeHeadline3">18dp</dimen>

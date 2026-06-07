@@ -1,6 +1,8 @@
 package de.simon.dankelmann.bluetoothlespam
 
 import android.app.Application
+import android.os.Build
+import com.google.android.material.color.DynamicColors
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
@@ -21,8 +23,11 @@ class BleSpamApplication : Application() {
         private set
 
     override fun onCreate() {
-        // Apply the user's theme preference before calling super.onCreate()
-        // to ensure the theme is set before any UI is created
+        // 应用 Material 3 Dynamic Colors (Android 12+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            DynamicColors.applyToActivitiesIfAvailable(this)
+        }
+        // 应用主题
         ThemeManager.getInstance().applyTheme(this)
 
         super.onCreate()

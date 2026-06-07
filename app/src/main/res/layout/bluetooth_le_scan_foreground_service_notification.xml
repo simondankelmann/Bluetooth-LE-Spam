@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="@dimen/spacing_small">
 
     <ImageView
         android:id="@+id/bluetoothLeScanningForegroundNotificationIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="10dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
         android:src="@drawable/bluetooth_searching"
-        app:tint="@color/tint_target_icon" />
+        app:tint="?attr/colorPrimary" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -20,28 +22,24 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/bluetoothLeScanningForegroundNotificationTitle"
+            style="?attr/textAppearanceTitleMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:gravity="center"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/color_title"
-            android:textSize="18dp"
+            android:textColor="?attr/colorOnSurface"
             tools:text="Title" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/bluetoothLeScanningForegroundNotificationSubTitle"
+            style="?attr/textAppearanceBodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
-            android:gravity="center"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/color_subtitle"
-            android:textSize="15dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textStyle="italic"
             tools:text="Subtitle" />
     </LinearLayout>

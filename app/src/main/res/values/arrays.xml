@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="scan_mode_entries">
-        <item>Low Power</item>
-        <item>Balanced</item>
-        <item>Low Latency</item>
+        <item>@string/scan_mode_low_power</item>
+        <item>@string/scan_mode_balanced</item>
+        <item>@string/scan_mode_low_latency</item>
     </string-array>
 
     <string-array name="scan_mode_values">
@@ -11,7 +11,7 @@
         <item>balanced</item>
         <item>low_latency</item>
     </string-array>
-    
+
     <string-array name="theme_mode_entries">
         <item>@string/preference_theme_mode_follow_system</item>
         <item>@string/preference_theme_mode_light</item>

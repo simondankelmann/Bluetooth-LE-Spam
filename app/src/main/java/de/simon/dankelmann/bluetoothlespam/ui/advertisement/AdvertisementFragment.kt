@@ -331,7 +331,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
         if(advertisementSet != null){
             highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_FAILED)
-            Toast.makeText(requireContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.toast_advertisement_failed, advertisementError), Toast.LENGTH_SHORT).show()
         }
     }
     // END: AdvertismentServiceCallback

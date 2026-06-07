@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="scan_mode_entries">
+        <item>استهلاك طاقة منخفض</item>
+        <item>متوازن</item>
+        <item>زمن انتظار منخفض</item>
+    </string-array>
+</resources>

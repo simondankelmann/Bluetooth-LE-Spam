@@ -1,21 +1,50 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="Theme.BluetoothLESpam" parent="Theme.Material3.DayNight">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_normal</item>
-        <item name="colorPrimaryVariant">@color/blue_dark</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/green_normal</item>
-        <item name="colorSecondaryVariant">@color/green_dark</item>
-        <item name="colorOnSecondary">@color/grey_normal</item>
-        <!-- Customize your theme here. -->
-        <item name="seekbarBackground">@color/grey_normal</item>
-        <item name="seekbarProgress">?attr/colorPrimary</item>
-        <item name="seekbarSecondaryProgress">?attr/colorPrimaryVariant</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+    <!-- 深色主题的 Material 3 覆盖 -->
+    <style name="Theme.BluetoothLESpam" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="colorPrimary">@color/md_theme_dark_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_dark_onPrimaryContainer</item>
+
+        <item name="colorSecondary">@color/md_theme_dark_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_dark_onSecondaryContainer</item>
+
+        <item name="colorTertiary">@color/md_theme_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_dark_onTertiaryContainer</item>
+
+        <item name="android:colorBackground">@color/md_theme_dark_background</item>
+        <item name="colorOnBackground">@color/md_theme_dark_onBackground</item>
+
+        <item name="colorSurface">@color/md_theme_dark_surface</item>
+        <item name="colorOnSurface">@color/md_theme_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>
+        <item name="colorSurfaceTint">@color/md_theme_dark_surfaceTint</item>
+
+        <item name="colorError">@color/md_theme_dark_error</item>
+        <item name="colorOnError">@color/md_theme_dark_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
+
+        <item name="colorOutline">@color/md_theme_dark_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_dark_outlineVariant</item>
+
+        <item name="android:windowBackground">@color/md_theme_dark_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/md_theme_dark_surface</item>
+
+        <item name="colorPrimaryVariant">@color/md_theme_dark_primaryContainer</item>
+        <item name="colorSecondaryVariant">@color/md_theme_dark_secondaryContainer</item>
+
+        <item name="seekbarBackground">@color/md_theme_dark_surfaceVariant</item>
+        <item name="seekbarProgress">@color/md_theme_dark_primary</item>
+        <item name="seekbarSecondaryProgress">@color/md_theme_dark_primaryContainer</item>
     </style>
 
 </resources>

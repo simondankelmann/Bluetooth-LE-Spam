@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:padding="@dimen/spacing_medium"
         app:layout_constraintHeight_percent="0.35"
         app:layout_constraintTop_toTopOf="@id/advertisementFragmentLayout">
 
@@ -29,30 +29,31 @@
 
         <TextView
             android:id="@+id/advertisementFragmentCollectionTitle"
+            style="?attr/textAppearanceHeadlineMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Collection Title"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/textSizeHeadline"
-            android:textStyle="bold"
+            android:text="@string/label_collection_title"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionSubtitle" />
 
         <TextView
             android:id="@+id/advertisementFragmentCollectionSubtitle"
+            style="?attr/textAppearanceBodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="test"
-            android:textColor="@color/text_color"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textStyle="italic"
+            tools:text="@string/label_current_advertising_subtitle"
             app:layout_constraintBottom_toTopOf="@id/advertisementFragmentCollectionHint" />
 
         <TextView
             android:id="@+id/advertisementFragmentCollectionHint"
+            style="?attr/textAppearanceBodySmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="-"
-            android:textColor="@color/text_color"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textStyle="italic"
+            tools:text="@string/label_current_advertising_subtitle"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- End: Advertisement Top Container -->
@@ -61,8 +62,10 @@
     <LinearLayout
         android:id="@+id/advertisementFragmentLayoutLowerTop"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_medium"
         app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutTop">
 
         <LinearLayout
@@ -70,44 +73,40 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:layout_weight="5"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeLinearButton"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="@dimen/spacing_small"
+                android:background="?attr/actionBarItemBackground"
                 android:scaleType="fitCenter"
                 android:src="@drawable/repeat"
-                app:tint="@color/text_color_light" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
             <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeRandomButton"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:padding="5dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/actionBarItemBackground"
                 android:scaleType="fitCenter"
                 android:src="@drawable/shuffle"
-                app:tint="@color/text_color_light" />
+                app:tint="?attr/colorOnSurfaceVariant" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="70dp"
-            android:layout_height="match_parent"
-            android:padding="10dp">
-
-            <ImageButton
-                android:id="@+id/advertisementFragmentPlayButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/roundedbutton"
-                android:scaleType="center"
-                android:src="@drawable/play_arrow"
-                app:tint="@color/foreground_color_rounded_button" />
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/advertisementFragmentPlayButton"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:src="@drawable/play_arrow"
+            app:iconSize="24dp"
+            app:iconTint="?attr/colorOnPrimary" />
 
     </LinearLayout>
     <!-- END: Advertisement Lower Top Container -->
@@ -134,58 +133,57 @@
     </LinearLayout>
     <!-- END: Advertisement Center Container -->
 
-
     <!-- Advertisement Footer Container -->
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/advertisementFragmentLayoutFooter"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_small"
+        app:cardBackgroundColor="?attr/colorSurfaceVariant"
+        app:cardCornerRadius="@dimen/cardview_corner_radius"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@id/advertisementFragmentLayout">
 
         <LinearLayout
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:padding="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/spacing_small">
 
             <ImageView
                 android:id="@+id/advertisementFragmentTargetImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/spacing_small"
                 android:src="@drawable/bluetooth"
-                app:tint="@color/tint_icon_light" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5">
+                app:tint="?attr/colorPrimary" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="5dp">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/advertisementFragmentCurrentSetTitle"
+                    style="?attr/textAppearanceTitleMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Current Advertising Set"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_current_advertising_set"
+                    android:textColor="?attr/colorOnSurface" />
+
                 <TextView
                     android:id="@+id/advertisementFragmentCurrentSetSubTitle"
+                    style="?attr/textAppearanceBodyMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="Current Advertising SubTitle"
-                    android:textColor="@color/blue_normal"
-                    android:textStyle="italic" />
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textStyle="italic"
+                    tools:text="@string/label_current_advertising_subtitle" />
             </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
     <!-- END: Advertisement Footer Container -->
 </androidx.constraintlayout.widget.ConstraintLayout>

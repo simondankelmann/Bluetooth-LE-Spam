@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 渐变背景 - 错误状态 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
-        android:angle="135"
-        android:endColor="#ee2235"
-        android:startColor="#f53d4e"
-        android:type="linear" />
+        android:startColor="?attr/colorErrorContainer"
+        android:endColor="?attr/colorSurface"
+        android:angle="135" />
+    <corners android:radius="16dp" />
 </shape>

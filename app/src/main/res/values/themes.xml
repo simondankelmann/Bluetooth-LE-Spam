@@ -1,21 +1,77 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
-    <style name="Theme.BluetoothLESpam" parent="Theme.Material3.DayNight">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_normal</item>
-        <item name="colorPrimaryVariant">@color/blue_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_normal</item>
-        <item name="colorSecondaryVariant">@color/blue_dark</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-        <item name="seekbarBackground">@color/grey_normal</item>
-        <item name="seekbarProgress">?attr/colorPrimary</item>
-        <item name="seekbarSecondaryProgress">?attr/colorPrimaryVariant</item>
+    <!-- 基础应用主题(浅色)。继承 Material 3 Expressive DayNight。 -->
+    <style name="Theme.BluetoothLESpam" parent="Theme.Material3.DynamicColors.DayNight">
+        <!-- 颜色覆盖(当 DynamicColors 不可用时退回) -->
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorSurfaceTint">@color/md_theme_light_surfaceTint</item>
+
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_light_outlineVariant</item>
+
+        <item name="android:windowBackground">@color/md_theme_light_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/md_theme_light_surface</item>
+
+        <!-- Material 3 形状(大圆角表达) -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.BluetoothLESpam.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.BluetoothLESpam.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.BluetoothLESpam.Large</item>
+
+        <!-- Material 3 排版(Expressive) -->
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.BluetoothLESpam.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.BluetoothLESpam.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.BluetoothLESpam.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.BluetoothLESpam.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.BluetoothLESpam.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.BluetoothLESpam.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.BluetoothLESpam.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.BluetoothLESpam.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.BluetoothLESpam.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.BluetoothLESpam.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.BluetoothLESpam.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.BluetoothLESpam.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.BluetoothLESpam.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.BluetoothLESpam.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.BluetoothLESpam.LabelSmall</item>
+
+        <!-- 向下兼容(旧主题属性) -->
+        <item name="colorPrimaryVariant">@color/md_theme_light_primaryContainer</item>
+        <item name="colorSecondaryVariant">@color/md_theme_light_secondaryContainer</item>
+
+        <!-- 自定义 SeekBar 颜色(保持向后兼容) -->
+        <item name="seekbarBackground">@color/md_theme_light_surfaceVariant</item>
+        <item name="seekbarProgress">@color/md_theme_light_primary</item>
+        <item name="seekbarSecondaryProgress">@color/md_theme_light_primaryContainer</item>
+
+        <!-- Material 3 顶部应用栏覆盖层 -->
     </style>
 
     <style name="Theme.BluetoothLESpam.NoActionBar">
@@ -23,14 +79,66 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
-        <item name="android:src">@drawable/settings</item>
-        <item name="color">@color/foreground_color_action_bar</item>
-        <item name="tint">@color/foreground_color_action_bar</item>
+    <!-- Material 3 形状外观覆盖 -->
+    <style name="ShapeAppearance.BluetoothLESpam.Small" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="ShapeAppearance.BluetoothLESpam.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="ShapeAppearance.BluetoothLESpam.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">28dp</item>
     </style>
 
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
+    <!-- Material 3 排版外观(Expressive 风格:圆润、略大的标题) -->
+    <style name="TextAppearance.BluetoothLESpam.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.BluetoothLESpam.TitleLarge" parent="TextAppearance.Material3.TitleLarge" />
+    <style name="TextAppearance.BluetoothLESpam.TitleMedium" parent="TextAppearance.Material3.TitleMedium" />
+    <style name="TextAppearance.BluetoothLESpam.TitleSmall" parent="TextAppearance.Material3.TitleSmall" />
+    <style name="TextAppearance.BluetoothLESpam.BodyLarge" parent="TextAppearance.Material3.BodyLarge" />
+    <style name="TextAppearance.BluetoothLESpam.BodyMedium" parent="TextAppearance.Material3.BodyMedium" />
+    <style name="TextAppearance.BluetoothLESpam.BodySmall" parent="TextAppearance.Material3.BodySmall" />
+    <style name="TextAppearance.BluetoothLESpam.LabelLarge" parent="TextAppearance.Material3.LabelLarge" />
+    <style name="TextAppearance.BluetoothLESpam.LabelMedium" parent="TextAppearance.Material3.LabelMedium" />
+    <style name="TextAppearance.BluetoothLESpam.LabelSmall" parent="TextAppearance.Material3.LabelSmall" />
+
+    <!-- 偏好设置主题(更具 Material 3 外观) -->
+    <style name="Theme.BluetoothLESpam.Preferences" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+    </style>
+
+    <!-- Material 3 AppBarOverlay 覆盖样式(确保菜单等组件正确着色) -->
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.Material3.DayNight.ActionBar" />
+
+    <!-- 工具/溢出按钮样式(保持与主题色一致) -->
+    <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/settings</item>
+        <item name="color">@color/md_theme_light_primary</item>
+        <item name="tint">@color/md_theme_light_primary</item>
     </style>
 
 </resources>

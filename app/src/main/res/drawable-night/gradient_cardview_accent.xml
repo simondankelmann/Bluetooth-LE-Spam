@@ -1,18 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 渐变卡片背景 - 强调色 (深色主题) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
-        android:angle="135"
-        android:endColor="@color/blue_dark"
-        android:startColor="@color/blue_normal"
-        android:type="linear" />
-    <corners
-        android:radius="16dp" />
-    <padding
-        android:left="16dp"
-        android:top="16dp"
-        android:right="16dp"
-        android:bottom="16dp" />
-    <stroke
-        android:width="2dp"
-        android:color="@color/blue_accent" />
+        android:startColor="?attr/colorPrimaryContainer"
+        android:endColor="?attr/colorTertiaryContainer"
+        android:angle="135" />
+    <corners android:radius="16dp" />
 </shape>

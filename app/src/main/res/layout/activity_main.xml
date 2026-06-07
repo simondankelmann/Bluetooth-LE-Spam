@@ -8,28 +8,22 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:elevation="0dp">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:elevation="0dp">
+            android:layout_height="?attr/actionBarSize"
+            app:titleTextColor="?attr/colorOnSurface"
+            tools:title="@string/app_name" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Theme.BluetoothLESpam.AppBarOverlay"
-                tools:title="@string/app_name" />
-        </com.google.android.material.appbar.AppBarLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
@@ -39,9 +33,13 @@
         app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:itemIconTint="?attr/colorOnSurfaceVariant"
+        app:itemTextColor="?attr/colorOnSurfaceVariant"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_bottom_nav" />
 
 </LinearLayout>

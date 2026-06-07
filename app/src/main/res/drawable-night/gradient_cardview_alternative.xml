@@ -1,18 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 渐变卡片背景 - 备用色 (深色主题) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
-        android:angle="135"
-        android:endColor="#2c3e50"
-        android:startColor="#4ca1af"
-        android:type="linear" />
-    <corners
-        android:radius="16dp" />
-    <padding
-        android:left="16dp"
-        android:top="16dp"
-        android:right="16dp"
-        android:bottom="16dp" />
-    <stroke
-        android:width="2dp"
-        android:color="#1abc9c" /> <!-- Teal stroke -->
+        android:startColor="?attr/colorPrimaryContainer"
+        android:endColor="?attr/colorSecondaryContainer"
+        android:angle="135" />
+    <corners android:radius="16dp" />
 </shape>

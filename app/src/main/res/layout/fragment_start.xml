@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,183 +7,188 @@
     android:clipToPadding="false"
     tools:context=".ui.start.StartFragment">
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_medium">
+
+        <include
+            android:id="@+id/info_card"
+            layout="@layout/card_system_info" />
+
+        <TextView
+            android:id="@+id/startFragmentRequirementsHeadline"
+            style="?attr/textAppearanceHeadlineMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/activity_vertical_margin">
+            android:paddingTop="@dimen/spacing_medium"
+            android:paddingBottom="@dimen/spacing_small"
+            android:text="@string/card_label_requirements"
+            android:textColor="?attr/colorOnSurface" />
 
-            <include
-                android:id="@+id/info_card"
-                layout="@layout/card_system_info" />
+        <TextView
+            android:id="@+id/startFragmentRequirementsTextView"
+            style="?attr/textAppearanceBodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/spacing_small"
+            android:text="@string/startfragment_requirements_checking"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <TextView
-                android:id="@+id/startFragmentRequirementsHeadline"
+        <TextView
+            android:id="@+id/startFragmentMissingRequirementsTextView"
+            style="?attr/textAppearanceBodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/spacing_small"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textStyle="italic"
+            tools:text="—" />
+
+        <!-- PERMISSIONS CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/startFragmentPermissionsCardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small"
+            app:cardBackgroundColor="?attr/colorPrimaryContainer"
+            app:cardCornerRadius="@dimen/cardview_corner_radius"
+            app:cardElevation="@dimen/cardview_elevation">
+
+            <LinearLayout
+                android:id="@+id/startFragmentPermissionCardViewContentWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="15dp"
-                android:paddingBottom="5dp"
-                android:text="Requirements"
-                android:textColor="@color/text_color"
-                android:textSize="@dimen/textSizeHeadline"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/startFragmentSystemInfoCard" />
-
-            <TextView
-                android:id="@+id/startFragmentRequirementsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:text="@string/startfragment_requirements_checking"
-                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsHeadline" />
-
-            <TextView
-                android:id="@+id/startFragmentMissingRequirementsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/cornerRadiusCardview"
-                android:text="---"
-                android:textColor="@color/grey_normal"
-                android:textStyle="italic"
-                app:layout_constraintTop_toBottomOf="@id/startFragmentRequirementsTextView" />
-
-            <!-- PERMISSIONS CARD -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/startFragmentPermissionsCardview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@id/startFragmentMissingRequirementsTextView">
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_medium"
+                android:paddingEnd="@dimen/spacing_medium">
 
                 <LinearLayout
-                    android:id="@+id/startFragmentPermissionCardViewContentWrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/gradient_cardview_requirements"
-                    android:orientation="horizontal">
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
 
-                    <LinearLayout
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:src="@drawable/key_24"
-                            app:tint="@color/tint_icon_card_view_alternative" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:text="Permissions"
-                        android:textColor="@color/text_color_card_view_alternative"
-                        android:textSize="@dimen/textSizeHeadline2" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/key_24"
+                        app:tint="?attr/colorOnPrimaryContainer" />
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-            <!-- END: PERMISSIONS CARD -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/card_label_permissions"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    style="?attr/textAppearanceTitleLarge" />
+            </LinearLayout>
 
-            <!-- BLUETOOTH CARD -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/start_fragment_bluetooth_cardview"
+        </com.google.android.material.card.MaterialCardView>
+        <!-- END: PERMISSIONS CARD -->
+
+        <!-- BLUETOOTH CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/start_fragment_bluetooth_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small"
+            app:cardBackgroundColor="?attr/colorPrimaryContainer"
+            app:cardCornerRadius="@dimen/cardview_corner_radius"
+            app:cardElevation="@dimen/cardview_elevation">
+
+            <LinearLayout
+                android:id="@+id/startFragmentBluetoothCardViewContentWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/cornerRadiusCardview"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@id/startFragmentPermissionsCardview">
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_medium"
+                android:paddingEnd="@dimen/spacing_medium">
 
                 <LinearLayout
-                    android:id="@+id/startFragmentBluetoothCardViewContentWrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/gradient_cardview_requirements"
-                    android:orientation="horizontal">
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
 
-                    <LinearLayout
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:src="@drawable/bluetooth"
-                            app:tint="@color/tint_icon_card_view_alternative" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:text="Bluetooth Adapter"
-                        android:textColor="@color/text_color_card_view_alternative"
-                        android:textSize="@dimen/textSizeHeadline2" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/bluetooth"
+                        app:tint="?attr/colorOnPrimaryContainer" />
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-            <!-- END: BLUETOOTH CARD -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/card_label_bluetooth_adapter"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    style="?attr/textAppearanceTitleLarge" />
+            </LinearLayout>
 
-            <!-- DATABASE CARD -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/start_fragment_database_cardview"
+        </com.google.android.material.card.MaterialCardView>
+        <!-- END: BLUETOOTH CARD -->
+
+        <!-- DATABASE CARD -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/start_fragment_database_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small"
+            app:cardBackgroundColor="?attr/colorPrimaryContainer"
+            app:cardCornerRadius="@dimen/cardview_corner_radius"
+            app:cardElevation="@dimen/cardview_elevation">
+
+            <LinearLayout
+                android:id="@+id/startFragmentDatabaseCardViewContentWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/cornerRadiusCardview"
-                app:cardCornerRadius="@dimen/cornerRadiusCardview"
-                app:cardElevation="0dp">
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_medium"
+                android:paddingEnd="@dimen/spacing_medium">
 
                 <LinearLayout
-                    android:id="@+id/startFragmentDatabaseCardViewContentWrapper"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/gradient_cardview_requirements"
-                    android:orientation="horizontal">
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
 
-                    <LinearLayout
-                        android:layout_width="50dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center">
+                    <ImageView
+                        android:id="@+id/startFragmentDatabaseCardIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/data_array"
+                        app:tint="?attr/colorOnPrimaryContainer" />
 
-                        <ImageView
-                            android:id="@+id/startFragmentDatabaseCardIcon"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:src="@drawable/data_array"
-                            app:tint="@color/tint_icon_card_view_alternative" />
-
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/startFragmentDatabaseCardSeedingAnimation"
-                            android:layout_width="35dp"
-                            android:layout_height="35dp"
-                            android:scaleType="fitXY"
-                            android:visibility="gone"
-                            app:lottie_autoPlay="true"
-                            app:lottie_colorFilter="@color/tint_icon_card_view_alternative"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/sandglass"
-                            app:lottie_repeatMode="restart" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:text="Database"
-                        android:textColor="@color/text_color_card_view_alternative"
-                        android:textSize="@dimen/textSizeHeadline2" />
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/startFragmentDatabaseCardSeedingAnimation"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:visibility="gone"
+                        app:lottie_autoPlay="true"
+                        app:lottie_colorFilter="?attr/colorOnPrimaryContainer"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/sandglass"
+                        app:lottie_repeatMode="restart" />
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
-            <!-- END: SERVICE CARD -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/card_label_database"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    style="?attr/textAppearanceTitleLarge" />
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+        <!-- END: DATABASE CARD -->
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

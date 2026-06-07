@@ -1,89 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Keep that commented out. It will lead to compile errors -->
-    <!--<string name="app_name">Bluetooth LE Spam</string>-->
-
-    <string name="bottom_nav_start">Информация</string>
-    <string name="bottom_nav_advertise">Спам</string>
-    <string name="bottom_nav_detect">Обнаружить</string>
-
+    <string name="bottom_nav_start">Обзор</string>
+    <string name="bottom_nav_advertise">Трансляция</string>
+    <string name="bottom_nav_detect">Обнаружение</string>
     <string name="action_settings">Настройки</string>
-    <string name="action_set_tx_power">Мощность передачи данных</string>
-
+    <string name="action_set_tx_power">Мощность передачи</string>
     <string name="menu_preferences">Настройки</string>
-    <string name="menu_start">Запустить</string>
-    <string name="menu_spam_detector">Обнаружение спама</string>
-    <string name="menu_advertisement">Спам</string>
-
+    <string name="menu_start">Старт</string>
+    <string name="menu_spam_detector">Детектор спам-рассылки</string>
+    <string name="menu_advertisement">Трансляция</string>
     <string name="menu_fastPairing">Быстрое сопряжение Google</string>
     <string name="menu_swiftPair">Быстрое сопряжение Microsoft</string>
-    <string name="menu_continuityDevicePopup">Всплывающин окна устройств Apple</string>
-    <string name="menu_continuityActionModal">Всплывающие окна Apple</string>
-    <string name="menu_kitchenSink">Все способы</string>
-
+    <string name="menu_continuityDevicePopup">Всплывающее окно устройства Apple</string>
+    <string name="menu_continuityActionModal">Модальное окно действий Apple</string>
+    <string name="menu_kitchenSink">Комбинированный режим (случайная трансляция всего)</string>
     <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
     <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
-    <string name="preference_title_use_legacy_advertising">Старый метод спама</string>
-    <string name="preference_summary_use_legacy_advertising">Использовать метод спама совместимый с Bluetooth 4</string>
-
+    <string name="preference_title_use_legacy_advertising">Трансляция в режиме совместимости</string>
+    <string name="preference_summary_use_legacy_advertising">Использовать устаревший метод трансляции Bluetooth LE с поддержкой Bluetooth 4</string>
     <string name="power_level_high">Высокая</string>
     <string name="power_level_medium">Средняя</string>
     <string name="power_level_low">Низкая</string>
-    <string name="power_level_ultra_low">Очень низкая</string>
-    <string name="power_dialog_title">Выберите мощность передачи данных</string>
-
-    <string-array name="spinner_entries_tx_power">
-        <item name="tx_power_high">Высокая</item>
-        <item name="tx_power_medium">Средняя</item>
-        <item name="tx_power_low">Низкая</item>
-        <item name="tx_power_ultralow">Очень низкая</item>
-    </string-array>
-
-    <string name="startfragment_requirements_checking">Проверка требований…</string>
-
-    <!-- Advertisement Set Types -->
-    <string name="ad_set_type_undefined">Неизвестный тип</string>
+    <string name="power_level_ultra_low">Крайне низкая</string>
+    <string name="power_dialog_title">Выберите мощность передачи</string>
+    <string name="startfragment_requirements_checking">Проверка условий работы…</string>
+    <string name="ad_set_type_undefined">Тип не определён</string>
     <string name="ad_set_type_fast_pairing">Быстрое сопряжение</string>
-    <string name="ad_set_type_fast_pairing_device">Быстрое сопряжение устройств</string>
-    <string name="ad_set_type_fast_pairing_non_production">Быстрое сопряжение для непроизводственных целей</string>
-    <string name="ad_set_type_fast_pairing_phone_setup">Быстрое сопряжение для настройки телефона</string>
-    <string name="ad_set_type_fast_pairing_debug">Быстрое сопряжение для откладки</string>
+    <string name="ad_set_type_fast_pairing_device">Устройство быстрого сопряжения</string>
+    <string name="ad_set_type_fast_pairing_non_production">Быстрое сопряжение (непромышленное)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">Настройка телефона при быстром сопряжении</string>
+    <string name="ad_set_type_fast_pairing_debug">Отладка быстрого сопряжения</string>
     <string name="ad_set_type_continuity_new_device">Новое устройство Apple</string>
-    <string name="ad_set_type_continuity_new_airtag">Новый Airtag</string>
+    <string name="ad_set_type_continuity_new_airtag">Новый AirTag</string>
     <string name="ad_set_type_continuity_not_your_device">Не ваше устройство</string>
-    <string name="ad_set_type_continuity_action_modals">Всплывающие окна Apple</string>
-    <string name="ad_set_type_continuity_ios17_crash">Вызов сбоя в iOS 17</string>
-    <string name="ad_set_type_swift_pairing">Быстрое сопряжение</string>
-    <string name="ad_set_type_easy_setup_buds">Быстрая настройка наушников</string>
-    <string name="ad_set_type_easy_setup_watch">Быстрая настройка часов</string>
-    <string name="ad_set_type_lovespouse_play">Включить любовные устройства</string>
-    <string name="ad_set_type_lovespouse_stop">Выключить любовные устройства</string>
-
-    <string name="spam_unknown">Неизвестный спам</string>
-    <string name="spam_detecting_title">Обнаружение спама</string>
+    <string name="ad_set_type_continuity_action_modals">Модальные окна действий Apple</string>
+    <string name="ad_set_type_continuity_ios17_crash">Тестирование сбоя iOS 17</string>
+    <string name="ad_set_type_swift_pairing">Быстрое сопряжение Swift Pair</string>
+    <string name="ad_set_type_easy_setup_buds">Простая настройка (наушники)</string>
+    <string name="ad_set_type_easy_setup_watch">Простая настройка (часы)</string>
+    <string name="ad_set_type_lovespouse_play">Love Spouse воспроизведение</string>
+    <string name="ad_set_type_lovespouse_stop">Love Spouse остановка</string>
+    <string name="spam_unknown">Неизвестная спам-трансляция</string>
+    <string name="spam_detecting_title">Обнаружение спам-трансляции</string>
     <string name="spam_detecting_text">Обнаружение Flipper Zero и других устройств</string>
-    <string name="spam_detected_title">Обнаружен спам</string>
-
-    <!-- Log Settings -->
+    <string name="spam_detected_title">Обнаружена спам-трансляция</string>
     <string name="preference_key_enable_logging">enable_logging</string>
-    <string name="preference_title_enable_logging">Включить сбор журналов</string>
-    <string name="preference_summary_enable_logging">Включить сбор журналов во внутреннее хранилище</string>
-
-    <!-- Log Folder Settings -->
+    <string name="preference_title_enable_logging">Включить логирование</string>
+    <string name="preference_summary_enable_logging">Разрешить приложению записывать журналы на внешний носитель</string>
     <string name="preference_key_open_log_folder">open_log_folder</string>
-    <string name="preference_title_open_log_folder">Открыть Папку Журналов</string>
-    <string name="preference_summary_open_log_folder">Посмотреть журналы приложения во внутреннем хранилище</string>
-
-    <!-- Theme Settings -->
-    <string name="preference_theme_mode">Тема</string>
+    <string name="preference_title_open_log_folder">Открыть папку с журналами</string>
+    <string name="preference_summary_open_log_folder">Просмотр журналов приложения на внешнем носителе</string>
+    <string name="preference_theme_mode">Режим темы</string>
     <string name="preference_theme_mode_light">Светлая</string>
     <string name="preference_theme_mode_dark">Тёмная</string>
     <string name="preference_theme_mode_follow_system">Как в системе</string>
-
-    <!-- Toasts -->
     <string name="toast_no_items_selected">Ничего не выбрано</string>
-
-    <!-- Permissions -->
-    <string name="missing_permissions_title">Отсутствуют разрешения</string>
-    <string name="missing_permissions_text">Не хватает некоторых разрешений. Без них Bluetooth LE Spam не будет работать должным образом.</string>
-    <string name="missing_permissions_grant">Выдать разрешения</string>
+    <string name="toast_permission_already_granted">Разрешение уже предоставлено</string>
+    <string name="toast_permission_not_required">На текущей версии Android запрашивать это разрешение не нужно</string>
+    <string name="toast_advertisement_failed">Ошибка трансляции: %1$s</string>
+    <string name="missing_permissions_title">Отсутствуют необходимые разрешения</string>
+    <string name="missing_permissions_text">Некоторые разрешения ещё не предоставлены. Без них Bluetooth LE Spam не сможет нормально работать.</string>
+    <string name="missing_permissions_grant">Предоставить разрешения</string>
+    <string name="card_label_requirements">Условия работы</string>
+    <string name="card_label_permissions">Разрешения</string>
+    <string name="card_label_bluetooth_adapter">Адаптер Bluetooth</string>
+    <string name="card_label_database">База данных</string>
+    <string name="card_label_advertise">Трансляция</string>
+    <string name="label_advertise_hint">Выберите набор и запустите BLE-трансляцию</string>
+    <string name="label_spam_detector_hint">Обнаружение Flipper Zero и других BLE-устройств, рассылающих спам</string>
+    <string name="label_flipper_devices">Устройства Flipper Zero</string>
+    <string name="label_spam_packages">Пакеты спам-рассылки</string>
+    <string name="label_app_version">Версия приложения:</string>
+    <string name="label_android_version">Версия Android:</string>
+    <string name="label_sdk_version">Версия SDK:</string>
+    <string name="label_bluetooth">Bluetooth:</string>
+    <string name="label_target">Цель:</string>
+    <string name="label_distance">Расстояние:</string>
+    <string name="label_distance_mixed">Смешанное</string>
+    <string name="label_collection_title">Набор трансляций</string>
+    <string name="label_current_advertising_set">Текущий набор трансляций</string>
+    <string name="label_current_advertising_subtitle">Ожидание начала трансляции…</string>
+    <string name="label_flipper_name">Имя Flipper</string>
+    <string name="label_flipper_mac_address">MAC-адрес Flipper</string>
+    <string name="label_flipper_device_type">Тип устройства Flipper</string>
+    <string name="label_rssi">Уровень сигнала (RSSI)</string>
+    <string name="label_spam_type">Тип спам-трансляции</string>
+    <string name="flipper_zero_white">Flipper Zero белый</string>
+    <string name="flipper_zero_black">Flipper Zero чёрный</string>
+    <string name="flipper_zero_transparent">Flipper Zero прозрачный</string>
+    <string name="flipper_zero_unknown">Неизвестный Flipper Zero</string>
+    <string name="notification_channel_advertisement_name">Уведомления о трансляции</string>
+    <string name="notification_channel_advertisement_description">Отображать уведомления с текущим набором трансляций</string>
+    <string name="notification_channel_scan_name">Уведомления службы сканирования</string>
+    <string name="notification_channel_scan_description">Отображать обнаруженные спам-трансляции и устройства Flipper</string>
+    <string name="notification_new_flipper_title">Обнаружен новый Flipper: %1$s</string>
+    <string name="notification_new_flipper_subtitle">%1$s | %2$s dBm</string>
+    <string name="preference_category_advertising_settings">Настройки трансляции</string>
+    <string name="preference_category_debug_settings">Настройки отладки</string>
+    <string name="preference_category_general_settings">Общие настройки</string>
+    <string name="preference_category_advanced_settings">Расширенные настройки</string>
+    <string name="preference_title_advertisement_duration">Длительность трансляции (мс)</string>
+    <string name="preference_summary_advertisement_duration">Длительность каждой трансляции в миллисекундах. Рекомендуемый диапазон: 1000–10000</string>
+    <string name="preference_title_scan_interval">Интервал сканирования</string>
+    <string name="preference_summary_scan_interval">Задать интервал BLE-сканирования (в секундах)</string>
+    <string name="preference_title_scan_mode">Режим сканирования</string>
+    <string name="preference_summary_scan_mode">Выберите режим работы BLE-сканирования</string>
+    <string name="preference_title_enable_notifications">Включить уведомления</string>
+    <string name="preference_summary_enable_notifications">Показывать уведомления о важных событиях</string>
+    <string name="scan_mode_low_power">Низкое энергопотребление</string>
+    <string name="scan_mode_balanced">Сбалансированный</string>
+    <string name="scan_mode_low_latency">Низкая задержка</string>
 </resources>

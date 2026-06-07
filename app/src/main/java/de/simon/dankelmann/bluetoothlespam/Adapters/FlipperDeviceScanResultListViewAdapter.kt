@@ -30,10 +30,10 @@ class FlipperDeviceScanResultListViewAdapter(private val context: Activity, var 
         addressText.text = flipperDevices[position].address
         rssiText.text = flipperDevices[position].rssi.toString() + " dBm"
         deviceTypeText.text = when(flipperDevices[position].flipperDeviceType){
-            FlipperDeviceType.FLIPPER_ZERO_WHITE -> "Flipper Zero White"
-            FlipperDeviceType.FLIPPER_ZERO_BLACK -> "Flipper Zero Black"
-            FlipperDeviceType.FLIPPER_ZERO_TRANSPARENT -> "Flipper ZeroTransparent"
-            FlipperDeviceType.UNKNOWN -> "Unknown Flipper Zero"
+            FlipperDeviceType.FLIPPER_ZERO_WHITE -> context.getString(R.string.flipper_zero_white)
+            FlipperDeviceType.FLIPPER_ZERO_BLACK -> context.getString(R.string.flipper_zero_black)
+            FlipperDeviceType.FLIPPER_ZERO_TRANSPARENT -> context.getString(R.string.flipper_zero_transparent)
+            FlipperDeviceType.UNKNOWN -> context.getString(R.string.flipper_zero_unknown)
         }
 
 
@@ -58,11 +58,12 @@ class FlipperDeviceScanResultListViewAdapter(var mList: MutableList<FlipperDevic
         holder.addressText.text = ItemsViewModel.address
         holder.rssiText.text = "${ItemsViewModel.rssi} dBm"
 
-        holder.deviceTypeText.text =  when(ItemsViewModel.flipperDeviceType){
-            FlipperDeviceType.FLIPPER_ZERO_WHITE -> "Flipper Zero White"
-            FlipperDeviceType.FLIPPER_ZERO_BLACK -> "Flipper Zero Black"
-            FlipperDeviceType.FLIPPER_ZERO_TRANSPARENT -> "Flipper ZeroTransparent"
-            FlipperDeviceType.UNKNOWN -> "Unknown Flipper Zero"
+        val context = holder.itemView.context
+        holder.deviceTypeText.text = when(ItemsViewModel.flipperDeviceType){
+            FlipperDeviceType.FLIPPER_ZERO_WHITE -> context.getString(R.string.flipper_zero_white)
+            FlipperDeviceType.FLIPPER_ZERO_BLACK -> context.getString(R.string.flipper_zero_black)
+            FlipperDeviceType.FLIPPER_ZERO_TRANSPARENT -> context.getString(R.string.flipper_zero_transparent)
+            FlipperDeviceType.UNKNOWN -> context.getString(R.string.flipper_zero_unknown)
         }
     }
 
@@ -79,4 +80,3 @@ class FlipperDeviceScanResultListViewAdapter(var mList: MutableList<FlipperDevic
         val deviceTypeText = ItemView.findViewById(R.id.list_item_flipper_device_scan_result_deviceType) as TextView
     }
 }
-

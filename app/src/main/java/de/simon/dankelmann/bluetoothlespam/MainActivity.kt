@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -23,6 +22,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Enums.toStringId
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Listen to Preference changes
+        // Listen to preference changes
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         sharedPreferenceChangedListener =
@@ -168,41 +168,31 @@ class MainActivity : AppCompatActivity() {
 
         val dialogLayout = LayoutInflater.from(this).inflate(R.layout.dialog_set_tx_power, null)
 
-        val seekBar: SeekBar = dialogLayout.findViewById(R.id.setTxPowerDialogSeekbar)
-        val seekBarLabel: TextView = dialogLayout.findViewById(R.id.setTxPowerDialogTxPowerTextView)
+        val slider: Slider = dialogLayout.findViewById(R.id.setTxPowerDialogSeekbar)
+        val sliderLabel: TextView = dialogLayout.findViewById(R.id.setTxPowerDialogTxPowerTextView)
 
         // Set Current TxPowerLevel
         val currentTxPowerLevel = app.advertisementService.getTxPowerLevel()
-        val currentProgress = when (currentTxPowerLevel) {
-            TxPowerLevel.TX_POWER_HIGH -> 3
-            TxPowerLevel.TX_POWER_MEDIUM -> 2
-            TxPowerLevel.TX_POWER_LOW -> 1
-            TxPowerLevel.TX_POWER_ULTRA_LOW -> 0
+        val currentValue = when (currentTxPowerLevel) {
+            TxPowerLevel.TX_POWER_HIGH -> 3f
+            TxPowerLevel.TX_POWER_MEDIUM -> 2f
+            TxPowerLevel.TX_POWER_LOW -> 1f
+            TxPowerLevel.TX_POWER_ULTRA_LOW -> 0f
         }
-        seekBar.progress = currentProgress
-        seekBarLabel.text = getString(currentTxPowerLevel.toStringId())
+        slider.value = currentValue
+        sliderLabel.text = getString(currentTxPowerLevel.toStringId())
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val newTxPowerLevel = when (progress) {
-                    3 -> TxPowerLevel.TX_POWER_HIGH
-                    2 -> TxPowerLevel.TX_POWER_MEDIUM
-                    1 -> TxPowerLevel.TX_POWER_LOW
-                    0 -> TxPowerLevel.TX_POWER_ULTRA_LOW
-                    else -> TxPowerLevel.TX_POWER_HIGH
-                }
-                seekBarLabel.text = getString(newTxPowerLevel.toStringId())
-                app.advertisementService.setTxPowerLevel(newTxPowerLevel)
+        slider.addOnChangeListener { _, value, _ ->
+            val newTxPowerLevel = when (value.toInt()) {
+                3 -> TxPowerLevel.TX_POWER_HIGH
+                2 -> TxPowerLevel.TX_POWER_MEDIUM
+                1 -> TxPowerLevel.TX_POWER_LOW
+                0 -> TxPowerLevel.TX_POWER_ULTRA_LOW
+                else -> TxPowerLevel.TX_POWER_HIGH
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // you can probably leave this empty
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                // you can probably leave this empty
-            }
-        })
+            sliderLabel.text = getString(newTxPowerLevel.toStringId())
+            app.advertisementService.setTxPowerLevel(newTxPowerLevel)
+        }
 
         MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.power_dialog_title))

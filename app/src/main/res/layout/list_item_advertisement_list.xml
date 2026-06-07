@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:paddingHorizontal="@dimen/spacing_medium"
+    android:paddingVertical="@dimen/spacing_small">
 
-    <CheckBox
+    <com.google.android.material.checkbox.MaterialCheckBox
         android:id="@+id/checkboxAdvertisementList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:checked="true"
         android:focusable="false"
-        android:clickable="true" />
+        android:clickable="true"
+        android:buttonTint="?attr/colorPrimary" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/listItemAdvertisementSetList"
+        style="?attr/textAppearanceTitleMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingStart="8dp"
-        android:text="Headline"
-        android:textColor="@color/text_color"
-        android:textSize="@dimen/textSizeHeadline3"
-        android:textStyle="bold" />
+        android:paddingStart="@dimen/spacing_small"
+        android:textColor="?attr/colorOnSurface"
+        tools:text="广播集合标题" />
 
 </LinearLayout>

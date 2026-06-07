@@ -1,73 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/listItemAdvertisementSetCollectionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/listItemAdvertisementSetCollectionStartCardview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        app:cardCornerRadius="@dimen/cornerRadiusCardview"
-        app:cardElevation="0dp">
+        android:layout_marginVertical="@dimen/spacing_small"
+        android:layout_marginHorizontal="@dimen/spacing_small"
+        app:cardBackgroundColor="?attr/colorPrimaryContainer"
+        app:cardCornerRadius="@dimen/cardview_corner_radius"
+        app:cardElevation="@dimen/cardview_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/gradient_cardview_accent"
             android:orientation="vertical"
-            android:padding="@dimen/cornerRadiusCardview">
+            android:padding="@dimen/spacing_medium">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/listItemAdvertisementSetCollectionStartTitle"
+                style="?attr/textAppearanceTitleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:text="Title"
-                android:textColor="@color/text_color_card_view_accent"
-                android:textSize="@dimen/textSizeHeadline"
-                android:textStyle="bold" />
+                android:paddingBottom="@dimen/spacing_small"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                tools:text="@string/label_collection_title" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- System Info -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartTarget"
+                        style="?attr/textAppearanceBodyMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Target: -"
-                        android:textColor="@color/text_color_card_view_accent_light" />
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        tools:text="目标: -" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartDistance"
+                        style="?attr/textAppearanceBodyMedium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Distance: Mixed"
-                        android:textColor="@color/text_color_card_view_accent_light" />
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        tools:text="距离: 混合" />
                 </LinearLayout>
 
-                <!-- Image Column -->
                 <ImageView
                     android:id="@+id/listItemAdvertisementSetCollectionStartImage"
                     android:layout_width="48dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="48dp"
                     android:layout_gravity="center"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_android"
-                    app:tint="@color/text_color_card_view_accent_light" />
+                    app:tint="?attr/colorOnPrimaryContainer" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

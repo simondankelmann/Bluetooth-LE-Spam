@@ -1,8 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 SeekBar 滑块 (thumb) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <size
-        android:height="@dimen/seek_bar_thumb_size"
-        android:width="@dimen/seek_bar_thumb_size"
-        />
-    <solid android:color="?attr/seekbarSecondaryProgress"/>
+        android:width="12dp"
+        android:height="12dp" />
+    <solid android:color="?attr/colorPrimary" />
+    <stroke
+        android:width="2dp"
+        android:color="?attr/colorOnPrimary" />
 </shape>

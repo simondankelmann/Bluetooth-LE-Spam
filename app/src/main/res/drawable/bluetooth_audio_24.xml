@@ -1,5 +1,14 @@
-<vector android:height="24dp" android:tint="#000000"
-    android:viewportHeight="24" android:viewportWidth="24"
-    android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="@android:color/white" android:pathData="M14.24,12.01l2.32,2.32c0.28,-0.72 0.44,-1.51 0.44,-2.33 0,-0.82 -0.16,-1.59 -0.43,-2.31l-2.33,2.32zM19.53,6.71l-1.26,1.26c0.63,1.21 0.98,2.57 0.98,4.02s-0.36,2.82 -0.98,4.02l1.2,1.2c0.97,-1.54 1.54,-3.36 1.54,-5.31 -0.01,-1.89 -0.55,-3.67 -1.48,-5.19zM15.71,7.71L10,2L9,2v7.59L4.41,5 3,6.41 8.59,12 3,17.59 4.41,19 9,14.41L9,22h1l5.71,-5.71 -4.3,-4.29 4.3,-4.29zM11,5.83l1.88,1.88L11,9.59L11,5.83zM12.88,16.29L11,18.17v-3.76l1.88,1.88z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 单色矢量图标 - 蓝牙音频 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="?attr/colorOnSurfaceVariant"
+        android:pathData="M14.24,12.01l2.32,-2.32c0.28,-0.27 0.44,-0.65 0.44,-1.06s-0.16,-0.79 -0.44,-1.06l-2.32,-2.32L19,2.59 22.41,6L18.41,10l4,4 3.41,-3.41L19,14.41l-4.76,-4.4z" />
+    <path
+        android:fillColor="?attr/colorOnSurfaceVariant"
+        android:pathData="M12.71,9.58l-1.91,-1.91c-0.36,-0.36 -0.85,-0.53 -1.34,-0.45L6,9.58L9.41,13l-3.41,3.41 3.46,2.36c0.49,0.08 0.98,-0.09 1.34,-0.45l1.91,-1.91 1.91,1.91c0.36,0.36 0.86,0.53 1.35,0.45l3.46,-2.36L16.17,13l3.41,-3.41 -3.46,-2.36c-0.49,-0.08 -0.99,0.09 -1.35,0.45L12.71,9.58z" />
 </vector>

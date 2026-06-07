@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false">
@@ -8,24 +9,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/activity_vertical_margin">
+        android:padding="@dimen/spacing_medium">
 
         <TextView
+            style="?attr/textAppearanceHeadlineMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp"
-            android:paddingBottom="5dp"
-            android:text="Advertise"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/textSizeHeadline"
-            android:textStyle="bold" />
+            android:paddingTop="@dimen/spacing_medium"
+            android:paddingBottom="@dimen/spacing_small"
+            android:text="@string/card_label_advertise"
+            android:textColor="?attr/colorOnSurface" />
 
         <TextView
             android:id="@+id/startFragmentAdvertisingDescription"
+            style="?attr/textAppearanceBodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:text="Select a collection and start BLE advertising" />
+            android:paddingBottom="@dimen/spacing_small"
+            android:text="@string/label_advertise_hint"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <!-- TODO: use a RecyclerView -->
         <LinearLayout
@@ -35,4 +37,4 @@
             android:orientation="vertical" />
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

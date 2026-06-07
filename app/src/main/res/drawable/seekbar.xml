@@ -1,32 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 SeekBar 进度条 -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape
-            android:shape="line">
-            <stroke
-                android:color="?attr/seekbarBackground"
-                android:width="@dimen/seek_bar_thickness"/>
+        <shape>
+            <solid android:color="?attr/colorSurfaceVariant" />
+            <corners android:radius="2dp" />
         </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <solid android:color="?attr/colorPrimary" />
+                <corners android:radius="2dp" />
+            </shape>
+        </clip>
     </item>
     <item android:id="@android:id/secondaryProgress">
         <clip>
-            <shape
-                android:shape="line">
-                <stroke
-                    android:color="?attr/seekbarSecondaryProgress"
-                    android:width="@dimen/seek_bar_thickness"/>
+            <shape>
+                <solid android:color="?attr/colorPrimaryContainer" />
+                <corners android:radius="2dp" />
             </shape>
         </clip>
     </item>
-
-    <item android:id="@android:id/progress">
-        <clip>
-            <shape
-                android:shape="line">
-                <stroke
-                    android:color="?attr/seekbarProgress"
-                    android:width="@dimen/seek_bar_thickness"/>
-            </shape>
-        </clip>
-    </item>
-
 </layer-list>

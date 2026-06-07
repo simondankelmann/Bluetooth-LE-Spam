@@ -1,90 +1,170 @@
 <resources>
-    <!-- Keep that commented out. It will lead to compile errors -->
+    <!-- 保持注释掉,它会导致编译错误 -->
     <!--<string name="app_name">Bluetooth LE Spam</string>-->
 
-    <string name="bottom_nav_start">Info</string>
-    <string name="bottom_nav_advertise">Advertise</string>
-    <string name="bottom_nav_detect">Detect</string>
+    <!-- 底部导航栏 -->
+    <string name="bottom_nav_start">概览</string>
+    <string name="bottom_nav_advertise">广播</string>
+    <string name="bottom_nav_detect">检测</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="action_set_tx_power">TX Power</string>
+    <!-- 操作栏菜单 -->
+    <string name="action_settings">设置</string>
+    <string name="action_set_tx_power">发射功率</string>
 
-    <string name="menu_preferences">Settings</string>
-    <string name="menu_start">Start</string>
-    <string name="menu_spam_detector">Spam Detector</string>
-    <string name="menu_advertisement">Advertisement</string>
+    <string name="menu_preferences">设置</string>
+    <string name="menu_start">开始</string>
+    <string name="menu_spam_detector">垃圾广播检测器</string>
+    <string name="menu_advertisement">广播</string>
 
-    <string name="menu_fastPairing">Google Fast Pairing</string>
-    <string name="menu_swiftPair">Microsoft Swift Pairing</string>
-    <string name="menu_continuityDevicePopup">Apple Device Popups</string>
-    <string name="menu_continuityActionModal">Apple Action Modals</string>
-    <string name="menu_kitchenSink">Kitchen Sink (Randomize all)</string>
+    <!-- 广播集合类型(菜单) -->
+    <string name="menu_fastPairing">Google 快速配对</string>
+    <string name="menu_swiftPair">Microsoft 快速配对</string>
+    <string name="menu_continuityDevicePopup">Apple 设备弹窗</string>
+    <string name="menu_continuityActionModal">Apple 操作弹窗</string>
+    <string name="menu_kitchenSink">综合模式(随机广播所有)</string>
 
+    <!-- SharedPreferences Key(不可翻译) -->
     <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
     <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
-    <string name="preference_title_use_legacy_advertising">Legacy Advertising</string>
-    <string name="preference_summary_use_legacy_advertising">Use Bluetooth 4 Compatible BLE Advertising</string>
 
-    <string name="power_level_high">High</string>
-    <string name="power_level_medium">Medium</string>
-    <string name="power_level_low">Low</string>
-    <string name="power_level_ultra_low">Ultra Low</string>
-    <string name="power_dialog_title">Select TX Power</string>
+    <!-- 偏好设置标题与描述 -->
+    <string name="preference_title_use_legacy_advertising">兼容模式广播</string>
+    <string name="preference_summary_use_legacy_advertising">使用兼容蓝牙 4 的低功耗广播方式</string>
 
+    <!-- 发射功率 -->
+    <string name="power_level_high">高</string>
+    <string name="power_level_medium">中</string>
+    <string name="power_level_low">低</string>
+    <string name="power_level_ultra_low">极低</string>
+    <string name="power_dialog_title">选择发射功率</string>
     <string-array name="spinner_entries_tx_power">
-        <item name="tx_power_high">High</item>
-        <item name="tx_power_medium">Medium</item>
-        <item name="tx_power_low">Low</item>
-        <item name="tx_power_ultralow">Ultra Low</item>
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
+        <item>极低</item>
     </string-array>
 
-    <string name="startfragment_requirements_checking">Checking Requirements…</string>
+    <!-- 开始界面 -->
+    <string name="startfragment_requirements_checking">正在检查运行条件……</string>
 
-    <!-- Advertisement Set Types -->
-    <string name="ad_set_type_undefined">Undefined Type</string>
-    <string name="ad_set_type_fast_pairing">Fast Pairing</string>
-    <string name="ad_set_type_fast_pairing_device">Fast Pairing Device</string>
-    <string name="ad_set_type_fast_pairing_non_production">Fast Pairing Non-Production</string>
-    <string name="ad_set_type_fast_pairing_phone_setup">Fast Pairing Phone Setup</string>
-    <string name="ad_set_type_fast_pairing_debug">Fast Pairing Debug</string>
-    <string name="ad_set_type_continuity_new_device">New Apple Device</string>
-    <string name="ad_set_type_continuity_new_airtag">New Airtag</string>
-    <string name="ad_set_type_continuity_not_your_device">Not Your Device</string>
-    <string name="ad_set_type_continuity_action_modals">Apple Action Modal</string>
-    <string name="ad_set_type_continuity_ios17_crash">iOS 17 Crash</string>
-    <string name="ad_set_type_swift_pairing">Swift Pairing</string>
-    <string name="ad_set_type_easy_setup_buds">Easy Setup Buds</string>
-    <string name="ad_set_type_easy_setup_watch">Easy Setup Watch</string>
-    <string name="ad_set_type_lovespouse_play">Lovespouse Play</string>
-    <string name="ad_set_type_lovespouse_stop">Lovespouse Stop</string>
+    <!-- 广播类型(用于 UI 与通知) -->
+    <string name="ad_set_type_undefined">未定义类型</string>
+    <string name="ad_set_type_fast_pairing">快速配对</string>
+    <string name="ad_set_type_fast_pairing_device">快速配对设备</string>
+    <string name="ad_set_type_fast_pairing_non_production">快速配对(非生产环境)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">快速配对手机配置</string>
+    <string name="ad_set_type_fast_pairing_debug">快速配对调试</string>
+    <string name="ad_set_type_continuity_new_device">新的 Apple 设备</string>
+    <string name="ad_set_type_continuity_new_airtag">新的 AirTag</string>
+    <string name="ad_set_type_continuity_not_your_device">非您的设备</string>
+    <string name="ad_set_type_continuity_action_modals">Apple 操作弹窗</string>
+    <string name="ad_set_type_continuity_ios17_crash">iOS 17 崩溃测试</string>
+    <string name="ad_set_type_swift_pairing">Swift 快速配对</string>
+    <string name="ad_set_type_easy_setup_buds">快捷设置(耳机)</string>
+    <string name="ad_set_type_easy_setup_watch">快捷设置(手表)</string>
+    <string name="ad_set_type_lovespouse_play">Love Spouse 播放</string>
+    <string name="ad_set_type_lovespouse_stop">Love Spouse 停止</string>
 
-    <string name="spam_unknown">Unknown Spam</string>
-    <string name="spam_detecting_title">Detecting Spam</string>
-    <string name="spam_detecting_text">Detecting Flipper Zero and other devices</string>
-    <string name="spam_detected_title">Spam Detected</string>
+    <!-- 检测相关 -->
+    <string name="spam_unknown">未知垃圾广播</string>
+    <string name="spam_detecting_title">正在检测垃圾广播</string>
+    <string name="spam_detecting_text">检测 Flipper Zero 及其他设备</string>
+    <string name="spam_detected_title">检测到垃圾广播</string>
 
-    <!-- Log Settings -->
+    <!-- 日志 -->
     <string name="preference_key_enable_logging">enable_logging</string>
-    <string name="preference_title_enable_logging">Enable Logging</string>
-    <string name="preference_summary_enable_logging">Enable application logging to external storage</string>
+    <string name="preference_title_enable_logging">启用日志</string>
+    <string name="preference_summary_enable_logging">允许应用将日志写入外部存储</string>
 
-    <!-- Log Folder Settings -->
     <string name="preference_key_open_log_folder">open_log_folder</string>
-    <string name="preference_title_open_log_folder">Open Log Folder</string>
-    <string name="preference_summary_open_log_folder">View application logs in external storage</string>
+    <string name="preference_title_open_log_folder">打开日志目录</string>
+    <string name="preference_summary_open_log_folder">在外部存储中查看应用日志</string>
 
-    <!-- Theme Settings -->
-    <string name="preference_theme_mode">Theme Mode</string>
-    <string name="preference_theme_mode_light">Light</string>
-    <string name="preference_theme_mode_dark">Dark</string>
-    <string name="preference_theme_mode_follow_system">System Default</string>
+    <!-- 主题设置 -->
+    <string name="preference_theme_mode">主题模式</string>
+    <string name="preference_theme_mode_light">浅色</string>
+    <string name="preference_theme_mode_dark">深色</string>
+    <string name="preference_theme_mode_follow_system">跟随系统</string>
 
-    <!-- Toasts -->
-    <string name="toast_no_items_selected">No items selected</string>
+    <!-- Toast 与提示 -->
+    <string name="toast_no_items_selected">未选择任何项目</string>
+    <string name="toast_permission_already_granted">权限已授予</string>
+    <string name="toast_permission_not_required">当前安卓版本无需申请此权限</string>
+    <string name="toast_advertisement_failed">广播失败: %1$s</string>
 
-    <!-- Permissions -->
-    <string name="missing_permissions_title">Missing Permissions</string>
-    <string name="missing_permissions_text">Some permissions are missing. Without them, Bluetooth LE Spam will not work properly.</string>
-    <string name="missing_permissions_grant">Grant Permissions</string>
+    <!-- 权限提示 -->
+    <string name="missing_permissions_title">缺少必要权限</string>
+    <string name="missing_permissions_text">部分权限尚未授予,没有这些权限,Bluetooth LE Spam 将无法正常运行。</string>
+    <string name="missing_permissions_grant">授予权限</string>
+
+    <!-- 卡片/列表标签(硬编码文本抽取) -->
+    <string name="card_label_requirements">运行条件</string>
+    <string name="card_label_permissions">权限</string>
+    <string name="card_label_bluetooth_adapter">蓝牙适配器</string>
+    <string name="card_label_database">数据库</string>
+    <string name="card_label_advertise">广播</string>
+    <string name="label_advertise_hint">选择一个集合并开始 BLE 广播</string>
+    <string name="label_spam_detector_hint">检测 Flipper Zero 及其他 BLE 垃圾广播设备</string>
+    <string name="label_flipper_devices">Flipper Zero 设备</string>
+    <string name="label_spam_packages">垃圾广播包</string>
+
+    <string name="label_app_version">应用版本:</string>
+    <string name="label_android_version">安卓版本:</string>
+    <string name="label_sdk_version">SDK 版本:</string>
+    <string name="label_bluetooth">蓝牙:</string>
+
+    <string name="label_target">目标:</string>
+    <string name="label_distance">距离:</string>
+    <string name="label_distance_mixed">混合</string>
+    <string name="label_collection_title">广播集合</string>
+    <string name="label_current_advertising_set">当前广播集</string>
+    <string name="label_current_advertising_subtitle">等待广播开始…</string>
+
+    <!-- 检测器列表 -->
+    <string name="label_flipper_name">Flipper 名称</string>
+    <string name="label_flipper_mac_address">Flipper MAC 地址</string>
+    <string name="label_flipper_device_type">Flipper 设备类型</string>
+    <string name="label_rssi">信号强度(RSSI)</string>
+    <string name="label_spam_type">垃圾广播类型</string>
+
+    <!-- Flipper 设备类型(硬编码抽取) -->
+    <string name="flipper_zero_white">Flipper Zero 白色版</string>
+    <string name="flipper_zero_black">Flipper Zero 黑色版</string>
+    <string name="flipper_zero_transparent">Flipper Zero 透明版</string>
+    <string name="flipper_zero_unknown">未知 Flipper Zero</string>
+
+    <!-- 通知渠道名称与描述(硬编码抽取) -->
+    <string name="notification_channel_advertisement_name">广播通知</string>
+    <string name="notification_channel_advertisement_description">显示当前广播集的通知</string>
+    <string name="notification_channel_scan_name">扫描服务通知</string>
+    <string name="notification_channel_scan_description">显示扫描到的垃圾广播与 Flipper 设备</string>
+
+    <!-- 新 Flipper 检测(通知标题格式) -->
+    <string name="notification_new_flipper_title">发现新的 Flipper: %1$s</string>
+    <string name="notification_new_flipper_subtitle">%1$s | %2$s dBm</string>
+
+    <!-- 偏好设置分类(硬编码抽取自 preferences.xml 与 root_preferences.xml) -->
+    <string name="preference_category_advertising_settings">广播设置</string>
+    <string name="preference_category_debug_settings">调试设置</string>
+    <string name="preference_category_general_settings">通用设置</string>
+    <string name="preference_category_advanced_settings">高级设置</string>
+
+    <!-- 广播时长 -->
+    <string name="preference_title_advertisement_duration">单次广播时长(毫秒)</string>
+    <string name="preference_summary_advertisement_duration">每条广播持续的毫秒数。推荐范围:1000 - 10000</string>
+
+    <!-- 扫描设置 -->
+    <string name="preference_title_scan_interval">扫描间隔</string>
+    <string name="preference_summary_scan_interval">设置 BLE 扫描的间隔(秒)</string>
+    <string name="preference_title_scan_mode">扫描模式</string>
+    <string name="preference_summary_scan_mode">选择 BLE 扫描的工作模式</string>
+
+    <string name="preference_title_enable_notifications">启用通知</string>
+    <string name="preference_summary_enable_notifications">在重要事件发生时显示通知</string>
+
+    <!-- 扫描模式选项 -->
+    <string name="scan_mode_low_power">低功耗</string>
+    <string name="scan_mode_balanced">平衡</string>
+    <string name="scan_mode_low_latency">低延迟</string>
 
 </resources>

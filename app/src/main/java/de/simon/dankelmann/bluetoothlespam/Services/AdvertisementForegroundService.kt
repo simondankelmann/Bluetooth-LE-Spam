@@ -32,8 +32,6 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
     private val _logTag = "AdvertisementForegroundService"
     private val _channelId = "BluetoothLeSpam"
-    private val _channelName = "Bluetooth Le Spam"
-    private val _channelDescription = "Bluetooth Le Spam Notifications"
     private var _currentAdvertisementSet:AdvertisementSet? = null
     private val _binder: IBinder = LocalBinder()
 
@@ -91,8 +89,10 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            val mChannel = NotificationChannel(_channelId, _channelName, NotificationManager.IMPORTANCE_HIGH)
-            mChannel.description = _channelDescription
+            val channelName = getString(R.string.notification_channel_advertisement_name)
+            val channelDescription = getString(R.string.notification_channel_advertisement_description)
+            val mChannel = NotificationChannel(_channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            mChannel.description = channelDescription
             mChannel.enableLights(true)
             mChannel.lightColor = Color.BLUE
             notificationManager.createNotificationChannel(mChannel)

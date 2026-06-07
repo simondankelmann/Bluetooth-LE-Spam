@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="scan_mode_entries">
+        <item>Низкое энергопотребление</item>
+        <item>Сбалансированный</item>
+        <item>Низкая задержка</item>
+    </string-array>
+</resources>

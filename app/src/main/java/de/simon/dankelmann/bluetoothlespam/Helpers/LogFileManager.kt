@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.FragmentActivity
 import androidx.documentfile.provider.DocumentFile
 import de.simon.dankelmann.bluetoothlespam.Models.LogEntryModel
+import de.simon.dankelmann.bluetoothlespam.R
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileWriter
@@ -577,10 +578,10 @@ class LogFileManager private constructor(context: Context) {
                     context.startActivity(intent)
                 }
             } else {
-                Toast.makeText(context, "Permission already granted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_permission_already_granted), Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(context, "Permission not required for this Android version", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.toast_permission_not_required), Toast.LENGTH_SHORT).show()
         }
     }
 

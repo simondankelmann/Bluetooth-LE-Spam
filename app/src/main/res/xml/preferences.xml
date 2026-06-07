@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="Advertising Settings">
+    <PreferenceCategory android:title="@string/preference_category_advertising_settings">
         <SwitchPreferenceCompat
             app:key="@string/preference_key_use_legacy_advertising"
             app:title="@string/preference_title_use_legacy_advertising"
             app:summary="@string/preference_summary_use_legacy_advertising"
-            app:defaultValue="true"
-            />
+            app:defaultValue="true" />
 
         <EditTextPreference
             android:defaultValue="1000"
@@ -16,11 +15,11 @@
             android:key="@string/preference_key_interval_advertising_queue_handler"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:summary="Duration of an Advertisement in Milliseconds. Recommended: 1000 - 10000"
-            android:title="Advertisement Duration (ms)" />
+            android:summary="@string/preference_summary_advertisement_duration"
+            android:title="@string/preference_title_advertisement_duration" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Debug Settings">
+    <PreferenceCategory android:title="@string/preference_category_debug_settings">
         <SwitchPreferenceCompat
             app:key="@string/preference_key_enable_logging"
             app:title="@string/preference_title_enable_logging"

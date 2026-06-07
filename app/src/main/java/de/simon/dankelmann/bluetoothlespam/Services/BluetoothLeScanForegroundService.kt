@@ -29,8 +29,6 @@ import de.simon.dankelmann.bluetoothlespam.R
 class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     private val _channelId = "BluetoothLeSpamScanService"
-    private val _channelName = "Bluetooth Le Spam Scan Service"
-    private val _channelDescription = "Bluetooth Le Spam Notifications"
 
     private val _binder: IBinder = LocalBinder()
 
@@ -96,8 +94,10 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            val mChannel = NotificationChannel(_channelId, _channelName, NotificationManager.IMPORTANCE_HIGH)
-            mChannel.description = _channelDescription
+            val channelName = getString(R.string.notification_channel_scan_name)
+            val channelDescription = getString(R.string.notification_channel_scan_description)
+            val mChannel = NotificationChannel(_channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            mChannel.description = channelDescription
             mChannel.enableLights(true)
             mChannel.lightColor = Color.BLUE
             notificationManager.createNotificationChannel(mChannel)
@@ -156,7 +156,9 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     override fun onFlipperDeviceDetected(flipperDeviceScanResult: FlipperDeviceScanResult, alreadyKnown: Boolean) {
         if(!alreadyKnown || notifyOnNewFlipper){
-            updateNotification("New Flipper: " + flipperDeviceScanResult.deviceName, "${flipperDeviceScanResult.address} | ${flipperDeviceScanResult.rssi} dBm", !notifyOnNewFlipper, 2)
+            val title = getString(R.string.notification_new_flipper_title, flipperDeviceScanResult.deviceName)
+            val subTitle = getString(R.string.notification_new_flipper_subtitle, flipperDeviceScanResult.address, flipperDeviceScanResult.rssi)
+            updateNotification(title, subTitle, !notifyOnNewFlipper, 2)
         }
         notifyOnNewFlipper = false
     }
