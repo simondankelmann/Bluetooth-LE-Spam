@@ -99,16 +99,16 @@ class MainActivity : AppCompatActivity() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        binding.bottomNav.setupWithNavController(navController)
+        binding.navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.nav_start,
                 R.id.nav_advertisement_collection,
                 R.id.nav_spam_detector
-                    -> binding.bottomNav.visibility = View.VISIBLE
+                    -> binding.navView.visibility = View.VISIBLE
 
-                else -> binding.bottomNav.visibility = View.GONE
+                else -> binding.navView.visibility = View.GONE
             }
         }
     }

@@ -234,18 +234,10 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         val advertisingAnimation = binding.advertisementFragmentAdvertisingAnimation
         viewModel.isAdvertising.observe(viewLifecycleOwner) { isAdvertising ->
             if (isAdvertising) {
-                playButton.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources, R.drawable.pause, context.theme
-                    )
-                )
+                playButton.setIconResource(R.drawable.pause)
                 advertisingAnimation.playAnimation()
             } else {
-                playButton.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources, R.drawable.play_arrow, context.theme
-                    )
-                )
+                playButton.setIconResource(R.drawable.play_arrow)
                 advertisingAnimation.cancelAnimation()
                 advertisingAnimation.frame = 0
             }
