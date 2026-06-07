@@ -25,7 +25,6 @@
         <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
         <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
         <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
-        <item name="colorSurfaceTint">@color/md_theme_light_surfaceTint</item>
 
         <item name="colorError">@color/md_theme_light_error</item>
         <item name="colorOnError">@color/md_theme_light_onError</item>
@@ -132,7 +131,7 @@
     </style>
 
     <!-- Material 3 AppBarOverlay 覆盖样式(确保菜单等组件正确着色) -->
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.Material3.DayNight.ActionBar" />
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.Material3.DayNight" />
 
     <!-- 工具/溢出按钮样式(保持与主题色一致) -->
     <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">

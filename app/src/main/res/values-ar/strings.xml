@@ -24,8 +24,6 @@
     <string name="power_level_low">منخفضة</string>
     <string name="power_level_ultra_low">منخفضة جداً</string>
     <string name="power_dialog_title">اختر قوة الإرسال</string>
-    <string name="spinner_entries_tx_power">عالية / متوسطة / منخفضة / منخفضة جداً</string>
-
     <string name="startfragment_requirements_checking">جارٍ فحص شروط التشغيل…</string>
 
     <string name="ad_set_type_undefined">نوع غير محدد</string>
