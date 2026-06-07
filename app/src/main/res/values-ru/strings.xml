@@ -67,6 +67,7 @@
     <string name="card_label_database">База данных</string>
     <string name="card_label_advertise">Трансляция</string>
     <string name="label_advertise_hint">Выберите набор и запустите BLE-трансляцию</string>
+    <string name="label_spam_detector">Детектор спам-трансляции</string>
     <string name="label_spam_detector_hint">Обнаружение Flipper Zero и других BLE-устройств, рассылающих спам</string>
     <string name="label_flipper_devices">Устройства Flipper Zero</string>
     <string name="label_spam_packages">Пакеты спам-рассылки</string>
@@ -83,7 +84,7 @@
     <string name="label_flipper_name">Имя Flipper</string>
     <string name="label_flipper_mac_address">MAC-адрес Flipper</string>
     <string name="label_flipper_device_type">Тип устройства Flipper</string>
-    <string name="label_rssi">Уровень сигнала (RSSI)</string>
+    <string name="label_rssi">Сила сигнала (RSSI)</string>
     <string name="label_spam_type">Тип спам-трансляции</string>
     <string name="flipper_zero_white">Flipper Zero белый</string>
     <string name="flipper_zero_black">Flipper Zero чёрный</string>

@@ -74,6 +74,7 @@
     <string name="card_label_advertise">إعلان</string>
 
     <string name="label_advertise_hint">اختر مجموعة وابدأ إعلان BLE</string>
+    <string name="label_spam_detector">كاشف الإعلانات المزعجة</string>
     <string name="label_spam_detector_hint">اكتشف أجهزة Flipper Zero وأجهزة الإعلانات المزعجة BLE الأخرى</string>
     <string name="label_flipper_devices">أجهزة Flipper Zero</string>
     <string name="label_spam_packages">حزم الإعلانات المزعجة</string>

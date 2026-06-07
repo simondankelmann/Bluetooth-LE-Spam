@@ -104,6 +104,7 @@
     <string name="card_label_database">数据库</string>
     <string name="card_label_advertise">广播</string>
     <string name="label_advertise_hint">选择一个集合并开始 BLE 广播</string>
+    <string name="label_spam_detector">垃圾广播检测器</string>
     <string name="label_spam_detector_hint">检测 Flipper Zero 及其他 BLE 垃圾广播设备</string>
     <string name="label_flipper_devices">Flipper Zero 设备</string>
     <string name="label_spam_packages">垃圾广播包</string>
