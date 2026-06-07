@@ -73,7 +73,7 @@
         <!-- Material 3 顶部应用栏覆盖层 -->
     </style>
 
-    <style name="Theme.BluetoothLESpam.NoActionBar">
+    <style name="Theme.BluetoothLESpam.NoActionBar" parent="Theme.BluetoothLESpam">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
@@ -131,7 +131,7 @@
     </style>
 
     <!-- Material 3 AppBarOverlay 覆盖样式(确保菜单等组件正确着色) -->
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.Material3.DayNight" />
+    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.Material3" />
 
     <!-- 工具/溢出按钮样式(保持与主题色一致) -->
     <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
