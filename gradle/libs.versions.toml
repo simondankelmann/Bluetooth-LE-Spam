@@ -1,21 +1,21 @@
 [versions]
-agp = "8.12.0"
-kotlin = "2.2.10"
-core = "1.17.0"
+agp = "9.3.1"
+ksp = "2.3.11"
+core = "1.19.0"
 preference = "1.2.1"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 appcompat = "1.7.1"
-navigation = "2.9.3"
-lifecycle = "2.9.2"
+navigation = "2.9.8"
+lifecycle = "2.11.0"
 legacy = "1.0.0"
-constraintlayout = "2.2.1"
-material = "1.12.0"
-room = "2.7.2"
-lottie = "6.6.7"
+constraintlayout = "2.2.2"
+material = "1.14.0"
+room = "2.8.4"
+lottie = "6.7.1"
 
 [plugins]
 agp-app = { id = "com.android.application", version.ref = "agp" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 
 [libraries]
