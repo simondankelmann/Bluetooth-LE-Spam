@@ -1,17 +1,14 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.agp.app)
-    alias(libs.plugins.kotlin)
     alias(libs.plugins.safeargs)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
 }
 
 val app_name = "Bluetooth LE Spam"
 
 android {
     namespace = "de.simon.dankelmann.bluetoothlespam"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "de.simon.dankelmann.bluetoothlespam"
@@ -54,14 +51,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
-    }
-
     buildFeatures {
         viewBinding = true
+        resValues = true
     }
 }
 
@@ -84,11 +76,8 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
 
-    // To use Kotlin annotation processing tool (kapt)
-    kapt(libs.room.compiler)
-
     // To use Kotlin Symbol Processing (KSP)
-    //ksp(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
     //implementation(libs.room.ktx)
