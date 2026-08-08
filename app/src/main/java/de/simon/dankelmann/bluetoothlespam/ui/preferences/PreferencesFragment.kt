@@ -3,27 +3,16 @@ package de.simon.dankelmann.bluetoothlespam.ui.preferences
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogDirectoryPicker
-import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
-import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager.Companion.THEME_MODE_KEY
+import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.R
 
-class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
+class PreferencesFragment : PreferenceFragmentCompat() {
 
     private val _logTag = "PreferencesFragment"
     private lateinit var directoryPickerLauncher: ActivityResultLauncher<Intent>
@@ -54,7 +43,7 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
                 // Check if we have any accessible directories first
                 val accessibleDirs = LogFileManager.getInstance(requireContext()).listAccessibleDirectories(requireContext())
                 Log.d(_logTag, "Available accessible directories: ${accessibleDirs.size}")
-                
+
                 logDirectoryPicker.pickDirectory { directory ->
                     LogFileManager.getInstance(requireContext()).setCustomLogDirectory(directory, requireContext())
                     LogFileManager.getInstance(requireContext()).initializeLogFile(requireContext())
@@ -67,65 +56,13 @@ class PreferencesFragment : PreferenceFragmentCompat(), MenuProvider {
             }
         }
 
-        // Set up theme mode preference
-        val themePreference = findPreference<ListPreference>(THEME_MODE_KEY)
-        themePreference?.setOnPreferenceChangeListener { _, newValue ->
-            val themeMode = newValue as String
-            ThemeManager.getInstance().setTheme(requireContext(), themeMode)
+        // Theme mode is now the segmented ThemeModePickerPreference, which manages
+        // ThemeManager.setTheme() itself in onBindViewHolder — no listener needed here.
 
-            // If the system is in dark mode, then when switching between FOLLOW_SYSTEM and DARK,
-            // the fragment will not be recreated. Same for light mode.
-            // Thus we need to manually update this.
-            themePreference.summary = ThemeManager.getInstance().getThemeString(requireContext())
-
+        // TX power dialog moved here from the (now-removed) toolbar overflow menu.
+        findPreference<androidx.preference.Preference>("tx_power")?.setOnPreferenceClickListener {
+            (activity as? MainActivity)?.showSetTxPowerDialog()
             true
-        }
-        themePreference?.summary = ThemeManager.getInstance().getThemeString(requireContext())
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(this, viewLifecycleOwner)
-    }
-
-    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        //menuInflater.inflate(R.menu.main, menu)
-    }
-
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return false
-    }
-
-    override fun onPrepareMenu(menu: Menu) {
-        super.onPrepareMenu(menu)
-
-        val menuItems = listOf<MenuItem?>(
-            menu.findItem(R.id.nav_preferences),
-            menu.findItem(R.id.nav_set_tx_power)
-        )
-
-        val context = requireContext()
-
-        menuItems.forEach { menuItem ->
-            val actionSettingsMenuItem = menuItem
-            val title = actionSettingsMenuItem?.title.toString()
-            val spannable = SpannableString(title)
-
-            var textColor = resources.getColor(R.color.text_color, context.theme)
-
-            if (menuItem?.itemId == R.id.nav_preferences) {
-                textColor = resources.getColor(R.color.text_color_light, context.theme)
-                menuItem.isEnabled = false
-            }
-
-            spannable.setSpan(
-                ForegroundColorSpan(textColor),
-                0,
-                spannable.length,
-                Spannable.SPAN_INCLUSIVE_INCLUSIVE
-            )
-            actionSettingsMenuItem?.title = spannable
         }
     }
 }
