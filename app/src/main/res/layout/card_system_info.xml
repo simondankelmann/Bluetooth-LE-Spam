@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
             android:text="@string/app_name"
-            android:textColor="@color/text_color_card_view_accent"
+            android:textColor="?attr/colorOnPrimaryContainer"
             android:textSize="@dimen/textSizeHeadline"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="App Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewAndroidVersion"
@@ -50,7 +50,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="Android Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewSdkVersion"
@@ -58,7 +58,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="Sdk Version:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:textColor="?attr/colorOnPrimaryContainer" />
 
                 <TextView
                     android:id="@+id/startFragmentTextViewBluetooth"
@@ -66,7 +66,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="Bluetooth:"
-                    android:textColor="@color/text_color_card_view_accent_light" />
+                    android:textColor="?attr/colorOnPrimaryContainer" />
             </LinearLayout>
 
             <ImageView
@@ -74,7 +74,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/logobrightnocircle"
-                app:tint="@color/white" />
+                app:tint="?attr/colorOnPrimaryContainer" />
 
         </LinearLayout>
     </LinearLayout>
