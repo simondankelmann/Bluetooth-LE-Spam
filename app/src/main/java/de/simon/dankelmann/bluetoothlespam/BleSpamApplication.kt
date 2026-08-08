@@ -27,6 +27,11 @@ class BleSpamApplication : Application() {
 
         super.onCreate()
 
+        // Dynamic color for the classic-View screens is applied per-Activity in
+        // MainActivity.onCreate() instead of app-wide here — it needs to react to the
+        // theme-picker's custom seed color (DynamicColorsOptions.setContentBasedSource),
+        // not just the device wallpaper, and MainActivity is this app's only Activity.
+
         setupAdvertisementService()
         scanService = BluetoothLeScanService(this)
     }
