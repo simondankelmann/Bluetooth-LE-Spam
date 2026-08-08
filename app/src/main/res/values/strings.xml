@@ -9,6 +9,11 @@
     <string name="action_settings">Settings</string>
     <string name="action_set_tx_power">TX Power</string>
 
+    <string name="theme_category_title">Theme</string>
+    <string name="theme_color_title">App Color</string>
+    <string name="theme_color_summary">Use your device\'s color, or pick one</string>
+    <string name="theme_color_device">Device</string>
+
     <string name="menu_preferences">Settings</string>
     <string name="menu_start">Start</string>
     <string name="menu_spam_detector">Spam Detector</string>
