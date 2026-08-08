@@ -7,6 +7,7 @@
             app:title="@string/preference_title_use_legacy_advertising"
             app:summary="@string/preference_summary_use_legacy_advertising"
             app:defaultValue="true"
+            app:icon="@drawable/ic_settings_bluetooth"
             />
 
         <EditTextPreference
@@ -17,7 +18,21 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="Duration of an Advertisement in Milliseconds. Recommended: 1000 - 10000"
-            android:title="Advertisement Duration (ms)" />
+            android:title="Advertisement Duration (ms)"
+            android:icon="@drawable/ic_settings_duration" />
+
+        <Preference
+            app:key="tx_power"
+            app:title="@string/action_set_tx_power"
+            app:icon="@drawable/ic_tx_power" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/theme_category_title">
+        <de.simon.dankelmann.bluetoothlespam.ui.preferences.ThemePickerPreference
+            app:key="theme_seed_color_picker" />
+
+        <de.simon.dankelmann.bluetoothlespam.ui.preferences.ThemeModePickerPreference
+            app:key="theme_mode_picker" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Debug Settings">
@@ -25,14 +40,8 @@
             app:key="@string/preference_key_enable_logging"
             app:title="@string/preference_title_enable_logging"
             app:summary="@string/preference_summary_enable_logging"
-            app:defaultValue="false" />
-
-        <ListPreference
-            app:key="theme_mode"
-            app:title="@string/preference_theme_mode"
-            app:entries="@array/theme_mode_entries"
-            app:entryValues="@array/theme_mode_values"
-            app:defaultValue="default" />
+            app:defaultValue="false"
+            app:icon="@drawable/ic_settings_logging" />
     </PreferenceCategory>
 
 </PreferenceScreen>
