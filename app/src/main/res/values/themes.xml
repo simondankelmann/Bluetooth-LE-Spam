@@ -6,12 +6,30 @@
         <item name="colorPrimary">@color/blue_normal</item>
         <item name="colorPrimaryVariant">@color/blue_dark</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/blue_light</item>
+        <item name="colorOnPrimaryContainer">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/blue_normal</item>
         <item name="colorSecondaryVariant">@color/blue_dark</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!-- Explicit colorSurface (was previously unset, inheriting Material3.DayNight's own
+             generic default) — the static pre-Compose window/splash background reads THIS
+             value, so it needs to match the app's actual background or the launch flashes a
+             visibly different color for the second or two before DynamicColors/Compose take
+             over. -->
+        <item name="colorSurface">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Window/launch background — theme-attr-based so it's consistent with the rest of
+             the app (and picks up DynamicColors.applyToActivitiesIfAvailable() on API 31+ for
+             everything after the very first pre-process frame, which Android always paints
+             from the static theme before the app process starts — a platform constraint, not
+             something app code can make truly wallpaper-dynamic). -->
+        <item name="android:windowBackground">?attr/colorSurface</item>
+        <!-- Android 12+'s SplashScreen system reads THIS attr for the launch splash backdrop,
+             not android:windowBackground — missing this was why the previous windowBackground
+             change had no visible effect on the actual splash frame. -->
+        <item name="android:windowSplashScreenBackground">?attr/colorSurface</item>
         <!-- Customize your theme here. -->
         <item name="seekbarBackground">@color/grey_normal</item>
         <item name="seekbarProgress">?attr/colorPrimary</item>
@@ -23,14 +41,19 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ActionButton.Overflow.Icon" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
-        <item name="android:src">@drawable/settings</item>
-        <item name="color">@color/foreground_color_action_bar</item>
-        <item name="tint">@color/foreground_color_action_bar</item>
-    </style>
-
-    <style name="Theme.BluetoothLESpam.AppBarOverlay" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Icon</item>
+    <!-- Applied programmatically (theme.applyStyle) in MainActivity when OLED mode is active,
+         after DynamicColors — forces the classic-View screens (cards, list rows) to pure black,
+         matching SpecterTheme's amoled override for the Compose side. -->
+    <style name="ThemeOverlay.Specter.Amoled" parent="">
+        <item name="colorSurface">@color/black</item>
+        <item name="colorSurfaceDim">@color/black</item>
+        <item name="colorSurfaceContainerLowest">@color/black</item>
+        <item name="colorSurfaceContainerLow">@color/black</item>
+        <item name="colorSurfaceContainer">@color/black</item>
+        <item name="colorSurfaceContainerHigh">@color/black</item>
+        <item name="colorSurfaceContainerHighest">@color/black</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:windowSplashScreenBackground">@color/black</item>
     </style>
 
 </resources>
