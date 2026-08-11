@@ -229,25 +229,20 @@ class StartFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             var result = false
             var database = AppDatabase.getInstance()
-            if(database != null){
-                removeMissingRequirement("Database is not initialized")
-                if(!database.isSeeding && !database.inTransaction()){
-                    removeMissingRequirement("Database is Seeding")
-                    viewModel.isSeeding.postValue(false)
-                    var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
-                    if(numberOfAdvertisementSetEntities > 0){
-                        removeMissingRequirement("Database is empty")
-                        result = true
-                    } else {
-                        addMissingRequirement("Database is empty")
-                    }
+            removeMissingRequirement("Database is not initialized")
+            if(!database.isSeeding && !database.inTransaction()){
+                removeMissingRequirement("Database is Seeding")
+                viewModel.isSeeding.postValue(false)
+                var numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
+                if(numberOfAdvertisementSetEntities > 0){
+                    removeMissingRequirement("Database is empty")
+                    result = true
                 } else {
-                    addMissingRequirement("Database is Seeding")
-                    viewModel.isSeeding.postValue(true)
+                    addMissingRequirement("Database is empty")
                 }
-
             } else {
-                addMissingRequirement("Database is not initialized")
+                addMissingRequirement("Database is Seeding")
+                viewModel.isSeeding.postValue(true)
             }
             viewModel.databaseIsReady.postValue(result)
 

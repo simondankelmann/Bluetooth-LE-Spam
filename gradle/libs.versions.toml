@@ -9,12 +9,11 @@ appcompat = "1.7.1"
 navigation = "2.9.8"
 navigationCompose = "2.9.8"
 lifecycle = "2.11.0"
-legacy = "1.0.0"
+documentfile = "1.0.0"
 constraintlayout = "2.2.2"
 material = "1.14.0"
 room = "2.8.4"
 lottie = "6.7.1"
-lottieCompose = "6.7.1"
 composeBom = "2025.11.00"
 activityCompose = "1.10.1"
 haze = "1.6.4"
@@ -29,7 +28,6 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 
 [libraries]
 airbnb-lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
-airbnb-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottieCompose" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -62,7 +60,7 @@ navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fr
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-legacy-support = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacy" }
+androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 
 android-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }

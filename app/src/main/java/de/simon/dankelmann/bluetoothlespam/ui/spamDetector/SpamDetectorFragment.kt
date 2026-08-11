@@ -130,55 +130,51 @@ class SpamDetectorFragment : IBluetoothLeScanCallback, Fragment() {
 
     fun updateFlipperDevicesListView(context: Context) {
         val scanService = (context.applicationContext as BleSpamApplication).scanService
-        if (_flipperDevicesListViewAdapter != null) {
-            var newItems = scanService.getFlipperDevicesList()
-            newItems.forEach { newFlipperDevice ->
-                var oldFlipperListIndex = -1
-                _flipperDevicesListViewAdapter.mList.forEachIndexed { index, oldFlipperDevice ->
-                    if (oldFlipperDevice.address == newFlipperDevice.address) {
-                        oldFlipperListIndex = index
-                    }
-                }
-
-                if (oldFlipperListIndex != -1) {
-                    // Update
-                    _flipperDevicesListViewAdapter.mList[oldFlipperListIndex] = newFlipperDevice
-                    //Log.d(_logTag, "Updated existing Item")
-                } else {
-                    // Add
-                    _flipperDevicesListViewAdapter.mList.add(newFlipperDevice)
-                    //Log.d(_logTag, "Created existing Item")
+        var newItems = scanService.getFlipperDevicesList()
+        newItems.forEach { newFlipperDevice ->
+            var oldFlipperListIndex = -1
+            _flipperDevicesListViewAdapter.mList.forEachIndexed { index, oldFlipperDevice ->
+                if (oldFlipperDevice.address == newFlipperDevice.address) {
+                    oldFlipperListIndex = index
                 }
             }
 
-            _flipperDevicesListViewAdapter.notifyDataSetChanged()
+            if (oldFlipperListIndex != -1) {
+                // Update
+                _flipperDevicesListViewAdapter.mList[oldFlipperListIndex] = newFlipperDevice
+                //Log.d(_logTag, "Updated existing Item")
+            } else {
+                // Add
+                _flipperDevicesListViewAdapter.mList.add(newFlipperDevice)
+                //Log.d(_logTag, "Created existing Item")
+            }
         }
+
+        _flipperDevicesListViewAdapter.notifyDataSetChanged()
     }
 
     fun updateSpamPackageListView(context: Context) {
         val scanService = (context.applicationContext as BleSpamApplication).scanService
-        if (_spamPackageListViewAdapter != null) {
-            var newItems = scanService.getSpamPackageScanResultList()
-            newItems.forEach { newSpamPackage ->
-                var oldListIndex = -1
+        var newItems = scanService.getSpamPackageScanResultList()
+        newItems.forEach { newSpamPackage ->
+            var oldListIndex = -1
 
-                _spamPackageListViewAdapter.mList.forEachIndexed { index, oldSpamPackage ->
-                    if (oldSpamPackage.address == newSpamPackage.address) {
-                        oldListIndex = index
-                    }
-                }
-
-                if (oldListIndex != -1) {
-                    // Update
-                    _spamPackageListViewAdapter.mList[oldListIndex] = newSpamPackage
-                } else {
-                    // Add
-                    _spamPackageListViewAdapter.mList.add(newSpamPackage)
+            _spamPackageListViewAdapter.mList.forEachIndexed { index, oldSpamPackage ->
+                if (oldSpamPackage.address == newSpamPackage.address) {
+                    oldListIndex = index
                 }
             }
 
-            _spamPackageListViewAdapter.notifyDataSetChanged()
+            if (oldListIndex != -1) {
+                // Update
+                _spamPackageListViewAdapter.mList[oldListIndex] = newSpamPackage
+            } else {
+                // Add
+                _spamPackageListViewAdapter.mList.add(newSpamPackage)
+            }
         }
+
+        _spamPackageListViewAdapter.notifyDataSetChanged()
     }
 
     fun onToggleButtonClicked(context: Context) {

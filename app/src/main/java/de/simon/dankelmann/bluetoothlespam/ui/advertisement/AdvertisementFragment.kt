@@ -290,21 +290,19 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     }
 
     fun highlightCurrentAdverstisementSet(currentAdvertisementSet: AdvertisementSet, advertisementState: AdvertisementState){
-        if(_adapter != null){
-            _adapter.advertisementSetLists.forEachIndexed{ listIndex, advertisementList ->
-                advertisementList.currentlyAdvertising = false
-                advertisementList.advertisementSets.forEachIndexed{ setIndex, advertisementSet ->
-                    if(advertisementSet == currentAdvertisementSet){
-                        advertisementSet.advertisementState = advertisementState
-                        advertisementSet.currentlyAdvertising = true
-                        advertisementList.currentlyAdvertising = true
-                    } else {
-                        advertisementSet.currentlyAdvertising = false
-                    }
+        _adapter.advertisementSetLists.forEachIndexed{ listIndex, advertisementList ->
+            advertisementList.currentlyAdvertising = false
+            advertisementList.advertisementSets.forEachIndexed{ setIndex, advertisementSet ->
+                if(advertisementSet == currentAdvertisementSet){
+                    advertisementSet.advertisementState = advertisementState
+                    advertisementSet.currentlyAdvertising = true
+                    advertisementList.currentlyAdvertising = true
+                } else {
+                    advertisementSet.currentlyAdvertising = false
                 }
             }
-            _adapter.notifyDataSetChanged()
         }
+        _adapter.notifyDataSetChanged()
     }
 
     // AdvertismentServiceCallback

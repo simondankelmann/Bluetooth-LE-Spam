@@ -157,7 +157,7 @@ class DatabaseHelpers {
             var database = AppDatabase.getInstance()
 
             // Advertise Settings
-            database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId)?.let { entity ->
+            database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId).let { entity ->
                 advertisementSet.advertiseSettings = AdvertiseSettings().apply {
                     id = advertisementSetEntity.id
                     advertiseMode = entity.advertiseMode
@@ -168,7 +168,7 @@ class DatabaseHelpers {
             }
 
             // AdvertisingSetParameters
-            database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
+            database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId).let { entity ->
                 advertisementSet.advertisingSetParameters = AdvertisingSetParameters().apply {
                     id = entity.id
                     legacyMode = entity.legacyMode
@@ -183,7 +183,7 @@ class DatabaseHelpers {
                 }
             }
 
-            advertisementSetEntity.advertiseDataId?.let { id ->
+            advertisementSetEntity.advertiseDataId.let { id ->
                 database.advertiseDataDao().findById(id)?.let { entity ->
                     advertisementSet.advertiseData = getAdvertiseDataFromEntity(entity, database)
                 }
@@ -202,7 +202,7 @@ class DatabaseHelpers {
             }
 
             advertisementSetEntity.periodicAdvertisingParametersId?.let { _ ->
-                database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
+                database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId).let { entity ->
                     advertisementSet.periodicAdvertisingParameters = PeriodicAdvertisingParameters().apply {
                         id = entity.id
                         includeTxPowerLevel = entity.includeTxPowerLevel

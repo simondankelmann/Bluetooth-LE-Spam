@@ -35,7 +35,8 @@ android {
         }
         release {
             resValue("string", "app_name", app_name)
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -68,7 +69,6 @@ android {
 
 dependencies {
     implementation(libs.airbnb.lottie)
-    implementation(libs.airbnb.lottie.compose)
 
     implementation(libs.core.ktx)
     implementation(libs.preference.ktx)
@@ -78,7 +78,7 @@ dependencies {
     implementation(libs.navigation.ui.ktx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.legacy.support)
+    implementation(libs.androidx.documentfile)
     implementation(libs.android.constraintlayout)
     implementation(libs.google.material)
 
@@ -95,7 +95,7 @@ dependencies {
     //implementation(libs.room.rxjava2)
 
     // optional - RxJava3 support for Room
-    implementation(libs.room.rxjava3)
+    //implementation(libs.room.rxjava3)
 
     // optional - Guava support for Room, including Optional and ListenableFuture
     //implementation(libs.room.guava)
