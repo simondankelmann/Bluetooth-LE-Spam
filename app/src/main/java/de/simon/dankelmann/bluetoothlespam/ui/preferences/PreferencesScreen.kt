@@ -48,6 +48,8 @@ fun PreferencesScreen(
     onDynamicColorEnabledChanged: (Boolean) -> Unit,
     blurEnabled: Boolean,
     onBlurEnabledChanged: (Boolean) -> Unit,
+    allowCustomSwiftPairNames: Boolean,
+    onAllowCustomSwiftPairNamesChanged: (Boolean) -> Unit,
     useLegacyAdvertising: Boolean,
     onUseLegacyAdvertisingChanged: (Boolean) -> Unit,
     advertisingIntervalMs: String,
@@ -125,6 +127,16 @@ fun PreferencesScreen(
         }
         item {
             ClickRow(title = "Set TX Power", onClick = onTxPowerClicked, iconRes = R.drawable.ic_tx_power)
+        }
+
+        item { SectionHeader("Swift Pair") }
+        item {
+            SwitchRow(
+                title = "Allow Custom Swift Pair Names",
+                summary = "Shows an edit button on each Swift Pair entry to set the advertised device name",
+                checked = allowCustomSwiftPairNames,
+                onCheckedChange = onAllowCustomSwiftPairNamesChanged,
+            )
         }
 
         item { SectionHeader("Debug Settings") }

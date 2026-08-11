@@ -29,6 +29,7 @@ object SettingsKeys {
     val THEME_SEED_COLOR = intPreferencesKey("theme_seed_color")
     val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
     val BLUR_ENABLED = booleanPreferencesKey("blur_enabled")
+    val ALLOW_CUSTOM_SWIFT_PAIR_NAMES = booleanPreferencesKey("allow_custom_swift_pair_names")
 }
 
 /**
@@ -123,6 +124,10 @@ class SettingsRepository private constructor(context: Context) {
         dataStore.edit { it[SettingsKeys.BLUR_ENABLED] = enabled }
     }
 
+    suspend fun setAllowCustomSwiftPairNamesEnabled(enabled: Boolean) {
+        dataStore.edit { it[SettingsKeys.ALLOW_CUSTOM_SWIFT_PAIR_NAMES] = enabled }
+    }
+
     /** Fire-and-forget variants for non-suspend call sites (e.g. [ThemeManager]) — launched on
      * this repository's own long-lived [scope] rather than each caller creating its own. */
     fun setThemeModeAsync(mode: String) {
@@ -139,6 +144,10 @@ class SettingsRepository private constructor(context: Context) {
 
     fun setBlurEnabledAsync(enabled: Boolean) {
         scope.launch { setBlurEnabled(enabled) }
+    }
+
+    fun setAllowCustomSwiftPairNamesEnabledAsync(enabled: Boolean) {
+        scope.launch { setAllowCustomSwiftPairNamesEnabled(enabled) }
     }
 
     companion object {

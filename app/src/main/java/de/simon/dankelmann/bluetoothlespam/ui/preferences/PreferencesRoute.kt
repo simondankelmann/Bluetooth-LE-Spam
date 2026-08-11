@@ -49,6 +49,7 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
     val seedColorArgb = settings[SettingsKeys.THEME_SEED_COLOR] ?: ThemeManager.THEME_SEED_COLOR_DEVICE
     val dynamicColorEnabled = settings[SettingsKeys.DYNAMIC_COLOR_ENABLED] ?: true
     val blurEnabled = settings[SettingsKeys.BLUR_ENABLED] ?: true
+    val allowCustomSwiftPairNames = settings[SettingsKeys.ALLOW_CUSTOM_SWIFT_PAIR_NAMES] ?: false
 
     val defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context)
     val legacyAdvertisingKey = context.getString(R.string.preference_key_use_legacy_advertising)
@@ -66,6 +67,10 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
         onDynamicColorEnabledChanged = { enabled -> ThemeManager.getInstance().setDynamicColorEnabled(context, enabled) },
         blurEnabled = blurEnabled,
         onBlurEnabledChanged = { enabled -> ThemeManager.getInstance().setBlurEnabled(context, enabled) },
+        allowCustomSwiftPairNames = allowCustomSwiftPairNames,
+        onAllowCustomSwiftPairNamesChanged = { enabled ->
+            settingsRepository.setAllowCustomSwiftPairNamesEnabledAsync(enabled)
+        },
         useLegacyAdvertising = useLegacyAdvertising,
         onUseLegacyAdvertisingChanged = { enabled ->
             useLegacyAdvertising = enabled

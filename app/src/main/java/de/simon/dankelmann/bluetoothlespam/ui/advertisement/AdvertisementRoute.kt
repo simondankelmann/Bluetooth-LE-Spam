@@ -5,11 +5,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -17,15 +19,21 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsKeys
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val LOG_TAG = "AdvertisementRoute"
 
@@ -35,6 +43,11 @@ fun AdvertisementRoute() {
     val context = LocalContext.current
     val viewModel: AdvertisementViewModel = viewModel()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
+
+    val settingsRepository = remember { SettingsRepository.getInstance(context) }
+    val settings by settingsRepository.preferencesFlow.collectAsState()
+    val allowCustomSwiftPairNames = settings[SettingsKeys.ALLOW_CUSTOM_SWIFT_PAIR_NAMES] ?: false
 
     var advertisementSetLists by remember { mutableStateOf<List<AdvertisementSetList>>(emptyList()) }
     var revision by remember { mutableIntStateOf(0) }
@@ -173,6 +186,13 @@ fun AdvertisementRoute() {
         onGroupCheckedChanged = { list, checked ->
             list.advertisementSets.forEach { it.isChecked = checked }
             revision++
+        },
+        allowCustomSwiftPairNames = allowCustomSwiftPairNames,
+        onRenameSwiftPairDevice = { set, newName ->
+            scope.launch(Dispatchers.IO) {
+                DatabaseHelpers.updateSwiftPairDeviceName(set, newName)
+                withContext(Dispatchers.Main) { revision++ }
+            }
         },
     )
 }
