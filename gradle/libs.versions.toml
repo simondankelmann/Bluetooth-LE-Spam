@@ -9,7 +9,7 @@ coroutines = "1.11.0"
 appcompat = "1.7.1"
 navigationCompose = "2.9.8"
 lifecycle = "2.11.0"
-legacy = "1.0.0"
+documentfile = "1.0.0"
 material = "1.14.0"
 room = "2.8.4"
 lottie = "6.7.1"
@@ -59,7 +59,7 @@ kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
-legacy-support = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacy" }
+androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 

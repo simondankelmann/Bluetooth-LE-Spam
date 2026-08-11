@@ -2,7 +2,6 @@ package de.simon.dankelmann.bluetoothlespam.Database
 
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
@@ -17,13 +16,11 @@ import org.robolectric.annotation.Config
 /**
  * Covers the DAO queries + seeding logic activating the dormant AdvertisementSetList/
  * AdvertisementSetCollection schema (plan §8) — separate from [de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_2_3_Test],
- * which only covers the CRITICAL existing-data-survives-migration path. This test calls
- * [DatabaseHelpers.seedBuiltInListsAndCollections] directly (not through `Migration_2_3`'s
- * fire-and-forget background Thread) so the seeding outcome can be asserted deterministically.
- *
- * [FastPairDevicesAdvertisementSetGenerator] alone produces sets across all 4 Fast-Pairing
- * types (device/phone-setup/non-production/debug), so seeding from just this one generator is
- * enough to exercise the full "Fast Pair Collection" (4 member lists).
+ * which only covers the CRITICAL existing-data-survives-migration path. This test asserts
+ * against [AppDatabase.seedingThread]'s own auto-seed (fired from Room's onCreate callback on
+ * first [AppDatabase.getInstance] access) rather than seeding again itself — calling
+ * [DatabaseHelpers.seedBuiltInListsAndCollections] a second time would just double every count,
+ * since both go through the same singleton.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [26, 31], application = Application::class)
@@ -50,12 +47,20 @@ class DatabaseHelpersSeedingTest {
         // casing the test database. All DB work (writes AND reads) happens in this one thread;
         // assertions run afterward on the main thread against the captured results.
         val workerThread = Thread {
-            FastPairDevicesAdvertisementSetGenerator().getAdvertisementSets(null).forEach {
-                DatabaseHelpers.saveAdvertisementSet(it)
-            }
-            DatabaseHelpers.seedBuiltInListsAndCollections()
-
+            // AppDatabase.getInstance() opens a fresh db on first access, which triggers Room's
+            // onCreate callback (AppDatabase.seedingThread) on its own background Thread — it
+            // already seeds every generator (including FastPairDevicesAdvertisementSetGenerator)
+            // and calls DatabaseHelpers.seedBuiltInListsAndCollections() itself, so seeding again
+            // here would just double every count. Force the db open and wait for that auto-seed
+            // to finish, then assert against its result instead of re-seeding.
             val database = AppDatabase.getInstance()
+            database.advertisementSetDao().getAll()
+            var waitedMillis = 0L
+            while (database.isSeeding && waitedMillis < 5000) {
+                Thread.sleep(20)
+                waitedMillis += 20
+            }
+
             builtIns = database.advertisementSetCollectionDao().getBuiltInCollections()
 
             val fastPair = builtIns.first { it.title == "Fast Pair Collection" }

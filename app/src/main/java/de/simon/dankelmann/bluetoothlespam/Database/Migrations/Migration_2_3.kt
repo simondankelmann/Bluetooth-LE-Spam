@@ -24,15 +24,15 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 val Migration_2_3 = object : Migration(2, 3) {
     private val _logTag = "Migration_2_3"
 
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         Log.d(_logTag, "Executing Migration...")
 
-        database.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `lastUsedAt` INTEGER")
-        database.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `isCustom` INTEGER NOT NULL DEFAULT 0")
-        database.execSQL("ALTER TABLE `AdvertisementSetListEntity` ADD COLUMN `lastUsedAt` INTEGER")
+        db.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `lastUsedAt` INTEGER")
+        db.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `isCustom` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `AdvertisementSetListEntity` ADD COLUMN `lastUsedAt` INTEGER")
 
         // AssociatonCollectionListEntity: recreate with FKs (collection CASCADE, list NO_ACTION).
-        database.execSQL(
+        db.execSQL(
             "CREATE TABLE `AssociatonCollectionListEntity_new` (" +
                 "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "`advertisementSetCollectionId` INTEGER NOT NULL, " +
@@ -41,23 +41,23 @@ val Migration_2_3 = object : Migration(2, 3) {
                 "FOREIGN KEY(`advertisementSetCollectionId`) REFERENCES `AdvertisementSetCollectionEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
                 "FOREIGN KEY(`advertisementSetListId`) REFERENCES `AdvertisementSetListEntity`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)",
         )
-        database.execSQL(
+        db.execSQL(
             "INSERT INTO `AssociatonCollectionListEntity_new` (id, advertisementSetCollectionId, advertisementSetListId, position) " +
                 "SELECT id, advertisementSetCollectionId, advertisementSetListId, position FROM `AssociatonCollectionListEntity`",
         )
-        database.execSQL("DROP TABLE `AssociatonCollectionListEntity`")
-        database.execSQL("ALTER TABLE `AssociatonCollectionListEntity_new` RENAME TO `AssociatonCollectionListEntity`")
-        database.execSQL(
+        db.execSQL("DROP TABLE `AssociatonCollectionListEntity`")
+        db.execSQL("ALTER TABLE `AssociatonCollectionListEntity_new` RENAME TO `AssociatonCollectionListEntity`")
+        db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_AssociatonCollectionListEntity_advertisementSetCollectionId` " +
                 "ON `AssociatonCollectionListEntity` (`advertisementSetCollectionId`)",
         )
-        database.execSQL(
+        db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_AssociatonCollectionListEntity_advertisementSetListId` " +
                 "ON `AssociatonCollectionListEntity` (`advertisementSetListId`)",
         )
 
         // AssociationListSetEntity: recreate with FKs (both sides CASCADE).
-        database.execSQL(
+        db.execSQL(
             "CREATE TABLE `AssociationListSetEntity_new` (" +
                 "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "`advertisementSetId` INTEGER NOT NULL, " +
@@ -66,17 +66,17 @@ val Migration_2_3 = object : Migration(2, 3) {
                 "FOREIGN KEY(`advertisementSetListId`) REFERENCES `AdvertisementSetListEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE, " +
                 "FOREIGN KEY(`advertisementSetId`) REFERENCES `AdvertisementSetEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)",
         )
-        database.execSQL(
+        db.execSQL(
             "INSERT INTO `AssociationListSetEntity_new` (id, advertisementSetId, advertisementSetListId, position) " +
                 "SELECT id, advertisementSetId, advertisementSetListId, position FROM `AssociationListSetEntity`",
         )
-        database.execSQL("DROP TABLE `AssociationListSetEntity`")
-        database.execSQL("ALTER TABLE `AssociationListSetEntity_new` RENAME TO `AssociationListSetEntity`")
-        database.execSQL(
+        db.execSQL("DROP TABLE `AssociationListSetEntity`")
+        db.execSQL("ALTER TABLE `AssociationListSetEntity_new` RENAME TO `AssociationListSetEntity`")
+        db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_AssociationListSetEntity_advertisementSetListId` " +
                 "ON `AssociationListSetEntity` (`advertisementSetListId`)",
         )
-        database.execSQL(
+        db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_AssociationListSetEntity_advertisementSetId` " +
                 "ON `AssociationListSetEntity` (`advertisementSetId`)",
         )

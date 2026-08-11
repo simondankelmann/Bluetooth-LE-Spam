@@ -12,10 +12,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 val Migration_3_4 = object : Migration(3, 4) {
     private val _logTag = "Migration_3_4"
 
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         Log.d(_logTag, "Executing Migration...")
 
-        database.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `isQuickStart` INTEGER NOT NULL DEFAULT 0")
-        database.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `quickStartOrder` INTEGER")
+        db.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `isQuickStart` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `AdvertisementSetCollectionEntity` ADD COLUMN `quickStartOrder` INTEGER")
     }
 }
