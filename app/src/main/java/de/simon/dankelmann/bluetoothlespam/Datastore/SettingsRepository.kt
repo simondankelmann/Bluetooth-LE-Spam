@@ -29,6 +29,8 @@ object SettingsKeys {
     val THEME_SEED_COLOR = intPreferencesKey("theme_seed_color")
     val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
     val BLUR_ENABLED = booleanPreferencesKey("blur_enabled")
+    val SPAM_DETECTION_BACKGROUND_ENABLED = booleanPreferencesKey("spam_detection_background_enabled")
+    val ADVERTISING_BACKGROUND_ENABLED = booleanPreferencesKey("advertising_background_enabled")
 }
 
 /**
@@ -123,6 +125,14 @@ class SettingsRepository private constructor(context: Context) {
         dataStore.edit { it[SettingsKeys.BLUR_ENABLED] = enabled }
     }
 
+    suspend fun setSpamDetectionBackgroundEnabled(enabled: Boolean) {
+        dataStore.edit { it[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] = enabled }
+    }
+
+    suspend fun setAdvertisingBackgroundEnabled(enabled: Boolean) {
+        dataStore.edit { it[SettingsKeys.ADVERTISING_BACKGROUND_ENABLED] = enabled }
+    }
+
     /** Fire-and-forget variants for non-suspend call sites (e.g. [ThemeManager]) — launched on
      * this repository's own long-lived [scope] rather than each caller creating its own. */
     fun setThemeModeAsync(mode: String) {
@@ -139,6 +149,14 @@ class SettingsRepository private constructor(context: Context) {
 
     fun setBlurEnabledAsync(enabled: Boolean) {
         scope.launch { setBlurEnabled(enabled) }
+    }
+
+    fun setSpamDetectionBackgroundEnabledAsync(enabled: Boolean) {
+        scope.launch { setSpamDetectionBackgroundEnabled(enabled) }
+    }
+
+    fun setAdvertisingBackgroundEnabledAsync(enabled: Boolean) {
+        scope.launch { setAdvertisingBackgroundEnabled(enabled) }
     }
 
     companion object {

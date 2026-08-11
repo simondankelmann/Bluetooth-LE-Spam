@@ -8,6 +8,8 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.simon.dankelmann.bluetoothlespam.Constants.Constants
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsKeys
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository
 
 class PermissionCheck() {
     companion object {
@@ -16,8 +18,12 @@ class PermissionCheck() {
 
         /**
          * Gets a list of permissions that are relevant for the SDK level we are running on.
+         *
+         * ACCESS_BACKGROUND_LOCATION is only pulled in once the user opts into background spam
+         * detection or background advertising (Preferences screen) — requesting it upfront for
+         * everyone would nag users who never need background operation.
          */
-        fun getAllRelevantPermissions(): List<String> {
+        fun getAllRelevantPermissions(context: Context): List<String> {
             val allPermissions = mutableListOf<String>()
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -35,7 +41,7 @@ class PermissionCheck() {
                 // On SDK 31 "S" and above, we declare in the manifest that we won't use Bluetooth to get the location
                 allPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && isBackgroundOperationEnabled(context)) {
                     allPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                 }
             }
@@ -44,6 +50,13 @@ class PermissionCheck() {
             allPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
 
             return allPermissions
+        }
+
+        private fun isBackgroundOperationEnabled(context: Context): Boolean {
+            val settings = SettingsRepository.getInstance(context).current
+            val spamDetectionBackgroundEnabled = settings[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] ?: false
+            val advertisingBackgroundEnabled = settings[SettingsKeys.ADVERTISING_BACKGROUND_ENABLED] ?: false
+            return spamDetectionBackgroundEnabled || advertisingBackgroundEnabled
         }
 
         fun checkPermissionAndRequest(permission: String, activity: Activity): Boolean {

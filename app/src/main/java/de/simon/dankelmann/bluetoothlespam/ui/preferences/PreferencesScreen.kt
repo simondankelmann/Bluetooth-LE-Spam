@@ -53,6 +53,10 @@ fun PreferencesScreen(
     advertisingIntervalMs: String,
     onAdvertisingIntervalChanged: (String) -> Unit,
     onTxPowerClicked: () -> Unit,
+    advertisingBackgroundEnabled: Boolean,
+    onAdvertisingBackgroundEnabledChanged: (Boolean) -> Unit,
+    spamDetectionBackgroundEnabled: Boolean,
+    onSpamDetectionBackgroundEnabledChanged: (Boolean) -> Unit,
     loggingEnabled: Boolean,
     onLoggingEnabledChanged: (Boolean) -> Unit,
 ) {
@@ -125,6 +129,25 @@ fun PreferencesScreen(
         }
         item {
             ClickRow(title = "Set TX Power", onClick = onTxPowerClicked, iconRes = R.drawable.ic_tx_power)
+        }
+        item {
+            SwitchRow(
+                title = "Advertise in Background",
+                summary = "Keep advertising once the app leaves the foreground — requires background location access",
+                checked = advertisingBackgroundEnabled,
+                onCheckedChange = onAdvertisingBackgroundEnabledChanged,
+                iconRes = R.drawable.ic_settings_bluetooth,
+            )
+        }
+
+        item { SectionHeader("Spam Detector Settings") }
+        item {
+            SwitchRow(
+                title = "Detect Spam in Background",
+                summary = "Keep spam detection running once the app leaves the foreground — requires background location access",
+                checked = spamDetectionBackgroundEnabled,
+                onCheckedChange = onSpamDetectionBackgroundEnabledChanged,
+            )
         }
 
         item { SectionHeader("Debug Settings") }

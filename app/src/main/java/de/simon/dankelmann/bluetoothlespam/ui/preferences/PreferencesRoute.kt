@@ -1,6 +1,8 @@
 package de.simon.dankelmann.bluetoothlespam.ui.preferences
 
+import android.Manifest
 import android.app.Activity
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogDirectoryPicker
 import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
+import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.ui.theme.ThemeModeOption
 
@@ -49,6 +52,8 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
     val seedColorArgb = settings[SettingsKeys.THEME_SEED_COLOR] ?: ThemeManager.THEME_SEED_COLOR_DEVICE
     val dynamicColorEnabled = settings[SettingsKeys.DYNAMIC_COLOR_ENABLED] ?: true
     val blurEnabled = settings[SettingsKeys.BLUR_ENABLED] ?: true
+    val advertisingBackgroundEnabled = settings[SettingsKeys.ADVERTISING_BACKGROUND_ENABLED] ?: false
+    val spamDetectionBackgroundEnabled = settings[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] ?: false
 
     val defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context)
     val legacyAdvertisingKey = context.getString(R.string.preference_key_use_legacy_advertising)
@@ -77,6 +82,16 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
             defaultPrefs.edit().putString(intervalKey, value).apply()
         },
         onTxPowerClicked = onTxPowerClicked,
+        advertisingBackgroundEnabled = advertisingBackgroundEnabled,
+        onAdvertisingBackgroundEnabledChanged = { enabled ->
+            settingsRepository.setAdvertisingBackgroundEnabledAsync(enabled)
+            if (enabled) requestBackgroundLocationPermissionIfNeeded(activity)
+        },
+        spamDetectionBackgroundEnabled = spamDetectionBackgroundEnabled,
+        onSpamDetectionBackgroundEnabledChanged = { enabled ->
+            settingsRepository.setSpamDetectionBackgroundEnabledAsync(enabled)
+            if (enabled) requestBackgroundLocationPermissionIfNeeded(activity)
+        },
         loggingEnabled = loggingEnabled,
         onLoggingEnabledChanged = { enabled ->
             if (enabled) {
@@ -91,4 +106,15 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
             }
         },
     )
+}
+
+/**
+ * ACCESS_BACKGROUND_LOCATION can't be requested alongside other runtime permissions on Android Q/R
+ * (S+ doesn't need it at all, see [PermissionCheck.getAllRelevantPermissions]) — asked for
+ * immediately when a background switch is flipped on, rather than upfront on the Start screen.
+ */
+private fun requestBackgroundLocationPermissionIfNeeded(activity: Activity) {
+    if (Build.VERSION.SDK_INT in Build.VERSION_CODES.Q until Build.VERSION_CODES.S) {
+        PermissionCheck.checkPermissionAndRequest(Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity)
+    }
 }

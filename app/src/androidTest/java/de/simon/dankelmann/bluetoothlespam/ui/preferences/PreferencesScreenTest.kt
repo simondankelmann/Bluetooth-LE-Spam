@@ -38,6 +38,10 @@ class PreferencesScreenTest {
                     advertisingIntervalMs = "1000",
                     onAdvertisingIntervalChanged = {},
                     onTxPowerClicked = {},
+                    advertisingBackgroundEnabled = false,
+                    onAdvertisingBackgroundEnabledChanged = {},
+                    spamDetectionBackgroundEnabled = false,
+                    onSpamDetectionBackgroundEnabledChanged = {},
                     loggingEnabled = false,
                     onLoggingEnabledChanged = {},
                 )
@@ -69,6 +73,10 @@ class PreferencesScreenTest {
                     advertisingIntervalMs = "1000",
                     onAdvertisingIntervalChanged = {},
                     onTxPowerClicked = { clicked = true },
+                    advertisingBackgroundEnabled = false,
+                    onAdvertisingBackgroundEnabledChanged = {},
+                    spamDetectionBackgroundEnabled = false,
+                    onSpamDetectionBackgroundEnabledChanged = {},
                     loggingEnabled = false,
                     onLoggingEnabledChanged = {},
                 )
