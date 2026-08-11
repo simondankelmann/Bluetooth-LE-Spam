@@ -12,6 +12,8 @@ class AdvertisementViewModel : ViewModel() {
         AdvertisementTarget.ADVERTISEMENT_TARGET_UNDEFINED
     )
 
+    val isLoadingSets = MutableLiveData<Boolean>(false)
+
     val advertisementSetCollectionTitle = MutableLiveData<String>("-")
     val advertisementSetCollectionSubTitle = MutableLiveData<String>("-")
     val advertisementSetCollectionHint = MutableLiveData<String>("-")
