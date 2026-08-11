@@ -251,7 +251,7 @@ private fun checkBluetoothAdapter(
 private fun checkRequiredPermissions(context: Context, viewModel: StartViewModel) {
     var allGranted = true
 
-    PermissionCheck.getAllRelevantPermissions(context).forEach { permission ->
+    PermissionCheck.getAllRelevantPermissions().forEach { permission ->
         val missingRequirementString = "Permission " + permission.replace("android.permission.", "") + " not granted"
         if (PermissionCheck.checkPermission(permission, context)) {
             removeMissingRequirement(viewModel, missingRequirementString)
@@ -273,9 +273,7 @@ private fun checkRequiredPermissions(context: Context, viewModel: StartViewModel
 }
 
 private fun requestRequiredPermissions(activity: Activity) {
-    PermissionCheck.getAllRelevantPermissions(activity).forEach { permission ->
-        PermissionCheck.checkPermissionAndRequest(permission, activity)
-    }
+    PermissionCheck.requestMissingPermissions(PermissionCheck.getAllRelevantPermissions(), activity)
 }
 
 /**

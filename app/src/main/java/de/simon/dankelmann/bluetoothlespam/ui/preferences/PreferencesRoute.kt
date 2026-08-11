@@ -2,7 +2,9 @@ package de.simon.dankelmann.bluetoothlespam.ui.preferences
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -44,6 +46,22 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
         logDirectoryPicker.initialize(directoryPickerLauncher)
     }
 
+    // Android denies ACCESS_BACKGROUND_LOCATION without ever showing a dialog if the app doesn't
+    // already hold foreground location — so on Q/R we have to request foreground location first,
+    // wait for that result, and only then follow up with the background request. Using the
+    // Activity Result API (rather than raw ActivityCompat.requestPermissions, which has no
+    // completion callback in this codebase) is what makes that chaining possible.
+    val backgroundLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { /* Preferences doesn't show inline permission state; next Start-screen resume reflects it. */ }
+    val foregroundLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            backgroundLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
+    }
+
     val settingsRepository = remember { SettingsRepository.getInstance(context) }
     val settings by settingsRepository.preferencesFlow.collectAsState()
 
@@ -52,7 +70,6 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
     val seedColorArgb = settings[SettingsKeys.THEME_SEED_COLOR] ?: ThemeManager.THEME_SEED_COLOR_DEVICE
     val dynamicColorEnabled = settings[SettingsKeys.DYNAMIC_COLOR_ENABLED] ?: true
     val blurEnabled = settings[SettingsKeys.BLUR_ENABLED] ?: true
-    val advertisingBackgroundEnabled = settings[SettingsKeys.ADVERTISING_BACKGROUND_ENABLED] ?: false
     val spamDetectionBackgroundEnabled = settings[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] ?: false
 
     val defaultPrefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -82,15 +99,10 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
             defaultPrefs.edit().putString(intervalKey, value).apply()
         },
         onTxPowerClicked = onTxPowerClicked,
-        advertisingBackgroundEnabled = advertisingBackgroundEnabled,
-        onAdvertisingBackgroundEnabledChanged = { enabled ->
-            settingsRepository.setAdvertisingBackgroundEnabledAsync(enabled)
-            if (enabled) requestBackgroundLocationPermissionIfNeeded(activity)
-        },
         spamDetectionBackgroundEnabled = spamDetectionBackgroundEnabled,
         onSpamDetectionBackgroundEnabledChanged = { enabled ->
             settingsRepository.setSpamDetectionBackgroundEnabledAsync(enabled)
-            if (enabled) requestBackgroundLocationPermissionIfNeeded(activity)
+            if (enabled) requestBackgroundLocationPermissionIfNeeded(context, foregroundLocationLauncher, backgroundLocationLauncher)
         },
         loggingEnabled = loggingEnabled,
         onLoggingEnabledChanged = { enabled ->
@@ -109,12 +121,25 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
 }
 
 /**
- * ACCESS_BACKGROUND_LOCATION can't be requested alongside other runtime permissions on Android Q/R
- * (S+ doesn't need it at all, see [PermissionCheck.getAllRelevantPermissions]) — asked for
- * immediately when a background switch is flipped on, rather than upfront on the Start screen.
+ * ACCESS_BACKGROUND_LOCATION only exists as a concept on Q/R (S+ doesn't need it at all, see
+ * [PermissionCheck.getAllRelevantPermissions]) — asked for immediately when a background switch
+ * is flipped on, rather than upfront on the Start screen. On Q/R, Android silently denies a
+ * background-location request with no dialog at all unless the app already holds foreground
+ * location, so that has to be requested (and granted) first.
  */
-private fun requestBackgroundLocationPermissionIfNeeded(activity: Activity) {
-    if (Build.VERSION.SDK_INT in Build.VERSION_CODES.Q until Build.VERSION_CODES.S) {
-        PermissionCheck.checkPermissionAndRequest(Manifest.permission.ACCESS_BACKGROUND_LOCATION, activity)
+private fun requestBackgroundLocationPermissionIfNeeded(
+    context: Context,
+    foregroundLocationLauncher: ManagedActivityResultLauncher<String, Boolean>,
+    backgroundLocationLauncher: ManagedActivityResultLauncher<String, Boolean>,
+) {
+    if (Build.VERSION.SDK_INT !in Build.VERSION_CODES.Q until Build.VERSION_CODES.S) return
+
+    val hasForegroundLocation = PermissionCheck.checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, context) ||
+        PermissionCheck.checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, context)
+
+    if (hasForegroundLocation) {
+        backgroundLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    } else {
+        foregroundLocationLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 }

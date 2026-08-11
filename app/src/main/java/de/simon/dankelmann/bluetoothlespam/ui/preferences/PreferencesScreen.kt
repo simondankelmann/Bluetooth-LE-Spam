@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BlurOn
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +22,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,8 +58,6 @@ fun PreferencesScreen(
     advertisingIntervalMs: String,
     onAdvertisingIntervalChanged: (String) -> Unit,
     onTxPowerClicked: () -> Unit,
-    advertisingBackgroundEnabled: Boolean,
-    onAdvertisingBackgroundEnabledChanged: (Boolean) -> Unit,
     spamDetectionBackgroundEnabled: Boolean,
     onSpamDetectionBackgroundEnabledChanged: (Boolean) -> Unit,
     loggingEnabled: Boolean,
@@ -80,6 +83,7 @@ fun PreferencesScreen(
                 summary = "Follow Material You colors derived from your wallpaper or picked swatch",
                 checked = dynamicColorEnabled,
                 onCheckedChange = onDynamicColorEnabledChanged,
+                icon = rememberVectorPainter(Icons.Filled.Palette),
             )
         }
         item {
@@ -88,6 +92,7 @@ fun PreferencesScreen(
                 summary = "Frosted-glass backdrop behind the floating navigation bar",
                 checked = blurEnabled,
                 onCheckedChange = onBlurEnabledChanged,
+                icon = rememberVectorPainter(Icons.Filled.BlurOn),
             )
         }
 
@@ -98,7 +103,7 @@ fun PreferencesScreen(
                 summary = "Recommended for maximum device compatibility",
                 checked = useLegacyAdvertising,
                 onCheckedChange = onUseLegacyAdvertisingChanged,
-                iconRes = R.drawable.ic_settings_bluetooth,
+                icon = painterResource(R.drawable.ic_settings_bluetooth),
             )
         }
         item {
@@ -130,15 +135,6 @@ fun PreferencesScreen(
         item {
             ClickRow(title = "Set TX Power", onClick = onTxPowerClicked, iconRes = R.drawable.ic_tx_power)
         }
-        item {
-            SwitchRow(
-                title = "Advertise in Background",
-                summary = "Keep advertising once the app leaves the foreground — requires background location access",
-                checked = advertisingBackgroundEnabled,
-                onCheckedChange = onAdvertisingBackgroundEnabledChanged,
-                iconRes = R.drawable.ic_settings_bluetooth,
-            )
-        }
 
         item { SectionHeader("Spam Detector Settings") }
         item {
@@ -147,6 +143,7 @@ fun PreferencesScreen(
                 summary = "Keep spam detection running once the app leaves the foreground — requires background location access",
                 checked = spamDetectionBackgroundEnabled,
                 onCheckedChange = onSpamDetectionBackgroundEnabledChanged,
+                icon = painterResource(R.drawable.ic_location_searching),
             )
         }
 
@@ -157,7 +154,7 @@ fun PreferencesScreen(
                 summary = "Write advertisement/scan activity to a log file",
                 checked = loggingEnabled,
                 onCheckedChange = onLoggingEnabledChanged,
-                iconRes = R.drawable.ic_settings_logging,
+                icon = painterResource(R.drawable.ic_settings_logging),
             )
         }
     }
@@ -180,7 +177,7 @@ private fun SwitchRow(
     summary: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    iconRes: Int? = null,
+    icon: Painter? = null,
 ) {
     Card(
         modifier = Modifier
@@ -193,9 +190,9 @@ private fun SwitchRow(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (iconRes != null) {
+            if (icon != null) {
                 Icon(
-                    painter = painterResource(iconRes),
+                    painter = icon,
                     contentDescription = null,
                     // padding BEFORE size: chaining size().padding() would fix the outer box at
                     // 28dp and then let padding eat into that same box from the inside, shrinking
