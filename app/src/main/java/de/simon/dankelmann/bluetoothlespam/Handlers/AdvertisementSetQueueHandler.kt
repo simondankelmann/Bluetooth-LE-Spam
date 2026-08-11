@@ -104,6 +104,16 @@ class AdvertisementSetQueueHandler(
         _currentAdvertisementSet= null
         _currentAdvertisementSetListIndex = 0
         _currentAdvertisementSetIndex = 0
+
+        // Callers must invoke this from the main thread (matches every existing call site) since
+        // listeners (e.g. AdvertisementRoute) update Compose/LiveData state directly here.
+        _advertisementQueueHandlerCallbacks.forEach {
+            try {
+                it.onAdvertisementSetCollectionChanged()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onAdvertisementSetCollectionChanged: ${e.message}")
+            }
+        }
     }
 
     fun getAdvertisementSetCollection(): AdvertisementSetCollection{
