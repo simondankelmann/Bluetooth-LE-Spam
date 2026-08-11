@@ -47,7 +47,7 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
     <application
         android:name=".BleSpamApplication"
@@ -61,7 +61,7 @@
 
         <service android:foregroundServiceType="specialUse" android:name=".Services.AdvertisementForegroundService" />
 
-        <service android:foregroundServiceType="location" android:name=".Services.BluetoothLeScanForegroundService" />
+        <service android:foregroundServiceType="connectedDevice" android:name=".Services.BluetoothLeScanForegroundService" />
 
         <receiver android:name=".Services.AdvertisementForegroundService$ToggleButtonListener" />
 
@@ -80,6 +80,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.BluetoothLESpam.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
