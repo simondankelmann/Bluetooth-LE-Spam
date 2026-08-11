@@ -192,24 +192,20 @@ private fun removeMissingRequirement(viewModel: StartViewModel, missingRequireme
 private fun checkDatabase(viewModel: StartViewModel) {
     var result = false
     val database = AppDatabase.getInstance()
-    if (database != null) {
-        removeMissingRequirement(viewModel, "Database is not initialized")
-        if (!database.isSeeding && !database.inTransaction()) {
-            removeMissingRequirement(viewModel, "Database is Seeding")
-            viewModel.isSeeding.postValue(false)
-            val numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
-            if (numberOfAdvertisementSetEntities > 0) {
-                removeMissingRequirement(viewModel, "Database is empty")
-                result = true
-            } else {
-                addMissingRequirement(viewModel, "Database is empty")
-            }
+    removeMissingRequirement(viewModel, "Database is not initialized")
+    if (!database.isSeeding && !database.inTransaction()) {
+        removeMissingRequirement(viewModel, "Database is Seeding")
+        viewModel.isSeeding.postValue(false)
+        val numberOfAdvertisementSetEntities = database.advertisementSetDao().getAll().count()
+        if (numberOfAdvertisementSetEntities > 0) {
+            removeMissingRequirement(viewModel, "Database is empty")
+            result = true
         } else {
-            addMissingRequirement(viewModel, "Database is Seeding")
-            viewModel.isSeeding.postValue(true)
+            addMissingRequirement(viewModel, "Database is empty")
         }
     } else {
-        addMissingRequirement(viewModel, "Database is not initialized")
+        addMissingRequirement(viewModel, "Database is Seeding")
+        viewModel.isSeeding.postValue(true)
     }
     viewModel.databaseIsReady.postValue(result)
 

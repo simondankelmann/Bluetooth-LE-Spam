@@ -35,7 +35,8 @@ android {
         }
         release {
             resValue("string", "app_name", app_name)
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -92,7 +93,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.legacy.support)
+    implementation(libs.androidx.documentfile)
     implementation(libs.google.material)
 
     implementation(libs.room.runtime)
@@ -108,7 +109,7 @@ dependencies {
     //implementation(libs.room.rxjava2)
 
     // optional - RxJava3 support for Room
-    implementation(libs.room.rxjava3)
+    //implementation(libs.room.rxjava3)
 
     // optional - Guava support for Room, including Optional and ListenableFuture
     //implementation(libs.room.guava)
