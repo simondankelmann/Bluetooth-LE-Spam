@@ -43,6 +43,8 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociatonCollectio
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociationListSetEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_1_2
+import de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_2_3
+import de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_3_4
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 
 @androidx.room.Database(
@@ -57,8 +59,8 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
                 AssociatonCollectionListEntity::class,
                 AssociationListSetEntity::class,
                 PeriodicAdvertisingParametersEntity::class],
-    version = 2,
-    exportSchema = false)
+    version = 4,
+    exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
 
     var isSeeding = false
@@ -95,7 +97,7 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "BluetoothLeSpamDatabase.db")
                 .addCallback(seedDatabaseCallback(context))
-                .addMigrations(Migration_1_2)
+                .addMigrations(Migration_1_2, Migration_2_3, Migration_3_4)
                 //.fallbackToDestructiveMigration()
                 .build()
 
@@ -144,6 +146,8 @@ abstract class AppDatabase : RoomDatabase() {
                     DatabaseHelpers.saveAdvertisementSet(advertisementSet)
                 }
             }
+
+            DatabaseHelpers.seedBuiltInListsAndCollections()
 
             getInstance().isSeeding = false
             Log.d(_logTag, "Database Seeding finished")

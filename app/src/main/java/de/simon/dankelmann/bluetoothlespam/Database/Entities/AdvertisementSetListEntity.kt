@@ -8,4 +8,5 @@ import androidx.room.PrimaryKey
 data class AdvertisementSetListEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "title") var title: String,
+    @ColumnInfo(name = "lastUsedAt") var lastUsedAt: Long? = null,
 )
