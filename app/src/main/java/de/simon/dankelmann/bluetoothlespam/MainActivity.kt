@@ -126,6 +126,14 @@ class MainActivity : AppCompatActivity() {
                         Log.d(_logTag, "Setting new Interval: $newInterval")
                         app.queueHandler.setInterval(newInterval)
                     }
+
+                    if (key == ThemeManager.THEME_SEED_COLOR_KEY) {
+                        // recreate() re-runs onCreate top to bottom, which re-reads the seed
+                        // color for both the classic-View DynamicColorsOptions (cards/icons —
+                        // those only apply their theme overlay at Activity-creation time) and
+                        // Compose's seedColorArgb (FloatingNavBar) — one mechanism covers both.
+                        recreate()
+                    }
                 }
             }
 
