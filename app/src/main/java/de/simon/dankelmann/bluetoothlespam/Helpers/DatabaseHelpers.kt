@@ -2,6 +2,7 @@ package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.os.ParcelUuid
 import androidx.sqlite.db.SupportSQLiteDatabase
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Database.builtInCollectionDefinitions
@@ -150,6 +151,27 @@ class DatabaseHelpers {
 
             // RETURN ID
             return advertiseDataId
+        }
+
+        /**
+         * Renames a Swift Pair entry (Allow Custom Swift Pair Names setting) — persists the new
+         * title and rebuilds the manufacturer-specific-data bytes with the same Swift Pair
+         * framing ([SwiftPairAdvertisementSetGenerator.PREPENDED_BYTES]) so the new name is what
+         * actually gets advertised, then mutates [advertisementSet] in place so an
+         * already-loaded/queued set picks up the change immediately. Must be called off the main
+         * thread (Room has no allowMainThreadQueries()).
+         */
+        fun updateSwiftPairDeviceName(advertisementSet: AdvertisementSet, newName: String) {
+            val database = AppDatabase.getInstance()
+            database.advertisementSetDao().updateTitle(advertisementSet.id, newName)
+
+            val manufacturerSpecificData = advertisementSet.advertiseData.manufacturerData.firstOrNull() ?: return
+            val newBytes = SwiftPairAdvertisementSetGenerator.PREPENDED_BYTES.plus(newName.toByteArray())
+            database.advertiseDataManufacturerSpecificDataDao()
+                .updateManufacturerSpecificData(manufacturerSpecificData.id, newBytes.toHexString())
+
+            advertisementSet.title = newName
+            manufacturerSpecificData.manufacturerSpecificData = newBytes
         }
 
         fun getAdvertisementSetFromEntity(advertisementSetEntity: AdvertisementSetEntity):AdvertisementSet{

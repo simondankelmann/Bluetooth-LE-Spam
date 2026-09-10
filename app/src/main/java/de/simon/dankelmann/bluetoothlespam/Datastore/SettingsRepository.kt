@@ -29,6 +29,7 @@ object SettingsKeys {
     val THEME_SEED_COLOR = intPreferencesKey("theme_seed_color")
     val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
     val BLUR_ENABLED = booleanPreferencesKey("blur_enabled")
+    val ALLOW_CUSTOM_SWIFT_PAIR_NAMES = booleanPreferencesKey("allow_custom_swift_pair_names")
     val SPAM_DETECTION_BACKGROUND_ENABLED = booleanPreferencesKey("spam_detection_background_enabled")
 }
 
@@ -124,6 +125,10 @@ class SettingsRepository private constructor(context: Context) {
         dataStore.edit { it[SettingsKeys.BLUR_ENABLED] = enabled }
     }
 
+    suspend fun setAllowCustomSwiftPairNamesEnabled(enabled: Boolean) {
+        dataStore.edit { it[SettingsKeys.ALLOW_CUSTOM_SWIFT_PAIR_NAMES] = enabled }
+    }
+
     suspend fun setSpamDetectionBackgroundEnabled(enabled: Boolean) {
         dataStore.edit { it[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] = enabled }
     }
@@ -144,6 +149,10 @@ class SettingsRepository private constructor(context: Context) {
 
     fun setBlurEnabledAsync(enabled: Boolean) {
         scope.launch { setBlurEnabled(enabled) }
+    }
+
+    fun setAllowCustomSwiftPairNamesEnabledAsync(enabled: Boolean) {
+        scope.launch { setAllowCustomSwiftPairNamesEnabled(enabled) }
     }
 
     fun setSpamDetectionBackgroundEnabledAsync(enabled: Boolean) {

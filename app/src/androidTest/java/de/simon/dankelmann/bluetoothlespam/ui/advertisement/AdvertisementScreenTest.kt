@@ -48,6 +48,8 @@ class AdvertisementScreenTest {
                     onSetRowClicked = { _, _, _ -> },
                     onSetCheckedChanged = { _, _ -> },
                     onGroupCheckedChanged = { _, _ -> },
+                    allowCustomSwiftPairNames = false,
+                    onRenameSwiftPairDevice = { _, _ -> },
                 )
             }
         }

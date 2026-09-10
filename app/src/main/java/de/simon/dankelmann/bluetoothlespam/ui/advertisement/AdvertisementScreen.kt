@@ -18,11 +18,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,13 +32,17 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -93,12 +99,15 @@ fun AdvertisementScreen(
     onSetRowClicked: (groupIndex: Int, childIndex: Int, AdvertisementSet) -> Unit,
     onSetCheckedChanged: (AdvertisementSet, Boolean) -> Unit,
     onGroupCheckedChanged: (AdvertisementSetList, Boolean) -> Unit,
+    allowCustomSwiftPairNames: Boolean,
+    onRenameSwiftPairDevice: (AdvertisementSet, String) -> Unit,
 ) {
     val expandedGroups = remember(advertisementSetLists) {
         mutableStateMapOf<Int, Boolean>().apply {
             if (advertisementSetLists.size == 1) put(0, true)
         }
     }
+    var editingSwiftPairSet by remember { mutableStateOf<AdvertisementSet?>(null) }
 
     // Surface (not a plain Column) so every Text/Icon below that doesn't set an explicit color
     // gets a real LocalContentColor instead of falling back to black -- MainActivity's root is a
@@ -155,6 +164,9 @@ fun AdvertisementScreen(
                                 set = set,
                                 onClick = { onSetRowClicked(groupIndex, childIndex, set) },
                                 onCheckedChanged = { checked -> onSetCheckedChanged(set, checked) },
+                                showEditButton = allowCustomSwiftPairNames &&
+                                    set.type == AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
+                                onEditClicked = { editingSwiftPairSet = set },
                             )
                         }
                     }
@@ -162,6 +174,17 @@ fun AdvertisementScreen(
             }
         }
     }
+    }
+
+    editingSwiftPairSet?.let { set ->
+        RenameSwiftPairDeviceDialog(
+            set = set,
+            onConfirm = { newName ->
+                onRenameSwiftPairDevice(set, newName)
+                editingSwiftPairSet = null
+            },
+            onDismiss = { editingSwiftPairSet = null },
+        )
     }
 }
 
@@ -336,6 +359,8 @@ private fun SetRow(
     set: AdvertisementSet,
     onClick: () -> Unit,
     onCheckedChanged: (Boolean) -> Unit,
+    showEditButton: Boolean,
+    onEditClicked: () -> Unit,
 ) {
     val extendedColors = LocalExtendedColors.current
     val titleColor = when {
@@ -353,11 +378,55 @@ private fun SetRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(checked = set.isChecked, onCheckedChange = onCheckedChanged)
-        Column(modifier = Modifier.padding(start = 4.dp)) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp),
+        ) {
             Text(text = set.title, style = MaterialTheme.typography.bodyMedium, color = titleColor)
             Text(text = advertisementSetSubtitle(set), style = MaterialTheme.typography.bodySmall)
         }
+        if (showEditButton) {
+            IconButton(onClick = onEditClicked) {
+                Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit device name")
+            }
+        }
     }
+}
+
+/** Lets the user set the advertised Swift Pair device name (Allow Custom Swift Pair Names setting). */
+@Composable
+private fun RenameSwiftPairDeviceDialog(
+    set: AdvertisementSet,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    // BLE legacy advertising packets top out at 31 bytes and Swift Pair's fixed framing already
+    // uses some of that budget, so the name is capped well under the raw limit.
+    val maxNameLength = 20
+    var name by remember(set) { mutableStateOf(set.title) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Device Name") },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { if (it.length <= maxNameLength) name = it },
+                label = { Text("Device name") },
+                supportingText = { Text("${name.length}/$maxNameLength") },
+                singleLine = true,
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(name.trim()) }, enabled = name.isNotBlank()) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        },
+    )
 }
 
 internal fun advertisementSetSubtitle(advertisementSet: AdvertisementSet): String {
