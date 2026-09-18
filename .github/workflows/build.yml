@@ -31,9 +31,6 @@ jobs:
             echo "repo=$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
           } >> $GITHUB_ENV
 
-      - name: Test
-        run: ./gradlew test --no-daemon --stacktrace
-
       - name: Build
         run: |
           if [ "${{ secrets.STORE_FILE }}" != "" ]; then

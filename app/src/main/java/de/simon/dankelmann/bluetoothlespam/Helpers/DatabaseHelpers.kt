@@ -157,57 +157,69 @@ class DatabaseHelpers {
             var database = AppDatabase.getInstance()
 
             // Advertise Settings
-            database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId)?.let { entity ->
-                advertisementSet.advertiseSettings = AdvertiseSettings().apply {
-                    id = advertisementSetEntity.id
-                    advertiseMode = entity.advertiseMode
-                    txPowerLevel = entity.txPowerLevel
-                    connectable = entity.connectable
-                    timeout = entity.timeout
-                }
+            var advertiseSettingsEntity = database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId)
+            if(advertiseSettingsEntity != null){
+                var advertiseSettings = AdvertiseSettings()
+                advertiseSettings.id = advertisementSetEntity.id
+
+                advertiseSettings.advertiseMode = advertiseSettingsEntity.advertiseMode
+                advertiseSettings.txPowerLevel = advertiseSettingsEntity.txPowerLevel
+                advertiseSettings.connectable = advertiseSettingsEntity.connectable
+                advertiseSettings.timeout = advertiseSettingsEntity.timeout
+
+                advertisementSet.advertiseSettings = advertiseSettings
             }
 
             // AdvertisingSetParameters
-            database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
-                advertisementSet.advertisingSetParameters = AdvertisingSetParameters().apply {
-                    id = entity.id
-                    legacyMode = entity.legacyMode
-                    interval = entity.interval
-                    txPowerLevel = entity.txPowerLevel
-                    includeTxPowerLevel = entity.includeTxPowerLevel
-                    primaryPhy = entity.primaryPhy
-                    secondaryPhy = entity.secondaryPhy
-                    scanable = entity.scanable
-                    connectable = entity.connectable
-                    anonymous = entity.anonymous
+            var advertisingSetParametersEntity = database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)
+            if(advertisingSetParametersEntity != null){
+                var advertisingSetParameters = AdvertisingSetParameters()
+                advertisingSetParameters.id = advertisingSetParametersEntity.id
+
+                advertisingSetParameters.legacyMode = advertisingSetParametersEntity.legacyMode
+                advertisingSetParameters.interval = advertisingSetParametersEntity.interval
+                advertisingSetParameters.txPowerLevel = advertisingSetParametersEntity.txPowerLevel
+                advertisingSetParameters.includeTxPowerLevel = advertisingSetParametersEntity.includeTxPowerLevel
+                advertisingSetParameters.primaryPhy = advertisingSetParametersEntity.primaryPhy
+                advertisingSetParameters.secondaryPhy = advertisingSetParametersEntity.secondaryPhy
+                advertisingSetParameters.scanable = advertisingSetParametersEntity.scanable
+                advertisingSetParameters.connectable = advertisingSetParametersEntity.connectable
+                advertisingSetParameters.anonymous = advertisingSetParametersEntity.anonymous
+
+                advertisementSet.advertisingSetParameters = advertisingSetParameters
+            }
+
+            if(advertisementSetEntity.advertiseDataId != null){
+                var advertiseDataEntity = database.advertiseDataDao().findById(advertisementSetEntity.advertiseDataId)
+                if(advertiseDataEntity != null){
+                    advertisementSet.advertiseData = getAdvertiseDataFromEntity(advertiseDataEntity, database)
                 }
             }
 
-            advertisementSetEntity.advertiseDataId?.let { id ->
-                database.advertiseDataDao().findById(id)?.let { entity ->
-                    advertisementSet.advertiseData = getAdvertiseDataFromEntity(entity, database)
+            if(advertisementSetEntity.scanResponseId != null){
+                var scanResponseEntity = database.advertiseDataDao().findById(advertisementSetEntity.scanResponseId!!)
+                if(scanResponseEntity != null){
+                    advertisementSet.scanResponse = getAdvertiseDataFromEntity(scanResponseEntity, database)
                 }
             }
 
-            advertisementSetEntity.scanResponseId?.let { id ->
-                database.advertiseDataDao().findById(id)?.let { entity ->
-                    advertisementSet.scanResponse = getAdvertiseDataFromEntity(entity, database)
+            if(advertisementSetEntity.periodicAdvertiseDataId != null){
+                var periodicAdvertiseDataEntity = database.advertiseDataDao().findById(advertisementSetEntity.periodicAdvertiseDataId!!)
+                if(periodicAdvertiseDataEntity != null){
+                    advertisementSet.periodicAdvertiseData = getAdvertiseDataFromEntity(periodicAdvertiseDataEntity, database)
                 }
             }
 
-            advertisementSetEntity.periodicAdvertiseDataId?.let { id ->
-                database.advertiseDataDao().findById(id)?.let { entity ->
-                    advertisementSet.periodicAdvertiseData = getAdvertiseDataFromEntity(entity, database)
-                }
-            }
+            if(advertisementSetEntity.periodicAdvertisingParametersId != null){
+                var periodicAdvertisingParametersEntity = database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)
+                if(periodicAdvertisingParametersEntity != null){
+                    var periodicAdvertisingParameters = PeriodicAdvertisingParameters()
 
-            advertisementSetEntity.periodicAdvertisingParametersId?.let { _ ->
-                database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
-                    advertisementSet.periodicAdvertisingParameters = PeriodicAdvertisingParameters().apply {
-                        id = entity.id
-                        includeTxPowerLevel = entity.includeTxPowerLevel
-                        interval = entity.interval
-                    }
+                    periodicAdvertisingParameters.id = periodicAdvertisingParametersEntity.id
+                    periodicAdvertisingParameters.includeTxPowerLevel = periodicAdvertisingParametersEntity.includeTxPowerLevel
+                    periodicAdvertisingParameters.interval = periodicAdvertisingParametersEntity.interval
+
+                    advertisementSet.periodicAdvertisingParameters = periodicAdvertisingParameters
                 }
             }
 
@@ -268,6 +280,99 @@ class DatabaseHelpers {
             }
 
             return advertisementSets.toList()
+        }
+
+        fun getAdvertisementSetById(id: Int): AdvertisementSet? {
+            return try {
+                val database = AppDatabase.getInstance()
+                val entity = database.advertisementSetDao().findByIdOrNull(id) ?: return null
+                getAdvertisementSetFromEntity(entity)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        fun getAllAdvertisementSets(): List<AdvertisementSet> {
+            val database = AppDatabase.getInstance()
+            val result = mutableListOf<AdvertisementSet>()
+            database.advertisementSetDao().getAll().forEach { entity ->
+                try {
+                    result.add(getAdvertisementSetFromEntity(entity))
+                } catch (e: Exception) {
+                    // Skip unreadable rows
+                }
+            }
+            return result.toList()
+        }
+
+        /**
+         * Persists title + advertiseData content (flags, manufacturer entries, service entries)
+         * of an already stored AdvertisementSet, matched by row ids carried by the model.
+         */
+        fun updateAdvertisementSetContent(advertisementSet: AdvertisementSet) {
+            val database = AppDatabase.getInstance()
+
+            database.advertisementSetDao().updateTitle(advertisementSet.id, advertisementSet.title)
+
+            val advertiseData = advertisementSet.advertiseData
+            database.advertiseDataDao().updateFlags(
+                advertiseData.id,
+                advertiseData.includeDeviceName,
+                advertiseData.includeTxPower
+            )
+            advertiseData.manufacturerData.forEach { manufacturerSpecificData ->
+                database.advertiseDataManufacturerSpecificDataDao().updateEntry(
+                    manufacturerSpecificData.id,
+                    manufacturerSpecificData.manufacturerId,
+                    manufacturerSpecificData.manufacturerSpecificData.toHexString()
+                )
+            }
+            advertiseData.services.forEach { serviceData ->
+                val uuid = serviceData.serviceUuid
+                if (uuid != null) {
+                    database.advertiseDataServiceDataDao().updateEntry(
+                        serviceData.id,
+                        UUID.fromString(uuid.toString()),
+                        serviceData.serviceData?.toHexString()
+                    )
+                }
+            }
+        }
+
+        /**
+         * Physically removes an AdvertisementSet and all its related rows.
+         * Used for custom (non-default) sets on "reset to defaults".
+         */
+        fun deleteAdvertisementSetTree(advertisementSetId: Int) {
+            val database = AppDatabase.getInstance()
+            val entity = try {
+                database.advertisementSetDao().findByIdOrNull(advertisementSetId)
+            } catch (e: Exception) {
+                null
+            } ?: return
+
+            fun deleteAdvertiseDataTree(advertiseDataId: Int?) {
+                if (advertiseDataId == null || advertiseDataId <= 0) return
+                database.advertiseDataServiceDataDao().deleteByAdvertiseDataId(advertiseDataId)
+                database.advertiseDataManufacturerSpecificDataDao().deleteByAdvertiseDataId(advertiseDataId)
+                database.advertiseDataDao().deleteById(advertiseDataId)
+            }
+
+            deleteAdvertiseDataTree(entity.advertiseDataId)
+            deleteAdvertiseDataTree(entity.scanResponseId)
+            deleteAdvertiseDataTree(entity.periodicAdvertiseDataId)
+
+            if (entity.advertiseSettingsId > 0) {
+                database.advertiseSettingsDao().deleteById(entity.advertiseSettingsId)
+            }
+            if (entity.advertisingSetParametersId > 0) {
+                database.advertisingSetParametersDao().deleteById(entity.advertisingSetParametersId)
+            }
+            if ((entity.periodicAdvertisingParametersId ?: 0) > 0) {
+                database.periodicAdvertisingParametersDao().deleteById(entity.periodicAdvertisingParametersId!!)
+            }
+
+            database.advertisementSetDao().deleteById(entity.id)
         }
     }
 }

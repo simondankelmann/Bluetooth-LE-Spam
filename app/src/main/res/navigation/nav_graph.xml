@@ -69,4 +69,10 @@
         android:name="de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesFragment"
         android:label="@string/menu_preferences" />
 
+    <fragment
+        android:id="@+id/nav_custom_devices"
+        android:name="de.simon.dankelmann.bluetoothlespam.ui.customdevices.CustomDevicesFragment"
+        android:label="@string/menu_manage_devices"
+        tools:layout="@layout/fragment_custom_devices" />
+
 </navigation>

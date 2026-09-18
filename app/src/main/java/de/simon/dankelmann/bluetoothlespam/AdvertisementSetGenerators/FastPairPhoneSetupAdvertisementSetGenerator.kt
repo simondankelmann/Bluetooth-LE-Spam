@@ -20,11 +20,19 @@ class FastPairPhoneSetupAdvertisementSetGenerator:IAdvertisementSetGenerator{
 
     // Device Id's taken from here:
     // https://github.com/Flipper-XFW/Xtreme-Firmware/blob/dev/applications/external/ble_spam/protocols/fastpair.c
+    // Recent phone Model ID's (incl. WhisperPair/CVE-2025-36911 research) from:
+    // https://github.com/KULeuven-COSIC/WhisperPair/blob/main/model_ids.csv
 
     val _genuineDeviceIds = mapOf(
         "00000C" to "Google Gphones Transfer",
         "0577B1" to "Galaxy S23 Ultra",
-        "05A9BC" to "Galaxy S20+"
+        "05A9BC" to "Galaxy S20+",
+        "B03C3D" to "Galaxy S21+ 5G",
+        "FB5DB0" to "Galaxy S21 Ultra 5G",
+        "8018AF" to "Galaxy A34 5G",
+        "362AC3" to "Galaxy A14 5G",
+        "6093A4" to "Galaxy A24 5G",
+        "56488E" to "Galaxy M34 5G"
         )
 
     val serviceUuid = ParcelUuid(UUID.fromString("0000fe2c-0000-1000-8000-00805f9b34fb"))

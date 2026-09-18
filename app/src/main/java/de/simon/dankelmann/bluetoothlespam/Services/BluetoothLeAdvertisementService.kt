@@ -2,21 +2,33 @@ package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.BluetoothGattDescriptor
+import android.bluetooth.BluetoothGattServerCallback
+import android.bluetooth.BluetoothGattService
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.AdvertiseCallback
+import android.bluetooth.le.AdvertiseData
+import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
-import android.content.Context
+import android.content.pm.PackageManager
+import android.os.ParcelUuid
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothManager
+import de.simon.dankelmann.bluetoothlespam.Constants.Constants
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBleAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
+import java.util.UUID
 
 
-class BluetoothLeAdvertisementService(
-    _bluetoothAdapter: BluetoothAdapter,
-    private val context: Context,
-) {
+class BluetoothLeAdvertisementService (_bluetoothAdapter: BluetoothAdapter) {
 
     // private
     private val _bluetoothAdapter = _bluetoothAdapter
@@ -42,10 +54,10 @@ class BluetoothLeAdvertisementService(
     }
 
     private fun useAdvertisingWithSettings():Boolean{
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
-        val prefKey = context.resources.getString(R.string.preference_key_use_legacy_advertising)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
+
         preferences.forEach {
-            if(it.key == prefKey){
+            if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
                 val useAdvertisingWithSettings = it.value as Boolean
                 return !useAdvertisingWithSettings
             }
@@ -120,11 +132,8 @@ class BluetoothLeAdvertisementService(
 
     private fun startAdvertising(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
-            if (advertisementSet.validate()) {
-                if (PermissionCheck.checkPermission(
-                        Manifest.permission.BLUETOOTH_ADVERTISE, context
-                    )
-                ) {
+            if(advertisementSet.validate()){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
                     _advertiser!!.startAdvertising(preparedAdvertisementSet.advertiseSettings.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.advertisingCallback)
                     _bleAdvertisementServiceCallback.map {
@@ -141,9 +150,9 @@ class BluetoothLeAdvertisementService(
         }
     }
 
-    private fun stopAdvertising(advertisementSet: AdvertisementSet) {
-        if (_advertiser != null) {
-            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, context)) {
+    private fun stopAdvertising(advertisementSet: AdvertisementSet){
+        if(_advertiser != null){
+            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser!!.stopAdvertising(advertisementSet.advertisingCallback)
             } else {
                 Log.d(_logTag, "Missing permission to stop advertisement")
@@ -155,11 +164,8 @@ class BluetoothLeAdvertisementService(
 
     private fun startAdvertisingSet(advertisementSet: AdvertisementSet){
         if(_advertiser != null){
-            if (advertisementSet.validate()) {
-                if (PermissionCheck.checkPermission(
-                        Manifest.permission.BLUETOOTH_ADVERTISE, context
-                    )
-                ) {
+            if(advertisementSet.validate()){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
                     _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), null, null, null, preparedAdvertisementSet.advertisingSetCallback)
                     _bleAdvertisementServiceCallback.map {
@@ -176,9 +182,9 @@ class BluetoothLeAdvertisementService(
         }
     }
 
-    private fun stopAdvertisingSet(advertisementSet: AdvertisementSet) {
-        if (_advertiser != null) {
-            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, context)) {
+    private fun stopAdvertisingSet(advertisementSet: AdvertisementSet){
+        if(_advertiser != null){
+            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                 _advertiser!!.stopAdvertisingSet(advertisementSet.advertisingSetCallback)
                 _bleAdvertisementServiceCallback.map {
                     it.onAdvertisementStopped()

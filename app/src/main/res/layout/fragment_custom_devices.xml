@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/customDevicesLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ui.customdevices.CustomDevicesFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/manage_removed_title"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/textSizeHeadline"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/customDevicesRemovedEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/manage_removed_empty"
+            android:textColor="@color/text_color_light"
+            android:textStyle="italic" />
+
+        <LinearLayout
+            android:id="@+id/customDevicesRemovedList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:text="@string/manage_modified_title"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/textSizeHeadline"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/customDevicesModifiedEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="@string/manage_modified_empty"
+            android:textColor="@color/text_color_light"
+            android:textStyle="italic" />
+
+        <LinearLayout
+            android:id="@+id/customDevicesModifiedList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/customDevicesResetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/manage_reset" />
+
+    </LinearLayout>
+</ScrollView>

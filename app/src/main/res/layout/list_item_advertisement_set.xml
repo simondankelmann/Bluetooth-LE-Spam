@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
-
-    <CheckBox
-        android:id="@+id/checkboxAdvertisementSet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="?android:attr/expandableListPreferredChildPaddingLeft"
-        android:checked="true"
-        android:focusable="false"
-        android:clickable="true" />
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/listItemAdvertisementSetTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:paddingBottom="10dp"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
         android:paddingTop="10dp"
-        android:paddingStart="8dp"
         android:textSize="@dimen/textSizeHeadline4"
         android:text="Item"/>
+
+    <ImageButton
+        android:id="@+id/listItemAdvertisementSetEditButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/device_edit"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_edit"
+        app:tint="@color/text_color_light" />
+
+    <ImageButton
+        android:id="@+id/listItemAdvertisementSetDeleteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/device_delete"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/text_color_light" />
 
 </LinearLayout>

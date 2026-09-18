@@ -5,5 +5,3 @@
 build/
 /app/debug/
 /app/release/
-
-.kotlin/

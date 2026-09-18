@@ -3,7 +3,6 @@ package de.simon.dankelmann.bluetoothlespam.ui.start
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,13 +13,13 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.isBluetooth5Supported
+import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentStartBinding
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit
 class StartFragment : Fragment() {
 
     private val _logTag = "StartFragment"
-    private lateinit var enableBluetoothLauncher: ActivityResultLauncher<Intent>
+    private lateinit var registerForResult:ActivityResultLauncher<Intent>
 
     private var _viewModel: StartViewModel? = null
     private val viewModel get() = _viewModel!!
@@ -49,19 +48,23 @@ class StartFragment : Fragment() {
         _binding = FragmentStartBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        viewModel.appVersion.postValue(getAppVersion(root.context))
-        viewModel.bluetoothSupport.postValue(getBluetoothSupportText(root.context))
+        viewModel.appVersion.postValue(getAppVersion())
+        viewModel.bluetoothSupport.postValue(getBluetoothSupportText())
 
-        enableBluetoothLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    checkBluetoothAdapter(false)
-                }
+        // register for bt enable callback
+        registerForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                // Handle the Intent
+                checkBluetoothAdapter(false)
             }
+        }
 
-        setupUi(root.context)
+        setupUi()
 
-        // These _should_ only need one-time initialisation, and thus don't need to be in onResume.
+        checkRequiredPermissions(true)
+        checkBluetoothAdapter(true)
+        checkAdvertisementService()
         checkDatabase()
 
         return root
@@ -72,29 +75,22 @@ class StartFragment : Fragment() {
         _binding = null
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        checkRequiredPermissions(requireContext())
-        checkBluetoothAdapter(true)
-    }
-
-    fun getAppVersion(context: Context): String? {
-        val manager = context.packageManager
-        val info = manager.getPackageInfo(context.packageName, 0)
+    fun getAppVersion():String?{
+        val manager = AppContext.getContext()!!.packageManager
+        val info = manager.getPackageInfo(AppContext.getContext().packageName, 0)
         val version = info.versionName
         return version
     }
 
-    fun getBluetoothSupportText(context: Context): String {
-        if (context.isBluetooth5Supported()) {
+    fun getBluetoothSupportText():String{
+        if(AppContext.isBluetooth5Supported()){
             return "Modern & Legacy"
         } else {
             return "Legacy only"
         }
     }
 
-    fun setupUi(context: Context){
+    fun setupUi(){
         // Seeding Animation
         val seedingAnimationView: View = binding.startFragmentDatabaseCardSeedingAnimation
         val databaseImageView: View = binding.startFragmentDatabaseCardIcon
@@ -160,21 +156,16 @@ class StartFragment : Fragment() {
         // Permissions CardView
         val startFragmentPermissionCardView: CardView = binding.startFragmentPermissionsCardview
         startFragmentPermissionCardView.setOnClickListener {
-            checkRequiredPermissions(context)
+            checkRequiredPermissions(true)
         }
-
-        val successBackground =
-            ResourcesCompat.getDrawable(resources, R.drawable.gradient_success, context.theme)
-        val errorBackground =
-            ResourcesCompat.getDrawable(resources, R.drawable.gradient_error, context.theme)
 
         // Permissions CardView Content
         val startFragmentPermissionCardViewContentWrapper: LinearLayout = binding.startFragmentPermissionCardViewContentWrapper
         viewModel.allPermissionsGranted.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentPermissionCardViewContentWrapper.background = successBackground
+                startFragmentPermissionCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
-                startFragmentPermissionCardViewContentWrapper.background = errorBackground
+                startFragmentPermissionCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
 
@@ -188,9 +179,25 @@ class StartFragment : Fragment() {
         val startFragmentBluetoothCardViewContentWrapper: LinearLayout = binding.startFragmentBluetoothCardViewContentWrapper
         viewModel.bluetoothAdapterIsReady.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentBluetoothCardViewContentWrapper.background = successBackground
+                startFragmentBluetoothCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
-                startFragmentBluetoothCardViewContentWrapper.background = errorBackground
+                startFragmentBluetoothCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
+            }
+        }
+
+        // Service CardView
+        val startFragmentServiceCardview: CardView = binding.startFragmentServiceCardview
+        startFragmentServiceCardview.setOnClickListener {
+            checkAdvertisementService()
+        }
+
+        // Service CardView Content
+        val startFragmentServiceCardViewContentWrapper: LinearLayout = binding.startFragmentServiceCardViewContentWrapper
+        viewModel.advertisementServiceIsReady.observe(viewLifecycleOwner) {
+            if(it == true){
+                startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
+            } else {
+                startFragmentServiceCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
 
@@ -204,9 +211,9 @@ class StartFragment : Fragment() {
         val startFragmentDatabaseCardViewContentWrapper: LinearLayout = binding.startFragmentDatabaseCardViewContentWrapper
         viewModel.databaseIsReady.observe(viewLifecycleOwner) {
             if(it == true){
-                startFragmentDatabaseCardViewContentWrapper.background = successBackground
+                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_success, AppContext.getContext().theme)
             } else {
-                startFragmentDatabaseCardViewContentWrapper.background = errorBackground
+                startFragmentDatabaseCardViewContentWrapper.background = resources.getDrawable(R.drawable.gradient_error, AppContext.getContext().theme)
             }
         }
     }
@@ -260,72 +267,134 @@ class StartFragment : Fragment() {
         }
     }
 
-    fun checkBluetoothAdapter(promptIfAdapterIsDisabled: Boolean = false) {
-        val activity = requireActivity()
-        viewModel.bluetoothAdapterIsReady.postValue(false)
-
-        val bluetoothAdapter: BluetoothAdapter? = activity.bluetoothAdapter()
-        if (bluetoothAdapter != null) {
+    fun checkBluetoothAdapter(promptIfAdapterIsDisabled:Boolean = false){
+        var bluetoothIsReady = false
+        // Get Bluetooth Adapter
+        val bluetoothAdapter:BluetoothAdapter? = AppContext.getContext().bluetoothAdapter()
+        if(bluetoothAdapter != null){
             removeMissingRequirement("Bluetooth Adapter not found")
-            if (bluetoothAdapter.isEnabled) {
-                removeMissingRequirement("Bluetooth is disabled")
-                viewModel.bluetoothAdapterIsReady.postValue(true)
-            } else {
-                addMissingRequirement("Bluetooth is disabled")
-                if (promptIfAdapterIsDisabled) {
-                    promptEnableBluetooth()
+            // Check if Bluetooth Adapter is enabled
+                if(bluetoothAdapter.isEnabled){
+                    removeMissingRequirement("Bluetooth is disabled")
+                    bluetoothIsReady = true
+                } else {
+                    addMissingRequirement("Bluetooth is disabled")
+                    if(promptIfAdapterIsDisabled){
+                        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
+                            promptEnableBluetooth(bluetoothAdapter)
+                        }
+                    }
                 }
-            }
         } else {
             addMissingRequirement("Bluetooth Adapter not found")
         }
+
+        viewModel.bluetoothAdapterIsReady.postValue(bluetoothIsReady)
     }
 
-    fun promptEnableBluetooth() {
-        if (PermissionCheck.checkPermission(
-                Manifest.permission.BLUETOOTH_CONNECT, requireContext()
-            )
-        ) {
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            enableBluetoothLauncher.launch(enableBtIntent)
-        }
+    fun promptEnableBluetooth(bluetoothAdapter: BluetoothAdapter){
+        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        registerForResult.launch(enableBtIntent)
     }
 
-    fun checkRequiredPermissions(context: Context) {
-        var allGranted = true
+    fun checkRequiredPermissions(promptForNotGranted:Boolean = false){
+        val allPermissions = arrayOf(
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_ADVERTISE,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
 
-        val allPermissions = PermissionCheck.getAllRelevantPermissions()
-        allPermissions.forEach { permission ->
-            val missingRequirementString =
-                "Permission " + permission.replace("android.permission.", "") + " not granted"
+        var notGrantedPermissions:MutableList<String> = mutableListOf()
 
-            val isGranted = PermissionCheck.checkPermission(permission, context)
-            if (isGranted) {
-                removeMissingRequirement(missingRequirementString)
+        allPermissions.forEach {permission ->
+            var missingRequirementString = "Permission " + permission.replace("android.permission.", "") + " not granted"
+            val isGranted = PermissionCheck.checkPermission(permission, AppContext.getActivity(), false)
+
+            if(isGranted){
+               removeMissingRequirement(missingRequirementString)
             } else {
-                allGranted = false
+                notGrantedPermissions.add(permission)
                 addMissingRequirement(missingRequirementString)
             }
         }
-        viewModel.allPermissionsGranted.postValue(allGranted)
 
-        if (!allGranted) {
-            MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.missing_permissions_title)
-                .setMessage(R.string.missing_permissions_text)
-                .setPositiveButton(
-                    R.string.missing_permissions_grant,
-                    { _, _ -> requestRequiredPermissions() }
-                )
-                .setNegativeButton(android.R.string.cancel, null /* dismiss dialog */)
-                .show()
+        if(notGrantedPermissions.isEmpty()){
+            val backgroundLocationAccessIsGranted = checkBackgroundLocationAccessPermission(promptForNotGranted)
+            var missingRequirementStringBgLocation = "Permission " + Manifest.permission.ACCESS_BACKGROUND_LOCATION.replace("android.permission.", "") + " not granted"
+            if(backgroundLocationAccessIsGranted){
+                removeMissingRequirement(missingRequirementStringBgLocation)
+                viewModel.allPermissionsGranted.postValue(true)
+            } else {
+                addMissingRequirement(missingRequirementStringBgLocation)
+                checkBackgroundLocationAccessPermission(true)
+            }
+        } else {
+            viewModel.allPermissionsGranted.postValue(false)
+            // Request Missing Permissions
+            if(promptForNotGranted){
+                //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
+                activityResultLauncher.launch(notGrantedPermissions.toTypedArray())
+            }
         }
     }
 
-    fun requestRequiredPermissions() {
-        val allPermissions = PermissionCheck.getAllRelevantPermissions()
-        allPermissions.forEach { permission ->
-            PermissionCheck.checkPermissionAndRequest(permission, requireActivity())
+    fun checkBackgroundLocationAccessPermission(promptForNotGranted:Boolean = false):Boolean{
+        val isGranted = PermissionCheck.checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION, AppContext.getActivity(), false)
+        if(promptForNotGranted){
+            //PermissionCheck.requireAllPermissions(AppContext.getActivity(), notGrantedPermissions.toTypedArray())
+            activityResultLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
         }
+        return isGranted
+    }
+
+    private var activityResultLauncher: ActivityResultLauncher<Array<String>>
+    init{
+        this.activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()) {result ->
+            checkRequiredPermissions(false)
+        }
+    }
+
+    fun checkAdvertisementService(){
+        var advertisementServiceIsReady = true
+
+        if(!AppContext.advertisementServiceIsInitialized()){
+            try {
+                val advertisementService = BluetoothHelpers.getAdvertisementService()
+                AppContext.setAdvertisementService(advertisementService)
+            } catch (e:Exception){
+                addMissingRequirement("Advertisement Service not initialized")
+                advertisementServiceIsReady = false
+            }
+        }
+
+
+        if(!AppContext.bluetoothLeScanServiceIsInitialized()){
+            try {
+                val bluetoothLeScanService = BluetoothHelpers.getBluetoothLeScanService()
+                AppContext.setBluetoothLeScanService(bluetoothLeScanService)
+                //BluetoothLeScanForegroundService.startService(AppContext.getContext(), "Bluetooth LE Scan Foreground Service is running...")
+            } catch (e:Exception){
+                addMissingRequirement("Bluetooth LE Scan Service not initialized")
+                advertisementServiceIsReady = false
+            }
+        }
+
+        if(!AppContext.advertisementSetQueueHandlerIsInitialized()){
+            try {
+                var advertisementSetQueueHandler = AdvertisementSetQueueHandler()
+                AppContext.setAdvertisementSetQueueHandler(advertisementSetQueueHandler)
+            } catch (e:Exception){
+                addMissingRequirement("Queue Handler not initialized")
+                advertisementServiceIsReady = false
+            }
+        }
+
+        viewModel.advertisementServiceIsReady.postValue(advertisementServiceIsReady)
     }
 }

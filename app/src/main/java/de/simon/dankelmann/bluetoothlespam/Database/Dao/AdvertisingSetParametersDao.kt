@@ -23,4 +23,7 @@ interface AdvertisingSetParametersDao {
 
     @Insert
     fun insertItem(advertisingSetParametersEntity: AdvertisingSetParametersEntity): Long
+
+    @Query("DELETE FROM advertisingsetparametersentity WHERE id = :id")
+    fun deleteById(id: Int)
 }

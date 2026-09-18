@@ -5,20 +5,6 @@ import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityIos17CrashAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewAirtagPopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNotYourDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupBudsAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupWatchAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDebugAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairNonProductionAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairPhoneSetupAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.LovespousePlayAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.LovespouseStopAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.AdvertiseDataDao
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.AdvertiseDataManufacturerSpecificDataDao
@@ -44,6 +30,7 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociationListSetE
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Migrations.Migration_1_2
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper
 
 @androidx.room.Database(
     entities = [AdvertiseDataEntity::class,
@@ -116,27 +103,7 @@ abstract class AppDatabase : RoomDatabase() {
             Log.d(_logTag, "Starting Database Seeding")
             getInstance().isSeeding = true
 
-            val advertisementSetGenerators = listOf(
-                FastPairDevicesAdvertisementSetGenerator(),
-                FastPairPhoneSetupAdvertisementSetGenerator(),
-                FastPairNonProductionAdvertisementSetGenerator(),
-                FastPairDebugAdvertisementSetGenerator(),
-
-                //ContinuityDevicePopUpAdvertisementSetGenerator(),
-                ContinuityNotYourDevicePopUpAdvertisementSetGenerator(),
-                ContinuityNewDevicePopUpAdvertisementSetGenerator(),
-                ContinuityNewAirtagPopUpAdvertisementSetGenerator(),
-                ContinuityActionModalAdvertisementSetGenerator(),
-                ContinuityIos17CrashAdvertisementSetGenerator(),
-
-                SwiftPairAdvertisementSetGenerator(),
-
-                EasySetupWatchAdvertisementSetGenerator(),
-                EasySetupBudsAdvertisementSetGenerator(),
-
-                LovespousePlayAdvertisementSetGenerator(),
-                LovespouseStopAdvertisementSetGenerator()
-            )
+            val advertisementSetGenerators = DeviceCustomizationHelper.defaultGenerators()
 
             advertisementSetGenerators.forEach{ generator ->
                 val advertisementSets = generator.getAdvertisementSets(null)

@@ -1,22 +1,24 @@
 plugins {
     alias(libs.plugins.agp.app)
+    alias(libs.plugins.kotlin)
     alias(libs.plugins.safeargs)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 val app_name = "Bluetooth LE Spam"
 
 android {
     namespace = "de.simon.dankelmann.bluetoothlespam"
-    compileSdk = 37
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "de.simon.dankelmann.bluetoothlespam"
         minSdk = 26
-        targetSdk = compileSdk
+        targetSdk = 35
         versionCode = 3
         versionName = "1.0.9"
+
+        //testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -52,23 +54,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    buildFeatures {
-        viewBinding = true
-        compose = true
-        resValues = true
+    kotlinOptions {
+        jvmTarget = "21"
     }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
 
 dependencies {
     implementation(libs.airbnb.lottie)
-    implementation(libs.airbnb.lottie.compose)
 
     implementation(libs.core.ktx)
     implementation(libs.preference.ktx)
@@ -85,8 +82,11 @@ dependencies {
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
 
+    // To use Kotlin annotation processing tool (kapt)
+    kapt(libs.room.compiler)
+
     // To use Kotlin Symbol Processing (KSP)
-    ksp(libs.room.compiler)
+    //ksp(libs.room.compiler)
 
     // optional - Kotlin Extensions and Coroutines support for Room
     //implementation(libs.room.ktx)
@@ -100,36 +100,9 @@ dependencies {
     // optional - Guava support for Room, including Optional and ListenableFuture
     //implementation(libs.room.guava)
 
+    // optional - Test helpers
+    //testImplementation(libs.room.testing)
+
     // optional - Paging 3 Integration
     //implementation(libs.room.paging)
-
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.viewbinding)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-
-    // Blur (floating nav bar backdrop only, see plan §4) + dynamic-color-consistent static palette
-    implementation(libs.haze)
-    implementation(libs.haze.materials)
-    implementation(libs.material.kolor)
-
-    // Test infra (T0)
-    testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.room.testing)
-    testImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.room.testing)
 }

@@ -1,6 +1,5 @@
 package de.simon.dankelmann.bluetoothlespam.ui.advertisementcollection
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,20 +7,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Enums.stringResId
 import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementCollectionBinding
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -67,7 +66,6 @@ class AdvertisementCollectionFragment : Fragment() {
         // Get Layout View
         val advertisementSetCollectionView: View =
             layoutInflater.inflate(R.layout.listitem_advertisement_collection_start, null)
-        val context = advertisementSetCollectionView.context
 
         // Insert Data
         var titleTextView: TextView =
@@ -85,7 +83,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Android"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.ic_android, context.theme)
+                    resources.getDrawable(
+                        R.drawable.ic_android,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -94,7 +95,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: iOS"
                 distanceTextView.text = "Distance: Mixed"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.apple, context.theme)
+                    resources.getDrawable(
+                        R.drawable.apple,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -103,7 +107,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Samsung"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.samsung, context.theme)
+                    resources.getDrawable(
+                        R.drawable.samsung,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -112,7 +119,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Windows"
                 distanceTextView.text = "Distance: Close"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.microsoft, context.theme)
+                    resources.getDrawable(
+                        R.drawable.microsoft,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -121,7 +131,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: All"
                 distanceTextView.text = "Distance: Mixed"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.shuffle, context.theme)
+                    resources.getDrawable(
+                        R.drawable.shuffle,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -130,7 +143,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: undefined"
                 distanceTextView.text = "Distance: Undefined"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.ic_info, context.theme)
+                    resources.getDrawable(
+                        R.drawable.ic_info,
+                        AppContext.getContext().theme
+                    )
                 )
             }
 
@@ -139,7 +155,10 @@ class AdvertisementCollectionFragment : Fragment() {
                 targetTextView.text = "Target: Lovespouse"
                 distanceTextView.text = "Distance: Far"
                 iconImageView.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.heart, context.theme)
+                    resources.getDrawable(
+                        R.drawable.heart,
+                        AppContext.getContext().theme
+                    )
                 )
             }
         }
@@ -147,7 +166,7 @@ class AdvertisementCollectionFragment : Fragment() {
         // Hookup Events
         var cardView: CardView =
             advertisementSetCollectionView.findViewById(R.id.listItemAdvertisementSetCollectionStartCardview)
-        cardView.setOnClickListener { view ->
+        cardView.setOnClickListener {
             when (advertisementTarget) {
                 AdvertisementTarget.ADVERTISEMENT_TARGET_ANDROID -> {
                     onFastPairCardViewClicked()
@@ -166,7 +185,7 @@ class AdvertisementCollectionFragment : Fragment() {
                 }
 
                 AdvertisementTarget.ADVERTISEMENT_TARGET_KITCHEN_SINK -> {
-                    onKitchenSinkCardViewClicked(view.context)
+                    onKitchenSinkCardViewClicked()
                 }
 
                 AdvertisementTarget.ADVERTISEMENT_TARGET_LOVESPOUSE -> {
@@ -187,22 +206,19 @@ class AdvertisementCollectionFragment : Fragment() {
         advertisementSetTypes: List<AdvertisementSetType>,
         advertisementSetCollectionTitle: String
     ) {
-        // TODO: Move this work into a ViewModel
-        lifecycleScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
             // Run database work in background
             val advertisementSetCollection =
                 buildAdvertisementCollection(advertisementSetTypes, advertisementSetCollectionTitle)
 
-            activity?.let { ac ->
-                ac.runOnUiThread {
-                    // Pass Collection to Advertisement Fragment
-                    val navController = ac.findNavController(R.id.nav_host_fragment)
-                    (ac.applicationContext as BleSpamApplication).queueHandler.apply {
-                        deactivate(ac)
-                        setAdvertisementSetCollection(advertisementSetCollection)
-                    }
-                    navController.navigate(R.id.action_ad_coll_to_ad)
-                }
+            AppContext.getActivity().runOnUiThread {
+                // Pass Collection to Advertisement Fragment
+                val navController =
+                    AppContext.getActivity().findNavController(R.id.nav_host_fragment)
+                AppContext.getAdvertisementSetQueueHandler().deactivate()
+                AppContext.getAdvertisementSetQueueHandler()
+                    .setAdvertisementSetCollection(advertisementSetCollection)
+                navController.navigate(R.id.action_ad_coll_to_ad)
             }
         }
     }
@@ -233,7 +249,9 @@ class AdvertisementCollectionFragment : Fragment() {
             advertisementSetList.title = "${getString(advertisementSetType.stringResId())} List"
 
             val advertisementSets =
-                DatabaseHelpers.getAllAdvertisementSetsForType(advertisementSetType)
+                DeviceCustomizationHelper.filterDeleted(
+                    DatabaseHelpers.getAllAdvertisementSetsForType(advertisementSetType)
+                )
             advertisementSetList.advertisementSets = advertisementSets.toMutableList()
 
             // Add List to the Collection
@@ -291,9 +309,9 @@ class AdvertisementCollectionFragment : Fragment() {
         )
     }
 
-    fun onKitchenSinkCardViewClicked(context: Context) {
+    fun onKitchenSinkCardViewClicked() {
         // Set Random Mode for Kitchen Sink
-        (context.applicationContext as BleSpamApplication).queueHandler
+        AppContext.getAdvertisementSetQueueHandler()
             .setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
 
         navigateToAdvertisementFragmentWithType(

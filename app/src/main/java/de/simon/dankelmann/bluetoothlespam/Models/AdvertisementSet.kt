@@ -36,7 +36,10 @@ class AdvertisementSet : Serializable {
     // Ui Data
     var currentlyAdvertising = false
     var advertisementState = AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED
-    var isChecked = true // Default to true to maintain backward compatibility
+
+    // Multi-selection (session state only, not persisted): when non-empty,
+    // the queue handler advertises only the selected sets
+    var selected = false
 
     fun validate():Boolean{
         //@todo: implement checks here

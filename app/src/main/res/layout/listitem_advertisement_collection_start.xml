@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/gradient_cardview_accent"
+            android:background="@drawable/gradient_cardview_alternative"
             android:orientation="vertical"
             android:padding="@dimen/cornerRadiusCardview">
 
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:text="Title"
-                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textColor="@color/text_color_card_view_alternative"
                 android:textSize="@dimen/textSizeHeadline"
                 android:textStyle="bold" />
 
@@ -48,14 +48,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Target: -"
-                        android:textColor="?attr/colorOnPrimaryContainer" />
+                        android:textColor="@color/text_color_card_view_alternative_light" />
 
                     <TextView
                         android:id="@+id/listItemAdvertisementSetCollectionStartDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Distance: Mixed"
-                        android:textColor="?attr/colorOnPrimaryContainer" />
+                        android:textColor="@color/text_color_card_view_alternative_light" />
                 </LinearLayout>
 
                 <!-- Image Column -->
@@ -65,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_android"
-                    app:tint="?attr/colorOnPrimaryContainer" />
+                    app:tint="@color/text_color_card_view_alternative_light" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

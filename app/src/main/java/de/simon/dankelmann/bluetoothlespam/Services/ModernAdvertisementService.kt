@@ -2,22 +2,26 @@ package de.simon.dankelmann.bluetoothlespam.Services
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.AdvertiseCallback
+import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.AdvertisingSet
 import android.bluetooth.le.AdvertisingSetCallback
 import android.bluetooth.le.BluetoothLeAdvertiser
-import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
-import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 
-class ModernAdvertisementService(
-    private val context: Context,
-): IAdvertisementService{
+class ModernAdvertisementService: IAdvertisementService{
 
     // private
     private val _logTag = "AdvertisementService"
@@ -28,7 +32,7 @@ class ModernAdvertisementService(
     private var _txPowerLevel:TxPowerLevel? = null
 
     init {
-        _bluetoothAdapter = context.bluetoothAdapter()
+        _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _advertiser = _bluetoothAdapter!!.bluetoothLeAdvertiser
         }
@@ -49,7 +53,7 @@ class ModernAdvertisementService(
     override fun startAdvertisement(advertisementSet: AdvertisementSet) {
         if(_advertiser != null){
             if(advertisementSet.validate()){
-                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, context)){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     val preparedAdvertisementSet = prepareAdvertisementSet(advertisementSet)
                     if(preparedAdvertisementSet.scanResponse != null){
                         _advertiser!!.startAdvertisingSet(preparedAdvertisementSet.advertisingSetParameters.build(), preparedAdvertisementSet.advertiseData.build(), preparedAdvertisementSet.scanResponse!!.build(), null, null, preparedAdvertisementSet.advertisingSetCallback)
@@ -75,11 +79,8 @@ class ModernAdvertisementService(
 
     override fun stopAdvertisement() {
         if(_advertiser != null){
-            if (_currentAdvertisementSet != null) {
-                if (PermissionCheck.checkPermission(
-                        Manifest.permission.BLUETOOTH_ADVERTISE, context
-                    )
-                ) {
+            if(_currentAdvertisementSet != null){
+                if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_ADVERTISE, AppContext.getActivity())){
                     _advertiser!!.stopAdvertisingSet(_currentAdvertisementSet!!.advertisingSetCallback)
                     _currentAdvertisementSet = null
                 } else {

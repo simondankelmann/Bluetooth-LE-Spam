@@ -22,4 +22,7 @@ interface PeriodicAdvertisingParametersDao {
 
     @Insert
     fun insertItem(periodicAdvertisingParametersEntity: PeriodicAdvertisingParametersEntity): Long
+
+    @Query("DELETE FROM periodicadvertisingparametersentity WHERE id = :id")
+    fun deleteById(id: Int)
 }

@@ -26,4 +26,10 @@ interface AdvertiseDataManufacturerSpecificDataDao {
 
     @Insert
     fun insertItem(advertiseDataManufacturerSpecificDataEntity: AdvertiseDataManufacturerSpecificDataEntity): Long
+
+    @Query("UPDATE advertisedatamanufacturerspecificdataentity SET manufacturerId = :manufacturerId, manufacturerSpecificData = :manufacturerSpecificData WHERE id = :id")
+    fun updateEntry(id: Int, manufacturerId: Int, manufacturerSpecificData: String)
+
+    @Query("DELETE FROM advertisedatamanufacturerspecificdataentity WHERE advertiseDataId = :advertiseDataId")
+    fun deleteByAdvertiseDataId(advertiseDataId: Int)
 }

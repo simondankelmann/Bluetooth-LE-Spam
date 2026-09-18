@@ -1,25 +1,30 @@
 package de.simon.dankelmann.bluetoothlespam.ui.advertisement
 
-import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.ExpandableListView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import de.simon.dankelmann.bluetoothlespam.Adapters.AdvertisementSetCollectionExpandableListViewAdapter
-import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
+import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
 import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
-import de.simon.dankelmann.bluetoothlespam.Handlers.AdvertisementSetQueueHandler
+import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
+import de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper
+import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -28,11 +33,20 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.databinding.FragmentAdvertisementBinding
 import de.simon.dankelmann.bluetoothlespam.ui.setupEdgeToEdge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
-class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvertisementSetQueueHandlerCallback {
+class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvertisementSetQueueHandlerCallback,
+    AdvertisementSetCollectionExpandableListViewAdapter.OnAdvertisementSetActionListener {
 
     private val _logTag = "AdvertisementFragment"
+
+    companion object {
+        // 3 header bytes + name must fit the 31 byte legacy advertising payload
+        private const val MAX_CUSTOM_SWIFT_PAIR_NAME_BYTES = 24
+    }
 
     private var _viewModel: AdvertisementViewModel? = null
     private val viewModel get() = _viewModel!!
@@ -50,28 +64,22 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         val root: View = binding.root
 
         _expandableListView = binding.advertisementFragmentCollectionExpandableListview
-        setupUi(root.context)
+        setupUi()
 
         return root
     }
 
     override fun onResume() {
         super.onResume()
-
-        val context = requireContext()
-        val queue = (context.applicationContext as BleSpamApplication).queueHandler
-        queue.addAdvertisementServiceCallback(this)
-        queue.addAdvertisementQueueHandlerCallback(this)
-
-        syncUiStateWithQueue(context, queue)
+        AppContext.getAdvertisementSetQueueHandler().addAdvertisementServiceCallback(this)
+        AppContext.getAdvertisementSetQueueHandler().addAdvertisementQueueHandlerCallback(this)
+        syncWithQueueHandler()
     }
 
     override fun onPause() {
         super.onPause()
-
-        val app = (requireContext().applicationContext as BleSpamApplication)
-        app.queueHandler.removeAdvertisementServiceCallback(this)
-        app.queueHandler.removeAdvertisementQueueHandlerCallback(this)
+        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementServiceCallback(this)
+        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementQueueHandlerCallback(this)
         //AppContext.getAdvertisementSetQueueHandler().deactivate()
     }
 
@@ -81,25 +89,237 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         //AppContext.getAdvertisementSetQueueHandler().deactivate(true)
     }
 
-    fun onPlayButtonClicked(context: Context) {
-        val queue = (context.applicationContext as BleSpamApplication).queueHandler
-        if (viewModel.isAdvertising.value == true) {
-            queue.deactivate(context)
+    private fun syncWithQueueHandler(){
+        setAdvertisementSetCollection(AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection())
+        viewModel.advertisementQueueMode.postValue(AppContext.getAdvertisementSetQueueHandler().getAdvertisementQueueMode())
+        viewModel.isAdvertising.postValue(AppContext.getAdvertisementSetQueueHandler().isActive())
+    }
+
+    fun onPlayButtonClicked(){
+        if(viewModel.isAdvertising.value == true){
+            AppContext.getAdvertisementSetQueueHandler().deactivate()
+            viewModel.isAdvertising.postValue(false)
         } else {
-            queue.activate(context)
+            AppContext.getAdvertisementSetQueueHandler().activate(true)
+            viewModel.isAdvertising.postValue(true)
         }
     }
 
-    fun syncUiStateWithQueue(context: Context, queue: AdvertisementSetQueueHandler) {
-        viewModel.advertisementQueueMode.postValue(queue.getAdvertisementQueueMode())
-        viewModel.isAdvertising.postValue(queue.isActive())
+    fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection){
+        viewModel.advertisementSetCollectionTitle.postValue(advertisementSetCollection.title)
+        viewModel.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(advertisementSetCollection))
+        viewModel.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(advertisementSetCollection))
 
-        val collection = queue.getAdvertisementSetCollection()
-        viewModel.advertisementSetCollectionTitle.postValue(collection.title)
-        viewModel.advertisementSetCollectionSubTitle.postValue(getAdvertisementSetCollectionSubTitle(collection))
-        viewModel.advertisementSetCollectionHint.postValue(getAdvertisementSetCollectionHint(collection))
+        // Show the custom Swift Pair input only when the collection contains Swift Pairing sets
+        _binding?.advertisementFragmentCustomSwiftPairContainer?.visibility =
+            if (isSwiftPairCollection(advertisementSetCollection)) View.VISIBLE else View.GONE
 
-        setupExpandableListView(context, collection)
+        // Update UI
+        setupExpandableListView(advertisementSetCollection)
+
+        // Pass the Collection to the Queue Handler
+        //AppContext.getAdvertisementSetQueueHandler().setAdvertisementSetCollection(advertisementSetCollection)
+    }
+
+    fun isSwiftPairCollection(advertisementSetCollection: AdvertisementSetCollection): Boolean {
+        if (advertisementSetCollection.title.contains("Swift Pair")) return true
+        return advertisementSetCollection.advertisementSetLists.any { advertisementSetList ->
+            advertisementSetList.advertisementSets.any { advertisementSet ->
+                advertisementSet.type == AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING
+            }
+        }
+    }
+
+    fun onAddCustomSwiftPairDeviceClicked() {
+        val input = _binding?.advertisementFragmentCustomSwiftPairNameInput ?: return
+        val addButton = _binding?.advertisementFragmentCustomSwiftPairAddButton ?: return
+        val deviceName = input.text.toString().trim()
+
+        if (deviceName.isEmpty()) {
+            Toast.makeText(AppContext.getContext(), getString(R.string.swift_pair_custom_empty), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Swift Pair manufacturer data is 3 header bytes + name and must fit the 31 byte legacy payload
+        if (deviceName.toByteArray(Charsets.UTF_8).size > MAX_CUSTOM_SWIFT_PAIR_NAME_BYTES) {
+            Toast.makeText(AppContext.getContext(), getString(R.string.swift_pair_custom_too_long), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val collection = AppContext.getAdvertisementSetQueueHandler().getAdvertisementSetCollection()
+        val alreadyExists = collection.advertisementSetLists.any { advertisementSetList ->
+            advertisementSetList.advertisementSets.any { advertisementSet ->
+                advertisementSet.title.equals(deviceName, ignoreCase = true)
+            }
+        }
+        if (alreadyExists) {
+            Toast.makeText(AppContext.getContext(), getString(R.string.swift_pair_custom_exists), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        addButton.isEnabled = false
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val newSets = SwiftPairAdvertisementSetGenerator()
+                    .getAdvertisementSets(mapOf(deviceName to "Custom"))
+                newSets.forEach { advertisementSet ->
+                    DatabaseHelpers.saveAdvertisementSet(advertisementSet)
+                }
+
+                AppContext.getActivity().runOnUiThread {
+                    input.text.clear()
+                    Toast.makeText(AppContext.getContext(), getString(R.string.swift_pair_custom_added), Toast.LENGTH_SHORT).show()
+                }
+                refreshCurrentCollectionFromDatabase()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to add custom Swift Pair device: ${e.message}")
+                AppContext.getActivity().runOnUiThread {
+                    Toast.makeText(AppContext.getContext(), "Failed to add device", Toast.LENGTH_SHORT).show()
+                }
+            } finally {
+                AppContext.getActivity().runOnUiThread {
+                    _binding?.advertisementFragmentCustomSwiftPairAddButton?.isEnabled = true
+                }
+            }
+        }
+    }
+
+    /**
+     * Reloads every list of the current collection from the database
+     * (hiding removed sets), pushes it to the queue handler and refreshes the UI.
+     * Must be safe to call from any thread.
+     */
+    fun refreshCurrentCollectionFromDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val handler = AppContext.getAdvertisementSetQueueHandler()
+                val collection = handler.getAdvertisementSetCollection()
+                collection.advertisementSetLists.toList().forEach { advertisementSetList ->
+                    val types = advertisementSetList.advertisementSets.map { it.type }.distinct()
+                    val fresh = types.flatMap { type ->
+                        DeviceCustomizationHelper.filterDeleted(
+                            DatabaseHelpers.getAllAdvertisementSetsForType(type)
+                        )
+                    }
+                    advertisementSetList.advertisementSets.clear()
+                    advertisementSetList.advertisementSets.addAll(fresh)
+                }
+                collection.advertisementSetLists.removeAll { it.advertisementSets.isEmpty() }
+
+                // Preserve multi-selection across the reload (matched by stable row id)
+                val selectedIds = handler.getSelectedIds()
+                val presentIds = mutableSetOf<Int>()
+                collection.advertisementSetLists.forEach { list ->
+                    list.advertisementSets.forEach {
+                        presentIds.add(it.id)
+                        it.selected = selectedIds.contains(it.id)
+                    }
+                }
+                handler.retainSelection(presentIds)
+
+                AppContext.getActivity().runOnUiThread {
+                    if (collection.getTotalNumberOfAdvertisementSets() == 0 && handler.isActive()) {
+                        handler.deactivate()
+                    }
+                    handler.setAdvertisementSetCollection(collection, false)
+                    _binding?.let { setAdvertisementSetCollection(collection) }
+                }
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to refresh collection: ${e.message}")
+            }
+        }
+    }
+
+    // AdvertisementSet row actions (all categories)
+
+    override fun onEditAdvertisementSet(advertisementSet: AdvertisementSet) {
+        if (advertisementSet.id <= 0) return
+        // DB access must stay off the UI thread (Room forbids main-thread queries)
+        CoroutineScope(Dispatchers.IO).launch {
+            val fresh = try {
+                DatabaseHelpers.getAdvertisementSetById(advertisementSet.id)
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to load device for editing: ${e.message}")
+                null
+            }
+            AppContext.getActivity().runOnUiThread {
+                if (fresh == null) {
+                    Toast.makeText(AppContext.getContext(), "Failed to load device", Toast.LENGTH_SHORT).show()
+                    return@runOnUiThread
+                }
+                if (_binding == null) return@runOnUiThread
+                EditAdvertisementSetDialog.show(AppContext.getActivity(), fresh) { values ->
+                    saveEditedAdvertisementSet(fresh.id, values)
+                }
+            }
+        }
+    }
+
+    fun saveEditedAdvertisementSet(setId: Int, values: EditAdvertisementSetDialog.EditedValues) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val current = DatabaseHelpers.getAdvertisementSetById(setId) ?: return@launch
+                DeviceCustomizationHelper.saveBackupIfAbsent(current)
+
+                current.title = values.title
+                current.advertiseData.includeDeviceName = values.includeDeviceName
+                current.advertiseData.includeTxPower = values.includeTxPower
+                current.advertiseData.manufacturerData.forEachIndexed { index, entry ->
+                    if (index < values.manufacturerIds.size) {
+                        entry.manufacturerId = values.manufacturerIds[index]
+                    }
+                    if (index < values.manufacturerHex.size) {
+                        entry.manufacturerSpecificData =
+                            StringHelpers.decodeHex(values.manufacturerHex[index])
+                    }
+                }
+                current.advertiseData.services.forEachIndexed { index, entry ->
+                    if (index < values.serviceUuids.size) {
+                        entry.serviceUuid = android.os.ParcelUuid.fromString(values.serviceUuids[index])
+                    }
+                    if (index < values.serviceHex.size) {
+                        val hex = values.serviceHex[index]
+                        entry.serviceData = if (hex == null) null else StringHelpers.decodeHex(hex)
+                    }
+                }
+
+                DatabaseHelpers.updateAdvertisementSetContent(current)
+
+                // If the user reverted everything back to the original, drop the backup
+                val reloaded = DatabaseHelpers.getAdvertisementSetById(setId)
+                if (reloaded != null && DeviceCustomizationHelper.matchesBackup(reloaded)) {
+                    DeviceCustomizationHelper.clearBackup(setId)
+                }
+
+                AppContext.getActivity().runOnUiThread {
+                    Toast.makeText(AppContext.getContext(), getString(R.string.device_updated), Toast.LENGTH_SHORT).show()
+                }
+                refreshCurrentCollectionFromDatabase()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to save edited device: ${e.message}")
+                AppContext.getActivity().runOnUiThread {
+                    Toast.makeText(AppContext.getContext(), "Failed to save device", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    override fun onDeleteAdvertisementSet(advertisementSet: AdvertisementSet) {
+        if (advertisementSet.id <= 0) return
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(AppContext.getActivity())
+            .setTitle(getString(R.string.device_delete_title))
+            .setMessage(getString(R.string.device_delete_message, advertisementSet.title))
+            .setPositiveButton(getString(R.string.device_delete)) { _, _ ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    DeviceCustomizationHelper.setDeleted(advertisementSet.id, true)
+                    AppContext.getActivity().runOnUiThread {
+                        Toast.makeText(AppContext.getContext(), getString(R.string.device_deleted), Toast.LENGTH_SHORT).show()
+                    }
+                    refreshCurrentCollectionFromDatabase()
+                }
+            }
+            .setNegativeButton(getString(android.R.string.cancel), null)
+            .show()
     }
 
     fun getAdvertisementSetCollectionHint(advertisementSetCollection: AdvertisementSetCollection):String{
@@ -124,10 +344,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         return hint
     }
 
-    private fun setupExpandableListView(
-        context: Context,
-        advertisementSetCollection: AdvertisementSetCollection,
-    ) {
+    private fun setupExpandableListView(advertisementSetCollection: AdvertisementSetCollection) {
 
         Log.d(_logTag, "Collection: " + advertisementSetCollection.advertisementSetLists.count())
         // Setup grouped Data
@@ -137,7 +354,8 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             dataList[advertisementSetList] = advertisementSetList.advertisementSets
         }
 
-        _adapter = AdvertisementSetCollectionExpandableListViewAdapter(context,titleList,dataList)
+        _adapter = AdvertisementSetCollectionExpandableListViewAdapter(AppContext.getContext(),titleList,dataList)
+        _adapter.actionListener = this
         _expandableListView.setAdapter(_adapter)
 
         if(_adapter.advertisementSetLists.isNotEmpty() && advertisementSetCollection.advertisementSetLists.size == 1){
@@ -146,20 +364,54 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
 
         _expandableListView.setOnGroupExpandListener { groupPosition ->
             var advertisementSetList = titleList[groupPosition]
+            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Expanded.", Toast.LENGTH_SHORT).show()
         }
 
         _expandableListView.setOnGroupCollapseListener { groupPosition ->
             var advertisementSetList = titleList[groupPosition]
+            //Toast.makeText(AppContext.getContext(), advertisementSetList.title + " List Collapsed.", Toast.LENGTH_SHORT).show()
         }
 
         _expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-            val app = (context.applicationContext as BleSpamApplication)
-            app.queueHandler.setSelectedAdvertisementSet(groupPosition, childPosition)
-
             var advertisementSetList = titleList[groupPosition]
             var advertisementSet = dataList[titleList[groupPosition]]!![childPosition]
-            highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_UNDEFINED)
+            val handler = AppContext.getAdvertisementSetQueueHandler()
+            // Multi-selection: tapping toggles the set, previously tapped sets stay selected
+            val nowSelected = handler.toggleSelectedAdvertisementSet(advertisementSet)
+            if (nowSelected) {
+                handler.setSelectedAdvertisementSet(groupPosition, childPosition)
+            } else {
+                if (handler.getCurrentAdvertisementSet()?.id == advertisementSet.id) {
+                    handler.clearCurrentAdvertisementSet()
+                }
+            }
+            _adapter.notifyDataSetChanged()
             false
+        }
+
+        // Long-press (>500ms) on a category header toggles the whole category:
+        // selects all of it when incomplete, deselects it entirely when complete
+        _expandableListView.setOnItemLongClickListener { parent, view, position, id ->
+            val packedPosition = _expandableListView.getExpandableListPosition(position)
+            val packedType = ExpandableListView.getPackedPositionType(packedPosition)
+            if (packedType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+                val groupPosition = ExpandableListView.getPackedPositionGroup(packedPosition)
+                if (groupPosition in titleList.indices) {
+                    val groupSets = dataList[titleList[groupPosition]] ?: emptyList()
+                    if (groupSets.isNotEmpty()) {
+                        val handler = AppContext.getAdvertisementSetQueueHandler()
+                        val allSelected = groupSets.all { handler.isSelected(it) }
+                        handler.setSetsSelected(groupSets, !allSelected)
+                        if (handler.getCurrentAdvertisementSet()?.let { !handler.isSelected(it) } == true) {
+                            handler.clearCurrentAdvertisementSet()
+                        }
+                        _adapter.notifyDataSetChanged()
+                    }
+                }
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -204,30 +456,47 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         return "Type: $type, Range: $range"
     }
 
-    fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode) {
-        val app = (requireContext().applicationContext as BleSpamApplication)
-        app.queueHandler.setAdvertisementQueueMode(advertisementQueueMode)
-
+    fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
+        AppContext.getAdvertisementSetQueueHandler().setAdvertisementQueueMode(advertisementQueueMode)
         viewModel.advertisementQueueMode.postValue(advertisementQueueMode)
     }
 
-    fun setupUi(context: Context) {
+    fun setupUi() {
         setupEdgeToEdge(binding.root, top = false)
 
         // Views
         var playButton = binding.advertisementFragmentPlayButton
+        var queueModeButtonSingle = binding.advertisementFragmentQueueModeSingleButton
         var queueModeButtonLinear = binding.advertisementFragmentQueueModeLinearButton
         var queueModeButtonRandom = binding.advertisementFragmentQueueModeRandomButton
+        var queueModeButtonList = binding.advertisementFragmentQueueModeListButton
 
         // Listeners
         playButton.setOnClickListener {
-            onPlayButtonClicked(playButton.context)
+            onPlayButtonClicked()
+        }
+        binding.advertisementFragmentCustomSwiftPairAddButton.setOnClickListener {
+            onAddCustomSwiftPairDeviceClicked()
+        }
+        binding.advertisementFragmentCustomSwiftPairNameInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                onAddCustomSwiftPairDeviceClicked()
+                true
+            } else {
+                false
+            }
+        }
+        queueModeButtonSingle.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE)
         }
         queueModeButtonLinear.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR)
         }
         queueModeButtonRandom.setOnClickListener{
             setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
+        }
+        queueModeButtonList.setOnClickListener{
+            setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST)
         }
 
         // Observers
@@ -236,14 +505,14 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
             if (isAdvertising) {
                 playButton.setImageDrawable(
                     ResourcesCompat.getDrawable(
-                        resources, R.drawable.pause, context.theme
+                        resources, R.drawable.pause, AppContext.getContext().theme
                     )
                 )
                 advertisingAnimation.playAnimation()
             } else {
                 playButton.setImageDrawable(
                     ResourcesCompat.getDrawable(
-                        resources, R.drawable.play_arrow, context.theme
+                        resources, R.drawable.play_arrow, AppContext.getContext().theme
                     )
                 )
                 advertisingAnimation.cancelAnimation()
@@ -254,7 +523,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         viewModel.target.observe(viewLifecycleOwner) { target ->
             binding.advertisementFragmentTargetImage.setImageDrawable(
                 ResourcesCompat.getDrawable(
-                    resources, target.getDrawableId(), context.theme
+                    resources, target.getDrawableId(), AppContext.getContext().theme
                 )
             )
         }
@@ -276,15 +545,19 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
         }
 
         viewModel.advertisementQueueMode.observe(viewLifecycleOwner) { mode ->
-            val colorInactive = resources.getColor(R.color.text_color_light, context.theme)
-            val colorActive = resources.getColor(R.color.blue_normal, context.theme)
+            val colorInactive = resources.getColor(R.color.text_color_light, AppContext.getContext().theme)
+            val colorActive = resources.getColor(R.color.blue_normal, AppContext.getContext().theme)
 
+            queueModeButtonSingle.setColorFilter(colorInactive)
             queueModeButtonLinear.setColorFilter(colorInactive)
             queueModeButtonRandom.setColorFilter(colorInactive)
+            queueModeButtonList.setColorFilter(colorInactive)
 
-            when (mode) {
+            when(mode){
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> queueModeButtonSingle.setColorFilter(colorActive)
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> queueModeButtonLinear.setColorFilter(colorActive)
                 AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> queueModeButtonRandom.setColorFilter(colorActive)
+                AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> queueModeButtonList.setColorFilter(colorActive)
             }
         }
     }
@@ -331,7 +604,7 @@ class AdvertisementFragment : Fragment(), IAdvertisementServiceCallback, IAdvert
     override fun onAdvertisementSetFailed(advertisementSet: AdvertisementSet?, advertisementError: AdvertisementError) {
         if(advertisementSet != null){
             highlightCurrentAdverstisementSet(advertisementSet, AdvertisementState.ADVERTISEMENT_STATE_FAILED)
-            Toast.makeText(requireContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
+            Toast.makeText(AppContext.getContext(), "Advertisement Failed: $advertisementError", Toast.LENGTH_SHORT).show()
         }
     }
     // END: AdvertismentServiceCallback

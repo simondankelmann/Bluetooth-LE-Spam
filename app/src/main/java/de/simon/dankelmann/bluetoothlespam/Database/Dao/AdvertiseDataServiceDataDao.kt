@@ -26,4 +26,10 @@ interface AdvertiseDataServiceDataDao {
 
     @Insert
     fun insertItem(advertiseDataServiceDataEntity: AdvertiseDataServiceDataEntity): Long
+
+    @Query("UPDATE advertisedataservicedataentity SET serviceUuid = :serviceUuid, serviceData = :serviceData WHERE id = :id")
+    fun updateEntry(id: Int, serviceUuid: java.util.UUID, serviceData: String?)
+
+    @Query("DELETE FROM advertisedataservicedataentity WHERE advertiseDataId = :advertiseDataId")
+    fun deleteByAdvertiseDataId(advertiseDataId: Int)
 }

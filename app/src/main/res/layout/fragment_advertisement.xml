@@ -73,6 +73,16 @@
             android:orientation="horizontal">
 
             <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeSingleButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/repeat_one"
+                app:tint="@color/text_color_light" />
+
+            <ImageButton
                 android:id="@+id/advertisementFragmentQueueModeLinearButton"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
@@ -80,6 +90,16 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/repeat"
+                app:tint="@color/text_color_light" />
+
+            <ImageButton
+                android:id="@+id/advertisementFragmentQueueModeListButton"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/list"
                 app:tint="@color/text_color_light" />
 
             <ImageButton
@@ -112,6 +132,38 @@
     </LinearLayout>
     <!-- END: Advertisement Lower Top Container -->
 
+    <!-- Custom Swift Pair Container (visible only for Swift Pair collections) -->
+    <LinearLayout
+        android:id="@+id/advertisementFragmentCustomSwiftPairContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutLowerTop">
+
+        <EditText
+            android:id="@+id/advertisementFragmentCustomSwiftPairNameInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/swift_pair_custom_name_hint"
+            android:inputType="text"
+            android:maxLength="24"
+            android:maxLines="1"
+            android:textColor="@color/text_color"
+            android:textColorHint="@color/text_color_light" />
+
+        <Button
+            android:id="@+id/advertisementFragmentCustomSwiftPairAddButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/swift_pair_add" />
+
+    </LinearLayout>
+    <!-- END: Custom Swift Pair Container -->
+
     <!-- Advertisement Center Container -->
     <LinearLayout
         android:id="@+id/advertisementFragmentLayoutCenter"
@@ -119,7 +171,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/advertisementFragmentLayoutFooter"
-        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentLayoutLowerTop">
+        app:layout_constraintTop_toBottomOf="@id/advertisementFragmentCustomSwiftPairContainer">
 
         <ExpandableListView
             android:id="@+id/advertisementFragmentCollectionExpandableListview"
