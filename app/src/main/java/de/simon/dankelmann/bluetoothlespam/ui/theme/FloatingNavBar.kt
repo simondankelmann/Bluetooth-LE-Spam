@@ -9,6 +9,9 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -29,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import de.simon.dankelmann.bluetoothlespam.Navigation.SpecterDestinations
 import de.simon.dankelmann.bluetoothlespam.R
@@ -41,12 +45,10 @@ import dev.chrisbanes.haze.materials.HazeMaterials
 // doesn't render underneath the pill, which floats on top of content rather than reserving space.
 val FloatingNavBarClearance = 100.dp
 
-// On-screen footprint of SpecterTopAppBar now that content scrolls full-bleed behind it too,
-// the same way FloatingNavBarClearance already accounts for the bottom pill. 100.dp (a guess at
-// 64dp TopAppBar + a "typical" status bar) measured ~28dp short on a real device -- the actual
-// bar (its 64dp content row plus the real status bar inset) came out to ~144dp -- so this is
-// that measured value plus a small buffer rather than another guess.
-val SpecterTopAppBarClearance = 150.dp
+// Exact height of SpecterTopAppBar (status bar inset + 64dp TopAppBar row), which floats over
+// content, so screens start right under it.
+val SpecterTopAppBarClearance: Dp
+    @Composable get() = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 64.dp
 
 data class FloatingNavDestination(
     val route: String,
