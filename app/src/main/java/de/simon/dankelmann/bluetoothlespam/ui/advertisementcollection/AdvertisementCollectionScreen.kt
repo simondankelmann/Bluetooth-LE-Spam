@@ -24,8 +24,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -51,7 +52,7 @@ fun AdvertisementCollectionScreen(
     customItems: List<AdvertisementCollectionItem>,
     onAddClicked: () -> Unit,
 ) {
-    val expandedCategories = remember { mutableStateMapOf("Custom Groups" to true) }
+    var customExpanded by remember { mutableStateOf(true) }
 
     Scaffold(
         floatingActionButton = {
@@ -90,13 +91,11 @@ fun AdvertisementCollectionScreen(
                 item {
                     CategoryHeaderRow(
                         title = "Custom Groups",
-                        expanded = expandedCategories["Custom Groups"] == true,
-                        onToggle = {
-                            expandedCategories["Custom Groups"] = expandedCategories["Custom Groups"] != true
-                        },
+                        expanded = customExpanded,
+                        onToggle = { customExpanded = !customExpanded },
                     )
                 }
-                if (expandedCategories["Custom Groups"] == true) {
+                if (customExpanded) {
                     items(customItems) { item -> AdvertisementCollectionCard(item) }
                 }
             }

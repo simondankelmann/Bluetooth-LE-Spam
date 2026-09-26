@@ -47,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -219,7 +218,7 @@ private fun checkDatabase(viewModel: StartViewModel) {
         // Check again in a few seconds
         Executors.newSingleThreadScheduledExecutor().schedule({
             checkDatabase(viewModel)
-        }, 2, TimeUnit.SECONDS)
+        }, 500, TimeUnit.MILLISECONDS)
     }
 }
 
@@ -305,10 +304,7 @@ fun StartScreen(
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        // Top padding includes SpecterTopAppBarClearance and bottom includes
-        // FloatingNavBarClearance -- both bars float/blur on top of content rather than
-        // reserving space (see MainActivity), so without this the first/last card ends up
-        // stuck underneath one of them.
+        // Clearances keep the first/last card clear of the floating title bar and nav pill.
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
@@ -605,10 +601,9 @@ private fun StatusRow(
     }
 
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
             .semantics { contentDescription = "$label: $stateText" },
         colors = CardDefaults.cardColors(containerColor = background),
         shape = RoundedCornerShape(12.dp),
@@ -633,23 +628,14 @@ private fun StatusRow(
                     .weight(1f)
                     .padding(start = 16.dp),
             )
-            when (status) {
-                RequirementStatus.Ready -> Icon(
-                    imageVector = Icons.Filled.CheckCircle,
+            if (status == RequirementStatus.Loading) {
+                CircularProgressIndicator(color = onColor, strokeWidth = 2.5.dp, modifier = Modifier.size(20.dp))
+            } else {
+                Icon(
+                    imageVector = if (status == RequirementStatus.Ready) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
                     contentDescription = null,
                     tint = onColor,
                     modifier = Modifier.size(24.dp),
-                )
-                RequirementStatus.NotReady -> Icon(
-                    imageVector = Icons.Filled.Cancel,
-                    contentDescription = null,
-                    tint = onColor,
-                    modifier = Modifier.size(24.dp),
-                )
-                RequirementStatus.Loading -> CircularProgressIndicator(
-                    color = onColor,
-                    strokeWidth = 2.5.dp,
-                    modifier = Modifier.size(20.dp),
                 )
             }
         }

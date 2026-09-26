@@ -31,7 +31,7 @@ fun GroupEditorRoute(onSaved: () -> Unit) {
             // Migration_2_3 seeds these tables on its own background thread that can still be
             // running after the migration itself returns (see StartScreen's checkDatabase) --
             // wait it out rather than loading against a still-empty DB.
-            while (database.isSeeding) delay(500)
+            while (database.isSeeding) delay(100)
             collections = database.advertisementSetCollectionDao().getAllCollectionsWithLists()
         }
     }

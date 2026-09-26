@@ -63,7 +63,8 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
     exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
 
-    var isSeeding = false
+    // Written by seeding threads, polled from UI coroutines.
+    @Volatile var isSeeding = false
     abstract fun advertiseDataDao(): AdvertiseDataDao
     abstract fun advertiseDataManufacturerSpecificDataDao(): AdvertiseDataManufacturerSpecificDataDao
     abstract fun advertiseDataServiceDataDao(): AdvertiseDataServiceDataDao

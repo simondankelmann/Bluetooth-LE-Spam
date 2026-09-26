@@ -79,11 +79,8 @@ fun FloatingNavBar(
     blurEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    // Same shape as each item's own pill (RoundedCornerShape(50) is percent-based -- a full
-    // stadium curve derived from the bar's own height, not an unrelated fixed dp value).
+    // Same stadium shape as each item; equal inner padding keeps outer radius = item radius + padding.
     val pillShape = RoundedCornerShape(50)
-    // Equal padding on every side between the bar's edge and the items -- see the Row below for
-    // why this also drives the outer/inner corner-radius relationship.
     val navBarInnerPadding = 6.dp
     val hazeStyle = HazeMaterials.thin()
     var hazeRenderFailed = false
@@ -112,13 +109,7 @@ fun FloatingNavBar(
         Surface(
             shape = pillShape,
             tonalElevation = 3.dp,
-            // Never fully transparent: blur alone can still blend into a similarly-toned
-            // background, so a tonal tint is always layered on top of it (lighter when blur is
-            // doing most of the separation work, stronger when there's no blur to help).
-            // surfaceContainerHighest (not surfaceContainer) + a strong border: on an
-            // AMOLED/pure-black background even the lightest container tone at moderate alpha
-            // still read as barely-there, so this leans further into both the fill opacity and
-            // a full-contrast `outline` (not the deliberately-subtle `outlineVariant`) ring.
+            // Always tinted + outlined so the pill stays visible even on AMOLED black.
             color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(
                 alpha = if (blurEnabled && !hazeRenderFailed) 0.85f else 1f,
             ),
@@ -126,19 +117,7 @@ fun FloatingNavBar(
             modifier = blurModifier,
         ) {
             Row(
-                // No fillMaxWidth: the bar shrink-wraps to exactly the 4 items' content width
-                // (then MainActivity centers it) instead of stretching to the screen width and
-                // pushing all the leftover space into the gaps -- SpaceEvenly put it at the
-                // ends, SpaceBetween put it between items, either way stretching this Row is
-                // what created the "spaced out" look. A small fixed gap keeps items snug.
-                //
-                // Padding is equal on every side (not separate horizontal/vertical values) so
-                // the ring around the items reads as one consistent thickness -- and because
-                // both this bar's shape and each pill's own shape are the same percent-based
-                // RoundedCornerShape(50) (radius = height / 2), that equal padding also makes
-                // the outer corner radius come out to exactly the pill's own radius plus this
-                // padding: outerHeight = pillHeight + 2 * navBarInnerPadding, so
-                // outerRadius = outerHeight / 2 = pillRadius + navBarInnerPadding automatically.
+                // Shrink-wraps to the items (no fillMaxWidth) so they stay snug; MainActivity centers it.
                 modifier = Modifier.padding(navBarInnerPadding),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -181,10 +160,7 @@ private fun FloatingNavItem(
     }
     val label = stringResource(destination.labelRes)
 
-    // No animateContentSize here: AnimatedVisibility below already animates the label's width
-    // every frame, so the Surface naturally tracks that same measured size on its own. Layering
-    // animateContentSize on top raced its own interpolation against AnimatedVisibility's,
-    // which is what caused the pill to visibly cut off right as a tap started the animation.
+    // No animateContentSize: it races AnimatedVisibility's width animation and clips the pill.
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(50),
@@ -210,10 +186,7 @@ private fun FloatingNavItem(
                     Text(
                         text = label,
                         maxLines = 1,
-                        // Bounds the pill's max width regardless of label length/locale/font
-                        // scale -- without this the pill (and the Row of all 4 items) can grow
-                        // wider than the outer bar and get hard-clipped by its .clip(pillShape)
-                        // instead of ellipsizing gracefully.
+                        // Caps width so long labels/font scales ellipsize instead of clipping.
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.widthIn(max = 96.dp),
                     )

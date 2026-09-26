@@ -10,6 +10,7 @@ import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.logMissingAdvertisingCapabilities
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -31,21 +32,7 @@ class LegacyAdvertisementService(
         _bluetoothAdapter = context.bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _advertiser = _bluetoothAdapter!!.bluetoothLeAdvertiser
-            logMissingAdvertisingCapabilities(_bluetoothAdapter!!)
-        }
-    }
-
-    // Diagnostic-only (mirrors the old checkHardware() log lines) -- never gates advertising,
-    // just gives a root cause in logcat if a device misbehaves due to a missing BLE 5 capability.
-    private fun logMissingAdvertisingCapabilities(adapter: BluetoothAdapter) {
-        if (!adapter.isMultipleAdvertisementSupported) {
-            Log.e(_logTag, "Adapter does not support isMultipleAdvertisementSupported")
-        }
-        if (!adapter.isOffloadedFilteringSupported) {
-            Log.e(_logTag, "Adapter does not support isOffloadedFilteringSupported")
-        }
-        if (!adapter.isOffloadedScanBatchingSupported) {
-            Log.e(_logTag, "Adapter does not support isOffloadedScanBatchingSupported")
+            _bluetoothAdapter!!.logMissingAdvertisingCapabilities(_logTag)
         }
     }
 

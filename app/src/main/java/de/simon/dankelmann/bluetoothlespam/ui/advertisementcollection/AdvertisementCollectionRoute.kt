@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
-import de.simon.dankelmann.bluetoothlespam.Database.BuiltInCollectionDefinition
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
 import de.simon.dankelmann.bluetoothlespam.Database.builtInCollectionDefinitions
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
@@ -41,7 +40,7 @@ fun AdvertisementCollectionRoute(
     }
 
     AdvertisementCollectionScreen(
-        premadeItems = buildAdvertisementCollectionItems(context, onNavigateToAdvertisement),
+        premadeItems = remember { buildAdvertisementCollectionItems(context, onNavigateToAdvertisement) },
         customItems = customGroups.map { group ->
             AdvertisementCollectionItem(
                 title = group.title,
@@ -108,7 +107,7 @@ private fun buildAdvertisementCollectionItems(
         navigateToAdvertisementWithType(context, advertisementSetTypes, title, onNavigateToAdvertisement)
     }
 
-    return builtInCollectionDefinitions.map { definition: BuiltInCollectionDefinition ->
+    return builtInCollectionDefinitions.map { definition ->
         val meta = builtInCollectionCardMeta.getValue(definition.title)
         AdvertisementCollectionItem(
             title = meta.displayTitle,

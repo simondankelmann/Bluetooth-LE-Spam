@@ -64,7 +64,7 @@ class DatabaseHelpersSeedingTest {
             builtIns = database.advertisementSetCollectionDao().getBuiltInCollections()
 
             val fastPair = builtIns.first { it.title == "Fast Pair Collection" }
-            val fastPairWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(fastPair.id)
+            val fastPairWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(fastPair.id)!!
             fastPairListCount = fastPairWithLists.lists.size
             fastPairListTitlesBlank = fastPairWithLists.lists.any { it.title.isBlank() }
 
@@ -72,7 +72,7 @@ class DatabaseHelpersSeedingTest {
             fastPairDeviceListId = fastPairDeviceList.id
 
             val kitchenSink = builtIns.first { it.title == "Kitchen Sink Collection" }
-            val kitchenSinkWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(kitchenSink.id)
+            val kitchenSinkWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(kitchenSink.id)!!
             kitchenSinkContainsFastPairDeviceList = kitchenSinkWithLists.lists.any { it.id == fastPairDeviceListId }
 
             fastPairDeviceSetCount = database.advertisementSetDao()

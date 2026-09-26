@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -182,14 +183,8 @@ class MainActivity : AppCompatActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
-                // The 4 primary tabs (Start/AdvertisementCollection/SpamDetector/Preferences,
-                // Preferences as a 4th tab being a pre-existing deviation from a strict "3
-                // primary destinations" reading, kept as-is, plan §3) all live as pages of one
-                // HorizontalPager hosted at the START route, so real finger-tracking drag
-                // between them comes for free from the pager itself instead of a hand-rolled
-                // gesture. Everything else is a detail screen pushed on top, with its own
-                // back-button app bar. Every route gets a title bar; only detail routes get the
-                // back arrow on it.
+                // The 4 top-level tabs are pages of one HorizontalPager hosted at START (free
+                // finger-tracking swipes); everything else is a detail screen pushed on top.
                 val isTopLevel = currentRoute == null || currentRoute == SpecterDestinations.START
                 val pagerState = rememberPagerState(pageCount = { floatingNavDestinations.size })
                 val coroutineScope = rememberCoroutineScope()
@@ -227,14 +222,8 @@ class MainActivity : AppCompatActivity() {
                             popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
                         ) {
                             composable(SpecterDestinations.START) {
-                                // All 4 tabs as pages of one pager -- real finger-tracking
-                                // drag between them, content visibly following the gesture
-                                // like a seamless carousel, rather than a fixed-duration
-                                // transition that only plays after the gesture ends. All
-                                // pages stay composed (beyondViewportPageCount) so each
-                                // tab's own state/scroll position survives swiping away and
-                                // back, same as the FloatingNavBar tap used to preserve via
-                                // NavHost's saveState.
+                                // All pages stay composed so each tab keeps its state/scroll
+                                // position when swiped away and back.
                                 HorizontalPager(
                                     state = pagerState,
                                     modifier = Modifier.fillMaxSize(),
@@ -264,23 +253,17 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
 
-                    if (isTopLevel) {
-                        val currentTabRoute = floatingNavDestinations.getOrNull(pagerState.currentPage)?.route
-                        SpecterTopAppBar(
-                            title = topLevelRouteTitles[currentTabRoute] ?: "",
-                            hazeState = hazeState,
-                            blurEnabled = blurEnabled,
-                            modifier = Modifier.align(Alignment.TopCenter),
-                        )
-                    } else {
-                        SpecterTopAppBar(
-                            title = detailRouteTitles[currentRoute] ?: "",
-                            hazeState = hazeState,
-                            blurEnabled = blurEnabled,
-                            onBackClicked = { navController.navigateUp() },
-                            modifier = Modifier.align(Alignment.TopCenter),
-                        )
-                    }
+                    SpecterTopAppBar(
+                        title = if (isTopLevel) {
+                            stringResource(floatingNavDestinations[pagerState.currentPage].labelRes)
+                        } else {
+                            detailRouteTitles[currentRoute] ?: ""
+                        },
+                        hazeState = hazeState,
+                        blurEnabled = blurEnabled,
+                        onBackClicked = if (isTopLevel) null else ({ navController.navigateUp() }),
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
 
                     if (isTopLevel) {
                         FloatingNavBar(
@@ -358,14 +341,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-// Same labels as the FloatingNavBar's own items (bottom_nav_start/advertise/detect, menu_preferences).
-private val topLevelRouteTitles = mapOf(
-    SpecterDestinations.START to "Info",
-    SpecterDestinations.ADVERTISEMENT_COLLECTION to "Advertise",
-    SpecterDestinations.SPAM_DETECTOR to "Detect",
-    SpecterDestinations.PREFERENCES to "Settings",
-)
-
 private val detailRouteTitles = mapOf(
     SpecterDestinations.ADVERTISEMENT to "Advertisement",
     SpecterDestinations.GROUP_EDITOR to "Create custom group",
@@ -382,20 +357,7 @@ private fun SpecterTopAppBar(
     modifier: Modifier = Modifier,
 ) {
     val hazeStyle = HazeMaterials.thin()
-    var hazeRenderFailed = false
-    val blurModifier = if (blurEnabled && !hazeRenderFailed) {
-        try {
-            Modifier.hazeEffect(state = hazeState) { style = hazeStyle }
-        } catch (e: Exception) {
-            // Best-effort: catches synchronous failures during modifier/style construction.
-            // GPU-level render failures on unaccelerated hardware happen later in the draw
-            // phase and aren't guaranteed to be caught here.
-            hazeRenderFailed = true
-            Modifier
-        }
-    } else {
-        Modifier
-    }
+    val blurModifier = if (blurEnabled) Modifier.hazeEffect(state = hazeState) { style = hazeStyle } else Modifier
 
     TopAppBar(
         title = { Text(title) },
@@ -409,7 +371,7 @@ private fun SpecterTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             // Transparent + blur when it renders; otherwise the same opaque tonal fallback the
             // floating nav bar uses, so the title stays legible either way.
-            containerColor = if (blurEnabled && !hazeRenderFailed) {
+            containerColor = if (blurEnabled) {
                 Color.Transparent
             } else {
                 MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.96f)

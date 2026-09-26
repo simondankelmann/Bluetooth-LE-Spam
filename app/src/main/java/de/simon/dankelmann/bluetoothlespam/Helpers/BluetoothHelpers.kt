@@ -3,6 +3,7 @@ package de.simon.dankelmann.bluetoothlespam.Helpers
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.R
@@ -17,6 +18,14 @@ class BluetoothHelpers {
             (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
 
         fun Context.bluetoothAdapter(): BluetoothAdapter? = this.bluetoothManager()?.adapter
+
+        // Diagnostic-only -- never gates advertising, just gives a root cause in logcat if a
+        // device misbehaves due to a missing BLE capability.
+        fun BluetoothAdapter.logMissingAdvertisingCapabilities(logTag: String) {
+            if (!isMultipleAdvertisementSupported) Log.e(logTag, "Adapter does not support isMultipleAdvertisementSupported")
+            if (!isOffloadedFilteringSupported) Log.e(logTag, "Adapter does not support isOffloadedFilteringSupported")
+            if (!isOffloadedScanBatchingSupported) Log.e(logTag, "Adapter does not support isOffloadedScanBatchingSupported")
+        }
 
         fun Context.isBluetooth5Supported(): Boolean {
             val bluetoothAdapter = this.bluetoothAdapter() ?: return false
