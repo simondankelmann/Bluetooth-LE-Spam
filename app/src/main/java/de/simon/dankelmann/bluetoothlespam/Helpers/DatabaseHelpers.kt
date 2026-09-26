@@ -326,16 +326,15 @@ class DatabaseHelpers {
                         ).toInt()
                         typeToListId[type] = listId
 
-                        setsForType.forEachIndexed { index, setEntity ->
-                            database.associationListSetDao().insertItem(
-                                AssociationListSetEntity(
-                                    id = 0,
-                                    advertisementSetId = setEntity.id,
-                                    advertisementSetListId = listId,
-                                    position = index,
-                                ),
+                        val associations = setsForType.mapIndexed { index, setEntity ->
+                            AssociationListSetEntity(
+                                id = 0,
+                                advertisementSetId = setEntity.id,
+                                advertisementSetListId = listId,
+                                position = index,
                             )
                         }
+                        database.associationListSetDao().insertAll(*associations.toTypedArray())
                     }
                 }
 
@@ -344,24 +343,28 @@ class DatabaseHelpers {
                     AdvertisementSetCollectionEntity(id = 0, title = definition.title, isCustom = false),
                 ).toInt()
 
-                definition.types.forEachIndexed { index, type ->
-                    val listId = typeToListId[type] ?: return@forEachIndexed
-                    database.associationCollectionListDao().insertItem(
-                        AssociatonCollectionListEntity(
-                            id = 0,
-                            advertisementSetCollectionId = collectionId,
-                            advertisementSetListId = listId,
-                            position = index,
-                        ),
+                val associations = definition.types.mapIndexedNotNull { index, type ->
+                    val listId = typeToListId[type] ?: return@mapIndexedNotNull null
+                    AssociatonCollectionListEntity(
+                        id = 0,
+                        advertisementSetCollectionId = collectionId,
+                        advertisementSetListId = listId,
+                        position = index,
                     )
+                }
+                if (associations.isNotEmpty()) {
+                    database.associationCollectionListDao().insertAll(*associations.toTypedArray())
                 }
             }
         }
 
         fun getAllAdvertisementSetsForList(listId: Int): List<AdvertisementSet> {
             val database = AppDatabase.getInstance()
-            val setEntities = database.associationListSetDao().findByListId(listId)
-                .map { association -> database.advertisementSetDao().findById(association.advertisementSetId) }
+            // findByListId is already ORDER BY position; loadAllByIds's WHERE IN doesn't
+            // preserve that order, so re-sort the batched result to match it.
+            val orderedSetIds = database.associationListSetDao().findByListId(listId).map { it.advertisementSetId }
+            val entitiesById = database.advertisementSetDao().loadAllByIds(orderedSetIds.toIntArray()).associateBy { it.id }
+            val setEntities = orderedSetIds.mapNotNull { entitiesById[it] }
             return getAdvertisementSetListFromEntities(setEntities)
         }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.ui.theme.FloatingNavBarClearance
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 import de.simon.dankelmann.bluetoothlespam.ui.theme.ThemeModeOption
 import de.simon.dankelmann.bluetoothlespam.ui.theme.ThemeModePicker
 import de.simon.dankelmann.bluetoothlespam.ui.theme.ThemeSwatchPicker
@@ -67,14 +68,23 @@ fun PreferencesScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        // Bottom padding includes FloatingNavBarClearance so the last card can scroll clear of
-        // the floating nav bar pill instead of staying stuck underneath it.
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp + FloatingNavBarClearance),
+        // Top/bottom padding include SpecterTopAppBarClearance/FloatingNavBarClearance so the
+        // first/last card scrolls clear of the floating title bar and nav pill instead of
+        // staying stuck underneath either one.
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp + SpecterTopAppBarClearance,
+            bottom = 16.dp + FloatingNavBarClearance,
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item { SectionHeader("Appearance") }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Both pickers are now bordered pills (ThemeSwatchPicker matches ThemeModePicker's
+            // own 28.dp/outlineVariant treatment) -- 8dp read as too tight once there were two
+            // visible borders stacked instead of one, so the gap between them is a bit wider.
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 ThemeModePicker(selected = themeMode, onSelected = onThemeModeSelected)
                 ThemeSwatchPicker(selectedSeedColor = seedColorArgb, onSeedColorSelected = onSeedColorSelected)
             }
@@ -123,7 +133,10 @@ fun PreferencesScreen(
                     )
                     OutlinedTextField(
                         value = advertisingIntervalMs,
-                        onValueChange = onAdvertisingIntervalChanged,
+                        // Number keyboard is a soft-keyboard hint only -- it doesn't block a
+                        // hardware keyboard or paste, so digits are filtered explicitly here
+                        // (equivalent to the old EditTextPreference's android:digits filter).
+                        onValueChange = { input -> onAdvertisingIntervalChanged(input.filter(Char::isDigit)) },
                         label = { Text("Advertisement Duration (ms)") },
                         supportingText = { Text("Recommended: 1000 - 10000") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 
 /** A pickable row on the Manage Quick Start screen -- one per premade or custom group. */
 data class QuickStartPickerItem(
@@ -38,7 +39,10 @@ fun ManageQuickStartScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
+        // Top padding is SpecterTopAppBarClearance: the title bar floats/blurs on top of
+        // content rather than reserving space (see MainActivity), so without this the first
+        // row renders underneath it.
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp + SpecterTopAppBarClearance, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {

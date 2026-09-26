@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -22,7 +23,12 @@ fun ManageQuickStartRoute() {
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            val dao = AppDatabase.getInstance().advertisementSetCollectionDao()
+            val database = AppDatabase.getInstance()
+            // Migration_2_3 seeds these tables on its own background thread that can still be
+            // running after the migration itself returns (see StartScreen's checkDatabase) --
+            // wait it out rather than loading against a still-empty DB.
+            while (database.isSeeding) delay(500)
+            val dao = database.advertisementSetCollectionDao()
             premadeGroups = dao.getBuiltInCollections()
             customGroups = dao.getCustomCollections()
         }

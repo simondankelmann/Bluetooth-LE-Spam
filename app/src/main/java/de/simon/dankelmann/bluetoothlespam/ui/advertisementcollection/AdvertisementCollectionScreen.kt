@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import de.simon.dankelmann.bluetoothlespam.ui.theme.FloatingNavBarClearance
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 
 /** One selectable attack profile card on the Advertisement Collection screen. */
 data class AdvertisementCollectionItem(
@@ -45,12 +47,11 @@ data class AdvertisementCollectionItem(
 
 @Composable
 fun AdvertisementCollectionScreen(
-    description: String,
     premadeItems: List<AdvertisementCollectionItem>,
     customItems: List<AdvertisementCollectionItem>,
     onAddClicked: () -> Unit,
 ) {
-    val expandedCategories = remember { mutableStateMapOf("Premade Groups" to true, "Custom Groups" to true) }
+    val expandedCategories = remember { mutableStateMapOf("Custom Groups" to true) }
 
     Scaffold(
         floatingActionButton = {
@@ -58,38 +59,32 @@ fun AdvertisementCollectionScreen(
                 onClick = onAddClicked,
                 modifier = Modifier.padding(bottom = FloatingNavBarClearance),
             ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Choose what to advertise")
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Create custom group")
             }
         },
         containerColor = MaterialTheme.colorScheme.background,
+        // Both MainActivity's title bar and the floating nav pill blur on top of content rather
+        // than reserving space -- Scaffold's own default window-inset padding would stack an
+        // extra gap on top of the explicit SpecterTopAppBarClearance/FloatingNavBarClearance
+        // this screen's own contentPadding already adds below.
+        contentWindowInsets = WindowInsets(0.dp),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            // Bottom padding includes FloatingNavBarClearance: the nav bar floats on top of
-            // content rather than reserving space (see MainActivity), so without this the last
-            // card in a scrolled-to-the-end list (e.g. the last Custom Group) has nowhere to
-            // scroll to and stays stuck underneath the pill.
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp + FloatingNavBarClearance),
+            // Top/bottom padding include SpecterTopAppBarClearance/FloatingNavBarClearance so
+            // the first/last card scrolls clear of the floating title bar and nav pill instead
+            // of staying stuck underneath either one.
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp + SpecterTopAppBarClearance,
+                bottom = 16.dp + FloatingNavBarClearance,
+            ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
-                Text(text = description, style = MaterialTheme.typography.bodyMedium)
-            }
-
-            item {
-                CategoryHeaderRow(
-                    title = "Premade Groups",
-                    expanded = expandedCategories["Premade Groups"] == true,
-                    onToggle = {
-                        expandedCategories["Premade Groups"] = expandedCategories["Premade Groups"] != true
-                    },
-                )
-            }
-            if (expandedCategories["Premade Groups"] == true) {
-                items(premadeItems) { item -> AdvertisementCollectionCard(item) }
-            }
+            items(premadeItems) { item -> AdvertisementCollectionCard(item) }
 
             if (customItems.isNotEmpty()) {
                 item {

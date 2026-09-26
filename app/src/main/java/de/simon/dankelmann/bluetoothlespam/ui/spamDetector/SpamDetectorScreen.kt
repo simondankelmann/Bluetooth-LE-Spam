@@ -37,6 +37,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.ui.theme.FloatingNavBarClearance
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 
 /**
  * Core migration of `SpamDetectorFragment`'s content (plan §5/§5a/§5b) — single LazyColumn with
@@ -51,9 +52,15 @@ fun SpamDetectorScreen(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        // Bottom padding includes FloatingNavBarClearance so the last card can scroll clear of
-        // the floating nav bar pill instead of staying stuck underneath it.
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp + FloatingNavBarClearance),
+        // Top/bottom padding include SpecterTopAppBarClearance/FloatingNavBarClearance so the
+        // first/last card scrolls clear of the floating title bar and nav pill instead of
+        // staying stuck underneath either one.
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp + SpecterTopAppBarClearance,
+            bottom = 16.dp + FloatingNavBarClearance,
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {

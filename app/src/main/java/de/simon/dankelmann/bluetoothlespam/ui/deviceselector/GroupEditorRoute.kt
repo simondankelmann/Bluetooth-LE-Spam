@@ -13,6 +13,7 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCol
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetListEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociatonCollectionListEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,7 +27,12 @@ fun GroupEditorRoute(onSaved: () -> Unit) {
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            collections = AppDatabase.getInstance().advertisementSetCollectionDao().getAllCollectionsWithLists()
+            val database = AppDatabase.getInstance()
+            // Migration_2_3 seeds these tables on its own background thread that can still be
+            // running after the migration itself returns (see StartScreen's checkDatabase) --
+            // wait it out rather than loading against a still-empty DB.
+            while (database.isSeeding) delay(500)
+            collections = database.advertisementSetCollectionDao().getAllCollectionsWithLists()
         }
     }
 

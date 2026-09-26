@@ -34,6 +34,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import de.simon.dankelmann.bluetoothlespam.Database.Dao.CollectionWithLists
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetListEntity
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 
 /**
  * Group Editor (plan §8) — pick lists from any existing collection (built-in or custom) to
@@ -51,7 +52,10 @@ fun GroupEditorScreen(
     onToggleList: (AdvertisementSetListEntity) -> Unit,
     onSave: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Top padding is SpecterTopAppBarClearance: the title bar floats/blurs on top of content
+    // rather than reserving space (see MainActivity), so without this the name field renders
+    // underneath it.
+    Column(modifier = Modifier.fillMaxSize().padding(top = SpecterTopAppBarClearance)) {
         OutlinedTextField(
             value = groupName,
             onValueChange = onGroupNameChanged,
@@ -140,6 +144,10 @@ private fun CollectionRow(
             Icon(
                 imageVector = Icons.Filled.ExpandMore,
                 contentDescription = null,
+                // Explicit tint -- without one this defaults to the ambient content color,
+                // which on this screen ends up close enough to the row background to be hard
+                // to spot as a "this expands" affordance.
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.rotate(rotation),
             )
         }

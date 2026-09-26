@@ -13,11 +13,12 @@ class StartViewModel : ViewModel() {
 
     val bluetoothSupport = MutableLiveData<String>("-")
 
-    val allPermissionsGranted = MutableLiveData<Boolean>(false)
+    // null = not checked yet (rendered as the loading state on the Requirements card)
+    val allPermissionsGranted = MutableLiveData<Boolean?>(null)
 
-    val bluetoothAdapterIsReady = MutableLiveData<Boolean>(false)
+    val bluetoothAdapterIsReady = MutableLiveData<Boolean?>(null)
 
-    val databaseIsReady = MutableLiveData<Boolean>(false)
+    val databaseIsReady = MutableLiveData<Boolean?>(null)
 
     val missingRequirements = MutableLiveData<MutableList<String>>(mutableListOf())
 

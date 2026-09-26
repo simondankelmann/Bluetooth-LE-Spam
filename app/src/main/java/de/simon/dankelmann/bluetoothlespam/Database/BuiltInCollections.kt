@@ -62,6 +62,7 @@ val builtInCollectionDefinitions: List<BuiltInCollectionDefinition> = listOf(
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE,
             AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH,
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
             AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
             AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,

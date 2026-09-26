@@ -22,12 +22,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -66,6 +70,7 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.ui.theme.FloatingNavBarClearance
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 import de.simon.dankelmann.bluetoothlespam.ui.theme.LocalExtendedColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -131,6 +136,7 @@ fun StartRoute(
             scope.launch(Dispatchers.IO) {
                 val database = AppDatabase.getInstance()
                 val collectionWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(collection.id)
+                    ?: return@launch
                 database.advertisementSetCollectionDao().updateLastUsedAt(collection.id, System.currentTimeMillis())
 
                 val listEntities = collectionWithLists.lists
@@ -292,19 +298,26 @@ fun StartScreen(
     val androidVersion by viewModel.androidVersion.observeAsState("-")
     val sdkVersion by viewModel.sdkVersion.observeAsState("-")
     val bluetoothSupport by viewModel.bluetoothSupport.observeAsState("-")
-    val allPermissionsGranted by viewModel.allPermissionsGranted.observeAsState(false)
-    val bluetoothAdapterIsReady by viewModel.bluetoothAdapterIsReady.observeAsState(false)
-    val databaseIsReady by viewModel.databaseIsReady.observeAsState(false)
+    val allPermissionsGranted by viewModel.allPermissionsGranted.observeAsState()
+    val bluetoothAdapterIsReady by viewModel.bluetoothAdapterIsReady.observeAsState()
+    val databaseIsReady by viewModel.databaseIsReady.observeAsState()
     val missingRequirements by viewModel.missingRequirements.observeAsState(mutableListOf())
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        // Bottom padding includes FloatingNavBarClearance so the last card can scroll clear of
-        // the floating nav bar pill instead of staying stuck underneath it.
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp + FloatingNavBarClearance),
+        // Top padding includes SpecterTopAppBarClearance and bottom includes
+        // FloatingNavBarClearance -- both bars float/blur on top of content rather than
+        // reserving space (see MainActivity), so without this the first/last card ends up
+        // stuck underneath one of them.
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 16.dp + SpecterTopAppBarClearance,
+            bottom = 16.dp + FloatingNavBarClearance,
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (allPermissionsGranted != true) {
+        if (allPermissionsGranted == false) {
             item { PermissionRationaleCard(onGrantPermissions = onGrantPermissions) }
         }
 
@@ -330,9 +343,9 @@ fun StartScreen(
         item {
             RequirementsCard(
                 missingRequirements = missingRequirements ?: emptyList(),
-                allPermissionsGranted = allPermissionsGranted == true,
-                bluetoothAdapterIsReady = bluetoothAdapterIsReady == true,
-                databaseIsReady = databaseIsReady == true,
+                permissionsStatus = requirementStatus(allPermissionsGranted),
+                bluetoothStatus = requirementStatus(bluetoothAdapterIsReady),
+                databaseStatus = if (isSeeding == true) RequirementStatus.Loading else requirementStatus(databaseIsReady),
                 onRecheckPermissions = onRecheckPermissions,
                 onRecheckBluetooth = onRecheckBluetooth,
                 onRecheckDatabase = onRecheckDatabase,
@@ -510,9 +523,9 @@ private fun QuickStartSection(
 @Composable
 private fun RequirementsCard(
     missingRequirements: List<String>,
-    allPermissionsGranted: Boolean,
-    bluetoothAdapterIsReady: Boolean,
-    databaseIsReady: Boolean,
+    permissionsStatus: RequirementStatus,
+    bluetoothStatus: RequirementStatus,
+    databaseStatus: RequirementStatus,
     onRecheckPermissions: () -> Unit,
     onRecheckBluetooth: () -> Unit,
     onRecheckDatabase: () -> Unit,
@@ -520,13 +533,7 @@ private fun RequirementsCard(
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Requirements", style = MaterialTheme.typography.titleMedium)
-            if (missingRequirements.isEmpty()) {
-                Text(
-                    text = "All requirements are met",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
-            } else {
+            if (missingRequirements.isNotEmpty()) {
                 Text(
                     text = "Missing Requirements:",
                     style = MaterialTheme.typography.bodyMedium,
@@ -549,19 +556,19 @@ private fun RequirementsCard(
                 StatusRow(
                     label = "Permissions",
                     iconRes = R.drawable.key_24,
-                    isReady = allPermissionsGranted,
+                    status = permissionsStatus,
                     onClick = onRecheckPermissions,
                 )
                 StatusRow(
                     label = "Bluetooth Adapter",
                     iconRes = R.drawable.bluetooth,
-                    isReady = bluetoothAdapterIsReady,
+                    status = bluetoothStatus,
                     onClick = onRecheckBluetooth,
                 )
                 StatusRow(
                     label = "Database",
                     iconRes = R.drawable.data_array,
-                    isReady = databaseIsReady,
+                    status = databaseStatus,
                     onClick = onRecheckDatabase,
                 )
             }
@@ -569,25 +576,40 @@ private fun RequirementsCard(
     }
 }
 
+private enum class RequirementStatus { Ready, NotReady, Loading }
+
+/** null = the check hasn't reported yet. */
+private fun requirementStatus(isReady: Boolean?) = when (isReady) {
+    true -> RequirementStatus.Ready
+    false -> RequirementStatus.NotReady
+    null -> RequirementStatus.Loading
+}
+
 @Composable
 private fun StatusRow(
     label: String,
     iconRes: Int,
-    isReady: Boolean,
+    status: RequirementStatus,
     onClick: () -> Unit,
 ) {
-    val extendedColors = LocalExtendedColors.current
-    val (background, onColor) = if (isReady) {
-        extendedColors.success to extendedColors.onSuccess
-    } else {
-        extendedColors.warning to extendedColors.onWarning
+    val colors = MaterialTheme.colorScheme
+    val (background, onColor) = when (status) {
+        RequirementStatus.Ready -> colors.primary to colors.onPrimary
+        RequirementStatus.NotReady -> colors.primaryContainer to colors.onPrimaryContainer
+        RequirementStatus.Loading -> colors.surfaceVariant to colors.onSurfaceVariant
+    }
+    val stateText = when (status) {
+        RequirementStatus.Ready -> "OK"
+        RequirementStatus.NotReady -> "Needs attention"
+        RequirementStatus.Loading -> "Checking"
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .semantics { contentDescription = "$label: ${if (isReady) "OK" else "Needs attention"}" },
+            .semantics { contentDescription = "$label: $stateText" },
         colors = CardDefaults.cardColors(containerColor = background),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -607,8 +629,29 @@ private fun StatusRow(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
                 color = onColor,
-                modifier = Modifier.padding(start = 16.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
             )
+            when (status) {
+                RequirementStatus.Ready -> Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = null,
+                    tint = onColor,
+                    modifier = Modifier.size(24.dp),
+                )
+                RequirementStatus.NotReady -> Icon(
+                    imageVector = Icons.Filled.Cancel,
+                    contentDescription = null,
+                    tint = onColor,
+                    modifier = Modifier.size(24.dp),
+                )
+                RequirementStatus.Loading -> CircularProgressIndicator(
+                    color = onColor,
+                    strokeWidth = 2.5.dp,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
         }
     }
 }

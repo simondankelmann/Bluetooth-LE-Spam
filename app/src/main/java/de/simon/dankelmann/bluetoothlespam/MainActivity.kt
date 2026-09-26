@@ -7,18 +7,23 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,9 +31,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.lifecycleScope
@@ -47,9 +54,9 @@ import de.simon.dankelmann.bluetoothlespam.Helpers.LogFileManager
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.Helpers.ThemeManager
 import de.simon.dankelmann.bluetoothlespam.Navigation.SpecterDestinations
+import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanForegroundService
 import de.simon.dankelmann.bluetoothlespam.ui.advertisement.AdvertisementRoute
 import de.simon.dankelmann.bluetoothlespam.ui.advertisementcollection.AdvertisementCollectionRoute
-import de.simon.dankelmann.bluetoothlespam.ui.deviceselector.DeviceSelectorRoute
 import de.simon.dankelmann.bluetoothlespam.ui.deviceselector.GroupEditorRoute
 import de.simon.dankelmann.bluetoothlespam.ui.preferences.PreferencesRoute
 import de.simon.dankelmann.bluetoothlespam.ui.quickstart.ManageQuickStartRoute
@@ -57,9 +64,12 @@ import de.simon.dankelmann.bluetoothlespam.ui.spamDetector.SpamDetectorRoute
 import de.simon.dankelmann.bluetoothlespam.ui.start.StartRoute
 import de.simon.dankelmann.bluetoothlespam.ui.theme.FloatingNavBar
 import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTheme
+import de.simon.dankelmann.bluetoothlespam.ui.theme.floatingNavDestinations
 import de.simon.dankelmann.bluetoothlespam.ui.theme.TxPowerSlider
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
@@ -172,76 +182,110 @@ class MainActivity : AppCompatActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
-                // The FloatingNavBar covers Start/AdvertisementCollection/SpamDetector/Preferences
-                // (Preferences as a 4th tab is a pre-existing deviation from a strict "3 primary
-                // destinations" reading, kept as-is, plan §3) — everything else is a detail screen
-                // with its own back-button app bar.
-                val isTopLevel = currentRoute == null || currentRoute in topLevelRoutes
+                // The 4 primary tabs (Start/AdvertisementCollection/SpamDetector/Preferences,
+                // Preferences as a 4th tab being a pre-existing deviation from a strict "3
+                // primary destinations" reading, kept as-is, plan §3) all live as pages of one
+                // HorizontalPager hosted at the START route, so real finger-tracking drag
+                // between them comes for free from the pager itself instead of a hand-rolled
+                // gesture. Everything else is a detail screen pushed on top, with its own
+                // back-button app bar. Every route gets a title bar; only detail routes get the
+                // back arrow on it.
+                val isTopLevel = currentRoute == null || currentRoute == SpecterDestinations.START
+                val pagerState = rememberPagerState(pageCount = { floatingNavDestinations.size })
+                val coroutineScope = rememberCoroutineScope()
 
                 LaunchedEffect(pendingDeepLinkDestination) {
                     pendingDeepLinkDestination?.let { destination ->
-                        navController.navigate(destination)
+                        val tabIndex = floatingNavDestinations.indexOfFirst { it.route == destination }
+                        if (tabIndex != -1) {
+                            navController.popBackStack(SpecterDestinations.START, inclusive = false)
+                            pagerState.scrollToPage(tabIndex)
+                        } else {
+                            navController.navigate(destination)
+                        }
                         pendingDeepLinkDestination = null
                     }
                 }
 
-                // Plain Box, not Scaffold: Scaffold reserves a background-painted strip for
-                // bottomBar and pads content away from it. A FLOATING nav bar means content
-                // extends the full screen and the pill overlays on top — nothing but the pill
-                // itself should paint a background down here.
+                // Plain Box, not Scaffold: Scaffold reserves background-painted strips for
+                // topBar/bottomBar and pads content away from them. Both bars FLOAT/blur on top
+                // of content instead, so content extends the full screen behind both and each
+                // screen adds its own top/bottom clearance padding (SpecterTopAppBarClearance,
+                // FloatingNavBarClearance) so nothing actually renders underneath either one.
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        if (!isTopLevel) {
-                            DetailTopAppBar(
-                                title = detailRouteTitles[currentRoute] ?: "",
-                                onBackClicked = { navController.navigateUp() },
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxSize()
-                                .then(if (isTopLevel) Modifier.statusBarsPadding() else Modifier)
-                                .hazeSource(state = hazeState),
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .hazeSource(state = hazeState),
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = SpecterDestinations.START,
+                            enterTransition = { slideInHorizontally(initialOffsetX = { it }) },
+                            exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) },
+                            popEnterTransition = { slideInHorizontally(initialOffsetX = { -it }) },
+                            popExitTransition = { slideOutHorizontally(targetOffsetX = { it }) },
                         ) {
-                            NavHost(navController = navController, startDestination = SpecterDestinations.START) {
-                                composable(SpecterDestinations.START) {
-                                    StartRoute(
-                                        onNavigateToAdvertisement = { navController.navigate(SpecterDestinations.ADVERTISEMENT) },
-                                        onNavigateToManageQuickStart = { navController.navigate(SpecterDestinations.MANAGE_QUICK_START) },
-                                    )
+                            composable(SpecterDestinations.START) {
+                                // All 4 tabs as pages of one pager -- real finger-tracking
+                                // drag between them, content visibly following the gesture
+                                // like a seamless carousel, rather than a fixed-duration
+                                // transition that only plays after the gesture ends. All
+                                // pages stay composed (beyondViewportPageCount) so each
+                                // tab's own state/scroll position survives swiping away and
+                                // back, same as the FloatingNavBar tap used to preserve via
+                                // NavHost's saveState.
+                                HorizontalPager(
+                                    state = pagerState,
+                                    modifier = Modifier.fillMaxSize(),
+                                    beyondViewportPageCount = floatingNavDestinations.lastIndex,
+                                ) { page ->
+                                    when (floatingNavDestinations[page].route) {
+                                        SpecterDestinations.START -> StartRoute(
+                                            onNavigateToAdvertisement = { navController.navigate(SpecterDestinations.ADVERTISEMENT) },
+                                            onNavigateToManageQuickStart = { navController.navigate(SpecterDestinations.MANAGE_QUICK_START) },
+                                        )
+                                        SpecterDestinations.ADVERTISEMENT_COLLECTION -> AdvertisementCollectionRoute(
+                                            onNavigateToAdvertisement = { navController.navigate(SpecterDestinations.ADVERTISEMENT) },
+                                            onCreateCustomGroup = { navController.navigate(SpecterDestinations.GROUP_EDITOR) },
+                                        )
+                                        SpecterDestinations.SPAM_DETECTOR -> SpamDetectorRoute()
+                                        SpecterDestinations.PREFERENCES -> PreferencesRoute(onTxPowerClicked = { showSetTxPowerDialog() })
+                                    }
                                 }
-                                composable(SpecterDestinations.ADVERTISEMENT_COLLECTION) {
-                                    AdvertisementCollectionRoute(
-                                        onNavigateToAdvertisement = { navController.navigate(SpecterDestinations.ADVERTISEMENT) },
-                                        onOpenDeviceSelector = { navController.navigate(SpecterDestinations.DEVICE_SELECTOR) },
-                                    )
-                                }
-                                composable(SpecterDestinations.SPAM_DETECTOR) { SpamDetectorRoute() }
-                                composable(SpecterDestinations.ADVERTISEMENT) { AdvertisementRoute() }
-                                composable(SpecterDestinations.PREFERENCES) {
-                                    PreferencesRoute(onTxPowerClicked = { showSetTxPowerDialog() })
-                                }
-                                composable(SpecterDestinations.DEVICE_SELECTOR) {
-                                    DeviceSelectorRoute(
-                                        onNavigateToAdvertisement = { navController.navigate(SpecterDestinations.ADVERTISEMENT) },
-                                        onNavigateToGroupEditor = { navController.navigate(SpecterDestinations.GROUP_EDITOR) },
-                                    )
-                                }
-                                composable(SpecterDestinations.GROUP_EDITOR) {
-                                    GroupEditorRoute(onSaved = { navController.popBackStack() })
-                                }
-                                composable(SpecterDestinations.MANAGE_QUICK_START) {
-                                    ManageQuickStartRoute()
-                                }
+                            }
+                            composable(SpecterDestinations.ADVERTISEMENT) { AdvertisementRoute() }
+                            composable(SpecterDestinations.GROUP_EDITOR) {
+                                GroupEditorRoute(onSaved = { navController.popBackStack() })
+                            }
+                            composable(SpecterDestinations.MANAGE_QUICK_START) {
+                                ManageQuickStartRoute()
                             }
                         }
                     }
 
                     if (isTopLevel) {
+                        val currentTabRoute = floatingNavDestinations.getOrNull(pagerState.currentPage)?.route
+                        SpecterTopAppBar(
+                            title = topLevelRouteTitles[currentTabRoute] ?: "",
+                            hazeState = hazeState,
+                            blurEnabled = blurEnabled,
+                            modifier = Modifier.align(Alignment.TopCenter),
+                        )
+                    } else {
+                        SpecterTopAppBar(
+                            title = detailRouteTitles[currentRoute] ?: "",
+                            hazeState = hazeState,
+                            blurEnabled = blurEnabled,
+                            onBackClicked = { navController.navigateUp() },
+                            modifier = Modifier.align(Alignment.TopCenter),
+                        )
+                    }
+
+                    if (isTopLevel) {
                         FloatingNavBar(
-                            navController = navController,
+                            selectedIndex = pagerState.currentPage,
+                            onTabSelected = { index -> coroutineScope.launch { pagerState.animateScrollToPage(index) } },
                             hazeState = hazeState,
                             blurEnabled = blurEnabled,
                             modifier = Modifier.align(Alignment.BottomCenter),
@@ -256,6 +300,22 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         pendingDeepLinkDestination = intent.getStringExtra(EXTRA_DESTINATION)
+    }
+
+    // Single-Activity app, so onStop() is a reliable "app left the foreground" signal. The
+    // "Detect Spam in Background" preference (default off) gates whether scanning is allowed to
+    // keep running past this point -- off means stop it here, matching the setting's summary
+    // text ("Keep spam detection running once the app leaves the foreground").
+    override fun onStop() {
+        super.onStop()
+        val scanService = (applicationContext as BleSpamApplication).scanService
+        if (scanService.isScanning()) {
+            val backgroundDetectionEnabled =
+                SettingsRepository.getInstance(this).current[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] ?: false
+            if (!backgroundDetectionEnabled) {
+                BluetoothLeScanForegroundService.stopService(this)
+            }
+        }
     }
 
     // Called from PreferencesRoute now that TX power moved out of the toolbar menu.
@@ -298,30 +358,66 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-private val topLevelRoutes = setOf(
-    SpecterDestinations.START,
-    SpecterDestinations.ADVERTISEMENT_COLLECTION,
-    SpecterDestinations.SPAM_DETECTOR,
-    SpecterDestinations.PREFERENCES,
+// Same labels as the FloatingNavBar's own items (bottom_nav_start/advertise/detect, menu_preferences).
+private val topLevelRouteTitles = mapOf(
+    SpecterDestinations.START to "Info",
+    SpecterDestinations.ADVERTISEMENT_COLLECTION to "Advertise",
+    SpecterDestinations.SPAM_DETECTOR to "Detect",
+    SpecterDestinations.PREFERENCES to "Settings",
 )
 
 private val detailRouteTitles = mapOf(
     SpecterDestinations.ADVERTISEMENT to "Advertisement",
-    SpecterDestinations.DEVICE_SELECTOR to "Choose what to advertise",
     SpecterDestinations.GROUP_EDITOR to "Create custom group",
     SpecterDestinations.MANAGE_QUICK_START to "Manage Quick Start",
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DetailTopAppBar(title: String, onBackClicked: () -> Unit) {
+private fun SpecterTopAppBar(
+    title: String,
+    hazeState: HazeState,
+    blurEnabled: Boolean,
+    onBackClicked: (() -> Unit)? = null,
+    modifier: Modifier = Modifier,
+) {
+    val hazeStyle = HazeMaterials.thin()
+    var hazeRenderFailed = false
+    val blurModifier = if (blurEnabled && !hazeRenderFailed) {
+        try {
+            Modifier.hazeEffect(state = hazeState) { style = hazeStyle }
+        } catch (e: Exception) {
+            // Best-effort: catches synchronous failures during modifier/style construction.
+            // GPU-level render failures on unaccelerated hardware happen later in the draw
+            // phase and aren't guaranteed to be caught here.
+            hazeRenderFailed = true
+            Modifier
+        }
+    } else {
+        Modifier
+    }
+
     TopAppBar(
         title = { Text(title) },
         navigationIcon = {
-            IconButton(onClick = onBackClicked) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+            if (onBackClicked != null) {
+                IconButton(onClick = onBackClicked) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                }
             }
         },
-        modifier = Modifier.statusBarsPadding(),
+        colors = TopAppBarDefaults.topAppBarColors(
+            // Transparent + blur when it renders; otherwise the same opaque tonal fallback the
+            // floating nav bar uses, so the title stays legible either way.
+            containerColor = if (blurEnabled && !hazeRenderFailed) {
+                Color.Transparent
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.96f)
+            },
+        ),
+        // No statusBarsPadding here: TopAppBar's own default windowInsets already keep the
+        // title/back-arrow below the status bar while letting its background (and the blur)
+        // paint all the way up through it, for a real edge-to-edge frosted bar.
+        modifier = modifier.fillMaxWidth().then(blurModifier),
     )
 }

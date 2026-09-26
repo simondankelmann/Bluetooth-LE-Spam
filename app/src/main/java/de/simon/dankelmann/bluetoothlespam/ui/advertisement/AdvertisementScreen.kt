@@ -67,6 +67,7 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.R
 import de.simon.dankelmann.bluetoothlespam.ui.theme.LocalExtendedColors
+import de.simon.dankelmann.bluetoothlespam.ui.theme.SpecterTopAppBarClearance
 import de.simon.dankelmann.bluetoothlespam.ui.theme.StatusBadge
 import de.simon.dankelmann.bluetoothlespam.ui.theme.StatusTone
 
@@ -115,7 +116,10 @@ fun AdvertisementScreen(
     // so several rows read as black-on-black in dark mode (same root cause as the Group Editor
     // checkbox-label bug from earlier in this session).
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    // Top padding is SpecterTopAppBarClearance: the title bar floats/blurs on top of content
+    // rather than reserving space (see MainActivity), so without this HeaderSection renders
+    // underneath it.
+    Column(modifier = Modifier.fillMaxSize().padding(top = SpecterTopAppBarClearance)) {
         HeaderSection(
             isAdvertising = isAdvertising,
             target = target,

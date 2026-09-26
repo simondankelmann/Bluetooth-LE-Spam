@@ -12,7 +12,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Database.BuiltInCollectionDefinition
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
+import de.simon.dankelmann.bluetoothlespam.Database.builtInCollectionDefinitions
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.stringResId
@@ -27,7 +29,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun AdvertisementCollectionRoute(
     onNavigateToAdvertisement: () -> Unit,
-    onOpenDeviceSelector: () -> Unit,
+    onCreateCustomGroup: () -> Unit,
 ) {
     val context = LocalContext.current
     var customGroups by remember { mutableStateOf<List<AdvertisementSetCollectionEntity>>(emptyList()) }
@@ -39,7 +41,6 @@ fun AdvertisementCollectionRoute(
     }
 
     AdvertisementCollectionScreen(
-        description = "Select a collection and start BLE advertising",
         premadeItems = buildAdvertisementCollectionItems(context, onNavigateToAdvertisement),
         customItems = customGroups.map { group ->
             AdvertisementCollectionItem(
@@ -50,7 +51,7 @@ fun AdvertisementCollectionRoute(
                 onClick = { launchCustomGroup(context, group.id, onNavigateToAdvertisement) },
             )
         },
-        onAddClicked = onOpenDeviceSelector,
+        onAddClicked = onCreateCustomGroup,
     )
 }
 
@@ -60,6 +61,7 @@ private fun launchCustomGroup(context: Context, groupId: Int, onNavigateToAdvert
     Thread {
         val database = AppDatabase.getInstance()
         val collectionWithLists = database.advertisementSetCollectionDao().getCollectionWithLists(groupId)
+            ?: return@Thread
         val listEntities = collectionWithLists.lists
         val collection = DatabaseHelpers.buildAdvertisementSetCollectionSkeletonFromEntity(collectionWithLists)
             .apply { isLoadingSets = true }
@@ -85,6 +87,19 @@ private fun launchCustomGroup(context: Context, groupId: Int, onNavigateToAdvert
     }.start()
 }
 
+/** UI-only metadata (icon/labels) per [builtInCollectionDefinitions] entry, keyed by title -- the
+ * single source of truth for which types belong to each collection lives in that list. */
+private data class CollectionCardMeta(val displayTitle: String, val targetLabel: String, val distanceLabel: String, val iconRes: Int)
+
+private val builtInCollectionCardMeta: Map<String, CollectionCardMeta> = mapOf(
+    "Fast Pair Collection" to CollectionCardMeta("Fast Pair", "Target: Android", "Distance: Close", R.drawable.ic_android),
+    "Continuity Collection" to CollectionCardMeta("Continuity", "Target: iOS", "Distance: Mixed", R.drawable.apple),
+    "Easy Setup Collection" to CollectionCardMeta("Easy Setup", "Target: Samsung", "Distance: Close", R.drawable.samsung),
+    "Swift Pair Collection" to CollectionCardMeta("Swift Pair", "Target: Windows", "Distance: Close", R.drawable.microsoft),
+    "Lovespouse Collection" to CollectionCardMeta("Lovespouse", "Target: Lovespouse", "Distance: Far", R.drawable.heart),
+    "Kitchen Sink Collection" to CollectionCardMeta("Kitchen Sink", "Target: All", "Distance: Mixed", R.drawable.shuffle),
+)
+
 private fun buildAdvertisementCollectionItems(
     context: Context,
     onNavigateToAdvertisement: () -> Unit,
@@ -93,113 +108,22 @@ private fun buildAdvertisementCollectionItems(
         navigateToAdvertisementWithType(context, advertisementSetTypes, title, onNavigateToAdvertisement)
     }
 
-    return listOf(
+    return builtInCollectionDefinitions.map { definition: BuiltInCollectionDefinition ->
+        val meta = builtInCollectionCardMeta.getValue(definition.title)
         AdvertisementCollectionItem(
-            title = "Fast Pair",
-            targetLabel = "Target: Android",
-            distanceLabel = "Distance: Close",
-            iconRes = R.drawable.ic_android,
+            title = meta.displayTitle,
+            targetLabel = meta.targetLabel,
+            distanceLabel = meta.distanceLabel,
+            iconRes = meta.iconRes,
             onClick = {
-                navigateWithType(
-                    listOf(
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG,
-                    ),
-                    "Fast Pair Collection",
-                )
+                if (definition.title == "Kitchen Sink Collection") {
+                    (context.applicationContext as BleSpamApplication).queueHandler
+                        .setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
+                }
+                navigateWithType(definition.types, definition.title)
             },
-        ),
-        AdvertisementCollectionItem(
-            title = "Continuity",
-            targetLabel = "Target: iOS",
-            distanceLabel = "Distance: Mixed",
-            iconRes = R.drawable.apple,
-            onClick = {
-                navigateWithType(
-                    listOf(
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH,
-                    ),
-                    "Continuity Collection",
-                )
-            },
-        ),
-        AdvertisementCollectionItem(
-            title = "Easy Setup",
-            targetLabel = "Target: Samsung",
-            distanceLabel = "Distance: Close",
-            iconRes = R.drawable.samsung,
-            onClick = {
-                navigateWithType(
-                    listOf(
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
-                    ),
-                    "Easy Setup Collection",
-                )
-            },
-        ),
-        AdvertisementCollectionItem(
-            title = "Swift Pair",
-            targetLabel = "Target: Windows",
-            distanceLabel = "Distance: Close",
-            iconRes = R.drawable.microsoft,
-            onClick = {
-                navigateWithType(
-                    listOf(AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING),
-                    "Swift Pair Collection",
-                )
-            },
-        ),
-        AdvertisementCollectionItem(
-            title = "Lovespouse",
-            targetLabel = "Target: Lovespouse",
-            distanceLabel = "Distance: Far",
-            iconRes = R.drawable.heart,
-            onClick = {
-                navigateWithType(
-                    listOf(
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP,
-                    ),
-                    "Lovespouse Collection",
-                )
-            },
-        ),
-        AdvertisementCollectionItem(
-            title = "Kitchen Sink",
-            targetLabel = "Target: All",
-            distanceLabel = "Distance: Mixed",
-            iconRes = R.drawable.shuffle,
-            onClick = {
-                (context.applicationContext as BleSpamApplication).queueHandler
-                    .setAdvertisementQueueMode(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
-                navigateWithType(
-                    listOf(
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_PHONE_SETUP,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_NON_PRODUCTION,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_FAST_PAIRING_DEBUG,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_WATCH,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_EASY_SETUP_BUDS,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_PLAY,
-                        AdvertisementSetType.ADVERTISEMENT_TYPE_LOVESPOUSE_STOP,
-                    ),
-                    "Kitchen Sink Collection",
-                )
-            },
-        ),
-    )
+        )
+    }
 }
 
 /**

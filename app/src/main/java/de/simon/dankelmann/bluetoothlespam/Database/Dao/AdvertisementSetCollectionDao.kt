@@ -52,9 +52,30 @@ interface AdvertisementSetCollectionDao {
     @Query("UPDATE advertisementsetcollectionentity SET isQuickStart = :isQuickStart, quickStartOrder = :order WHERE id = :id")
     fun setQuickStart(id: Int, isQuickStart: Boolean, order: Int?)
 
-    @Transaction
     @Query("SELECT * FROM advertisementsetcollectionentity WHERE id = :id")
-    fun getCollectionWithLists(id: Int): CollectionWithLists
+    fun findCollectionByIdOrNull(id: Int): AdvertisementSetCollectionEntity?
+
+    // @Relation (used by [getAllCollectionsWithLists] below) has no ordering support, so the
+    // single-collection lookup that actually feeds the live advertising queue order
+    // (DatabaseHelpers.buildAdvertisementSetCollectionSkeletonFromEntity) uses this explicit
+    // join instead, ordered by the junction row's position -- same idea as the sibling
+    // AssociationListSetDao.findByListId.
+    @Query(
+        """
+        SELECT AdvertisementSetListEntity.* FROM AdvertisementSetListEntity
+        INNER JOIN AssociatonCollectionListEntity
+            ON AdvertisementSetListEntity.id = AssociatonCollectionListEntity.advertisementSetListId
+        WHERE AssociatonCollectionListEntity.advertisementSetCollectionId = :collectionId
+        ORDER BY AssociatonCollectionListEntity.position
+        """,
+    )
+    fun getOrderedListsForCollection(collectionId: Int): List<AdvertisementSetListEntity>
+
+    @Transaction
+    fun getCollectionWithLists(id: Int): CollectionWithLists? {
+        val collection = findCollectionByIdOrNull(id) ?: return null
+        return CollectionWithLists(collection, getOrderedListsForCollection(id))
+    }
 
     @Transaction
     @Query("SELECT * FROM advertisementsetcollectionentity ORDER BY title")
