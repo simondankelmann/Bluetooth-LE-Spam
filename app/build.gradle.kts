@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.agp.app)
-    alias(libs.plugins.safeargs)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.compose)
 }
@@ -17,6 +16,7 @@ android {
         targetSdk = compileSdk
         versionCode = 3
         versionName = "1.0.9"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -35,7 +35,8 @@ android {
         }
         release {
             resValue("string", "app_name", app_name)
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -53,7 +54,6 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
         compose = true
         resValues = true
     }
@@ -63,8 +63,24 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    sourceSets {
+        // Room schema JSON (ksp room.schemaLocation above) — MigrationTestHelper loads
+        // expected/target schemas from here to build + validate migration test databases.
+        // Robolectric's unit-test config points at the "debug" variant's merged assets (not a
+        // test-specific assets dir), so this has to live on the debug build type, not
+        // sourceSets.test — scoped to debug only so schemas/ never ships in a release APK.
+        getByName("debug").assets.srcDirs("$projectDir/schemas")
+        getByName("androidTest").assets.srcDirs("$projectDir/schemas")
+    }
 }
 
+
+ksp {
+    // Ground truth for hand-written Migration SQL + lets MigrationTestHelper validate against
+    // the real expected schema instead of a hand-rolled one.
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 
 dependencies {
     implementation(libs.airbnb.lottie)
@@ -72,14 +88,12 @@ dependencies {
 
     implementation(libs.core.ktx)
     implementation(libs.preference.ktx)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.androidx.appcompat)
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
-    implementation(libs.legacy.support)
-    implementation(libs.android.constraintlayout)
+    implementation(libs.androidx.documentfile)
     implementation(libs.google.material)
 
     implementation(libs.room.runtime)
@@ -95,7 +109,7 @@ dependencies {
     //implementation(libs.room.rxjava2)
 
     // optional - RxJava3 support for Room
-    implementation(libs.room.rxjava3)
+    //implementation(libs.room.rxjava3)
 
     // optional - Guava support for Room, including Optional and ListenableFuture
     //implementation(libs.room.guava)
@@ -108,7 +122,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.viewbinding)
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

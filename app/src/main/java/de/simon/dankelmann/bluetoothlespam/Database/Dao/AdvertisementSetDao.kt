@@ -35,4 +35,7 @@ interface AdvertisementSetDao {
 
     @Insert
     fun insertItem(advertisementSetEntity: AdvertisementSetEntity): Long
+
+    @Query("UPDATE advertisementsetentity SET title = :title WHERE id = :id")
+    fun updateTitle(id: Int, title: String)
 }

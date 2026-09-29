@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness1
@@ -69,11 +70,13 @@ fun ThemeModePicker(
                             imageVector = Icons.Rounded.Check,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(28.dp),
                         )
                         Icon(
                             imageVector = option.icon,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            modifier = Modifier.size(28.dp),
                         )
                     }
                 } else {
@@ -81,6 +84,7 @@ fun ThemeModePicker(
                         imageVector = option.icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(28.dp),
                     )
                 }
             }

@@ -2,21 +2,32 @@ package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.os.ParcelUuid
 import androidx.sqlite.db.SupportSQLiteDatabase
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Database.AppDatabase
+import de.simon.dankelmann.bluetoothlespam.Database.builtInCollectionDefinitions
+import de.simon.dankelmann.bluetoothlespam.Database.Dao.CollectionWithLists
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseDataEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseDataManufacturerSpecificDataEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseDataServiceDataEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseSettingsEntity
+import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetCollectionEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetEntity
+import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisementSetListEntity
+import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociationListSetEntity
+import de.simon.dankelmann.bluetoothlespam.Database.Entities.AssociatonCollectionListEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertisingSetParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Database.Entities.PeriodicAdvertisingParametersEntity
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetRange
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementTarget
+import de.simon.dankelmann.bluetoothlespam.Enums.stringResId
 import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseData
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertiseSettings
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
+import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisingSetParameters
 import de.simon.dankelmann.bluetoothlespam.Models.ManufacturerSpecificData
 import de.simon.dankelmann.bluetoothlespam.Models.PeriodicAdvertisingParameters
@@ -142,6 +153,27 @@ class DatabaseHelpers {
             return advertiseDataId
         }
 
+        /**
+         * Renames a Swift Pair entry (Allow Custom Swift Pair Names setting) — persists the new
+         * title and rebuilds the manufacturer-specific-data bytes with the same Swift Pair
+         * framing ([SwiftPairAdvertisementSetGenerator.PREPENDED_BYTES]) so the new name is what
+         * actually gets advertised, then mutates [advertisementSet] in place so an
+         * already-loaded/queued set picks up the change immediately. Must be called off the main
+         * thread (Room has no allowMainThreadQueries()).
+         */
+        fun updateSwiftPairDeviceName(advertisementSet: AdvertisementSet, newName: String) {
+            val database = AppDatabase.getInstance()
+            database.advertisementSetDao().updateTitle(advertisementSet.id, newName)
+
+            val manufacturerSpecificData = advertisementSet.advertiseData.manufacturerData.firstOrNull() ?: return
+            val newBytes = SwiftPairAdvertisementSetGenerator.PREPENDED_BYTES.plus(newName.toByteArray())
+            database.advertiseDataManufacturerSpecificDataDao()
+                .updateManufacturerSpecificData(manufacturerSpecificData.id, newBytes.toHexString())
+
+            advertisementSet.title = newName
+            manufacturerSpecificData.manufacturerSpecificData = newBytes
+        }
+
         fun getAdvertisementSetFromEntity(advertisementSetEntity: AdvertisementSetEntity):AdvertisementSet{
             var advertisementSet = AdvertisementSet()
 
@@ -157,7 +189,7 @@ class DatabaseHelpers {
             var database = AppDatabase.getInstance()
 
             // Advertise Settings
-            database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId)?.let { entity ->
+            database.advertiseSettingsDao().findById(advertisementSetEntity.advertiseSettingsId).let { entity ->
                 advertisementSet.advertiseSettings = AdvertiseSettings().apply {
                     id = advertisementSetEntity.id
                     advertiseMode = entity.advertiseMode
@@ -168,7 +200,7 @@ class DatabaseHelpers {
             }
 
             // AdvertisingSetParameters
-            database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
+            database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId).let { entity ->
                 advertisementSet.advertisingSetParameters = AdvertisingSetParameters().apply {
                     id = entity.id
                     legacyMode = entity.legacyMode
@@ -183,7 +215,7 @@ class DatabaseHelpers {
                 }
             }
 
-            advertisementSetEntity.advertiseDataId?.let { id ->
+            advertisementSetEntity.advertiseDataId.let { id ->
                 database.advertiseDataDao().findById(id)?.let { entity ->
                     advertisementSet.advertiseData = getAdvertiseDataFromEntity(entity, database)
                 }
@@ -202,7 +234,7 @@ class DatabaseHelpers {
             }
 
             advertisementSetEntity.periodicAdvertisingParametersId?.let { _ ->
-                database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId)?.let { entity ->
+                database.advertisingSetParametersDao().findById(advertisementSetEntity.advertisingSetParametersId).let { entity ->
                     advertisementSet.periodicAdvertisingParameters = PeriodicAdvertisingParameters().apply {
                         id = entity.id
                         includeTxPowerLevel = entity.includeTxPowerLevel
@@ -268,6 +300,89 @@ class DatabaseHelpers {
             }
 
             return advertisementSets.toList()
+        }
+
+        /**
+         * Activates the dormant AdvertisementSetList/AdvertisementSetCollection schema (plan §8):
+         * one real [AdvertisementSetListEntity] per [AdvertisementSetType] (mirroring the 14
+         * seeding generators), joined to the sets already saved for that type, then the 6
+         * built-in collections ([builtInCollectionDefinitions]) joined to their member lists.
+         * Called once from fresh-install seeding and once from `Migration_2_3` for existing
+         * installs upgrading — both cases run against a DB that already has its
+         * [AdvertisementSetEntity] rows saved.
+         */
+        fun seedBuiltInListsAndCollections() {
+            val database = AppDatabase.getInstance()
+            val context = AppContext.getContext()
+            val typeToListId = mutableMapOf<AdvertisementSetType, Int>()
+
+            AdvertisementSetType.entries
+                .filter { it != AdvertisementSetType.ADVERTISEMENT_TYPE_UNDEFINED }
+                .forEach { type ->
+                    val setsForType = database.advertisementSetDao().findByType(type)
+                    if (setsForType.isNotEmpty()) {
+                        val listId = database.advertisementSetListDao().insertItem(
+                            AdvertisementSetListEntity(id = 0, title = "${context.getString(type.stringResId())} List"),
+                        ).toInt()
+                        typeToListId[type] = listId
+
+                        val associations = setsForType.mapIndexed { index, setEntity ->
+                            AssociationListSetEntity(
+                                id = 0,
+                                advertisementSetId = setEntity.id,
+                                advertisementSetListId = listId,
+                                position = index,
+                            )
+                        }
+                        database.associationListSetDao().insertAll(*associations.toTypedArray())
+                    }
+                }
+
+            builtInCollectionDefinitions.forEach { definition ->
+                val collectionId = database.advertisementSetCollectionDao().insertItem(
+                    AdvertisementSetCollectionEntity(id = 0, title = definition.title, isCustom = false),
+                ).toInt()
+
+                val associations = definition.types.mapIndexedNotNull { index, type ->
+                    val listId = typeToListId[type] ?: return@mapIndexedNotNull null
+                    AssociatonCollectionListEntity(
+                        id = 0,
+                        advertisementSetCollectionId = collectionId,
+                        advertisementSetListId = listId,
+                        position = index,
+                    )
+                }
+                if (associations.isNotEmpty()) {
+                    database.associationCollectionListDao().insertAll(*associations.toTypedArray())
+                }
+            }
+        }
+
+        fun getAllAdvertisementSetsForList(listId: Int): List<AdvertisementSet> {
+            val database = AppDatabase.getInstance()
+            // findByListId is already ORDER BY position; loadAllByIds's WHERE IN doesn't
+            // preserve that order, so re-sort the batched result to match it.
+            val orderedSetIds = database.associationListSetDao().findByListId(listId).map { it.advertisementSetId }
+            val entitiesById = database.advertisementSetDao().loadAllByIds(orderedSetIds.toIntArray()).associateBy { it.id }
+            val setEntities = orderedSetIds.mapNotNull { entitiesById[it] }
+            return getAdvertisementSetListFromEntities(setEntities)
+        }
+
+        /**
+         * DB row -> domain model, for relaunching a Quick Start item or a Device Selector group
+         * pick (plan §8). Title/list-titles only, no per-set queries -- callers navigate on this
+         * immediately, then load each list's actual sets on a background Thread so the control
+         * GUI shows up without waiting on a potentially-many-lists DB fetch.
+         */
+        fun buildAdvertisementSetCollectionSkeletonFromEntity(collectionWithLists: CollectionWithLists): AdvertisementSetCollection {
+            val collection = AdvertisementSetCollection()
+            collection.title = collectionWithLists.collection.title
+            collectionWithLists.lists.forEach { listEntity ->
+                val list = AdvertisementSetList()
+                list.title = listEntity.title
+                collection.advertisementSetLists.add(list)
+            }
+            return collection
         }
     }
 }

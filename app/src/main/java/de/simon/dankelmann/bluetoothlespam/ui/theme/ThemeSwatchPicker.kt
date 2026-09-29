@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Smartphone
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -53,25 +54,29 @@ fun ThemeSwatchPicker(
 ) {
     val isDark = isSystemInDarkTheme()
 
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        item {
-            DeviceColorSwatch(
-                isSelected = selectedSeedColor == ThemeManager.THEME_SEED_COLOR_DEVICE,
-                onClick = { onSeedColorSelected(ThemeManager.THEME_SEED_COLOR_DEVICE) },
-            )
-        }
+    // Same filled Card background as every other row on this screen (Dynamic Color, Blur
+    // Effects, Advertisement Duration, ...) instead of floating with no container at all.
+    Card(modifier = modifier.fillMaxWidth()) {
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            item {
+                DeviceColorSwatch(
+                    isSelected = selectedSeedColor == ThemeManager.THEME_SEED_COLOR_DEVICE,
+                    onClick = { onSeedColorSelected(ThemeManager.THEME_SEED_COLOR_DEVICE) },
+                )
+            }
 
-        items(themeSeedColorOptions) { seedColorArgb ->
-            ColorSwatch(
-                seedColor = Color(seedColorArgb),
-                isDark = isDark,
-                isSelected = selectedSeedColor == seedColorArgb,
-                onClick = { onSeedColorSelected(seedColorArgb) },
-            )
+            items(themeSeedColorOptions) { seedColorArgb ->
+                ColorSwatch(
+                    seedColor = Color(seedColorArgb),
+                    isDark = isDark,
+                    isSelected = selectedSeedColor == seedColorArgb,
+                    onClick = { onSeedColorSelected(seedColorArgb) },
+                )
+            }
         }
     }
 }

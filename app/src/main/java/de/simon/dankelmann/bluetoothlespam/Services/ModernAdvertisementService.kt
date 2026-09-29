@@ -10,6 +10,7 @@ import android.util.Log
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.logMissingAdvertisingCapabilities
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
@@ -31,6 +32,7 @@ class ModernAdvertisementService(
         _bluetoothAdapter = context.bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _advertiser = _bluetoothAdapter!!.bluetoothLeAdvertiser
+            _bluetoothAdapter!!.logMissingAdvertisingCapabilities(_logTag)
         }
     }
 

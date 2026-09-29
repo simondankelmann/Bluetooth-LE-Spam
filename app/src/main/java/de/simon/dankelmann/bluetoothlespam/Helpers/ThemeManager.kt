@@ -2,14 +2,15 @@ package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.PreferenceManager
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsKeys
+import de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository
 import de.simon.dankelmann.bluetoothlespam.R
 
 class ThemeManager private constructor() {
 
     companion object {
         const val THEME_MODE_KEY = "theme_mode"
-        private const val THEME_MODE_DEFAULT = "default"
+        const val THEME_MODE_DEFAULT = "default"
         private const val THEME_MODE_LIGHT = "light"
         private const val THEME_MODE_DARK = "dark"
         // OLED forces night mode (same as Dark) plus pure-black surfaces — see isOledActive().
@@ -31,19 +32,19 @@ class ThemeManager private constructor() {
     }
 
     fun getSeedColor(context: Context): Int {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return preferences.getInt(THEME_SEED_COLOR_KEY, THEME_SEED_COLOR_DEVICE)
+        return SettingsRepository.getInstance(context).current[SettingsKeys.THEME_SEED_COLOR]
+            ?: THEME_SEED_COLOR_DEVICE
     }
 
     fun setSeedColor(context: Context, argb: Int) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        preferences.edit().putInt(THEME_SEED_COLOR_KEY, argb).apply()
+        SettingsRepository.getInstance(context).setThemeSeedColorAsync(argb)
     }
 
     fun applyTheme(context: Context) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val themeMode = preferences.getString(THEME_MODE_KEY, THEME_MODE_DEFAULT)
+        applyThemeMode(getTheme(context))
+    }
 
+    private fun applyThemeMode(themeMode: String) {
         val mode = when (themeMode) {
             THEME_MODE_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
             THEME_MODE_DARK, THEME_MODE_OLED -> AppCompatDelegate.MODE_NIGHT_YES
@@ -57,14 +58,14 @@ class ThemeManager private constructor() {
     }
 
     fun setTheme(context: Context, themeMode: String) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        preferences.edit().putString(THEME_MODE_KEY, themeMode).apply()
-        applyTheme(context)
+        SettingsRepository.getInstance(context).setThemeModeAsync(themeMode)
+        // Apply the new mode directly rather than re-reading — the DataStore write above is
+        // async, so a read-back here could still observe the pre-write value.
+        applyThemeMode(themeMode)
     }
 
     fun getTheme(context: Context): String {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return preferences.getString(THEME_MODE_KEY, THEME_MODE_DEFAULT) ?: THEME_MODE_DEFAULT
+        return SettingsRepository.getInstance(context).current[SettingsKeys.THEME_MODE] ?: THEME_MODE_DEFAULT
     }
 
     fun getThemeString(context: Context): String {
@@ -76,5 +77,21 @@ class ThemeManager private constructor() {
             else -> R.string.preference_theme_mode_follow_system
         }
         return context.getString(resId)
+    }
+
+    fun isDynamicColorEnabled(context: Context): Boolean {
+        return SettingsRepository.getInstance(context).current[SettingsKeys.DYNAMIC_COLOR_ENABLED] ?: true
+    }
+
+    fun setDynamicColorEnabled(context: Context, enabled: Boolean) {
+        SettingsRepository.getInstance(context).setDynamicColorEnabledAsync(enabled)
+    }
+
+    fun isBlurEnabled(context: Context): Boolean {
+        return SettingsRepository.getInstance(context).current[SettingsKeys.BLUR_ENABLED] ?: true
+    }
+
+    fun setBlurEnabled(context: Context, enabled: Boolean) {
+        SettingsRepository.getInstance(context).setBlurEnabledAsync(enabled)
     }
 }

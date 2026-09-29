@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.Notification.FOREGROUND_SERVICE_IMMEDIATE
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.le.ScanResult
 import android.content.Context
@@ -16,7 +17,6 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavDeepLinkBuilder
 import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.stringRes
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
@@ -24,6 +24,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanS
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
+import de.simon.dankelmann.bluetoothlespam.Navigation.SpecterDestinations
 import de.simon.dankelmann.bluetoothlespam.R
 
 class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
@@ -39,6 +40,7 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
 
     companion object {
         private val _logTag = "AdvertisementScanForegroundService"
+        private const val REQUEST_CODE_OPEN_APP = 1002
 
         fun startService(context: Context) {
             val startIntent = Intent(context, BluetoothLeScanForegroundService::class.java)
@@ -110,11 +112,19 @@ class BluetoothLeScanForegroundService: IBluetoothLeScanCallback, Service() {
         alertOnlyOnce: Boolean
     ): Notification {
 
-        val pendingIntentTargeted = NavDeepLinkBuilder(this)
-            .setComponentName(MainActivity::class.java)
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.nav_spam_detector)
-            .createPendingIntent()
+        val targetIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(MainActivity.EXTRA_DESTINATION, SpecterDestinations.SPAM_DETECTOR)
+        }
+        // requestCode distinct from AdvertisementForegroundService's — PendingIntent equality
+        // ignores extras, so a shared requestCode would let one service's notification tap
+        // silently start pointing at the other's destination once both had fired.
+        val pendingIntentTargeted = PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_OPEN_APP,
+            targetIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
 
         val notificationView = RemoteViews(packageName, R.layout.bluetooth_le_scan_foreground_service_notification)
         notificationView.setTextViewText(
