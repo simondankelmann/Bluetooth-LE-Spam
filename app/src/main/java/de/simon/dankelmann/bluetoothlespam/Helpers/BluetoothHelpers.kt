@@ -1,55 +1,59 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.BluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
 
 class BluetoothHelpers {
+
     companion object {
-        fun supportsBluetooth5():Boolean{
-            var bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
-            if(bluetoothAdapter != null){
-                if(bluetoothAdapter!!.isLe2MPhySupported
-                    && bluetoothAdapter!!.isLeCodedPhySupported
-                    && bluetoothAdapter!!.isLeExtendedAdvertisingSupported
-                    && bluetoothAdapter!!.isLePeriodicAdvertisingSupported
-                ){
-                    return true
-                }
-            }
-            return false
+
+        fun Context.bluetoothManager(): BluetoothManager? =
+            (this.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+
+        fun Context.bluetoothAdapter(): BluetoothAdapter? = this.bluetoothManager()?.adapter
+
+        // Diagnostic-only -- never gates advertising, just gives a root cause in logcat if a
+        // device misbehaves due to a missing BLE capability.
+        fun BluetoothAdapter.logMissingAdvertisingCapabilities(logTag: String) {
+            if (!isMultipleAdvertisementSupported) Log.e(logTag, "Adapter does not support isMultipleAdvertisementSupported")
+            if (!isOffloadedFilteringSupported) Log.e(logTag, "Adapter does not support isOffloadedFilteringSupported")
+            if (!isOffloadedScanBatchingSupported) Log.e(logTag, "Adapter does not support isOffloadedScanBatchingSupported")
         }
 
-        fun getAdvertisementService() : IAdvertisementService {
+        fun Context.isBluetooth5Supported(): Boolean {
+            val bluetoothAdapter = this.bluetoothAdapter() ?: return false
+            return (bluetoothAdapter.isLe2MPhySupported
+                    && bluetoothAdapter.isLeCodedPhySupported
+                    && bluetoothAdapter.isLeExtendedAdvertisingSupported
+                    && bluetoothAdapter.isLePeriodicAdvertisingSupported)
+        }
 
-            var useLegacyAdvertisementService = true // <-- DEFAULT
+        fun getAdvertisementService(context: Context): IAdvertisementService {
+            var useLegacyAdvertisementService = true
 
             // Get from Settings, if present
-            val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
+            val prefKey =
+                context.resources.getString(R.string.preference_key_use_legacy_advertising)
             preferences.forEach {
-                if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_use_legacy_advertising)){
+                if (it.key == prefKey) {
                     useLegacyAdvertisementService = it.value as Boolean
                 }
             }
 
-            val advertisementService = when (useLegacyAdvertisementService) {
-                true -> LegacyAdvertisementService()
+            return when (useLegacyAdvertisementService) {
+                true -> LegacyAdvertisementService(context)
                 else -> {
-                    ModernAdvertisementService()
+                    ModernAdvertisementService(context)
                 }
             }
-
-            return advertisementService
-        }
-
-        fun getBluetoothLeScanService():IBluetoothLeScanService{
-            return BluetoothLeScanService()
         }
     }
 }

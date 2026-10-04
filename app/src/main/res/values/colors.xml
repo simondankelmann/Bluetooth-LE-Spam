@@ -34,7 +34,7 @@
 
     <!-- CARDVIEW -->
     <color name="text_color_card_view_accent">#FFFFFF</color>
-    <color name="text_color_card_view_accent_light">#ababab</color>
+    <color name="text_color_card_view_accent_light">#D1D1D1</color>
 
     <!-- CARDVIEW ALTERNATIVE -->
     <color name="text_color_card_view_alternative">#000000</color>

@@ -22,7 +22,13 @@ class SwiftPairAdvertisementSetGenerator : IAdvertisementSetGenerator {
     // Generating Manufacturer Specific Data like found here:
     // https://github.com/Flipper-XFW/Xtreme-Firmware/blob/dev/applications/external/ble_spam/protocols/swiftpair.c
 
-    private val _prependedBytes = StringHelpers.decodeHex("030080")
+    companion object {
+        // Exposed so a renamed device's manufacturer data can be rebuilt with the same framing
+        // (see DatabaseHelpers.updateSwiftPairDeviceName) without duplicating this hex literal.
+        val PREPENDED_BYTES = StringHelpers.decodeHex("030080")
+    }
+
+    private val _prependedBytes = PREPENDED_BYTES
 
     private val _deviceNames = mapOf(
         "Device 1" to "Not used...",

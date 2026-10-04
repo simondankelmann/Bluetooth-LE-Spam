@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="scan_mode_entries">
+        <item>Low Power</item>
+        <item>Balanced</item>
+        <item>Low Latency</item>
+    </string-array>
+
+    <string-array name="scan_mode_values">
+        <item>low_power</item>
+        <item>balanced</item>
+        <item>low_latency</item>
+    </string-array>
+</resources>

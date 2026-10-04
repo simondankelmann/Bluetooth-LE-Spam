@@ -2,16 +2,10 @@ package de.simon.dankelmann.bluetoothlespam.Models
 
 import android.Manifest
 import android.bluetooth.le.ScanResult
+import android.content.Context
 import android.os.ParcelUuid
-import android.util.Log
 import androidx.core.util.forEach
-import androidx.core.util.plus
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
-import java.sql.Time
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 open class BluetoothLeScanResult {
@@ -22,57 +16,56 @@ open class BluetoothLeScanResult {
     var rssi = 0
     var firstSeen = LocalDateTime.now()
     var lastSeen = LocalDateTime.now()
-    var serviceUuids = mutableListOf<ParcelUuid>()
-    var manufacturerSpecificData = mutableMapOf<Int, ByteArray>()
+    private val _serviceUuids = mutableListOf<ParcelUuid>()
+    private val _manufacturerSpecificData = mutableMapOf<Int, ByteArray>()
     
-    fun parseFromBluetoothLeScanResult(bluetoothLeScanResult: BluetoothLeScanResult){
+    val serviceUuids: List<ParcelUuid>
+        get() = _serviceUuids
+
+    val manufacturerSpecificData: Map<Int, ByteArray>
+        get() = _manufacturerSpecificData
+    
+    fun parseFromBluetoothLeScanResult(bluetoothLeScanResult: BluetoothLeScanResult) {
         deviceName = bluetoothLeScanResult.deviceName
         address = bluetoothLeScanResult.address
         scanRecord = bluetoothLeScanResult.scanRecord
         rssi = bluetoothLeScanResult.rssi
         firstSeen = bluetoothLeScanResult.firstSeen
         lastSeen = bluetoothLeScanResult.lastSeen
-        serviceUuids = bluetoothLeScanResult.serviceUuids
-        manufacturerSpecificData = bluetoothLeScanResult.manufacturerSpecificData
+        _serviceUuids.clear()
+        _serviceUuids.addAll(bluetoothLeScanResult.serviceUuids)
+        _manufacturerSpecificData.clear()
+        _manufacturerSpecificData.putAll(bluetoothLeScanResult.manufacturerSpecificData)
     }
 
     companion object {
         private const val _logTag = "BluetoothLeScanResult"
-        fun parseFromScanResult(scanResult: ScanResult):BluetoothLeScanResult{
-            var model = BluetoothLeScanResult()
 
-            // get raw message
-            if(scanResult.scanRecord != null){
-                model.scanRecord = scanResult.scanRecord!!.bytes
+        fun parseFromScanResult(context: Context, scanResult: ScanResult): BluetoothLeScanResult {
+            val model = BluetoothLeScanResult()
 
-                var serviceUuids = scanResult.scanRecord!!.serviceUuids
-                if(serviceUuids != null){
-                    serviceUuids.forEach{
-                        model.serviceUuids.add(it)
-                    }
+            scanResult.scanRecord?.let { record ->
+                model.scanRecord = record.bytes
+
+                record.serviceUuids?.let { uuids ->
+                    model._serviceUuids.addAll(uuids)
                 }
 
-                // get manufacturer specific data
-                if(scanResult.scanRecord!!.manufacturerSpecificData != null){
-                    val resultManufacturerSpecificData = scanResult.scanRecord!!.manufacturerSpecificData
-                    resultManufacturerSpecificData.forEach{manufacurerId, data ->
-                        //Log.d(_logTag, "ID: ${manufacurerId} Data: ${data.toHexString()}")
-                        model.manufacturerSpecificData[manufacurerId] = data
+                record.manufacturerSpecificData?.let { msd ->
+                    msd.forEach { manufacturerId, data ->
+                        model._manufacturerSpecificData[manufacturerId] = data
                     }
                 }
             }
 
-            // get mac address
             model.address = scanResult.device.address
 
-            // get device data
-            if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, AppContext.getActivity())){
-                if(scanResult.device != null && scanResult.device.name != null){
-                    model.deviceName = scanResult.device.name
+            if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_CONNECT, context)) {
+                scanResult.device?.name?.let { name ->
+                    model.deviceName = name
                 }
             }
 
-            // get rssi
             model.rssi = scanResult.rssi
             
             return model

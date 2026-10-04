@@ -1,0 +1,91 @@
+<resources>
+    <!-- Keep that commented out. It will lead to compile errors -->
+    <!--<string name="app_name">Bluetooth LE Spam</string>-->
+
+    <string name="bottom_nav_start">معلومات</string>
+    <string name="bottom_nav_advertise">إعلان</string>
+    <string name="bottom_nav_detect">اكتشاف</string>
+
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_set_tx_power">قدرة الإرسال</string>
+
+    <string name="menu_preferences">الإعدادات</string>
+    <string name="menu_start">بدء</string>
+    <string name="menu_spam_detector">كاشف الرسائل المزعجة</string>
+    <string name="menu_advertisement">إعلان</string>
+
+    <string name="menu_fastPairing">اقتران سريع من Google</string>
+    <string name="menu_swiftPair">اقتران سريع من Microsoft</string>
+    <string name="menu_continuityDevicePopup">نوافذ أجهزة Apple المنبثقة</string>
+    <string name="menu_continuityActionModal">نوافذ إجراءات Apple</string>
+    <string name="menu_kitchenSink">عشوائي للجميع</string>
+
+    <string name="preference_key_use_legacy_advertising">preferenceKeyUseLegacyAdvertising</string>
+    <string name="preference_key_interval_advertising_queue_handler">preferenceKeyIntervalAdvertisingQueueHandler</string>
+    <string name="preference_title_use_legacy_advertising">إعلانات قديمة</string>
+    <string name="preference_summary_use_legacy_advertising">استخدم إعلانات BLE المتوافقة مع Bluetooth 4</string>
+
+    <string name="power_level_high">عالية</string>
+    <string name="power_level_medium">متوسطة</string>
+    <string name="power_level_low">منخفضة</string>
+    <string name="power_level_ultra_low">منخفضة جدًا</string>
+    <string name="power_dialog_title">اختر قدرة الإرسال</string>
+
+    <string-array name="spinner_entries_tx_power">
+        <item name="tx_power_high">عالية</item>
+        <item name="tx_power_medium">متوسطة</item>
+        <item name="tx_power_low">منخفضة</item>
+        <item name="tx_power_ultralow">منخفضة جدًا</item>
+    </string-array>
+
+    <string name="startfragment_requirements_checking">جارٍ التحقق من المتطلبات…</string>
+
+    <!-- Advertisement Set Types -->
+    <string name="ad_set_type_undefined">نوع غير محدد</string>
+    <string name="ad_set_type_fast_pairing">اقتران سريع</string>
+    <string name="ad_set_type_fast_pairing_device">جهاز اقتران سريع</string>
+    <string name="ad_set_type_fast_pairing_non_production">اقتران سريع (غير إنتاجي)</string>
+    <string name="ad_set_type_fast_pairing_phone_setup">إعداد هاتف الاقتران السريع</string>
+    <string name="ad_set_type_fast_pairing_debug">تصحيح الاقتران السريع</string>
+    <string name="ad_set_type_continuity_new_device">جهاز Apple جديد</string>
+    <string name="ad_set_type_continuity_new_airtag">AirTag جديدة</string>
+    <string name="ad_set_type_continuity_not_your_device">ليس جهازك</string>
+    <string name="ad_set_type_continuity_action_modals">نافذة إجراءات Apple</string>
+    <string name="ad_set_type_continuity_ios17_crash">انهيار iOS 17</string>
+    <string name="ad_set_type_swift_pairing">اقتران Swift</string>
+    <string name="ad_set_type_easy_setup_buds">إعداد سريع للسماعات</string>
+    <string name="ad_set_type_easy_setup_watch">إعداد سريع للساعة</string>
+    <string name="ad_set_type_lovespouse_play">Lovespouse تشغيل</string>
+    <string name="ad_set_type_lovespouse_stop">Lovespouse إيقاف</string>
+
+    <string name="spam_unknown">رسالة مزعجة غير معروفة</string>
+    <string name="spam_detecting_title">جارٍ اكتشاف الرسائل المزعجة</string>
+    <string name="spam_detecting_text">جارٍ اكتشاف Flipper Zero وأجهزة أخرى</string>
+    <string name="spam_detected_title">تم اكتشاف رسالة مزعجة</string>
+
+    <!-- Log Settings -->
+    <string name="preference_key_enable_logging">enable_logging</string>
+    <string name="preference_title_enable_logging">تفعيل السجلات</string>
+    <string name="preference_summary_enable_logging">تفعيل سجلات التطبيق في وحدة التخزين الخارجية</string>
+
+    <!-- Log Folder Settings -->
+    <string name="preference_key_open_log_folder">open_log_folder</string>
+    <string name="preference_title_open_log_folder">فتح مجلد السجلات</string>
+    <string name="preference_summary_open_log_folder">عرض سجلات التطبيق في وحدة التخزين الخارجية</string>
+
+    <!-- Theme Settings -->
+    <string name="preference_theme_mode">وضع السمة</string>
+    <string name="preference_theme_mode_light">فاتح</string>
+    <string name="preference_theme_mode_dark">داكن</string>
+    <string name="preference_theme_mode_follow_system">افتراضي النظام</string>
+
+    <!-- Toasts -->
+    <string name="toast_no_items_selected">لم يتم تحديد عناصر</string>
+
+    <!-- Permissions -->
+    <string name="missing_permissions_title">أذونات مفقودة</string>
+    <string name="missing_permissions_text">بعض الأذونات مفقودة. بدونها، لن يعمل Bluetooth LE Spam بشكل صحيح.</string>
+    <string name="missing_permissions_grant">منح الأذونات</string>
+
+</resources>
+

@@ -23,6 +23,4 @@ interface AdvertiseSettingsDao {
     @Insert
     fun insertItem(advertiseSettingsEntity: AdvertiseSettingsEntity): Long
 
-    @Query("DELETE FROM advertisesettingsentity WHERE id = :id")
-    fun deleteById(id: Int)
 }

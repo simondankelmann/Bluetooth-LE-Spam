@@ -1,42 +1,32 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
+import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.preference.PreferenceManager
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IAdvertisementService
 import de.simon.dankelmann.bluetoothlespam.R
-import de.simon.dankelmann.bluetoothlespam.Services.LegacyAdvertisementService
-import de.simon.dankelmann.bluetoothlespam.Services.ModernAdvertisementService
-import java.lang.Exception
+
 
 class QueueHandlerHelpers {
     companion object {
-        private const val _logTag = "QueueHandlerHelpers"
-        fun getInterval() : Int {
-            var interval = 1000
+        private const val TAG = "QueueHandlerHelpers"
 
-            // Get from Settings, if present
-            val preferences = PreferenceManager.getDefaultSharedPreferences(AppContext.getContext()).all
-            preferences.forEach {
-                if(it.key == AppContext.getActivity().resources.getString(R.string.preference_key_interval_advertising_queue_handler)){
-                    val intervalString = it.value as String
-                    if(intervalString != null){
-                        try {
-                            val parsedInterval = intervalString.toInt()
-                            if(parsedInterval > 0){
-                                interval = parsedInterval
-                            }
-                        } catch (e: Exception){
-                            Log.d(_logTag, "Invalid interval specified: $intervalString")
-                        }
-                    }
+        fun getInterval(context: Context): Long {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val prefKey =
+                context.resources.getString(R.string.preference_key_interval_advertising_queue_handler)
+            val intervalString = prefs.getString(prefKey, "1000")
+
+            return try {
+                val parsedInterval = intervalString?.toLong() ?: 1000L
+                if (parsedInterval > 0) {
+                    parsedInterval
+                } else {
+                    1000L
                 }
+            } catch (e: NumberFormatException) {
+                Log.d(TAG, "Invalid interval specified: $intervalString")
+                1000L
             }
-
-            return interval
         }
-
-
     }
 }

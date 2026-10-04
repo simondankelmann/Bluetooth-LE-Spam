@@ -12,7 +12,7 @@ val Migration_1_2 = object : Migration(1,2) {
     private val _logTag = "Migration_1_2"
 
 
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         Log.d(_logTag, "Executing Migration...")
 
         val nearbyActionsAdded = mapOf(

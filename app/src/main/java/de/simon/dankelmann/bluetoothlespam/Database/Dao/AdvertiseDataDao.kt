@@ -10,7 +10,7 @@ import de.simon.dankelmann.bluetoothlespam.Database.Entities.AdvertiseSettingsEn
 @Dao
 interface AdvertiseDataDao {
     @Query("SELECT * FROM advertisedataentity WHERE id = :id")
-    fun findById(id: Int): AdvertiseDataEntity
+    fun findById(id: Int): AdvertiseDataEntity?
 
     @Query("SELECT * FROM advertisedataentity")
     fun getAll(): List<AdvertiseDataEntity>
@@ -26,10 +26,4 @@ interface AdvertiseDataDao {
 
     @Insert
     fun insertItem(advertiseDataEntity: AdvertiseDataEntity): Long
-
-    @Query("UPDATE advertisedataentity SET includeDeviceName = :includeDeviceName, includeTxPower = :includeTxPower WHERE id = :id")
-    fun updateFlags(id: Int, includeDeviceName: Boolean, includeTxPower: Boolean)
-
-    @Query("DELETE FROM advertisedataentity WHERE id = :id")
-    fun deleteById(id: Int)
 }

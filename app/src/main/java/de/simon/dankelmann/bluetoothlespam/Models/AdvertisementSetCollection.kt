@@ -6,6 +6,7 @@ class AdvertisementSetCollection : Serializable {
     var title = ""
     var hints:MutableList<String> = mutableListOf()
     var advertisementSetLists:MutableList<AdvertisementSetList> = mutableListOf()
+    var isLoadingSets = false
 
     fun getNumberOfLists():Int{
         return advertisementSetLists.count()

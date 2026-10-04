@@ -16,8 +16,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavDeepLinkBuilder
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
+import de.simon.dankelmann.bluetoothlespam.BleSpamApplication
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementState
 import de.simon.dankelmann.bluetoothlespam.Enums.getDrawableId
@@ -26,6 +25,7 @@ import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSe
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
 import de.simon.dankelmann.bluetoothlespam.MainActivity
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
+import de.simon.dankelmann.bluetoothlespam.Navigation.SpecterDestinations
 import de.simon.dankelmann.bluetoothlespam.R
 
 class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisementSetQueueHandlerCallback, Service() {
@@ -38,14 +38,20 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     private val _binder: IBinder = LocalBinder()
 
     companion object {
-        fun startService(context: Context, message: String) {
+        private const val NOTIFICATION_ID = 1
+        private const val REQUEST_CODE_OPEN_APP = 1001
+
+        fun startService(context: Context) {
             val startIntent = Intent(context, AdvertisementForegroundService::class.java)
-            startIntent.putExtra("inputExtra", message)
             ContextCompat.startForegroundService(context, startIntent)
         }
+
         fun stopService(context: Context) {
             val stopIntent = Intent(context, AdvertisementForegroundService::class.java)
             context.stopService(stopIntent)
+
+            val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(NOTIFICATION_ID)
         }
     }
 
@@ -54,11 +60,12 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
         createNotificationChannel()
 
-        startForeground(1, createNotification(null))
+        startForeground(NOTIFICATION_ID, createNotification(null))
 
         // Setup Callbacks
-        AppContext.getAdvertisementService().addAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().addAdvertisementQueueHandlerCallback(this)
+        val app = applicationContext as BleSpamApplication
+        app.advertisementService.addAdvertisementServiceCallback(this)
+        app.queueHandler.addAdvertisementQueueHandlerCallback(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,14 +82,16 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
     }
 
     override fun onDestroy() {
-        AppContext.getAdvertisementService().removeAdvertisementServiceCallback(this)
-        AppContext.getAdvertisementSetQueueHandler().removeAdvertisementQueueHandlerCallback(this)
+        val app = applicationContext as BleSpamApplication
+        app.advertisementService.removeAdvertisementServiceCallback(this)
+        app.queueHandler.removeAdvertisementQueueHandlerCallback(this)
+
         super.onDestroy()
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && AppContext.getActivity() != null) {
-            val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             val mChannel = NotificationChannel(_channelId, _channelName, NotificationManager.IMPORTANCE_HIGH)
             mChannel.description = _channelDescription
             mChannel.enableLights(true)
@@ -93,17 +102,25 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
 
     private fun createNotification(advertisementSet: AdvertisementSet?): Notification {
 
-        val pendingIntentTargeted = NavDeepLinkBuilder(this)
-            .setComponentName(MainActivity::class.java)
-            .setGraph(R.navigation.nav_graph)
-            .setDestination(R.id.nav_advertisement)
-            //.setArguments(bundle)
-            .createPendingIntent()
+        val targetIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(MainActivity.EXTRA_DESTINATION, SpecterDestinations.ADVERTISEMENT)
+        }
+        // requestCode distinct from BluetoothLeScanForegroundService's — PendingIntent equality
+        // ignores extras, so a shared requestCode would let one service's notification tap
+        // silently start pointing at the other's destination once both had fired.
+        val pendingIntentTargeted = PendingIntent.getActivity(
+            this,
+            REQUEST_CODE_OPEN_APP,
+            targetIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
 
         // Custom Layout
         val notificationView = RemoteViews(packageName, R.layout.advertisement_foreground_service_notification)
 
-        val toggleImageSrc = when (AppContext.getAdvertisementSetQueueHandler().isActive()) {
+        val app = applicationContext as BleSpamApplication
+        val toggleImageSrc = when (app.queueHandler.isActive()) {
             true -> R.drawable.pause
             false -> R.drawable.play_arrow
         }
@@ -129,13 +146,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             toggleImageSrc
         )
 
-        val targetIconColor =
-            resources.getColor(R.color.tint_target_icon, AppContext.getContext().theme)
-        val buttonActiveColor =
-            resources.getColor(R.color.tint_button_active, AppContext.getContext().theme)
-        val buttonInActiveColor =
-            resources.getColor(R.color.tint_button_inactive, AppContext.getContext().theme)
-
+        val targetIconColor = resources.getColor(R.color.tint_target_icon, theme)
+        val buttonActiveColor = resources.getColor(R.color.tint_button_active, theme)
+        val buttonInActiveColor = resources.getColor(R.color.tint_button_inactive, theme)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             notificationView.setColorInt(
@@ -181,14 +194,14 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             }
             notificationView.setTextColor(
                 R.id.advertisementForegroundServiceNotificationTitleTextView,
-                resources.getColor(titleColorRes, AppContext.getContext().theme)
+                resources.getColor(titleColorRes, theme)
             )
         }
 
         // Listeners for Custom Layout
-        val toggleIntent = Intent(AppContext.getActivity(), ToggleButtonListener::class.java)
+        val toggleIntent = Intent(this, ToggleButtonListener::class.java)
         val pendingToggleSwitchIntent = PendingIntent.getBroadcast(
-            AppContext.getActivity(),
+            this,
             0,
             toggleIntent,
             PendingIntent.FLAG_MUTABLE
@@ -199,9 +212,9 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             pendingToggleSwitchIntent
         )
 
-        val stopIntent = Intent(AppContext.getActivity(), StopButtonListener::class.java)
+        val stopIntent = Intent(this, StopButtonListener::class.java)
         val pendingStopSwitchIntent = PendingIntent.getBroadcast(
-            AppContext.getActivity(),
+            this,
             0,
             stopIntent,
             PendingIntent.FLAG_MUTABLE
@@ -215,7 +228,7 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
         val appName = getString(R.string.app_name)
         val contentText = advertisementSet?.title ?: appName
 
-        return NotificationCompat.Builder(AppContext.getActivity(), _channelId)
+        return NotificationCompat.Builder(this, _channelId)
             .setContentTitle(appName)
             .setContentText(contentText)
             .setSmallIcon(R.drawable.bluetooth)
@@ -226,30 +239,28 @@ class AdvertisementForegroundService: IAdvertisementServiceCallback, IAdvertisem
             .setOnlyAlertOnce(true)
             .setCustomBigContentView(notificationView)
             .setCustomContentView(notificationView)
-            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE).build()
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
+            .build()
     }
 
-    private fun updateNotification(advertisementSet: AdvertisementSet?){
+    private fun updateNotification(advertisementSet: AdvertisementSet?) {
         val notification = createNotification(advertisementSet)
-        val notificationManager = AppContext.getActivity().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(1, notification)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
     // Button Handlers
     class ToggleButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if(AppContext.getAdvertisementSetQueueHandler().isActive()){
-                AppContext.getAdvertisementSetQueueHandler().deactivate()
-            } else {
-                AppContext.getAdvertisementSetQueueHandler().activate()
-            }
+            (context.applicationContext as BleSpamApplication).queueHandler.toggle(context)
         }
     }
 
     class StopButtonListener : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            AppContext.getAdvertisementSetQueueHandler().deactivate()
-            stopService(AppContext.getActivity())
+            (context.applicationContext as BleSpamApplication)
+                .queueHandler.deactivate(context, true)
+            stopService(context)
         }
     }
 

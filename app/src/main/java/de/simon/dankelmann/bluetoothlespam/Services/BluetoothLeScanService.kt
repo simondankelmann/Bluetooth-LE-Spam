@@ -7,19 +7,12 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.os.ParcelUuid
 import android.util.Log
-import androidx.room.util.recursiveFetchArrayMap
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext.Companion.bluetoothAdapter
-import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
-import de.simon.dankelmann.bluetoothlespam.Enums.FlipperDeviceType
+import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothHelpers.Companion.bluetoothAdapter
 import de.simon.dankelmann.bluetoothlespam.Helpers.BluetoothLeDeviceClassificationHelper
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers
-import de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.Companion.toHexString
-import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IBluetoothLeScanCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Services.IBluetoothLeScanService
 import de.simon.dankelmann.bluetoothlespam.Models.BluetoothLeScanResult
@@ -27,10 +20,11 @@ import de.simon.dankelmann.bluetoothlespam.Models.FlipperDeviceScanResult
 import de.simon.dankelmann.bluetoothlespam.Models.SpamPackageScanResult
 import de.simon.dankelmann.bluetoothlespam.PermissionCheck.PermissionCheck
 import java.time.Duration
-import java.time.LocalDate
 import java.time.LocalDateTime
 
-class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
+class BluetoothLeScanService(
+    private val context: Context,
+) : IBluetoothLeScanService, ScanCallback() {
 
     private val _logTag = "BluetoothLeScanService"
     private var _bluetoothAdapter:BluetoothAdapter? = null
@@ -45,9 +39,8 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     private val _millis_spam_package_lifetime = 5000
     private val _millis_flipper_device_lifetime = 5000
 
-
     init {
-        _bluetoothAdapter = AppContext.getContext().bluetoothAdapter()
+        _bluetoothAdapter = context.bluetoothAdapter()
         if(_bluetoothAdapter != null){
             _bluetoothLeScanner = _bluetoothAdapter!!.bluetoothLeScanner
         }
@@ -159,8 +152,8 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     }
 
     override fun startScanning(){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, AppContext.getActivity())){
-            if(_bluetoothLeScanner != null){
+        if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, context)) {
+            if (_bluetoothLeScanner != null) {
                 // SET THE FILTERS AND SETTINGS
                 val filterList:List<ScanFilter> = mutableListOf(ScanFilter.Builder().build())
 
@@ -173,9 +166,9 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
         }
     }
 
-    override fun stopScanning(){
-        if(PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, AppContext.getActivity())){
-            if(_bluetoothLeScanner != null) {
+    override fun stopScanning() {
+        if (PermissionCheck.checkPermission(Manifest.permission.BLUETOOTH_SCAN, context)) {
+            if (_bluetoothLeScanner != null) {
                 _bluetoothLeScanner!!.stopScan(this)
                 Log.d(_logTag, "Stopped BLE Scan")
                 _scanning = false
@@ -193,7 +186,7 @@ class BluetoothLeScanService () : IBluetoothLeScanService, ScanCallback() {
     override fun onScanResult(callbackType: Int, result: ScanResult?) {
         super.onScanResult(callbackType, result)
         if(result != null){
-            val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(result)
+            val bluetoothLeScanResult = BluetoothLeScanResult.parseFromScanResult(context, result)
 
             // Check if its a Flipper
             if(BluetoothLeDeviceClassificationHelper.isFlipperDevice(bluetoothLeScanResult)){

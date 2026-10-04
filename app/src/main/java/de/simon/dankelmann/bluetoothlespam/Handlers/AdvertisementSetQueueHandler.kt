@@ -1,18 +1,18 @@
 package de.simon.dankelmann.bluetoothlespam.Handlers
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityActionModalAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityIos17CrashAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewAirtagPopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNewDevicePopUpAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.ContinuityNotYourDevicePopUpAdvertisementSetGenerator
-import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementError
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementQueueMode
 import de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType
-import de.simon.dankelmann.bluetoothlespam.Enums.TxPowerLevel
 import de.simon.dankelmann.bluetoothlespam.Helpers.QueueHandlerHelpers
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementServiceCallback
 import de.simon.dankelmann.bluetoothlespam.Interfaces.Callbacks.IAdvertisementSetQueueHandlerCallback
@@ -21,37 +21,47 @@ import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSet
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetCollection
 import de.simon.dankelmann.bluetoothlespam.Models.AdvertisementSetList
 import de.simon.dankelmann.bluetoothlespam.Services.AdvertisementForegroundService
+import de.simon.dankelmann.bluetoothlespam.R
 import kotlin.random.Random
 
-class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
+/**
+ * Handler that takes an advertisement set, and iterates over the set according to a given AdvertisementQueueMode.
+ *
+ * The job of this handler is to select the next set, and provide it to the IAdvertisementService.
+ *
+ * The UI code should drive the advertising via this handler (via start, stop, set advertisement set, set queue mode).
+ * This handler takes care of starting and stopping services as appropriate.
+ */
+class AdvertisementSetQueueHandler(
+    context: Context,
+    adService: IAdvertisementService,
+) : IAdvertisementServiceCallback {
 
-    // private
-    private var _logTag = "AdvertisementSetQueuHandler"
-    private var _advertisementService:IAdvertisementService? = null
-    private var _advertisementSetCollection:AdvertisementSetCollection = AdvertisementSetCollection()
-    private var _interval:Long = 1000
+    private var _logTag = "AdvertisementSetQueueHandler"
+
+    private var _advertisementService: IAdvertisementService = adService
+
+    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
+    private var _advertisementSetCollection: AdvertisementSetCollection =
+        AdvertisementSetCollection()
+    private var _intervalMillis: Long = QueueHandlerHelpers.getInterval(context)
+
+    // Callbacks to listen to events of the underlying advertisement service
     private var _advertisementServiceCallbacks:MutableList<IAdvertisementServiceCallback> = mutableListOf()
+    // Callbacks to listen to queue events
     private var _advertisementQueueHandlerCallbacks:MutableList<IAdvertisementSetQueueHandlerCallback> = mutableListOf()
 
     private var _active = false
-    private var _advertisementQueueMode: AdvertisementQueueMode = AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR
-
     private var _currentAdvertisementSet: AdvertisementSet? = null
     private var _currentAdvertisementSetListIndex = 0
     private var _currentAdvertisementSetIndex = 0
 
-    // Multi-selection: ids of the sets the user tapped. When non-empty,
-    // advertising is restricted to this pool (in collection order).
-    private var _selectedIds: LinkedHashSet<Int> = LinkedHashSet()
+    init {
+        _advertisementService.addAdvertisementServiceCallback(this)
+    }
 
-
-    init{
-        _advertisementService = AppContext.getAdvertisementService()
-        if(_advertisementService != null){
-            _advertisementService!!.addAdvertisementServiceCallback(this)
-        }
-
-        setInterval(QueueHandlerHelpers.getInterval())
+    fun isActive(): Boolean {
+        return _active
     }
 
     fun setAdvertisementQueueMode(advertisementQueueMode: AdvertisementQueueMode){
@@ -62,105 +72,28 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         return _advertisementQueueMode
     }
 
-    fun setAdvertisementService(advertisementService: IAdvertisementService){
-        _advertisementService = advertisementService
-        _advertisementService!!.addAdvertisementServiceCallback(this)
-    }
-
-    fun setTxPowerLevel(txPowerLevel: TxPowerLevel){
-        if(_advertisementService != null){
-            _advertisementService!!.setTxPowerLevel(txPowerLevel)
+    fun setInterval(milliseconds: Long) {
+        if (milliseconds > 0) {
+            _intervalMillis = milliseconds
         }
     }
+
+    fun setAdvertisementService(advertisementService: IAdvertisementService) {
+        _advertisementService.removeAdvertisementServiceCallback(this)
+
+        _advertisementService = advertisementService
+        _advertisementService.addAdvertisementServiceCallback(this)
+    }
+
 
     fun setSelectedAdvertisementSet(advertisementSetListIndex: Int, advertisementSetIndex: Int){
-        if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex] != null){
-            if(_advertisementSetCollection.advertisementSetLists[advertisementSetListIndex].advertisementSets[advertisementSetIndex] != null){
-                _currentAdvertisementSetListIndex = advertisementSetListIndex
-                _currentAdvertisementSetIndex = advertisementSetIndex
-                _currentAdvertisementSet = _advertisementSetCollection.advertisementSetLists[advertisementSetListIndex].advertisementSets[advertisementSetIndex]
-            }
-        }
+        val advertisementSet = _advertisementSetCollection.advertisementSetLists[advertisementSetListIndex].advertisementSets.get(advertisementSetIndex)
+        _currentAdvertisementSetListIndex = advertisementSetListIndex
+        _currentAdvertisementSetIndex = advertisementSetIndex
+        _currentAdvertisementSet = advertisementSet
     }
 
-    fun getCurrentAdvertisementSet(): AdvertisementSet? {
-        return _currentAdvertisementSet
-    }
-
-    fun clearCurrentAdvertisementSet() {
-        _currentAdvertisementSet = null
-        _currentAdvertisementSetListIndex = 0
-        _currentAdvertisementSetIndex = 0
-    }
-
-    // Multi-selection (toggle). Returns the new selected state of the set.
-    fun toggleSelectedAdvertisementSet(advertisementSet: AdvertisementSet): Boolean {
-        val target = findSetById(advertisementSet.id) ?: advertisementSet
-        return if (_selectedIds.contains(target.id)) {
-            _selectedIds.remove(target.id)
-            target.selected = false
-            false
-        } else {
-            _selectedIds.add(target.id)
-            target.selected = true
-            true
-        }
-    }
-
-    fun isSelected(advertisementSet: AdvertisementSet): Boolean {
-        return _selectedIds.contains(advertisementSet.id)
-    }
-
-    // Bulk (de)selection, e.g. a whole category via long-press on its header
-    fun setSetsSelected(sets: List<AdvertisementSet>, selected: Boolean) {
-        sets.forEach { set ->
-            val target = findSetById(set.id) ?: set
-            if (selected) {
-                _selectedIds.add(target.id)
-                target.selected = true
-            } else {
-                _selectedIds.remove(target.id)
-                target.selected = false
-            }
-        }
-    }
-
-    fun getSelectedIds(): Set<Int> {
-        return _selectedIds.toSet()
-    }
-
-    fun clearSelection() {
-        _selectedIds.clear()
-        _advertisementSetCollection.advertisementSetLists.forEach { list ->
-            list.advertisementSets.forEach { it.selected = false }
-        }
-    }
-
-    fun retainSelection(presentIds: Set<Int>) {
-        _selectedIds.retainAll(presentIds)
-    }
-
-    fun findSetById(id: Int): AdvertisementSet? {
-        _advertisementSetCollection.advertisementSetLists.forEach { list ->
-            list.advertisementSets.forEach {
-                if (it.id == id) return it
-            }
-        }
-        return null
-    }
-
-    fun getSelectedOrdered(): List<AdvertisementSet> {
-        if (_selectedIds.isEmpty()) return emptyList()
-        val ordered = mutableListOf<AdvertisementSet>()
-        _advertisementSetCollection.advertisementSetLists.forEach { list ->
-            list.advertisementSets.forEach {
-                if (_selectedIds.contains(it.id)) ordered.add(it)
-            }
-        }
-        return ordered
-    }
-
-    fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection, clearSelection: Boolean = true){
+    fun setAdvertisementSetCollection(advertisementSetCollection: AdvertisementSetCollection){
         if(_advertisementSetCollection != advertisementSetCollection){
             _advertisementSetCollection = advertisementSetCollection
         }
@@ -170,8 +103,14 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         _currentAdvertisementSetListIndex = 0
         _currentAdvertisementSetIndex = 0
 
-        if(clearSelection){
-            clearSelection()
+        // Callers must invoke this from the main thread (matches every existing call site) since
+        // listeners (e.g. AdvertisementRoute) update Compose/LiveData state directly here.
+        _advertisementQueueHandlerCallbacks.forEach {
+            try {
+                it.onAdvertisementSetCollectionChanged()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onAdvertisementSetCollectionChanged: ${e.message}")
+            }
         }
     }
 
@@ -218,254 +157,198 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
         }
     }
 
-    fun setIntervalSeconds(seconds:Int){
-        _interval = (seconds * 1000).toLong()
-    }
-
-    fun setInterval(milliseconds:Int){
-        if(milliseconds > 0){
-            _interval = milliseconds.toLong()
-        }
-    }
-
-    fun activate(startService: Boolean = true){
-        if(!_active){
-            _active = true
-
-            if(startService){
-                AdvertisementForegroundService.startService(AppContext.getContext(), "Foreground Service is running...")
-            }
-
-            _advertisementQueueHandlerCallbacks.forEach { it ->
-                try {
-                    it.onQueueHandlerActivated()
-                } catch (e:Exception){
-                    Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerActivated")
+    fun hasCheckedItems(): Boolean {
+        // Check if any advertisement set is checked
+        for (list in _advertisementSetCollection.advertisementSetLists) {
+            for (set in list.advertisementSets) {
+                if (set.isChecked) {
+                    return true
                 }
             }
+        }
+        return false
+    }
 
-            if(_currentAdvertisementSet != null){
-                handleAdvertisementSet(_currentAdvertisementSet!!)
-            } else {
-                advertiseNextAdvertisementSet()
-            }
+    fun toggle(context: Context) {
+        if (_active) {
+            deactivate(context)
+        } else {
+            activate(context)
         }
     }
 
-    fun deactivate(stopService: Boolean = false){
-        _active = false
-
-        if(AppContext.getAdvertisementService() != null){
-            AppContext.getAdvertisementService().stopAdvertisement()
+    fun activate(context: Context) {
+        if (_active) {
+            return
         }
 
-        if(stopService){
+        // Cannot activate anything if nothing is selected
+        if (!hasCheckedItems()) {
+            Toast.makeText(context, R.string.toast_no_items_selected, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        _active = true
+        AdvertisementForegroundService.startService(context)
+        _advertisementQueueHandlerCallbacks.forEach { it ->
+            try {
+                it.onQueueHandlerActivated()
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerActivated: ${e.message}")
+            }
+        }
+        advertiseNextAdvertisementSet()
+    }
+
+    fun deactivate(context: Context, stopService: Boolean = false) {
+        _active = false
+
+        _advertisementService.stopAdvertisement()
+
+        if (stopService) {
             Log.d(_logTag, "Stopping Foreground Service")
-            AdvertisementForegroundService.stopService(AppContext.getActivity())
+            AdvertisementForegroundService.stopService(context)
         }
 
         _advertisementQueueHandlerCallbacks.forEach { it ->
             try {
                 it.onQueueHandlerDeactivated()
-            } catch (e:Exception){
-                Log.e(_logTag, "Error while executing AdvertisementQueueHandlerCallback onQueueHandlerDeactivated")
+            } catch (e: Exception) {
+                Log.e(_logTag, "Failed to call onQueueHandlerDeactivated: ${e.message}")
             }
         }
     }
 
-    fun advertiseNextAdvertisementSet(){
+    private fun advertiseNextAdvertisementSet() {
         selectNextAdvertisementSet()
-        if(_currentAdvertisementSet != null){
-            handleAdvertisementSet(prepareAdvertisementSet(_currentAdvertisementSet!!))
-        } else {
+
+        val nextSet = _currentAdvertisementSet
+        if (nextSet == null) {
             Log.e(_logTag, "Current Advertisement Set is null.")
-        }
-    }
-
-    fun prepareAdvertisementSet(advertisementSet: AdvertisementSet):AdvertisementSet{
-        when(advertisementSet.type){
-            // Continuity
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> return ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> return ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> return ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> return ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> return ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
-
-            else -> return advertisementSet
-        }
-    }
-
-    fun selectNextAdvertisementSet(){
-        // When the user selected specific sets, restrict advertising to that pool
-        val pool = getSelectedOrdered()
-        if(pool.isNotEmpty()){
-            selectNextFromPool(pool)
             return
         }
 
-        var nextAdvertisementSet: AdvertisementSet? = _currentAdvertisementSet
-        var nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
-        var nextAdvertisementSetIndex = _currentAdvertisementSetIndex
-
-        when(_advertisementQueueMode){
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> {
-                // If no AdvertisementSet is selected, select the first set in the first list
-                if(_currentAdvertisementSet == null){
-                    if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
-                        val firstList = _advertisementSetCollection.advertisementSetLists.first()
-                        if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
-                        }
-                    }
-                }
-            }
-
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> {
-                // If no AdvertisementSet is selected, select the first set in the first list
-                if(_currentAdvertisementSet == null){
-                    if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
-                        val firstList = _advertisementSetCollection.advertisementSetLists.first()
-                        if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
-                        }
-                    }
-                } else {
-                    var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
-                    Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
-                    if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
-                        // SET ADVERTISEMENT SET INDEX TO 0
-                        nextAdvertisementSetIndex = 0
-
-                        // SELECT NEXT LIST
-                        if(_currentAdvertisementSetListIndex >= (_advertisementSetCollection.advertisementSetLists.count() - 1)){
-                            nextAdvertisementSetListIndex = 0
-                        } else {
-                            nextAdvertisementSetListIndex++
-                        }
-
-                        selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
-
-                        // SET THE ITEM
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    } else {
-                        nextAdvertisementSetIndex++
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    }
-
-                }
-            }
-
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> {
-                // If no AdvertisementSet is selected, select the first set in the first list
-                if(_currentAdvertisementSet == null){
-                    if(_advertisementSetCollection.advertisementSetLists.isNotEmpty()){
-                        val firstList = _advertisementSetCollection.advertisementSetLists.first()
-                        if(firstList.advertisementSets.isNotEmpty()){
-                            nextAdvertisementSetListIndex = 0
-                            nextAdvertisementSetIndex = 0
-                            nextAdvertisementSet = firstList.advertisementSets.first()
-                        }
-                    }
-                } else {
-                    var selectedList = _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
-                    Log.d(_logTag, "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: ${_currentAdvertisementSetIndex}")
-                    if(_currentAdvertisementSetIndex >= (selectedList.advertisementSets.count() - 1)){
-                        // SET ADVERTISEMENT SET INDEX TO 0
-                        nextAdvertisementSetIndex = 0
-
-                        selectedList = _advertisementSetCollection.advertisementSetLists[nextAdvertisementSetListIndex]
-
-                        // SET THE ITEM
-                        nextAdvertisementSetListIndex = _currentAdvertisementSetListIndex
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    } else {
-                        nextAdvertisementSetIndex++
-                        nextAdvertisementSet = selectedList.advertisementSets[nextAdvertisementSetIndex]
-                    }
-
-                }
-            }
-
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> {
-                nextAdvertisementSetListIndex = Random.nextInt(_advertisementSetCollection.advertisementSetLists.size);
-                val nextAdvertisementSetList = _advertisementSetCollection.advertisementSetLists.get(nextAdvertisementSetListIndex)
-                nextAdvertisementSetIndex = Random.nextInt(nextAdvertisementSetList.advertisementSets.size)
-                nextAdvertisementSet = nextAdvertisementSetList.advertisementSets[nextAdvertisementSetIndex]
-            }
-        }
-
-        _currentAdvertisementSet = nextAdvertisementSet
-        _currentAdvertisementSetListIndex = nextAdvertisementSetListIndex
-        _currentAdvertisementSetIndex = nextAdvertisementSetIndex
-    }
-
-    private fun selectNextFromPool(pool: List<AdvertisementSet>){
-        when(_advertisementQueueMode){
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_SINGLE -> {
-                // Repeat the last tapped set, fall back to the first selected one
-                val current = _currentAdvertisementSet
-                if(current == null || !_selectedIds.contains(current.id)){
-                    _currentAdvertisementSet = pool.first()
-                }
-            }
-
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR,
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LIST -> {
-                val current = _currentAdvertisementSet
-                val currentIndex = pool.indexOfFirst { it.id == current?.id }
-                val nextIndex = if(currentIndex == -1) 0 else (currentIndex + 1) % pool.size
-                _currentAdvertisementSet = pool[nextIndex]
-                updateIndicesForSet(pool[nextIndex])
-            }
-
-            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> {
-                val nextIndex = Random.nextInt(pool.size)
-                _currentAdvertisementSet = pool[nextIndex]
-                updateIndicesForSet(pool[nextIndex])
-            }
-        }
-    }
-
-    private fun updateIndicesForSet(advertisementSet: AdvertisementSet){
-        _advertisementSetCollection.advertisementSetLists.forEachIndexed { listIndex, list ->
-            list.advertisementSets.forEachIndexed { setIndex, set ->
-                if(set.id == advertisementSet.id){
-                    _currentAdvertisementSetListIndex = listIndex
-                    _currentAdvertisementSetIndex = setIndex
-                    return
-                }
-            }
-        }
-    }
-
-    private fun handleAdvertisementSet(advertisementSet: AdvertisementSet){
-        if(_active && _advertisementService != null){
-            _advertisementService!!.startAdvertisement(advertisementSet)
-        }
-    }
-
-    fun isActive():Boolean{
-        return _active
-    }
-
-    fun onAdvertisementSucceeded(){
-        if(_advertisementService != null){
-            _advertisementService!!.stopAdvertisement()
-
-            if(_advertisementService!!.isLegacyService()){
-                advertiseNextAdvertisementSet()
+        if (_active) {
+            // Only advertise if the set is checked
+            if (nextSet.isChecked) {
+                val preparedSet = prepareAdvertisementSet(nextSet)
+                _advertisementService.startAdvertisement(preparedSet)
             } else {
-                // Wait for the Stop Advertising Callback
+                // If the set is not checked, immediately move to the next one
+                Log.d(_logTag, "Skipping unchecked advertisement set: ${nextSet.title}")
+                onAdvertisementSucceeded()
             }
         }
     }
 
-    fun onAdvertisementFailed(){
+    private fun prepareAdvertisementSet(advertisementSet: AdvertisementSet): AdvertisementSet {
+        return when (advertisementSet.type) {
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_DEVICE -> ContinuityNewDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NEW_AIRTAG -> ContinuityNewAirtagPopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_NOT_YOUR_DEVICE -> ContinuityNotYourDevicePopUpAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_ACTION_MODALS -> ContinuityActionModalAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            AdvertisementSetType.ADVERTISEMENT_TYPE_CONTINUITY_IOS_17_CRASH -> ContinuityIos17CrashAdvertisementSetGenerator.prepareAdvertisementSet(advertisementSet)
+            else -> advertisementSet
+        }
+    }
+
+    /**
+     * Select the AdvertisementSet that should be advertised next.
+     *
+     * Precondition: at least one set is checked by the user.
+     * The case of nothing being checked should be handled earlier.
+     * If nothing is checked, this function will do nothing.
+     */
+    private fun selectNextAdvertisementSet() {
+        // Explicit returns are used for clarity
+
+        when (_advertisementQueueMode) {
+            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_LINEAR -> {
+                // If no AdvertisementSet is currently selected, make sure to start at the beginning
+                if (_currentAdvertisementSet == null) {
+                    _currentAdvertisementSetListIndex = 0
+                    _currentAdvertisementSetIndex = 0
+                }
+
+                val selectedList =
+                    _advertisementSetCollection.advertisementSetLists[_currentAdvertisementSetListIndex]
+                Log.d(
+                    _logTag,
+                    "List: ${selectedList.title}, SETS: ${selectedList.advertisementSets.count()}, CurrentIndex: $_currentAdvertisementSetIndex"
+                )
+
+                // Find the next checked item in the current list
+                for (i in (_currentAdvertisementSetIndex + 1) until selectedList.advertisementSets.size) {
+                    if (selectedList.advertisementSets[i].isChecked) {
+                        // _currentAdvertisementSetListIndex is unchanged
+                        _currentAdvertisementSetIndex = i
+                        _currentAdvertisementSet = selectedList.advertisementSets[i]
+                        return
+                    }
+                }
+
+                // If we didn't find a checked item in the current list, move to the next list
+                // Find the next list with checked items
+                val startListIndex = _currentAdvertisementSetListIndex
+                val numberOfLists = _advertisementSetCollection.advertisementSetLists.size
+
+                // Loop through lists starting from the next one
+                for (listOffset in 1..numberOfLists) {
+                    val listIndex = (startListIndex + listOffset) % numberOfLists
+                    val list = _advertisementSetCollection.advertisementSetLists[listIndex]
+
+                    // Find the first checked item in this list
+                    val firstCheckedIndex = list.advertisementSets.indexOfFirst { it.isChecked }
+                    if (firstCheckedIndex >= 0) {
+                        _currentAdvertisementSetListIndex = listIndex
+                        _currentAdvertisementSetIndex = firstCheckedIndex
+                        _currentAdvertisementSet = list.advertisementSets[firstCheckedIndex]
+                        return
+                    }
+                }
+
+                // No checked set found in any list
+                return
+            }
+
+            AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM -> {
+                // Create a list of all checked advertisement sets across all lists
+                // TODO: Cache this, don't recompute it all the time?
+                val checkedSets = mutableListOf<Triple<Int, Int, AdvertisementSet>>()
+
+                _advertisementSetCollection.advertisementSetLists.forEachIndexed { listIndex, list ->
+                    list.advertisementSets.forEachIndexed { setIndex, set ->
+                        if (set.isChecked) {
+                            checkedSets.add(Triple(listIndex, setIndex, set))
+                        }
+                    }
+                }
+
+                // If we have checked items, randomly select one of them
+                if (checkedSets.isNotEmpty()) {
+                    val randomIndex = Random.nextInt(checkedSets.size)
+                    val selected = checkedSets[randomIndex]
+                    _currentAdvertisementSetListIndex = selected.first
+                    _currentAdvertisementSetIndex = selected.second
+                    _currentAdvertisementSet = selected.third
+                } else {
+                    // If no checked items, do nothing
+                }
+            }
+        }
+    }
+
+    private fun onAdvertisementSucceeded() {
+        _advertisementService.stopAdvertisement()
+
+        if (_advertisementService.isLegacyService()) {
+            advertiseNextAdvertisementSet()
+        } else {
+            // Wait for the Stop Advertising Callback
+        }
+    }
+
+    private fun onAdvertisementFailed() {
         Log.d(_logTag, "Advertisement failed, trying again")
         onAdvertisementSucceeded()
     }
@@ -479,7 +362,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
                     onAdvertisementFailed()
                 }
             }
-        }, _interval)
+        }, _intervalMillis)
     }
 
     // Callback Implementation, just pass to own Listeners
@@ -502,7 +385,7 @@ class  AdvertisementSetQueueHandler :IAdvertisementServiceCallback{
             }
         }
 
-        if(_advertisementService != null && !_advertisementService!!.isLegacyService()){
+        if (!_advertisementService.isLegacyService()) {
             advertiseNextAdvertisementSet()
         }
     }

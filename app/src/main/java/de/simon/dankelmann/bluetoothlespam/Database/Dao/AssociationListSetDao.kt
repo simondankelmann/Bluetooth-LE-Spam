@@ -14,6 +14,9 @@ interface AssociationListSetDao {
     @Query("SELECT * FROM associationlistsetentity")
     fun getAll(): List<AssociationListSetEntity>
 
+    @Query("SELECT * FROM associationlistsetentity WHERE advertisementSetListId = :listId ORDER BY position")
+    fun findByListId(listId: Int): List<AssociationListSetEntity>
+
     @Insert
     fun insertAll(vararg associationListSetEntity: AssociationListSetEntity)
 
