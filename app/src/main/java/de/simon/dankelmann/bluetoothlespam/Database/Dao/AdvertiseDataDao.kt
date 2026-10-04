@@ -26,4 +26,10 @@ interface AdvertiseDataDao {
 
     @Insert
     fun insertItem(advertiseDataEntity: AdvertiseDataEntity): Long
+
+    @Query("UPDATE advertisedataentity SET includeDeviceName = :includeDeviceName, includeTxPower = :includeTxPower WHERE id = :id")
+    fun updateFlags(id: Int, includeDeviceName: Boolean, includeTxPower: Boolean)
+
+    @Query("DELETE FROM advertisedataentity WHERE id = :id")
+    fun deleteById(id: Int)
 }

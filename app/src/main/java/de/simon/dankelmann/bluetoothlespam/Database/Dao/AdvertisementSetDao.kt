@@ -15,6 +15,9 @@ interface AdvertisementSetDao {
     @Query("SELECT * FROM advertisementsetentity WHERE id = :id")
     fun findById(id: Int): AdvertisementSetEntity
 
+    @Query("SELECT * FROM advertisementsetentity WHERE id = :id")
+    fun findByIdOrNull(id: Int): AdvertisementSetEntity?
+
     @Query("SELECT * FROM advertisementsetentity")
     fun getAll(): List<AdvertisementSetEntity>
 
@@ -38,4 +41,7 @@ interface AdvertisementSetDao {
 
     @Query("UPDATE advertisementsetentity SET title = :title WHERE id = :id")
     fun updateTitle(id: Int, title: String)
+
+    @Query("DELETE FROM advertisementsetentity WHERE id = :id")
+    fun deleteById(id: Int)
 }

@@ -23,4 +23,10 @@ interface AdvertiseSettingsDao {
     @Insert
     fun insertItem(advertiseSettingsEntity: AdvertiseSettingsEntity): Long
 
+    @Query("DELETE FROM advertisesettingsentity WHERE id = :id")
+    fun deleteById(id: Int)
+
+    @Query("SELECT * FROM advertisesettingsentity WHERE id IN (:ids)")
+    fun loadAllByIds(ids: IntArray): List<AdvertiseSettingsEntity>
+
 }

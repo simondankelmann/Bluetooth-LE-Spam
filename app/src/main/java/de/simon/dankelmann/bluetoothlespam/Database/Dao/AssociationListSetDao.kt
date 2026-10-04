@@ -25,4 +25,13 @@ interface AssociationListSetDao {
 
     @Insert
     fun insertItem(associationListSetEntity: AssociationListSetEntity): Long
+
+    @Query("SELECT * FROM associationlistsetentity WHERE advertisementSetId = :setId")
+    fun findBySetId(setId: Int): List<AssociationListSetEntity>
+
+    @Query("DELETE FROM associationlistsetentity WHERE advertisementSetId = :setId")
+    fun deleteBySetId(setId: Int)
+
+    @Query("SELECT MAX(position) FROM associationlistsetentity WHERE advertisementSetListId = :listId")
+    fun getMaxPositionForList(listId: Int): Int?
 }

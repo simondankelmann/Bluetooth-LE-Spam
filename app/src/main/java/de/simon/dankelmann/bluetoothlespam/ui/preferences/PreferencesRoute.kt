@@ -30,7 +30,7 @@ import de.simon.dankelmann.bluetoothlespam.ui.theme.ThemeModeOption
  * own. SAF folder picker kept via `rememberLauncherForActivityResult` (plan §5).
  */
 @Composable
-fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
+fun PreferencesRoute(onTxPowerClicked: () -> Unit, onManageDevicesClicked: () -> Unit = {}) {
     val context = LocalContext.current
     val activity = context as FragmentActivity
 
@@ -104,6 +104,7 @@ fun PreferencesRoute(onTxPowerClicked: () -> Unit) {
             defaultPrefs.edit().putString(intervalKey, value).apply()
         },
         onTxPowerClicked = onTxPowerClicked,
+        onManageDevicesClicked = onManageDevicesClicked,
         spamDetectionBackgroundEnabled = spamDetectionBackgroundEnabled,
         onSpamDetectionBackgroundEnabledChanged = { enabled ->
             settingsRepository.setSpamDetectionBackgroundEnabledAsync(enabled)

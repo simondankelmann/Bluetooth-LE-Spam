@@ -61,6 +61,7 @@ fun PreferencesScreen(
     advertisingIntervalMs: String,
     onAdvertisingIntervalChanged: (String) -> Unit,
     onTxPowerClicked: () -> Unit,
+    onManageDevicesClicked: () -> Unit = {},
     spamDetectionBackgroundEnabled: Boolean,
     onSpamDetectionBackgroundEnabledChanged: (Boolean) -> Unit,
     loggingEnabled: Boolean,
@@ -149,6 +150,9 @@ fun PreferencesScreen(
         }
         item {
             ClickRow(title = "Set TX Power", onClick = onTxPowerClicked, iconRes = R.drawable.ic_tx_power)
+        }
+        item {
+            ClickRow(title = "Manage devices", onClick = onManageDevicesClicked)
         }
 
         item { SectionHeader("Swift Pair") }

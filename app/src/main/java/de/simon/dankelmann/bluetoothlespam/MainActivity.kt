@@ -115,6 +115,17 @@ class MainActivity : AppCompatActivity() {
         // Initialize AppContext, Activity, Advertisement Service and QueHandler
         AppContext.setContext(applicationContext)
 
+        // Sync new default devices (e.g. new Fast Pair Model IDs from app updates)
+        // without losing user deletions/edits/customs. Once per process, IO thread,
+        // race-guarded against DB seeding inside the helper.
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.syncMissingDefaults()
+            } catch (e: Exception) {
+                android.util.Log.e("MainActivity", "syncMissingDefaults failed: ${e.message}")
+            }
+        }
+
         // Listen to Preference changes
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         seedColorArgb = ThemeManager.getInstance().getSeedColor(this)
@@ -239,7 +250,10 @@ class MainActivity : AppCompatActivity() {
                                             onCreateCustomGroup = { navController.navigate(SpecterDestinations.GROUP_EDITOR) },
                                         )
                                         SpecterDestinations.SPAM_DETECTOR -> SpamDetectorRoute()
-                                        SpecterDestinations.PREFERENCES -> PreferencesRoute(onTxPowerClicked = { showSetTxPowerDialog() })
+                                        SpecterDestinations.PREFERENCES -> PreferencesRoute(
+                                            onTxPowerClicked = { showSetTxPowerDialog() },
+                                            onManageDevicesClicked = { navController.navigate(SpecterDestinations.MANAGE_DEVICES) },
+                                        )
                                     }
                                 }
                             }
@@ -249,6 +263,9 @@ class MainActivity : AppCompatActivity() {
                             }
                             composable(SpecterDestinations.MANAGE_QUICK_START) {
                                 ManageQuickStartRoute()
+                            }
+                            composable(SpecterDestinations.MANAGE_DEVICES) {
+                                de.simon.dankelmann.bluetoothlespam.ui.managedevices.ManageDevicesRoute()
                             }
                         }
                     }
@@ -345,6 +362,7 @@ private val detailRouteTitles = mapOf(
     SpecterDestinations.ADVERTISEMENT to "Advertisement",
     SpecterDestinations.GROUP_EDITOR to "Create custom group",
     SpecterDestinations.MANAGE_QUICK_START to "Manage Quick Start",
+    SpecterDestinations.MANAGE_DEVICES to "Manage devices",
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

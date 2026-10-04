@@ -93,4 +93,45 @@
     <string name="missing_permissions_text">Some permissions are missing. Without them, Bluetooth LE Spam will not work properly.</string>
     <string name="missing_permissions_grant">Grant Permissions</string>
 
+    <!-- PR454: device edit/delete/manage + custom SwiftPair -->
+    <string name="swift_pair_custom_name_hint">Custom Swift Pair nameΓÇª</string>
+    <string name="swift_pair_add">Add</string>
+    <string name="swift_pair_custom_added">Custom Swift Pair device added</string>
+    <string name="swift_pair_custom_empty">Enter a device name first</string>
+    <string name="swift_pair_custom_too_long">Name too long (24 bytes max)</string>
+    <string name="swift_pair_custom_exists">This name is already in the list</string>
+    <string name="menu_manage_devices">Manage devices</string>
+    <string name="device_edit">Edit</string>
+    <string name="device_delete">Delete</string>
+    <string name="device_save">Save</string>
+    <string name="device_deleted">Device removed from the list</string>
+    <string name="device_updated">Device updated</string>
+    <string name="device_delete_title">Remove device?</string>
+    <string name="device_delete_message">%1$s will no longer be advertised. You can restore it later in Manage devices.</string>
+    <string name="device_field_title">Device name</string>
+    <string name="device_section_manufacturer">Manufacturer data</string>
+    <string name="device_section_service">Service data</string>
+    <string name="device_section_options">Options</string>
+    <string name="device_field_manufacturer_id">Manufacturer ID (hex) #%1$d</string>
+    <string name="device_field_manufacturer_data">Manufacturer payload (hex) #%1$d</string>
+    <string name="device_field_service_uuid">Service UUID #%1$d</string>
+    <string name="device_field_service_data">Service payload (hex) #%1$d</string>
+    <string name="device_field_include_name">Include device name</string>
+    <string name="device_field_include_tx">Include TX power</string>
+    <string name="device_error_empty_title">Enter a device name</string>
+    <string name="device_error_bad_hex">Invalid payload: use even-length hex (0-9, a-f)</string>
+    <string name="device_error_bad_manufacturer_id">Invalid manufacturer ID: use hex, max FFFF</string>
+    <string name="device_error_bad_uuid">Invalid service UUID</string>
+    <string name="manage_removed_title">Removed devices</string>
+    <string name="manage_removed_empty">No removed devices</string>
+    <string name="manage_modified_title">Modified devices</string>
+    <string name="manage_modified_empty">No modified devices</string>
+    <string name="manage_restore">Restore</string>
+    <string name="manage_restored">Device restored</string>
+    <string name="manage_reset">Reset all to defaults</string>
+    <string name="manage_reset_title">Reset all to defaults?</string>
+    <string name="manage_reset_message">This restores every modified device, brings back removed devices and deletes custom devices.</string>
+    <string name="manage_reset_done">Defaults restored</string>
+    <string name="manage_custom_badge">Custom</string>
+
 </resources>

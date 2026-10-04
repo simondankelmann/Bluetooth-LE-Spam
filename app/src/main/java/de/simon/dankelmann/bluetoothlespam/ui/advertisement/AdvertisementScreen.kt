@@ -15,9 +15,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Pause
@@ -102,6 +103,10 @@ fun AdvertisementScreen(
     onGroupCheckedChanged: (AdvertisementSetList, Boolean) -> Unit,
     allowCustomSwiftPairNames: Boolean,
     onRenameSwiftPairDevice: (AdvertisementSet, String) -> Unit,
+    onEditDevice: (AdvertisementSet) -> Unit = {},
+    onDeleteDevice: (AdvertisementSet) -> Unit = {},
+    showCustomSwiftPairAdd: Boolean = false,
+    onAddCustomSwiftPair: (String) -> Unit = {},
 ) {
     val expandedGroups = remember(advertisementSetLists) {
         mutableStateMapOf<Int, Boolean>().apply {
@@ -109,6 +114,7 @@ fun AdvertisementScreen(
         }
     }
     var editingSwiftPairSet by remember { mutableStateOf<AdvertisementSet?>(null) }
+    var customSwiftPairName by remember(showCustomSwiftPairAdd) { mutableStateOf("") }
 
     // Surface (not a plain Column) so every Text/Icon below that doesn't set an explicit color
     // gets a real LocalContentColor instead of falling back to black -- MainActivity's root is a
@@ -143,14 +149,30 @@ fun AdvertisementScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                if (showCustomSwiftPairAdd) {
+                    // Stable key: the add card must NOT be recreated on `revision` bumps
+                    // (spam ticks every ~1s), otherwise the text field loses focus while typing.
+                    item(key = "custom-swiftpair-add") {
+                        CustomSwiftPairAddRow(
+                            name = customSwiftPairName,
+                            onNameChanged = { if (it.length <= 24) customSwiftPairName = it },
+                            onAddClicked = {
+                                val trimmed = customSwiftPairName.trim()
+                                if (trimmed.isNotEmpty()) {
+                                    onAddCustomSwiftPair(trimmed)
+                                    customSwiftPairName = ""
+                                }
+                            },
+                        )
+                    }
+                }
                 advertisementSetLists.forEachIndexed { groupIndex, list ->
-                    // Keys include `revision`: `set`/`list` are plain mutated objects (not Compose
-                    // State), and LazyColumn gives each item its own recomposition scope that a
-                    // `revision++` bump alone doesn't invalidate -- only a key change forces
-                    // Compose to dispose+recreate the row and re-read the mutated field. Without
-                    // this, toggling a checkbox silently updates the model but the checkbox glyph
-                    // stays stale until the group is collapsed/expanded.
-                    item(key = "group-$groupIndex-$revision") {
+                    // Stable keys (group index / set id): rows are plain mutated models, so the
+                    // `revision` state is read inside each item to retrigger recomposition
+                    // without dispose+recreate (preserves scroll position and checkbox state).
+                    item(key = "group-$groupIndex") {
+                        @Suppress("UNUSED_VARIABLE")
+                        val _rev = revision
                         GroupHeaderRow(
                             list = list,
                             expanded = expandedGroups[groupIndex] == true,
@@ -162,15 +184,29 @@ fun AdvertisementScreen(
                     }
 
                     if (expandedGroups[groupIndex] == true) {
-                        items(list.advertisementSets, key = { "set-$groupIndex-${it.id}-$revision" }) { set ->
-                            val childIndex = list.advertisementSets.indexOf(set)
+                        itemsIndexed(
+                            list.advertisementSets,
+                            key = { _, set -> "set-$groupIndex-${set.id}" },
+                        ) { childIndex, set ->
+                            @Suppress("UNUSED_VARIABLE")
+                            val _rev = revision
+                            val isSwiftPair =
+                                set.type == AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING
+                            // Setting gates ALL SwiftPair custom UI (rename + add card).
+                            // Generic edit/delete for other categories stays always visible.
+                            val showEdit = if (isSwiftPair) allowCustomSwiftPairNames else true
+                            val showDelete = if (isSwiftPair) allowCustomSwiftPairNames else true
                             SetRow(
                                 set = set,
                                 onClick = { onSetRowClicked(groupIndex, childIndex, set) },
                                 onCheckedChanged = { checked -> onSetCheckedChanged(set, checked) },
-                                showEditButton = allowCustomSwiftPairNames &&
-                                    set.type == AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING,
-                                onEditClicked = { editingSwiftPairSet = set },
+                                showEditButton = showEdit,
+                                showDeleteButton = showDelete,
+                                onEditClicked = {
+                                    if (isSwiftPair) editingSwiftPairSet = set
+                                    else onEditDevice(set)
+                                },
+                                onDeleteClicked = { onDeleteDevice(set) },
                             )
                         }
                     }
@@ -277,27 +313,29 @@ private fun HeaderSection(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(target.getDrawableId()),
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-            )
-            Column(modifier = Modifier.padding(start = 12.dp)) {
-                if (currentSetTitle == "-") {
-                    PlaceholderBox()
-                } else {
-                    Text(text = currentSetTitle, style = MaterialTheme.typography.titleSmall)
-                }
-                if (currentSetSubtitle == "-") {
-                    PlaceholderBox(modifier = Modifier.padding(top = 4.dp))
-                } else {
-                    Text(text = currentSetSubtitle, style = MaterialTheme.typography.bodySmall)
+        if (isAdvertising) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(target.getDrawableId()),
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                )
+                Column(modifier = Modifier.padding(start = 12.dp)) {
+                    if (currentSetTitle == "-") {
+                        PlaceholderBox()
+                    } else {
+                        Text(text = currentSetTitle, style = MaterialTheme.typography.titleSmall)
+                    }
+                    if (currentSetSubtitle == "-") {
+                        PlaceholderBox(modifier = Modifier.padding(top = 4.dp))
+                    } else {
+                        Text(text = currentSetSubtitle, style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
         }
@@ -365,6 +403,8 @@ private fun SetRow(
     onCheckedChanged: (Boolean) -> Unit,
     showEditButton: Boolean,
     onEditClicked: () -> Unit,
+    showDeleteButton: Boolean = true,
+    onDeleteClicked: () -> Unit = {},
 ) {
     val extendedColors = LocalExtendedColors.current
     val titleColor = when {
@@ -392,7 +432,47 @@ private fun SetRow(
         }
         if (showEditButton) {
             IconButton(onClick = onEditClicked) {
-                Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit device name")
+                Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit device")
+            }
+        }
+        if (showDeleteButton) {
+            IconButton(onClick = onDeleteClicked) {
+                Icon(imageVector = Icons.Filled.Delete, contentDescription = "Delete device")
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomSwiftPairAddRow(
+    name: String,
+    onNameChanged: (String) -> Unit,
+    onAddClicked: () -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(text = "Add custom Swift Pair device", style = MaterialTheme.typography.titleSmall)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = onNameChanged,
+                    label = { Text("Device name") },
+                    supportingText = { Text("${name.length}/24") },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                    onClick = onAddClicked,
+                    enabled = name.trim().isNotEmpty(),
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
+                    Text("Add")
+                }
             }
         }
     }

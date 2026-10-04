@@ -73,7 +73,11 @@ private fun launchCustomGroup(context: Context, groupId: Int, onNavigateToAdvert
             onNavigateToAdvertisement()
 
             Thread {
-                val setsByList = listEntities.map { DatabaseHelpers.getAllAdvertisementSetsForList(it.id) }
+                val setsByList = listEntities.map {
+                    de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.filterDeleted(
+                        DatabaseHelpers.getAllAdvertisementSetsForList(it.id)
+                    )
+                }
                 Handler(Looper.getMainLooper()).post {
                     setsByList.forEachIndexed { index, sets ->
                         collection.advertisementSetLists[index].advertisementSets = sets.toMutableList()
@@ -150,7 +154,11 @@ private fun navigateToAdvertisementWithType(
     onNavigateToAdvertisement()
 
     Thread {
-        val setsByType = advertisementSetTypes.map { DatabaseHelpers.getAllAdvertisementSetsForType(it) }
+        val setsByType = advertisementSetTypes.map {
+            de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.filterDeleted(
+                DatabaseHelpers.getAllAdvertisementSetsForType(it)
+            )
+        }
         Handler(Looper.getMainLooper()).post {
             setsByType.forEachIndexed { index, sets ->
                 advertisementSetCollection.advertisementSetLists[index].advertisementSets = sets.toMutableList()
