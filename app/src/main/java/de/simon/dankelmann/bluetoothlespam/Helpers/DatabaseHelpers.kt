@@ -1,6 +1,7 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.os.ParcelUuid
+import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
@@ -37,6 +38,13 @@ import java.util.UUID
 class DatabaseHelpers {
     companion object{
         private const val _logTag = "DatabaseHelpers"
+
+        /**
+         * Version of the built-in advertisement-set data. Bump whenever the built-in generators
+         * gain new entries so existing installs re-sync them (see [syncBuiltInSets] /
+         * [de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository.builtInSeedVersion]).
+         */
+        const val BUILT_IN_SEED_VERSION = 1
 
         fun saveAdvertisementSet(advertisementSet: AdvertisementSet,):Int{
 
@@ -292,138 +300,14 @@ class DatabaseHelpers {
         }
 
         fun getAdvertisementSetListFromEntities(entities: List<AdvertisementSetEntity>):List<AdvertisementSet>{
-            if (entities.isEmpty()) return emptyList()
-            // Batched assembly: the old per-entity path issued ~5 queries per set
-            // (~5000 for a full Fast Pair collection). Same mapping, same quirks
-            // (see notes inside), but a constant handful of IN queries.
-            return try {
-                assembleAdvertisementSetsBatched(entities)
-            } catch (e: Exception) {
-                // Fallback to the old row-by-row path so a partial batch failure
-                // can never load less than before; per-row skips as in getAllAdvertisementSets.
-                val out = mutableListOf<AdvertisementSet>()
-                entities.forEach { entity ->
-                    try {
-                        out.add(getAdvertisementSetFromEntity(entity))
-                    } catch (ignored: Exception) {
-                    }
-                }
-                out.toList()
-            }
-        }
+            var advertisementSets = mutableListOf<AdvertisementSet>()
 
-        private fun assembleAdvertisementSetsBatched(entities: List<AdvertisementSetEntity>): List<AdvertisementSet> {
-            val database = AppDatabase.getInstance()
-
-            val settingsById = database.advertiseSettingsDao()
-                .loadAllByIds(entities.map { it.advertiseSettingsId }.distinct().toIntArray())
-                .associateBy { it.id }
-            val paramsById = database.advertisingSetParametersDao()
-                .loadAllByIds(entities.map { it.advertisingSetParametersId }.distinct().toIntArray())
-                .associateBy { it.id }
-
-            val dataIds = entities.flatMap {
-                listOfNotNull(
-                    it.advertiseDataId.takeIf { id -> id > 0 },
-                    it.scanResponseId?.takeIf { id -> id > 0 },
-                    it.periodicAdvertiseDataId?.takeIf { id -> id > 0 },
-                )
-            }.distinct().toIntArray()
-            val dataById = if (dataIds.isEmpty()) emptyMap() else database.advertiseDataDao()
-                .loadAllByIds(dataIds).associateBy { it.id }
-            val mfrByDataId = if (dataIds.isEmpty()) emptyMap() else database
-                .advertiseDataManufacturerSpecificDataDao().findByAdvertiseDataIds(dataIds)
-                .groupBy { it.advertiseDataId }
-            val svcByDataId = if (dataIds.isEmpty()) emptyMap() else database
-                .advertiseDataServiceDataDao().findByAdvertiseDataIds(dataIds)
-                .groupBy { it.advertiseDataId }
-
-            fun buildAdvertiseData(dataId: Int?): AdvertiseData? {
-                if (dataId == null || dataId <= 0) return null
-                val entity = dataById[dataId] ?: return null
-                val out = AdvertiseData()
-                out.id = entity.id
-                out.includeDeviceName = entity.includeDeviceName
-                out.includeTxPower = entity.includeTxPower
-                mfrByDataId[entity.id]?.forEach { mfr ->
-                    val item = ManufacturerSpecificData()
-                    item.id = mfr.id
-                    item.manufacturerId = mfr.manufacturerId
-                    item.manufacturerSpecificData = StringHelpers.decodeHex(mfr.manufacturerSpecificData)
-                    out.manufacturerData.add(item)
-                }
-                svcByDataId[entity.id]?.forEach { svc ->
-                    val item = ServiceData()
-                    item.id = svc.id
-                    item.serviceUuid = ParcelUuid.fromString(svc.serviceUuid.toString())
-                    if (svc.serviceData != null) {
-                        item.serviceData = StringHelpers.decodeHex(svc.serviceData!!)
-                    }
-                    out.services.add(item)
-                }
-                return out
+            entities.forEach { entitiy ->
+                var advertisementSet = getAdvertisementSetFromEntity(entitiy)
+                advertisementSets.add(advertisementSet)
             }
 
-            val out = mutableListOf<AdvertisementSet>()
-            entities.forEach { entity ->
-                try {
-                    val set = AdvertisementSet()
-                    set.id = entity.id
-                    set.title = entity.title
-                    set.target = entity.target
-                    set.type = entity.type
-                    set.duration = entity.duration
-                    set.maxExtendedAdvertisingEvents = entity.maxExtendedAdvertisingEvents
-                    set.range = entity.range
-
-                    val settings = settingsById[entity.advertiseSettingsId]
-                        ?: throw IllegalStateException("Missing AdvertiseSettings ${entity.advertiseSettingsId}")
-                    set.advertiseSettings = AdvertiseSettings().apply {
-                        // Quirk preserved from getAdvertisementSetFromEntity: model id mirrors
-                        // the set row id, not the settings row id.
-                        id = entity.id
-                        advertiseMode = settings.advertiseMode
-                        txPowerLevel = settings.txPowerLevel
-                        connectable = settings.connectable
-                        timeout = settings.timeout
-                    }
-
-                    val params = paramsById[entity.advertisingSetParametersId]
-                        ?: throw IllegalStateException("Missing AdvertisingSetParameters ${entity.advertisingSetParametersId}")
-                    set.advertisingSetParameters = AdvertisingSetParameters().apply {
-                        id = params.id
-                        legacyMode = params.legacyMode
-                        interval = params.interval
-                        txPowerLevel = params.txPowerLevel
-                        includeTxPowerLevel = params.includeTxPowerLevel
-                        primaryPhy = params.primaryPhy
-                        secondaryPhy = params.secondaryPhy
-                        scanable = params.scanable
-                        connectable = params.connectable
-                        anonymous = params.anonymous
-                    }
-
-                    buildAdvertiseData(entity.advertiseDataId)?.let { set.advertiseData = it }
-                    buildAdvertiseData(entity.scanResponseId)?.let { set.scanResponse = it }
-                    buildAdvertiseData(entity.periodicAdvertiseDataId)?.let { set.periodicAdvertiseData = it }
-
-                    // Quirk preserved: the old path (probably by copy-paste) builds the
-                    // periodic *parameters* from the REGULAR parameters row, not the periodic
-                    // table. Replicate exactly so periodic-capable sets behave as before.
-                    if (entity.periodicAdvertisingParametersId != null) {
-                        set.periodicAdvertisingParameters = PeriodicAdvertisingParameters().apply {
-                            id = params.id
-                            includeTxPowerLevel = params.includeTxPowerLevel
-                            interval = params.interval
-                        }
-                    }
-
-                    out.add(set)
-                } catch (ignored: Exception) {
-                    // Skip single unreadable rows, like getAllAdvertisementSets does.
-                }
-            }
-            return out.toList()
+            return advertisementSets.toList()
         }
 
         /**
@@ -482,6 +366,97 @@ class DatabaseHelpers {
             }
         }
 
+        /**
+         * Additively tops up the built-in advertisement sets on app upgrade (called from
+         * `BleSpamApplication` when [de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository.builtInSeedVersion]
+         * is behind [BUILT_IN_SEED_VERSION]) -- [seedBuiltInListsAndCollections] only ever runs on a
+         * brand-new database, so without this, model IDs added to the generators after a user's first
+         * launch would never reach them.
+         *
+         * Idempotent: a set is matched by its advertised payload (type + service/manufacturer data,
+         * NOT its title, so renaming a device does not re-add it), so only genuinely new payloads are
+         * inserted, and each is appended to the existing built-in list for its type. Nothing is
+         * deleted, so user-created collections -- which reference the same per-type lists -- are
+         * untouched. Must run off the main thread, and never concurrently with [seedingThread]
+         * (`BleSpamApplication` only calls it when the database already existed, i.e. not a fresh
+         * install).
+         */
+        fun syncBuiltInSets() {
+            val database = AppDatabase.getInstance()
+            val context = AppContext.getContext()
+
+            // Load payload rows once and index by advertiseDataId so signatures need no per-set query.
+            val serviceDataByAdvertiseDataId =
+                database.advertiseDataServiceDataDao().getAll().groupBy { it.advertiseDataId }
+            val manufacturerDataByAdvertiseDataId =
+                database.advertiseDataManufacturerSpecificDataDao().getAll().groupBy { it.advertiseDataId }
+
+            fun payloadSignature(type: AdvertisementSetType, servicePart: String, manufacturerPart: String) =
+                "${type.name}|svc[$servicePart]|mfg[$manufacturerPart]"
+
+            fun signatureForEntity(entity: AdvertisementSetEntity): String {
+                val svc = (serviceDataByAdvertiseDataId[entity.advertiseDataId] ?: emptyList())
+                    .map { "${it.serviceUuid}=${it.serviceData ?: ""}" }.sorted().joinToString(",")
+                val mfg = (manufacturerDataByAdvertiseDataId[entity.advertiseDataId] ?: emptyList())
+                    .map { "${it.manufacturerId}=${it.manufacturerSpecificData}" }.sorted().joinToString(",")
+                return payloadSignature(entity.type, svc, mfg)
+            }
+
+            fun signatureForSet(set: AdvertisementSet): String {
+                val svc = set.advertiseData.services
+                    .map { "${it.serviceUuid}=${it.serviceData?.toHexString() ?: ""}" }.sorted().joinToString(",")
+                val mfg = set.advertiseData.manufacturerData
+                    .map { "${it.manufacturerId}=${it.manufacturerSpecificData.toHexString()}" }.sorted().joinToString(",")
+                return payloadSignature(set.type, svc, mfg)
+            }
+
+            // add() returns false when already present, so this also collapses duplicate keys within
+            // a generator (matching mapOf's last-wins), exactly like the original seed.
+            val knownSignatures = database.advertisementSetDao().getAll()
+                .map { signatureForEntity(it) }.toHashSet()
+
+            // Built-in per-type lists are titled "<Type> List" (see seedBuiltInListsAndCollections).
+            val listIdByTitle = database.advertisementSetListDao().getAll().associate { it.title to it.id }
+            val nextPositionByListId = mutableMapOf<Int, Int>()
+
+            var added = 0
+            // Batch every insert into one transaction (same reason as the initial seed): a top-up
+            // of hundreds/thousands of sets must not be hundreds/thousands of separate commits.
+            database.runInTransaction {
+                AppDatabase.builtInAdvertisementSetGenerators.forEach { generator ->
+                    generator.getAdvertisementSets(null).forEach { set ->
+                        if (!knownSignatures.add(signatureForSet(set))) return@forEach
+
+                        val listTitle = "${context.getString(set.type.stringResId())} List"
+                        val listId = listIdByTitle[listTitle]
+                        if (listId == null) {
+                            // No built-in list for this type (e.g. a type added since the first seed).
+                            // Skip rather than create an orphan set -- a new type is a code change that
+                            // also updates seedBuiltInListsAndCollections.
+                            Log.w(_logTag, "syncBuiltInSets: no built-in list '$listTitle'; skipping new ${set.type.name} set")
+                            return@forEach
+                        }
+
+                        val position = nextPositionByListId.getOrPut(listId) {
+                            database.associationListSetDao().findByListId(listId).size
+                        }
+                        val setId = saveAdvertisementSet(set)
+                        database.associationListSetDao().insertItem(
+                            AssociationListSetEntity(
+                                id = 0,
+                                advertisementSetId = setId,
+                                advertisementSetListId = listId,
+                                position = position,
+                            ),
+                        )
+                        nextPositionByListId[listId] = position + 1
+                        added++
+                    }
+                }
+            }
+            Log.d(_logTag, "syncBuiltInSets: added $added new built-in advertisement set(s)")
+        }
+
         fun getAllAdvertisementSetsForList(listId: Int): List<AdvertisementSet> {
             val database = AppDatabase.getInstance()
             // findByListId is already ORDER BY position; loadAllByIds's WHERE IN doesn't
@@ -490,163 +465,6 @@ class DatabaseHelpers {
             val entitiesById = database.advertisementSetDao().loadAllByIds(orderedSetIds.toIntArray()).associateBy { it.id }
             val setEntities = orderedSetIds.mapNotNull { entitiesById[it] }
             return getAdvertisementSetListFromEntities(setEntities)
-        }
-
-        fun getAdvertisementSetById(id: Int): AdvertisementSet? {
-            return try {
-                val database = AppDatabase.getInstance()
-                val entity = database.advertisementSetDao().findByIdOrNull(id) ?: return null
-                getAdvertisementSetFromEntity(entity)
-            } catch (e: Exception) {
-                null
-            }
-        }
-
-        fun getAllAdvertisementSets(): List<AdvertisementSet> {
-            // Batched path already skips single unreadable rows internally.
-            return getAdvertisementSetListFromEntities(AppDatabase.getInstance().advertisementSetDao().getAll())
-        }
-
-        /**
-         * Persists title + advertiseData content (flags, manufacturer entries, service entries)
-         * of an already stored AdvertisementSet, matched by row ids carried by the model.
-         */
-        fun updateAdvertisementSetContent(advertisementSet: AdvertisementSet) {
-            val database = AppDatabase.getInstance()
-
-            database.advertisementSetDao().updateTitle(advertisementSet.id, advertisementSet.title)
-
-            val advertiseData = advertisementSet.advertiseData
-            database.advertiseDataDao().updateFlags(
-                advertiseData.id,
-                advertiseData.includeDeviceName,
-                advertiseData.includeTxPower
-            )
-            advertiseData.manufacturerData.forEach { manufacturerSpecificData ->
-                database.advertiseDataManufacturerSpecificDataDao().updateEntry(
-                    manufacturerSpecificData.id,
-                    manufacturerSpecificData.manufacturerId,
-                    manufacturerSpecificData.manufacturerSpecificData.toHexString()
-                )
-            }
-            advertiseData.services.forEach { serviceData ->
-                val uuid = serviceData.serviceUuid
-                if (uuid != null) {
-                    database.advertiseDataServiceDataDao().updateEntry(
-                        serviceData.id,
-                        UUID.fromString(uuid.toString()),
-                        serviceData.serviceData?.toHexString()
-                    )
-                }
-            }
-        }
-
-        /**
-         * Physically removes an AdvertisementSet and all its related rows.
-         * Used for custom (non-default) sets on "reset to defaults".
-         * Also cleans list associations so no orphan rows remain.
-         */
-        fun deleteAdvertisementSetTree(advertisementSetId: Int) {
-            val database = AppDatabase.getInstance()
-            val entity = try {
-                database.advertisementSetDao().findByIdOrNull(advertisementSetId)
-            } catch (e: Exception) {
-                null
-            } ?: return
-
-            try {
-                database.associationListSetDao().deleteBySetId(advertisementSetId)
-            } catch (e: Exception) {
-                // Older DBs without the query or missing rows: ignore
-            }
-
-            fun deleteAdvertiseDataTree(advertiseDataId: Int?) {
-                if (advertiseDataId == null || advertiseDataId <= 0) return
-                database.advertiseDataServiceDataDao().deleteByAdvertiseDataId(advertiseDataId)
-                database.advertiseDataManufacturerSpecificDataDao().deleteByAdvertiseDataId(advertiseDataId)
-                database.advertiseDataDao().deleteById(advertiseDataId)
-            }
-
-            deleteAdvertiseDataTree(entity.advertiseDataId)
-            deleteAdvertiseDataTree(entity.scanResponseId)
-            deleteAdvertiseDataTree(entity.periodicAdvertiseDataId)
-
-            if (entity.advertiseSettingsId > 0) {
-                database.advertiseSettingsDao().deleteById(entity.advertiseSettingsId)
-            }
-            if (entity.advertisingSetParametersId > 0) {
-                database.advertisingSetParametersDao().deleteById(entity.advertisingSetParametersId)
-            }
-            if ((entity.periodicAdvertisingParametersId ?: 0) > 0) {
-                database.periodicAdvertisingParametersDao().deleteById(entity.periodicAdvertisingParametersId!!)
-            }
-
-            database.advertisementSetDao().deleteById(entity.id)
-        }
-
-        /**
-         * Saves a set and ensures it is linked to its type's built-in list
-         * (used by syncMissingDefaults so new Model IDs actually show up in the
-         * Compose UI, which loads via lists, not via raw entities).
-         * @return new row id, or 0 on failure
-         */
-        fun saveAdvertisementSetAndAssociate(advertisementSet: AdvertisementSet): Int {
-            val newId = try {
-                saveAdvertisementSet(advertisementSet)
-            } catch (e: Exception) {
-                return 0
-            }
-            if (newId <= 0) return 0
-            try {
-                val database = AppDatabase.getInstance()
-                val context = AppContext.getContext()
-                val expectedTitle = try {
-                    "${context.getString(advertisementSet.type.stringResId())} List"
-                } catch (e: Exception) {
-                    null
-                }
-                var listId: Int? = null
-                if (expectedTitle != null) {
-                    listId = database.advertisementSetListDao().getAll()
-                        .firstOrNull { it.title == expectedTitle }?.id
-                }
-                if (listId == null) {
-                    // Fallback: pick the first list whose sets share the same type
-                    val allLists = database.advertisementSetListDao().getAll()
-                    for (list in allLists) {
-                        val firstSetId = database.associationListSetDao().findByListId(list.id).firstOrNull()?.advertisementSetId
-                        if (firstSetId != null) {
-                            val firstEntity = try {
-                                database.advertisementSetDao().findByIdOrNull(firstSetId)
-                            } catch (e: Exception) { null }
-                            if (firstEntity != null && firstEntity.type == advertisementSet.type) {
-                                listId = list.id
-                                break
-                            }
-                        }
-                    }
-                }
-                if (listId == null) {
-                    // No list for this type yet: create one
-                    listId = database.advertisementSetListDao().insertItem(
-                        AdvertisementSetListEntity(id = 0, title = expectedTitle ?: "${advertisementSet.type.name} List")
-                    ).toInt()
-                }
-                val maxPos = try {
-                    database.associationListSetDao().getMaxPositionForList(listId!!) ?: -1
-                } catch (e: Exception) { -1 }
-                database.associationListSetDao().insertItem(
-                    AssociationListSetEntity(
-                        id = 0,
-                        advertisementSetId = newId,
-                        advertisementSetListId = listId!!,
-                        position = maxPos + 1
-                    )
-                )
-            } catch (e: Exception) {
-                // Association failure must not fail the sync; set exists, UI reload will pick it up via type query
-            }
-            return newId
         }
 
         /**

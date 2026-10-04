@@ -29,13 +29,4 @@ interface AdvertiseDataManufacturerSpecificDataDao {
 
     @Query("UPDATE advertisedatamanufacturerspecificdataentity SET manufacturerSpecificData = :manufacturerSpecificData WHERE id = :id")
     fun updateManufacturerSpecificData(id: Int, manufacturerSpecificData: String)
-
-    @Query("UPDATE advertisedatamanufacturerspecificdataentity SET manufacturerId = :manufacturerId, manufacturerSpecificData = :manufacturerSpecificData WHERE id = :id")
-    fun updateEntry(id: Int, manufacturerId: Int, manufacturerSpecificData: String)
-
-    @Query("DELETE FROM advertisedatamanufacturerspecificdataentity WHERE advertiseDataId = :advertiseDataId")
-    fun deleteByAdvertiseDataId(advertiseDataId: Int)
-
-    @Query("SELECT * FROM advertisedatamanufacturerspecificdataentity WHERE advertiseDataId IN (:ids)")
-    fun findByAdvertiseDataIds(ids: IntArray): List<AdvertiseDataManufacturerSpecificDataEntity>
 }

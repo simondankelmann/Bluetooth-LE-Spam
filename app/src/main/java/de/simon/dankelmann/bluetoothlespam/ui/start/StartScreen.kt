@@ -153,11 +153,7 @@ fun StartRoute(
                     // Must outlive this composable (which unmounts the instant we navigate away),
                     // so a plain background Thread rather than this coroutine's own scope.
                     Thread {
-                        val setsByList = listEntities.map {
-                            de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.filterDeleted(
-                                DatabaseHelpers.getAllAdvertisementSetsForList(it.id)
-                            )
-                        }
+                        val setsByList = listEntities.map { DatabaseHelpers.getAllAdvertisementSetsForList(it.id) }
                         Handler(Looper.getMainLooper()).post {
                             setsByList.forEachIndexed { index, sets ->
                                 domainCollection.advertisementSetLists[index].advertisementSets = sets.toMutableList()

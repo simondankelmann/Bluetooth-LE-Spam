@@ -13,6 +13,7 @@ import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.Continuity
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupBudsAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.EasySetupWatchAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDevicesAdvertisementSetGenerator
+import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.IAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairDebugAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairNonProductionAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.FastPairPhoneSetupAdvertisementSetGenerator
@@ -65,6 +66,11 @@ abstract class AppDatabase : RoomDatabase() {
 
     // Written by seeding threads, polled from UI coroutines.
     @Volatile var isSeeding = false
+
+    // Set true in the Room onCreate callback when the database is first created, so the upgrade
+    // sync (DatabaseHelpers.syncBuiltInSets via BleSpamApplication) can tell a fresh install
+    // (seeding handles it) from an update to an existing database (sync handles it).
+    @Volatile var freshlyCreated = false
     abstract fun advertiseDataDao(): AdvertiseDataDao
     abstract fun advertiseDataManufacturerSpecificDataDao(): AdvertiseDataManufacturerSpecificDataDao
     abstract fun advertiseDataServiceDataDao(): AdvertiseDataServiceDataDao
@@ -106,6 +112,7 @@ abstract class AppDatabase : RoomDatabase() {
             return object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
+                    getInstance().freshlyCreated = true
                     Thread {
                         synchronized(this) {
                             seedingThread.run()
@@ -115,11 +122,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        val seedingThread = Runnable {
-            Log.d(_logTag, "Starting Database Seeding")
-            getInstance().isSeeding = true
-
-            val advertisementSetGenerators = listOf(
+        // Single source of truth for which generators supply the built-in advertisement sets --
+        // used both by first-install seeding (below) and by the upgrade sync
+        // (DatabaseHelpers.syncBuiltInSets), so an existing install can be topped up with whatever
+        // the current generators produce.
+        val builtInAdvertisementSetGenerators: List<IAdvertisementSetGenerator>
+            get() = listOf(
                 FastPairDevicesAdvertisementSetGenerator(),
                 FastPairPhoneSetupAdvertisementSetGenerator(),
                 FastPairNonProductionAdvertisementSetGenerator(),
@@ -141,14 +149,24 @@ abstract class AppDatabase : RoomDatabase() {
                 LovespouseStopAdvertisementSetGenerator()
             )
 
-            advertisementSetGenerators.forEach{ generator ->
-                val advertisementSets = generator.getAdvertisementSets(null)
-                advertisementSets.forEach{ advertisementSet ->
-                    DatabaseHelpers.saveAdvertisementSet(advertisementSet)
-                }
-            }
+        val seedingThread = Runnable {
+            Log.d(_logTag, "Starting Database Seeding")
+            getInstance().isSeeding = true
 
-            DatabaseHelpers.seedBuiltInListsAndCollections()
+            // One transaction for the whole seed: each saveAdvertisementSet is ~6 inserts, so
+            // seeding thousands of sets in autocommit means tens of thousands of separate
+            // transactions (fsync per commit) -- far slower. Batching makes first-launch seeding
+            // finish in a fraction of the time.
+            getInstance().runInTransaction {
+                builtInAdvertisementSetGenerators.forEach{ generator ->
+                    val advertisementSets = generator.getAdvertisementSets(null)
+                    advertisementSets.forEach{ advertisementSet ->
+                        DatabaseHelpers.saveAdvertisementSet(advertisementSet)
+                    }
+                }
+
+                DatabaseHelpers.seedBuiltInListsAndCollections()
+            }
 
             getInstance().isSeeding = false
             Log.d(_logTag, "Database Seeding finished")

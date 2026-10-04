@@ -12,5 +12,4 @@ object SpecterDestinations {
     const val PREFERENCES = "preferences"
     const val GROUP_EDITOR = "groupEditor"
     const val MANAGE_QUICK_START = "manageQuickStart"
-    const val MANAGE_DEVICES = "manageDevices"
 }

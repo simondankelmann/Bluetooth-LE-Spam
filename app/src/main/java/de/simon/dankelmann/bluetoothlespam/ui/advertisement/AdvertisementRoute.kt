@@ -51,37 +51,19 @@ fun AdvertisementRoute() {
 
     var advertisementSetLists by remember { mutableStateOf<List<AdvertisementSetList>>(emptyList()) }
     var revision by remember { mutableIntStateOf(0) }
-    // Last highlighted row: plain holder (not State) so updating it doesn't trigger an extra
-    // recomposition on top of the `revision++` below. Lets highlight reset O(1) instead of
-    // clearing all ~1000 rows on every spam tick.
-    val lastHighlight = remember { object { var list: AdvertisementSetList? = null; var set: AdvertisementSet? = null } }
 
     fun highlightCurrentAdvertisementSet(currentAdvertisementSet: AdvertisementSet, advertisementState: AdvertisementState) {
-        lastHighlight.set?.currentlyAdvertising = false
-        val prevList = lastHighlight.list
-        // Only clear the previous list flag if the new set lives in another list;
-        // it will be re-set below when found.
-        var foundList: AdvertisementSetList? = null
-        var found = false
-        for (advertisementList in advertisementSetLists) {
-            if (found) break
-            for (advertisementSet in advertisementList.advertisementSets) {
+        advertisementSetLists.forEach { advertisementList ->
+            advertisementList.currentlyAdvertising = false
+            advertisementList.advertisementSets.forEach { advertisementSet ->
                 if (advertisementSet == currentAdvertisementSet) {
                     advertisementSet.advertisementState = advertisementState
                     advertisementSet.currentlyAdvertising = true
                     advertisementList.currentlyAdvertising = true
-                    foundList = advertisementList
-                    found = true
-                    break
+                } else {
+                    advertisementSet.currentlyAdvertising = false
                 }
             }
-        }
-        if (prevList != null && prevList != foundList) {
-            prevList.currentlyAdvertising = false
-        }
-        if (found) {
-            lastHighlight.list = foundList
-            lastHighlight.set = currentAdvertisementSet
         }
         revision++
     }
@@ -132,8 +114,6 @@ fun AdvertisementRoute() {
                 viewModel.advertisementSetCollectionTitle.value = collection.title
                 viewModel.advertisementSetCollectionSubTitle.value = advertisementSetCollectionSubTitle(collection)
                 viewModel.advertisementSetCollectionHint.value = advertisementSetCollectionHint(collection)
-                lastHighlight.list = null
-                lastHighlight.set = null
                 advertisementSetLists = collection.advertisementSetLists.toList()
                 revision++
             }
@@ -157,8 +137,6 @@ fun AdvertisementRoute() {
                     viewModel.advertisementSetCollectionSubTitle.value = advertisementSetCollectionSubTitle(collection)
                     viewModel.advertisementSetCollectionHint.value = advertisementSetCollectionHint(collection)
 
-                    lastHighlight.list = null
-                    lastHighlight.set = null
                     advertisementSetLists = collection.advertisementSetLists.toList()
                     revision++
                 }
@@ -182,26 +160,6 @@ fun AdvertisementRoute() {
     val currentSetSubtitle by viewModel.advertisementSetSubTitle.observeAsState("-")
     val queueMode by viewModel.advertisementQueueMode.observeAsState(AdvertisementQueueMode.ADVERTISEMENT_QUEUE_MODE_RANDOM)
     val isLoadingSets by viewModel.isLoadingSets.observeAsState(false)
-
-    // Presence of a SwiftPair list only changes when the collection instance changes,
-    // never on `revision` ticks (checkbox/highlight mutations) — so don't rescan ~1000 rows
-    // on every spam tick.
-    val showCustomSwiftPairAdd = remember(advertisementSetLists, allowCustomSwiftPairNames) {
-        allowCustomSwiftPairNames && advertisementSetLists.any { list ->
-            list.advertisementSets.any {
-                it.type == de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING
-            }
-        }
-    }
-
-    fun reloadListsFilteringDeleted() {
-        // Remove soft-deleted sets from the in-memory collection so UI updates instantly
-        val deleted = de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.getDeletedIds()
-        if (deleted.isEmpty()) return
-        advertisementSetLists.forEach { list ->
-            list.advertisementSets.removeAll { deleted.contains(it.id) }
-        }
-    }
 
     AdvertisementScreen(
         isAdvertising = isAdvertising == true,
@@ -234,134 +192,6 @@ fun AdvertisementRoute() {
             scope.launch(Dispatchers.IO) {
                 DatabaseHelpers.updateSwiftPairDeviceName(set, newName)
                 withContext(Dispatchers.Main) { revision++ }
-            }
-        },
-        onEditDevice = { set ->
-            // View-based generic editor (title + manufacturer/service hex + flags).
-            // Must run on UI thread for dialog; DB load already in memory.
-            scope.launch(Dispatchers.IO) {
-                val full = DatabaseHelpers.getAdvertisementSetById(set.id) ?: set
-                withContext(Dispatchers.Main) {
-                    try {
-                        EditAdvertisementSetDialog.show(context, full) { edited ->
-                            scope.launch(Dispatchers.IO) {
-                                try {
-                                    de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.saveBackupIfAbsent(full)
-                                    full.title = edited.title
-                                    full.advertiseData.includeDeviceName = edited.includeDeviceName
-                                    full.advertiseData.includeTxPower = edited.includeTxPower
-                                    edited.manufacturerIds.forEachIndexed { i, mid ->
-                                        full.advertiseData.manufacturerData.getOrNull(i)?.let {
-                                            it.manufacturerId = mid
-                                            it.manufacturerSpecificData =
-                                                de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.decodeHex(edited.manufacturerHex[i])
-                                        }
-                                    }
-                                    edited.serviceUuids.forEachIndexed { i, uuidRaw ->
-                                        full.advertiseData.services.getOrNull(i)?.let {
-                                            it.serviceUuid = android.os.ParcelUuid.fromString(uuidRaw)
-                                            val hex = edited.serviceHex.getOrNull(i)
-                                            it.serviceData = if (hex == null) null
-                                            else de.simon.dankelmann.bluetoothlespam.Helpers.StringHelpers.decodeHex(hex)
-                                        }
-                                    }
-                                    DatabaseHelpers.updateAdvertisementSetContent(full)
-                                    if (de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.matchesBackup(full)) {
-                                        de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.clearBackup(full.id)
-                                    }
-                                    // Reflect in-memory so list updates without reload
-                                    set.title = full.title
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.device_updated), Toast.LENGTH_SHORT).show()
-                                        revision++
-                                    }
-                                } catch (e: Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(context, "Edit failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Toast.makeText(context, "Edit failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        },
-        onDeleteDevice = { set ->
-            try {
-                com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
-                    .setTitle(context.getString(de.simon.dankelmann.bluetoothlespam.R.string.device_delete_title))
-                    .setMessage(context.getString(de.simon.dankelmann.bluetoothlespam.R.string.device_delete_message, set.title))
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        scope.launch(Dispatchers.IO) {
-                            de.simon.dankelmann.bluetoothlespam.Helpers.DeviceCustomizationHelper.setDeleted(set.id, true)
-                            withContext(Dispatchers.Main) {
-                                advertisementSetLists.forEach { list ->
-                                    list.advertisementSets.removeAll { it.id == set.id }
-                                }
-                                Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.device_deleted), Toast.LENGTH_SHORT).show()
-                                revision++
-                            }
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .show()
-            } catch (e: Exception) {
-                Toast.makeText(context, "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        },
-        showCustomSwiftPairAdd = showCustomSwiftPairAdd,
-        onAddCustomSwiftPair = { name ->
-            scope.launch(Dispatchers.IO) {
-                try {
-                    val trimmed = name.trim()
-                    if (trimmed.isEmpty()) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.swift_pair_custom_empty), Toast.LENGTH_SHORT).show()
-                        }
-                        return@launch
-                    }
-                    if (trimmed.toByteArray(Charsets.UTF_8).size > 24) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.swift_pair_custom_too_long), Toast.LENGTH_SHORT).show()
-                        }
-                        return@launch
-                    }
-                    val duplicate = advertisementSetLists.flatMap { it.advertisementSets }
-                        .any { it.title.equals(trimmed, ignoreCase = true) }
-                    if (duplicate) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.swift_pair_custom_exists), Toast.LENGTH_SHORT).show()
-                        }
-                        return@launch
-                    }
-                    val generator = de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator()
-                    val newSet = generator.getAdvertisementSets(mapOf(trimmed to "Not used...")).firstOrNull()
-                    if (newSet != null) {
-                        val newId = DatabaseHelpers.saveAdvertisementSetAndAssociate(newSet)
-                        if (newId > 0) {
-                            newSet.id = newId
-                            newSet.isChecked = true
-                            withContext(Dispatchers.Main) {
-                                // Append to first SwiftPair list in memory
-                                advertisementSetLists.forEach { list ->
-                                    if (list.advertisementSets.any { it.type == de.simon.dankelmann.bluetoothlespam.Enums.AdvertisementSetType.ADVERTISEMENT_TYPE_SWIFT_PAIRING }) {
-                                        if (list.advertisementSets.none { it.id == newId }) {
-                                            list.advertisementSets.add(newSet)
-                                        }
-                                    }
-                                }
-                                Toast.makeText(context, context.getString(de.simon.dankelmann.bluetoothlespam.R.string.swift_pair_custom_added), Toast.LENGTH_SHORT).show()
-                                revision++
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Add failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
             }
         },
     )
