@@ -31,6 +31,7 @@ object SettingsKeys {
     val BLUR_ENABLED = booleanPreferencesKey("blur_enabled")
     val ALLOW_CUSTOM_SWIFT_PAIR_NAMES = booleanPreferencesKey("allow_custom_swift_pair_names")
     val SPAM_DETECTION_BACKGROUND_ENABLED = booleanPreferencesKey("spam_detection_background_enabled")
+    val BUILT_IN_SEED_VERSION = intPreferencesKey("built_in_seed_version")
 }
 
 /**
@@ -73,6 +74,13 @@ class SettingsRepository private constructor(context: Context) {
 
     /** Synchronous snapshot for legacy (non-suspend) call sites — see class doc. */
     val current: Preferences get() = preferencesFlow.value
+
+    /**
+     * Version of the built-in advertisement-set data this install has already seeded/synced
+     * (0 before this feature existed). Compared against [de.simon.dankelmann.bluetoothlespam.Helpers.DatabaseHelpers.BUILT_IN_SEED_VERSION]
+     * on startup to decide whether to top up the built-in sets. Synchronous, like [current].
+     */
+    val builtInSeedVersion: Int get() = current[SettingsKeys.BUILT_IN_SEED_VERSION] ?: 0
 
     /** Forces the one-time blocking load (and migration) to happen up front. Call once at process start. */
     fun warmUp() {
@@ -131,6 +139,10 @@ class SettingsRepository private constructor(context: Context) {
 
     suspend fun setSpamDetectionBackgroundEnabled(enabled: Boolean) {
         dataStore.edit { it[SettingsKeys.SPAM_DETECTION_BACKGROUND_ENABLED] = enabled }
+    }
+
+    suspend fun setBuiltInSeedVersion(version: Int) {
+        dataStore.edit { it[SettingsKeys.BUILT_IN_SEED_VERSION] = version }
     }
 
     /** Fire-and-forget variants for non-suspend call sites (e.g. [ThemeManager]) — launched on

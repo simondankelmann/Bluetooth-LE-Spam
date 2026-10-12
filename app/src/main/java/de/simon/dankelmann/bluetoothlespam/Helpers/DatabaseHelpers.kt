@@ -1,6 +1,7 @@
 package de.simon.dankelmann.bluetoothlespam.Helpers
 
 import android.os.ParcelUuid
+import android.util.Log
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.simon.dankelmann.bluetoothlespam.AdvertisementSetGenerators.SwiftPairAdvertisementSetGenerator
 import de.simon.dankelmann.bluetoothlespam.AppContext.AppContext
@@ -37,6 +38,13 @@ import java.util.UUID
 class DatabaseHelpers {
     companion object{
         private const val _logTag = "DatabaseHelpers"
+
+        /**
+         * Version of the built-in advertisement-set data. Bump whenever the built-in generators
+         * gain new entries so existing installs re-sync them (see [syncBuiltInSets] /
+         * [de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository.builtInSeedVersion]).
+         */
+        const val BUILT_IN_SEED_VERSION = 1
 
         fun saveAdvertisementSet(advertisementSet: AdvertisementSet,):Int{
 
@@ -356,6 +364,97 @@ class DatabaseHelpers {
                     database.associationCollectionListDao().insertAll(*associations.toTypedArray())
                 }
             }
+        }
+
+        /**
+         * Additively tops up the built-in advertisement sets on app upgrade (called from
+         * `BleSpamApplication` when [de.simon.dankelmann.bluetoothlespam.Datastore.SettingsRepository.builtInSeedVersion]
+         * is behind [BUILT_IN_SEED_VERSION]) -- [seedBuiltInListsAndCollections] only ever runs on a
+         * brand-new database, so without this, model IDs added to the generators after a user's first
+         * launch would never reach them.
+         *
+         * Idempotent: a set is matched by its advertised payload (type + service/manufacturer data,
+         * NOT its title, so renaming a device does not re-add it), so only genuinely new payloads are
+         * inserted, and each is appended to the existing built-in list for its type. Nothing is
+         * deleted, so user-created collections -- which reference the same per-type lists -- are
+         * untouched. Must run off the main thread, and never concurrently with [seedingThread]
+         * (`BleSpamApplication` only calls it when the database already existed, i.e. not a fresh
+         * install).
+         */
+        fun syncBuiltInSets() {
+            val database = AppDatabase.getInstance()
+            val context = AppContext.getContext()
+
+            // Load payload rows once and index by advertiseDataId so signatures need no per-set query.
+            val serviceDataByAdvertiseDataId =
+                database.advertiseDataServiceDataDao().getAll().groupBy { it.advertiseDataId }
+            val manufacturerDataByAdvertiseDataId =
+                database.advertiseDataManufacturerSpecificDataDao().getAll().groupBy { it.advertiseDataId }
+
+            fun payloadSignature(type: AdvertisementSetType, servicePart: String, manufacturerPart: String) =
+                "${type.name}|svc[$servicePart]|mfg[$manufacturerPart]"
+
+            fun signatureForEntity(entity: AdvertisementSetEntity): String {
+                val svc = (serviceDataByAdvertiseDataId[entity.advertiseDataId] ?: emptyList())
+                    .map { "${it.serviceUuid}=${it.serviceData ?: ""}" }.sorted().joinToString(",")
+                val mfg = (manufacturerDataByAdvertiseDataId[entity.advertiseDataId] ?: emptyList())
+                    .map { "${it.manufacturerId}=${it.manufacturerSpecificData}" }.sorted().joinToString(",")
+                return payloadSignature(entity.type, svc, mfg)
+            }
+
+            fun signatureForSet(set: AdvertisementSet): String {
+                val svc = set.advertiseData.services
+                    .map { "${it.serviceUuid}=${it.serviceData?.toHexString() ?: ""}" }.sorted().joinToString(",")
+                val mfg = set.advertiseData.manufacturerData
+                    .map { "${it.manufacturerId}=${it.manufacturerSpecificData.toHexString()}" }.sorted().joinToString(",")
+                return payloadSignature(set.type, svc, mfg)
+            }
+
+            // add() returns false when already present, so this also collapses duplicate keys within
+            // a generator (matching mapOf's last-wins), exactly like the original seed.
+            val knownSignatures = database.advertisementSetDao().getAll()
+                .map { signatureForEntity(it) }.toHashSet()
+
+            // Built-in per-type lists are titled "<Type> List" (see seedBuiltInListsAndCollections).
+            val listIdByTitle = database.advertisementSetListDao().getAll().associate { it.title to it.id }
+            val nextPositionByListId = mutableMapOf<Int, Int>()
+
+            var added = 0
+            // Batch every insert into one transaction (same reason as the initial seed): a top-up
+            // of hundreds/thousands of sets must not be hundreds/thousands of separate commits.
+            database.runInTransaction {
+                AppDatabase.builtInAdvertisementSetGenerators.forEach { generator ->
+                    generator.getAdvertisementSets(null).forEach { set ->
+                        if (!knownSignatures.add(signatureForSet(set))) return@forEach
+
+                        val listTitle = "${context.getString(set.type.stringResId())} List"
+                        val listId = listIdByTitle[listTitle]
+                        if (listId == null) {
+                            // No built-in list for this type (e.g. a type added since the first seed).
+                            // Skip rather than create an orphan set -- a new type is a code change that
+                            // also updates seedBuiltInListsAndCollections.
+                            Log.w(_logTag, "syncBuiltInSets: no built-in list '$listTitle'; skipping new ${set.type.name} set")
+                            return@forEach
+                        }
+
+                        val position = nextPositionByListId.getOrPut(listId) {
+                            database.associationListSetDao().findByListId(listId).size
+                        }
+                        val setId = saveAdvertisementSet(set)
+                        database.associationListSetDao().insertItem(
+                            AssociationListSetEntity(
+                                id = 0,
+                                advertisementSetId = setId,
+                                advertisementSetListId = listId,
+                                position = position,
+                            ),
+                        )
+                        nextPositionByListId[listId] = position + 1
+                        added++
+                    }
+                }
+            }
+            Log.d(_logTag, "syncBuiltInSets: added $added new built-in advertisement set(s)")
         }
 
         fun getAllAdvertisementSetsForList(listId: Int): List<AdvertisementSet> {
